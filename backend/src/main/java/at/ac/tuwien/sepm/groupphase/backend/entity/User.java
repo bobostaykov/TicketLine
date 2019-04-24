@@ -1,14 +1,12 @@
 package at.ac.tuwien.sepm.groupphase.backend.entity;
 
 import io.swagger.annotations.ApiModelProperty;
-import org.springframework.context.annotation.Primary;
 
 import javax.persistence.*;
-import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 @Entity
-public class UserLatestNewsFetch {
+public class User {
 
     @Id
     @ApiModelProperty(readOnly = true, name = "userName")
@@ -21,7 +19,7 @@ public class UserLatestNewsFetch {
         return userName;
     }
 
-    public void setUserName(Long id) {
+    public void setUserName(String userName) {
         this.userName = userName;
     }
 
@@ -29,18 +27,18 @@ public class UserLatestNewsFetch {
         return lastFetchTimestamp;
     }
 
-    public void setLastFetchTimestamp(LocalDateTime publishedAt) {
+    public void setLastFetchTimestamp(LocalDateTime lastFetchTimestamp) {
         this.lastFetchTimestamp = lastFetchTimestamp;
     }
 
 
-    /*public static MessageBuilder builder() {
-        return new MessageBuilder();
-    }*/
+    public static UserBuilder builder() {
+        return new UserBuilder();
+    }
 
     @Override
     public String toString() {
-        return "UserLatestNewsFetch{" +
+        return "User{" +
             "userName=" + userName +
             ", lastFetchTimestamp=" + lastFetchTimestamp +
             '}';
@@ -51,7 +49,7 @@ public class UserLatestNewsFetch {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        UserLatestNewsFetch that = (UserLatestNewsFetch) o;
+        User that = (User) o;
 
         if (userName != null ? !userName.equals(that.userName) : that.userName != null) return false;
         return lastFetchTimestamp != null ? !lastFetchTimestamp.equals(that.lastFetchTimestamp) : that.lastFetchTimestamp != null;
@@ -65,44 +63,30 @@ public class UserLatestNewsFetch {
         return result;
     }
 
-    /*
-    public static final class MessageBuilder {
-        private Long id;
-        private LocalDateTime publishedAt;
-        private String title;
-        private String text;
 
-        private MessageBuilder() {
+    public static final class UserBuilder {
+        private String userName;
+        private LocalDateTime lastFetchTimestamp;
+
+        private UserBuilder() {
         }
 
-        public MessageBuilder id(Long id) {
-            this.id = id;
+        public UserBuilder userName(String userName) {
+            this.userName = userName;
             return this;
         }
 
-        public MessageBuilder publishedAt(LocalDateTime publishedAt) {
-            this.publishedAt = publishedAt;
+        public UserBuilder lastFetchTimestamp(LocalDateTime lastFetchTimestamp) {
+            this.userName = userName;
             return this;
         }
 
-        public MessageBuilder title(String title) {
-            this.title = title;
-            return this;
-        }
-
-        public MessageBuilder text(String text) {
-            this.text = text;
-            return this;
-        }
-
-        public UserLatestNewsFetch build() {
-            UserLatestNewsFetch message = new UserLatestNewsFetch();
-            message.setId(id);
-            message.setPublishedAt(publishedAt);
-            message.setTitle(title);
-            message.setText(text);
-            return message;
+        public User build() {
+            User user = new User();
+            user.setUserName(userName);
+            user.setLastFetchTimestamp(lastFetchTimestamp);
+            return user;
         }
     }
-    */
+
 }

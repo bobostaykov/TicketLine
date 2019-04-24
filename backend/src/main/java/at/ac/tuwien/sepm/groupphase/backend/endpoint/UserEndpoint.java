@@ -1,57 +1,38 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint;
 
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.message.DetailedMessageDTO;
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.message.SimpleMessageDTO;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
-import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.message.MessageMapper;
-import at.ac.tuwien.sepm.groupphase.backend.service.MessageService;
+import at.ac.tuwien.sepm.groupphase.backend.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.hibernate.service.spi.ServiceException;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
+import java.time.LocalDateTime;
 
 @RestController
-@RequestMapping(value = "/news-fetch")
-@Api(value = "news-fetch")
-public class UserLatestNewsFetchEndpoint {
+@RequestMapping(value = "/messages/news-fetch")
+@Api(value = "messages/news-fetch")
+public class UserEndpoint {
 
-    private final MessageService messageService;
-    private final MessageMapper messageMapper;
+    private final UserService userService;
 
-    public UserLatestNewsFetchEndpoint(MessageService messageService, MessageMapper messageMapper) {
-        this.messageService = messageService;
-        this.messageMapper = messageMapper;
+    public UserEndpoint(UserService userService) {
+        this.userService = userService;
     }
 
-
-    @RequestMapping(method = RequestMethod.GET)
-    @ApiOperation(value = "Get list of simple message entries", authorizations = {@Authorization(value = "apiKey")})
-    public List<SimpleMessageDTO> findAll() {
-        return messageMapper.messageToSimpleMessageDTO(messageService.findAll());
-    }
-
-
-    @RequestMapping(value = "/latest", method = RequestMethod.GET)
-    @ApiOperation(value = "Get list of latest simple message entries", authorizations = {@Authorization(value = "apiKey")})
-    public List<SimpleMessageDTO> findLatest(HttpServletRequest request) {
-        return messageMapper.messageToSimpleMessageDTO(messageService.findLatest(request.getUserPrincipal().getName()));
-    }
-
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    @ApiOperation(value = "Get detailed information about a specific message entry", authorizations = {@Authorization(value = "apiKey")})
-    public DetailedMessageDTO find(@PathVariable Long id) {
-        return messageMapper.messageToDetailedMessageDTO(messageService.findOne(id));
-    }
-
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(method = RequestMethod.PUT)
+    @ResponseStatus(value = HttpStatus.OK)
     @ApiOperation(value = "Confirm news fetch", authorizations = {@Authorization(value = "apiKey")})
-    public void publishMessage(HttpServletRequest request) {
-        Message message = messageMapper.detailedMessageDTOToMessage(detailedMessageDTO);
-        message = messageService.publishMessage(message);
+    public void updateUsersLatestNewsFetchDate(HttpServletRequest request) {
+        System.out.println("INFO: updateUsersLatestNewsFetchDate for user: " + request.getUserPrincipal().getName());
+        try {
+            userService.addLatestNewsFetchDate(request.getUserPrincipal().getName(), LocalDateTime.now());
+        }
+        catch (ServiceException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
     }
-
 }

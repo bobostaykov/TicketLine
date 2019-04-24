@@ -1,40 +1,15 @@
 package at.ac.tuwien.sepm.groupphase.backend.service;
 
-import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
+import java.time.LocalDateTime;
 
-import java.util.List;
-
-public interface MessageService {
+public interface UserService {
 
     /**
-     * Find all message entries ordered by published at date (descending).
+     * Persist latest news fetch date of user
      *
-     * @return ordered list of al message entries
+     * @param userName to be saved
+     * @param timestamp to be saved
      */
-    List<Message> findAll();
-
-    /**
-     * Find latest message entries ordered by published at date (descending).
-     *
-     * @param username the username to get the latest news for
-     * @return ordered list of latest message entries
-     */
-    List<Message> findLatest(String username);
-
-    /**
-     * Find a single message entry by id.
-     *
-     * @param id the id of the message entry
-     * @return the message entry
-     */
-    Message findOne(Long id);
-
-    /**
-     * Publish a single message entry
-     *
-     * @param message to publish
-     * @return published message entry
-     */
-    Message publishMessage(Message message);
+    void addLatestNewsFetchDate(String userName, LocalDateTime timestamp);
 
 }

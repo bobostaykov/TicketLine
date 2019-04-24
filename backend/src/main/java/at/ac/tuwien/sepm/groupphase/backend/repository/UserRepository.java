@@ -1,20 +1,32 @@
 package at.ac.tuwien.sepm.groupphase.backend.repository;
 
-import at.ac.tuwien.sepm.groupphase.backend.entity.UserLatestNewsFetch;
+import at.ac.tuwien.sepm.groupphase.backend.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Repository
-public interface UserLastNewsFetchRepository extends JpaRepository<UserLatestNewsFetch, Long> {
+public interface UserRepository extends JpaRepository<User, Long> {
 
     /**
-     * Find latest news fetch timestamp by username.
+     * Find user entry by username.
      *
-     * @param userName the username from whom to find the latest newd fetch timestamp
-     * @return Optional containing the latest fetch timestamp
+     * @param userName the username of the desired user
+     * @return Optional containing the user
      */
-    Optional<UserLatestNewsFetch> findOneByUserName(String userName);
+    Optional<User> findOneByUserName(String userName);
+
+    /**
+     * Update last news fetch timestamp of specified user
+     *
+     * @param userName the username of the desired user
+     * @return Optional containing the user
+     */
+    @Query("UPDATE User SET lastFetchTimestamp = timestamp WHERE userName = :userName")
+    Optional<User> updateLastNewsFetchTimestampByUserName(String userName, LocalDateTime timestamp);
+
 
 }
