@@ -27,7 +27,6 @@ public class UserEndpoint {
     @ResponseStatus(value = HttpStatus.OK)
     @ApiOperation(value = "Confirm news fetch", authorizations = {@Authorization(value = "apiKey")})
     public void updateUsersLatestNewsFetchDate(HttpServletRequest request) {
-        System.out.println("INFO: updateUsersLatestNewsFetchDate for user: " + request.getUserPrincipal().getName());
         try {
             userService.addLatestNewsFetchDate(request.getUserPrincipal().getName(), LocalDateTime.now());
         }

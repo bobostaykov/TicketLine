@@ -30,13 +30,15 @@ public class SimpleMessageService implements MessageService {
 
     @Override
     public List<Message> findLatest(String userName) {
-        //TODO: get last news fetch timestamp for user (use userLatestNeWsFetchRepository)
         Optional<User> lastFetch = userRepository.findOneByUserName(userName);
         if (lastFetch.isPresent()) {
             return messageRepository.findAllAfter(lastFetch.get().getLastFetchTimestamp());
         }
         else {
-            // TODO: create findAllAfter(Localdatetime start) method in messageRepository and use it
+            User user = new User();
+            user.setUserName(userName);
+            user.setLastFetchTimestamp(LocalDateTime.now());
+            userRepository.save(user);
             return messageRepository.findAllByOrderByPublishedAtDesc();
         }
     }

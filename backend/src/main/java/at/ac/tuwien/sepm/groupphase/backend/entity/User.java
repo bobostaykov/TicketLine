@@ -9,11 +9,23 @@ import java.time.LocalDateTime;
 public class User {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "seq_message_id")
+    @SequenceGenerator(name = "seq_message_id", sequenceName = "seq_message_id")
+    private Long id;
+
     @ApiModelProperty(readOnly = true, name = "userName")
     private String userName;
 
     @ApiModelProperty(required = true, readOnly = true, name = "The date and time when the news where fetched latest")
     private LocalDateTime lastFetchTimestamp;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getUserName() {
         return userName;
@@ -39,6 +51,7 @@ public class User {
     @Override
     public String toString() {
         return "User{" +
+            "id=" + id +
             "userName=" + userName +
             ", lastFetchTimestamp=" + lastFetchTimestamp +
             '}';
@@ -51,6 +64,7 @@ public class User {
 
         User that = (User) o;
 
+        if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (userName != null ? !userName.equals(that.userName) : that.userName != null) return false;
         return lastFetchTimestamp != null ? !lastFetchTimestamp.equals(that.lastFetchTimestamp) : that.lastFetchTimestamp != null;
 
@@ -58,17 +72,24 @@ public class User {
 
     @Override
     public int hashCode() {
-        int result = userName != null ? userName.hashCode() : 0;
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (userName != null ? userName.hashCode() : 0);
         result = 31 * result + (lastFetchTimestamp != null ? lastFetchTimestamp.hashCode() : 0);
         return result;
     }
 
 
     public static final class UserBuilder {
+        private Long id;
         private String userName;
         private LocalDateTime lastFetchTimestamp;
 
         private UserBuilder() {
+        }
+
+        public UserBuilder id(Long id) {
+            this.id = id;
+            return this;
         }
 
         public UserBuilder userName(String userName) {
@@ -83,6 +104,7 @@ public class User {
 
         public User build() {
             User user = new User();
+            user.setId(id);
             user.setUserName(userName);
             user.setLastFetchTimestamp(lastFetchTimestamp);
             return user;
