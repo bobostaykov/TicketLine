@@ -22,6 +22,7 @@ public interface MessageService {
      */
     Message findOne(Long id);
 
+
     /**
      * Publish a single message entry
      *

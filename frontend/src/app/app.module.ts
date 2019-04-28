@@ -10,6 +10,7 @@ import {FooterComponent} from './components/footer/footer.component';
 import {HomeComponent} from './components/home/home.component';
 import {LoginComponent} from './components/login/login.component';
 import {MessageComponent} from './components/message/message.component';
+import {UserComponent} from './components/user/user.component';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {httpInterceptorProviders} from './interceptors';
 import {Globals} from './global/globals';
@@ -22,6 +23,7 @@ import {Globals} from './global/globals';
     HomeComponent,
     LoginComponent,
     MessageComponent,
+    UserComponent,
   ],
   imports: [
     BrowserModule,

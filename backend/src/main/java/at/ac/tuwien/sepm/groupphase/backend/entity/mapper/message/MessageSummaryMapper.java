@@ -29,7 +29,7 @@ public class MessageSummaryMapper {
      * If it is longer it will be stripped down to the last whitespace character or if there is not at exactly the maximum length.
      *
      * @param text which should be trimmed
-     * @return timmed text
+     * @return trimmed text
      */
     @MessageSummary
     public String trimTextToSummary(String text) {

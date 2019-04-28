@@ -19,3 +19,24 @@ export class AuthGuard implements CanActivate {
     }
   }
 }
+
+
+export class AuthGuardUser implements CanActivate {
+
+  constructor(private authService: AuthService,
+              private router: Router) {}
+
+  canActivate(): boolean {
+    if (this.authService.isLoggedIn()) {
+      if (this.authService.getUserRole() === 'ADMIN') {
+        return true;
+      } else {
+        this.router.navigate(['']);
+        return false;
+      }
+    } else {
+      this.router.navigate(['/login']);
+      return false;
+    }
+  }
+}
