@@ -11,6 +11,7 @@ import io.swagger.annotations.Authorization;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
@@ -26,10 +27,18 @@ public class MessageEndpoint {
         this.messageMapper = messageMapper;
     }
 
+
     @RequestMapping(method = RequestMethod.GET)
     @ApiOperation(value = "Get list of simple message entries", authorizations = {@Authorization(value = "apiKey")})
     public List<SimpleMessageDTO> findAll() {
         return messageMapper.messageToSimpleMessageDTO(messageService.findAll());
+    }
+
+
+    @RequestMapping(value = "/latest", method = RequestMethod.GET)
+    @ApiOperation(value = "Get list of latest simple message entries", authorizations = {@Authorization(value = "apiKey")})
+    public List<SimpleMessageDTO> findLatest(HttpServletRequest request) {
+        return messageMapper.messageToSimpleMessageDTO(messageService.findLatest(request.getUserPrincipal().getName()));
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)

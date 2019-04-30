@@ -1,55 +1,42 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.implementation;
 
-import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
-import at.ac.tuwien.sepm.groupphase.backend.entity.UserLatestNewsFetch;
-import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
-import at.ac.tuwien.sepm.groupphase.backend.repository.MessageRepository;
+import at.ac.tuwien.sepm.groupphase.backend.entity.User;
 import at.ac.tuwien.sepm.groupphase.backend.repository.UserRepository;
-import at.ac.tuwien.sepm.groupphase.backend.service.MessageService;
+import at.ac.tuwien.sepm.groupphase.backend.service.UserService;
+import org.hibernate.service.spi.ServiceException;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.PersistenceException;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
 
 @Service
-public class SimpleMessageService implements MessageService {
+public class UserServiceImplementation implements UserService {
 
-    private final MessageRepository messageRepository;
     private final UserRepository userRepository;
 
-    public SimpleMessageService(MessageRepository messageRepository, UserRepository userRepository) {
-        this.messageRepository = messageRepository;
+    public UserServiceImplementation(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
     @Override
-    public List<Message> findAll() {
-        return messageRepository.findAllByOrderByPublishedAtDesc();
-    }
-
-    @Override
-    public List<Message> findLatest(String userName) {
-        //TODO: get last news fetch timestamp for user (use userLatestNeWsFetchRepository)
-        Optional<UserLatestNewsFetch> lastFetch = userRepository.findOneByUserName(userName);
-        if (lastFetch.isPresent()) {
-            return messageRepository.findAllAfter(lastFetch.get().getLastFetchTimestamp());
+    public void addLatestNewsFetchDate(String userName, LocalDateTime timestamp) {
+        try {
+            //ToDo: optional improvement: make sure every user exists => no chedk for existence of user is needed
+            if (userRepository.findOneByUserName(userName).isEmpty()) {
+                User user = new User();
+                user.setUserName(userName);
+                user.setLastFetchTimestamp(timestamp);
+                userRepository.save(user);
+            }
+            else {
+                userRepository.updateLastNewsFetchTimestampByUserName(userName, timestamp);
+            }
         }
-        else {
-            // TODO: create findAllAfter(Localdatetime start) method in messageRepository and use it
-            return messageRepository.findAllByOrderByPublishedAtDesc();
+        catch (PersistenceException e) {
+            throw new ServiceException(e.getMessage());
+        }
+        catch (RuntimeException e) {
+            throw new ServiceException(e.getMessage());
         }
     }
-
-    @Override
-    public Message findOne(Long id) {
-        return messageRepository.findOneById(id).orElseThrow(NotFoundException::new);
-    }
-
-    @Override
-    public Message publishMessage(Message message) {
-        message.setPublishedAt(LocalDateTime.now());
-        return messageRepository.save(message);
-    }
-
 }

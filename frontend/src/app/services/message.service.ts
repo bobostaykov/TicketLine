@@ -22,6 +22,13 @@ export class MessageService {
   }
 
   /**
+   * Loads all unreceived messages from the backend
+   */
+  getLatestMessages(): Observable<Message[]> {
+    return this.httpClient.get<Message[]>(this.messageBaseUri + '/latest');
+  }
+
+  /**
    * Loads specific message from the backend
    * @param id of message to load
    */
@@ -37,5 +44,13 @@ export class MessageService {
   createMessage(message: Message): Observable<Message> {
     console.log('Create message with title ' + message.title);
     return this.httpClient.post<Message>(this.messageBaseUri, message);
+  }
+
+  /**
+   * Confirms news fetch to the backend
+   */
+  updateLastFetchTimestamp(): void {
+    console.log('Update last News Fetch Timestamp');
+    this.httpClient.put(this.messageBaseUri + '/news-fetch',  {});
   }
 }

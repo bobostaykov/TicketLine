@@ -20,12 +20,14 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
 
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.Matchers.any;
 
 public class MessageEndpointTest extends BaseIntegrationTest {
 
     private static final String NEWS_ENDPOINT = "/messages";
+    private static final String LATEST_NEWS_ENDPOINT = "/messages/latest";
     private static final String SPECIFIC_NEWS_PATH = "/{messageId}";
 
     private static final String TEST_NEWS_TEXT = "TestMessageText";
@@ -184,5 +186,53 @@ public class MessageEndpointTest extends BaseIntegrationTest {
             .text(TEST_NEWS_TEXT)
             .publishedAt(TEST_NEWS_PUBLISHED_AT)
             .build()));
+    }
+
+    @Test
+    public void findLatestMessageAsUserWithNoLastFetchReturnsAllMessages() {
+        BDDMockito.
+            given(messageRepository.findAllByOrderByPublishedAtDesc()).
+            willReturn(Collections.singletonList(
+                Message.builder()
+                    .id(TEST_NEWS_ID)
+                    .title(TEST_NEWS_TITLE)
+                    .text(TEST_NEWS_TEXT)
+                    .publishedAt(TEST_NEWS_PUBLISHED_AT)
+                    .build()));
+        Response response = RestAssured
+            .given()
+            .contentType(ContentType.JSON)
+            .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
+            .when().get(LATEST_NEWS_ENDPOINT)
+            .then().extract().response();
+        Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
+        Assert.assertThat(Arrays.asList(response.as(SimpleMessageDTO[].class)), is(Collections.singletonList(
+            SimpleMessageDTO.builder()
+                .id(TEST_NEWS_ID)
+                .title(TEST_NEWS_TITLE)
+                .summary(TEST_NEWS_TEXT)
+                .publishedAt(TEST_NEWS_PUBLISHED_AT)
+                .build())));
+    }
+
+    @Test
+    public void findLatestMessageAsUserWithLastFetchRightNowReturnsNoMessages() {
+        BDDMockito.
+            given(messageRepository.findAllAfter(LocalDateTime.now())).
+            willReturn(Collections.singletonList(
+                Message.builder()
+                    .id(TEST_NEWS_ID)
+                    .title(TEST_NEWS_TITLE)
+                    .text(TEST_NEWS_TEXT)
+                    .publishedAt(TEST_NEWS_PUBLISHED_AT)
+                    .build()));
+        Response response = RestAssured
+            .given()
+            .contentType(ContentType.JSON)
+            .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
+            .when().get(LATEST_NEWS_ENDPOINT)
+            .then().extract().response();
+        Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
+        Assert.assertThat(Arrays.asList(response.as(SimpleMessageDTO[].class)), is(Collections.EMPTY_LIST));
     }
 }

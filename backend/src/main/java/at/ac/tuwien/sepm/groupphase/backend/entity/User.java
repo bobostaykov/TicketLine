@@ -1,27 +1,37 @@
 package at.ac.tuwien.sepm.groupphase.backend.entity;
 
 import io.swagger.annotations.ApiModelProperty;
-import org.springframework.context.annotation.Primary;
 
 import javax.persistence.*;
-import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 @Entity
-public class UserLatestNewsFetch {
+public class User {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "seq_message_id")
+    @SequenceGenerator(name = "seq_message_id", sequenceName = "seq_message_id")
+    private Long id;
+
     @ApiModelProperty(readOnly = true, name = "userName")
     private String userName;
 
     @ApiModelProperty(required = true, readOnly = true, name = "The date and time when the news where fetched latest")
     private LocalDateTime lastFetchTimestamp;
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public String getUserName() {
         return userName;
     }
 
-    public void setUserName(Long id) {
+    public void setUserName(String userName) {
         this.userName = userName;
     }
 
@@ -29,18 +39,19 @@ public class UserLatestNewsFetch {
         return lastFetchTimestamp;
     }
 
-    public void setLastFetchTimestamp(LocalDateTime publishedAt) {
+    public void setLastFetchTimestamp(LocalDateTime lastFetchTimestamp) {
         this.lastFetchTimestamp = lastFetchTimestamp;
     }
 
 
-    /*public static MessageBuilder builder() {
-        return new MessageBuilder();
-    }*/
+    public static UserBuilder builder() {
+        return new UserBuilder();
+    }
 
     @Override
     public String toString() {
-        return "UserLatestNewsFetch{" +
+        return "User{" +
+            "id=" + id +
             "userName=" + userName +
             ", lastFetchTimestamp=" + lastFetchTimestamp +
             '}';
@@ -51,8 +62,9 @@ public class UserLatestNewsFetch {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        UserLatestNewsFetch that = (UserLatestNewsFetch) o;
+        User that = (User) o;
 
+        if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (userName != null ? !userName.equals(that.userName) : that.userName != null) return false;
         return lastFetchTimestamp != null ? !lastFetchTimestamp.equals(that.lastFetchTimestamp) : that.lastFetchTimestamp != null;
 
@@ -60,49 +72,43 @@ public class UserLatestNewsFetch {
 
     @Override
     public int hashCode() {
-        int result = userName != null ? userName.hashCode() : 0;
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (userName != null ? userName.hashCode() : 0);
         result = 31 * result + (lastFetchTimestamp != null ? lastFetchTimestamp.hashCode() : 0);
         return result;
     }
 
-    /*
-    public static final class MessageBuilder {
-        private Long id;
-        private LocalDateTime publishedAt;
-        private String title;
-        private String text;
 
-        private MessageBuilder() {
+    public static final class UserBuilder {
+        private Long id;
+        private String userName;
+        private LocalDateTime lastFetchTimestamp;
+
+        private UserBuilder() {
         }
 
-        public MessageBuilder id(Long id) {
+        public UserBuilder id(Long id) {
             this.id = id;
             return this;
         }
 
-        public MessageBuilder publishedAt(LocalDateTime publishedAt) {
-            this.publishedAt = publishedAt;
+        public UserBuilder userName(String userName) {
+            this.userName = userName;
             return this;
         }
 
-        public MessageBuilder title(String title) {
-            this.title = title;
+        public UserBuilder lastFetchTimestamp(LocalDateTime lastFetchTimestamp) {
+            this.userName = userName;
             return this;
         }
 
-        public MessageBuilder text(String text) {
-            this.text = text;
-            return this;
-        }
-
-        public UserLatestNewsFetch build() {
-            UserLatestNewsFetch message = new UserLatestNewsFetch();
-            message.setId(id);
-            message.setPublishedAt(publishedAt);
-            message.setTitle(title);
-            message.setText(text);
-            return message;
+        public User build() {
+            User user = new User();
+            user.setId(id);
+            user.setUserName(userName);
+            user.setLastFetchTimestamp(lastFetchTimestamp);
+            return user;
         }
     }
-    */
+
 }

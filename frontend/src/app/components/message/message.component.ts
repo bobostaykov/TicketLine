@@ -30,7 +30,8 @@ export class MessageComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.loadMessage();
+    //this.loadAllMessage();
+    this.loadLatestMessages();
   }
 
   /**
@@ -67,7 +68,7 @@ export class MessageComponent implements OnInit {
   createMessage(message: Message) {
     this.messageService.createMessage(message).subscribe(
       () => {
-        this.loadMessage();
+        this.loadAllMessage();
       },
       error => {
         this.defaultServiceErrorHandling(error);
@@ -115,7 +116,7 @@ export class MessageComponent implements OnInit {
   /**
    * Loads the specified page of message from the backend
    */
-  private loadMessage() {
+  private loadAllMessage() {
     // Backend pagination starts at page 0, therefore page must be reduced by 1
     this.messageService.getMessage().subscribe(
       (message: Message[]) => {
@@ -125,6 +126,23 @@ export class MessageComponent implements OnInit {
         this.defaultServiceErrorHandling(error);
       }
     );
+    //this.messageService.updateLastFetchTimestamp();
+  }
+
+  /**
+   * Loads all unreceived messages from the backend
+   */
+  private loadLatestMessages() {
+    // Backend pagination starts at page 0, therefore page must be reduced by 1
+    this.messageService.getLatestMessages().subscribe(
+      (message: Message[]) => {
+        this.message = message;
+      },
+      error => {
+        this.defaultServiceErrorHandling(error);
+      }
+    );
+    this.messageService.updateLastFetchTimestamp();
   }
 
 
