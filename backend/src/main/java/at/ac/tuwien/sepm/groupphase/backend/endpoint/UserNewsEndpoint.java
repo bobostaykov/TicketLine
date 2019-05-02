@@ -25,7 +25,7 @@ public class UserNewsEndpoint {
         this.userNewsMapper = userNewsMapper;
     }
 
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(method = RequestMethod.PUT)
     @ResponseStatus(value = HttpStatus.OK)
     @ApiOperation(value = "Confirm news fetch", authorizations = {@Authorization(value = "apiKey")})
     public void addNewsFetch(@RequestBody UserNewsDTO userNewsDTO) {

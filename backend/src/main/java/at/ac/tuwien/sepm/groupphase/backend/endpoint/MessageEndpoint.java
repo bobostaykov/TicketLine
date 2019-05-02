@@ -35,10 +35,10 @@ public class MessageEndpoint {
     }
 
 
-    @RequestMapping(value = "/latest", method = RequestMethod.GET)
-    @ApiOperation(value = "Get list of latest simple message entries", authorizations = {@Authorization(value = "apiKey")})
-    public List<SimpleMessageDTO> findLatest(HttpServletRequest request) {
-        return messageMapper.messageToSimpleMessageDTO(messageService.findLatest(request.getUserPrincipal().getName()));
+    @RequestMapping(value = "/unread", method = RequestMethod.GET)
+    @ApiOperation(value = "Get list of unread News articles", authorizations = {@Authorization(value = "apiKey")})
+    public List<SimpleMessageDTO> findUnread(HttpServletRequest request) {
+        return messageMapper.messageToSimpleMessageDTO(messageService.findUnread(request.getUserPrincipal().getName()));
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)

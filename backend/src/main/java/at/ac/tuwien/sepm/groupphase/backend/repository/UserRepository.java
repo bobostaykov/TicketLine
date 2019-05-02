@@ -11,4 +11,12 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     // findById() and save() inherited from superinterface CrudRepository
 
+    /**
+     * Find user entry by username.
+     *
+     * @param userName the username of the desired user
+     * @return Optional containing the user
+     */
+    Optional<User> findOneByName(String userName);
+
 }

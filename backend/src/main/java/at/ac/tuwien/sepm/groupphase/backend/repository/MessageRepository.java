@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,12 +28,13 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
     List<Message> findAllByOrderByPublishedAtDesc();
 
     /**
-     * Find all message entries ordered by published at date (descending) which where created later than timestamp.
+     * Find all message entries ordered by published at date (descending) which
+     * are unread by user.
      *
-     * @param timestamp search for all news, which where created after this datetime
+     * @param givenId ID of user
      * @return ordered list of message entries
-     */
-    @Query("SELECT n FROM Message n WHERE n.publishedAt >= :timestamp")
-    List<Message> findAllAfter(@Param("timestamp") LocalDateTime timestamp);
+     * */
+    @Query("SELECT m FROM Message m LEFT JOIN UserNews u ON m.id = u.newsId WHERE NOT u.userId = :givenId ORDER BY m.publishedAt desc")
+    List<Message> findUnread(@Param("givenId") Long givenId);
 
 }

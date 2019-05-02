@@ -19,7 +19,7 @@ public interface MessageService {
      * @param username the username to get the latest news for
      * @return ordered list of latest message entries
      */
-    List<Message> findLatest(String username);
+    List<Message> findUnread(String username);
 
     /**
      * Find a single message entry by id.

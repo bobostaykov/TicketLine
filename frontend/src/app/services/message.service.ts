@@ -22,11 +22,13 @@ export class MessageService {
   }
 
   /**
-   * Loads all unreceived messages from the backend
+   * Loads all unread news from the backend
    */
-  getLatestMessages(): Observable<Message[]> {
-    return this.httpClient.get<Message[]>(this.messageBaseUri + '/latest');
+  getUnreadMessages(): Observable<Message[]> {
+    console.log('Get unread news');
+    return this.httpClient.get<Message[]>(this.messageBaseUri + '/unread');
   }
+
 
   /**
    * Loads specific message from the backend
@@ -49,8 +51,8 @@ export class MessageService {
   /**
    * Confirms news fetch to the backend
    */
-  updateLastFetchTimestamp(): void {
-    console.log('Update last News Fetch Timestamp');
+  updateNewsFetch(): void {
+    console.log('Update news fetch and mark article as read');
     this.httpClient.put(this.messageBaseUri + '/news-fetch',  {});
   }
 }
