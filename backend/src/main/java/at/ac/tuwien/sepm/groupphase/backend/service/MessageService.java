@@ -14,14 +14,6 @@ public interface MessageService {
     List<Message> findAll();
 
     /**
-     * Find latest message entries ordered by published at date (descending).
-     *
-     * @param username the username to get the latest news for
-     * @return ordered list of latest message entries
-     */
-    List<Message> findLatest(String username);
-
-    /**
      * Find a single message entry by id.
      *
      * @param id the id of the message entry

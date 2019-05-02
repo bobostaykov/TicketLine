@@ -14,6 +14,9 @@ import {UserComponent} from './components/user/user.component';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {httpInterceptorProviders} from './interceptors';
 import {Globals} from './global/globals';
+import { TopTenEventsComponent } from './components/top-ten-events/top-ten-events.component';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {MatButtonModule, MatCheckboxModule} from '@angular/material';
 
 @NgModule({
   declarations: [
@@ -24,6 +27,7 @@ import {Globals} from './global/globals';
     LoginComponent,
     MessageComponent,
     UserComponent,
+    TopTenEventsComponent,
   ],
   imports: [
     BrowserModule,
@@ -31,7 +35,10 @@ import {Globals} from './global/globals';
     ReactiveFormsModule,
     HttpClientModule,
     NgbModule,
-    FormsModule
+    FormsModule,
+    BrowserAnimationsModule,
+    MatButtonModule,
+    MatCheckboxModule
   ],
   providers: [httpInterceptorProviders, Globals],
   bootstrap: [AppComponent]

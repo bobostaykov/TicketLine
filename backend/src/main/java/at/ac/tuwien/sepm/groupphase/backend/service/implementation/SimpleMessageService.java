@@ -29,21 +29,6 @@ public class SimpleMessageService implements MessageService {
     }
 
     @Override
-    public List<Message> findLatest(String userName) {
-        Optional<User> lastFetch = userRepository.findOneByUserName(userName);
-        if (lastFetch.isPresent()) {
-            return messageRepository.findAllAfter(lastFetch.get().getLastFetchTimestamp());
-        }
-        else {
-            User user = new User();
-            user.setUserName(userName);
-            user.setLastFetchTimestamp(LocalDateTime.now());
-            userRepository.save(user);
-            return messageRepository.findAllByOrderByPublishedAtDesc();
-        }
-    }
-
-    @Override
     public Message findOne(Long id) {
         return messageRepository.findOneById(id).orElseThrow(NotFoundException::new);
     }

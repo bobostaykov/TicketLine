@@ -1,23 +1,32 @@
 package at.ac.tuwien.sepm.groupphase.backend.entity;
 
-import io.swagger.annotations.ApiModelProperty;
+import at.ac.tuwien.sepm.groupphase.backend.datatype.UserType;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 @Entity
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "seq_message_id")
-    @SequenceGenerator(name = "seq_message_id", sequenceName = "seq_message_id")
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "seq_user_id")
+    @SequenceGenerator(name = "seq_user_id", sequenceName = "seq_user_id")
     private Long id;
 
-    @ApiModelProperty(readOnly = true, name = "userName")
-    private String userName;
+    @Column(nullable = false, unique = true)
+    @Size(max = 255)
+    private String name;
 
-    @ApiModelProperty(required = true, readOnly = true, name = "The date and time when the news where fetched latest")
-    private LocalDateTime lastFetchTimestamp;
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private UserType type;
+
+    @Column(nullable = false, name = "user_since")
+    private LocalDateTime userSince;
+
+    @Column(name = "last_login")
+    private LocalDateTime lastLogin;
 
     public Long getId() {
         return id;
@@ -27,33 +36,46 @@ public class User {
         this.id = id;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getName() {
+        return name;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public LocalDateTime getLastFetchTimestamp() {
-        return lastFetchTimestamp;
+    public UserType getType() {
+        return type;
     }
 
-    public void setLastFetchTimestamp(LocalDateTime lastFetchTimestamp) {
-        this.lastFetchTimestamp = lastFetchTimestamp;
+    public void setType(UserType type) {
+        this.type = type;
     }
 
+    public LocalDateTime getUserSince() {
+        return userSince;
+    }
 
-    public static UserBuilder builder() {
-        return new UserBuilder();
+    public void setUserSince(LocalDateTime userSince) {
+        this.userSince = userSince;
+    }
+
+    public LocalDateTime getLastLogin() {
+        return lastLogin;
+    }
+
+    public void setLastLogin(LocalDateTime lastLogin) {
+        this.lastLogin = lastLogin;
     }
 
     @Override
     public String toString() {
         return "User{" +
             "id=" + id +
-            "userName=" + userName +
-            ", lastFetchTimestamp=" + lastFetchTimestamp +
+            ", name='" + name + '\'' +
+            ", type=" + type +
+            ", userSince=" + userSince +
+            ", lastLogin=" + lastLogin +
             '}';
     }
 
@@ -62,27 +84,37 @@ public class User {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        User that = (User) o;
+        User user = (User) o;
 
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
-        if (userName != null ? !userName.equals(that.userName) : that.userName != null) return false;
-        return lastFetchTimestamp != null ? !lastFetchTimestamp.equals(that.lastFetchTimestamp) : that.lastFetchTimestamp != null;
-
+        if (id != null ? !id.equals(user.id) : user.id != null) return false;
+        if (userSince != null ? !userSince.equals(user.userSince) : user.userSince != null) return false;
+        if (lastLogin != null ? !lastLogin.equals(user.lastLogin) : user.lastLogin != null) return false;
+        if (name != null ? !name.equals(user.name) : user.name != null) return false;
+        return type != null ? type.equals(user.type) : user.type == null;
     }
 
     @Override
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (userName != null ? userName.hashCode() : 0);
-        result = 31 * result + (lastFetchTimestamp != null ? lastFetchTimestamp.hashCode() : 0);
+        result = 31 * result + (lastLogin != null ? lastLogin.hashCode() : 0);
+        result = 31 * result + (userSince != null ? userSince.hashCode() : 0);
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (type != null ? type.hashCode() : 0);
         return result;
+    }
+
+    public static UserBuilder builder() {
+        return new UserBuilder();
     }
 
 
     public static final class UserBuilder {
+
         private Long id;
-        private String userName;
-        private LocalDateTime lastFetchTimestamp;
+        private String name;
+        private UserType type;
+        private LocalDateTime userSince;
+        private LocalDateTime lastLogin;
 
         private UserBuilder() {
         }
@@ -92,21 +124,33 @@ public class User {
             return this;
         }
 
-        public UserBuilder userName(String userName) {
-            this.userName = userName;
+        public UserBuilder name(String name) {
+            this.name = name;
             return this;
         }
 
-        public UserBuilder lastFetchTimestamp(LocalDateTime lastFetchTimestamp) {
-            this.userName = userName;
+        public UserBuilder type(UserType type) {
+            this.type = type;
+            return this;
+        }
+
+        public UserBuilder userSince(LocalDateTime userSince) {
+            this.userSince = userSince;
+            return this;
+        }
+
+        public UserBuilder lastLogin(LocalDateTime lastLogin) {
+            this.lastLogin = lastLogin;
             return this;
         }
 
         public User build() {
             User user = new User();
             user.setId(id);
-            user.setUserName(userName);
-            user.setLastFetchTimestamp(lastFetchTimestamp);
+            user.setName(name);
+            user.setType(type);
+            user.setUserSince(userSince);
+            user.setLastLogin(lastLogin);
             return user;
         }
     }

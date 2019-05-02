@@ -34,13 +34,6 @@ public class MessageEndpoint {
         return messageMapper.messageToSimpleMessageDTO(messageService.findAll());
     }
 
-
-    @RequestMapping(value = "/latest", method = RequestMethod.GET)
-    @ApiOperation(value = "Get list of latest simple message entries", authorizations = {@Authorization(value = "apiKey")})
-    public List<SimpleMessageDTO> findLatest(HttpServletRequest request) {
-        return messageMapper.messageToSimpleMessageDTO(messageService.findLatest(request.getUserPrincipal().getName()));
-    }
-
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ApiOperation(value = "Get detailed information about a specific message entry", authorizations = {@Authorization(value = "apiKey")})
     public DetailedMessageDTO find(@PathVariable Long id) {

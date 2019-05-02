@@ -1,15 +1,33 @@
 package at.ac.tuwien.sepm.groupphase.backend.service;
 
-import java.time.LocalDateTime;
+import at.ac.tuwien.sepm.groupphase.backend.entity.User;
+
+import java.util.List;
 
 public interface UserService {
 
     /**
-     * Persist latest news fetch date of user
+     * Find all user entries.
      *
-     * @param userName to be saved
-     * @param timestamp to be saved
+     * @return all users
      */
-    void addLatestNewsFetchDate(String userName, LocalDateTime timestamp);
+    List<User> findAll();
+
+    /**
+     * Find a single user entry by id.
+     *
+     * @param id the is of the user entry
+     * @return the user entry
+     */
+    User findOne(Long id);
+
+
+    /**
+     * Create a user
+     *
+     * @param user to add
+     * @return created user
+     */
+    User createUser(User user);
 
 }
