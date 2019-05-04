@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.integrationtest.base;
 
+import at.ac.tuwien.sepm.groupphase.backend.datatype.UserType;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.user.UserDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.User;
 import at.ac.tuwien.sepm.groupphase.backend.repository.UserRepository;
@@ -27,7 +28,7 @@ public class UserEndpointTest extends BaseIntegrationTest {
 
     private static final long TEST_USER_ID = 1L;
     private static final String TEST_USER_NAME = "Messi";
-    private static final String TEST_USER_TYPE = "ADMIN";
+    private static final UserType TEST_USER_TYPE = UserType.ADMIN;
     private static final LocalDateTime TEST_USER_SINCE = LocalDateTime.of(1011, 11, 11, 11, 11, 11, 11);
     private static final LocalDateTime TEST_USER_LAST_LOGIN = LocalDateTime.of(2012, 12, 12, 12, 12, 12, 12);
 

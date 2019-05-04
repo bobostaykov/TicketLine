@@ -1,0 +1,36 @@
+<h1 class="mt-5">Top 10 Events</h1>
+
+<p class="mt-5">Category:</p>
+
+<div class="mr-5 chboxes" *ngFor="let cat of categories">
+    <mat-checkbox>{{cat}}</mat-checkbox>
+</div>
+
+<div class="right">
+  <mat-form-field>
+    <mat-label>{{selectedMonth}}</mat-label>
+    <mat-select>
+      <mat-option (click)="setSelectedMonth(month)" *ngFor="let month of months">
+        {{month}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>
+
+<ngx-charts-bar-horizontal
+  [scheme]="colorScheme"
+  [results]="data"
+  [gradient]=false
+  [xAxis]=false
+  [yAxis]=true
+  [legend]=false
+  [showXAxisLabel]=false
+  [showYAxisLabel]=false
+  [showDataLabel]=true
+  (select)="goToTickets()">
+  <ng-template #tooltipTemplate>
+    <div class="mytooltip">
+      <p class="mt-2 buy">Buy tickets</p>
+    </div>
+  </ng-template>
+</ngx-charts-bar-horizontal>

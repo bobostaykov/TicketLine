@@ -34,6 +34,13 @@ public class MessageEndpoint {
         return messageMapper.messageToSimpleMessageDTO(messageService.findAll());
     }
 
+
+    @RequestMapping(value = "/unread", method = RequestMethod.GET)
+    @ApiOperation(value = "Get list of unread News articles", authorizations = {@Authorization(value = "apiKey")})
+    public List<SimpleMessageDTO> findUnread(HttpServletRequest request) {
+        return messageMapper.messageToSimpleMessageDTO(messageService.findUnread(request.getUserPrincipal().getName()));
+    }
+
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ApiOperation(value = "Get detailed information about a specific message entry", authorizations = {@Authorization(value = "apiKey")})
     public DetailedMessageDTO find(@PathVariable Long id) {

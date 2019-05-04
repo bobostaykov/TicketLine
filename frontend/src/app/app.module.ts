@@ -14,9 +14,10 @@ import {UserComponent} from './components/user/user.component';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {httpInterceptorProviders} from './interceptors';
 import {Globals} from './global/globals';
-import { TopTenEventsComponent } from './components/top-ten-events/top-ten-events.component';
+import { TopTenEventsComponent } from './components/events/top-ten-events/top-ten-events.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {MatButtonModule, MatCheckboxModule} from '@angular/material';
+import {MatButtonModule, MatCheckboxModule, MatInputModule, MatSelectModule} from '@angular/material';
+import {NgxChartsModule} from '@swimlane/ngx-charts';
 
 @NgModule({
   declarations: [
@@ -38,7 +39,10 @@ import {MatButtonModule, MatCheckboxModule} from '@angular/material';
     FormsModule,
     BrowserAnimationsModule,
     MatButtonModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    MatInputModule,
+    MatSelectModule,
+    NgxChartsModule
   ],
   providers: [httpInterceptorProviders, Globals],
   bootstrap: [AppComponent]

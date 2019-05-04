@@ -27,7 +27,7 @@ import static org.mockito.Matchers.any;
 public class MessageEndpointTest extends BaseIntegrationTest {
 
     private static final String NEWS_ENDPOINT = "/messages";
-    private static final String LATEST_NEWS_ENDPOINT = "/messages/latest";
+    private static final String LATEST_NEWS_ENDPOINT = "/messages/unread";
     private static final String SPECIFIC_NEWS_PATH = "/{messageId}";
 
     private static final String TEST_NEWS_TEXT = "TestMessageText";

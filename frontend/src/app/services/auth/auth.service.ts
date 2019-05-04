@@ -1,11 +1,11 @@
 import {Injectable} from '@angular/core';
-import {AuthRequest} from '../dtos/auth-request';
+import {AuthRequest} from '../../dtos/auth-request';
 import {interval, Observable} from 'rxjs';
-import {AuthResponse} from '../dtos/auth-response';
+import {AuthResponse} from '../../dtos/auth-response';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {tap} from 'rxjs/operators';
 import * as jwt_decode from 'jwt-decode';
-import {Globals} from '../global/globals';
+import {Globals} from '../../global/globals';
 
 @Injectable({
   providedIn: 'root'

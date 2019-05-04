@@ -5,7 +5,7 @@ import {LoginComponent} from './components/login/login.component';
 import {AuthGuard} from './guards/auth.guard';
 import {MessageComponent} from './components/message/message.component';
 import {UserComponent} from './components/user/user.component';
-import {TopTenEventsComponent} from './components/top-ten-events/top-ten-events.component';
+import {TopTenEventsComponent} from './components/events/top-ten-events/top-ten-events.component';
 
 const routes: Routes = [
   {path: '', component: HomeComponent},

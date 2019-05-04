@@ -1,10 +1,10 @@
 import {ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
-import {MessageService} from '../../services/message.service';
+import {MessageService} from '../../services/message/message.service';
 import {Message} from '../../dtos/message';
 import {NgbPaginationConfig} from '@ng-bootstrap/ng-bootstrap';
 import * as _ from 'lodash';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {AuthService} from '../../services/auth.service';
+import {AuthService} from '../../services/auth/auth.service';
 
 @Component({
   selector: 'app-message',
@@ -30,8 +30,7 @@ export class MessageComponent implements OnInit {
   }
 
   ngOnInit() {
-    //this.loadAllMessage();
-    this.loadLatestMessages();
+    this.loadUnreadMessages();
   }
 
   /**
@@ -68,7 +67,7 @@ export class MessageComponent implements OnInit {
   createMessage(message: Message) {
     this.messageService.createMessage(message).subscribe(
       () => {
-        this.loadAllMessage();
+        this.loadUnreadMessages();
       },
       error => {
         this.defaultServiceErrorHandling(error);
@@ -87,6 +86,7 @@ export class MessageComponent implements OnInit {
   getMessageDetails(id: number) {
     if (_.isEmpty(this.message.find(x => x.id === id).text)) {
       this.loadMessageDetails(id);
+      this.messageService.updateNewsFetch();
     }
   }
 
@@ -114,11 +114,11 @@ export class MessageComponent implements OnInit {
   }
 
   /**
-   * Loads the specified page of message from the backend
+   * Loads all unread messages from the backend for this user
    */
-  private loadAllMessage() {
+  private loadUnreadMessages() {
     // Backend pagination starts at page 0, therefore page must be reduced by 1
-    this.messageService.getMessage().subscribe(
+    this.messageService.getUnreadMessages().subscribe(
       (message: Message[]) => {
         this.message = message;
       },
@@ -126,23 +126,6 @@ export class MessageComponent implements OnInit {
         this.defaultServiceErrorHandling(error);
       }
     );
-    //this.messageService.updateLastFetchTimestamp();
-  }
-
-  /**
-   * Loads all unreceived messages from the backend
-   */
-  private loadLatestMessages() {
-    // Backend pagination starts at page 0, therefore page must be reduced by 1
-    this.messageService.getLatestMessages().subscribe(
-      (message: Message[]) => {
-        this.message = message;
-      },
-      error => {
-        this.defaultServiceErrorHandling(error);
-      }
-    );
-    this.messageService.updateLastFetchTimestamp();
   }
 
 
