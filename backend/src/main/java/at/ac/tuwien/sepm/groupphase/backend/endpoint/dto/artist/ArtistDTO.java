@@ -14,16 +14,16 @@ public class ArtistDTO {
     @ApiModelProperty(name = "The automatically generated database id")
     private Long id;
 
-    @ApiModelProperty(name = "The automatically generated database id")
+    @ApiModelProperty(name = "The first birth name of name of artist")
     private String firstname;
 
-    @ApiModelProperty(name = "The automatically generated database id")
+    @ApiModelProperty(name = "The last birth name of name of artist")
     private String lastname;
 
-    @ApiModelProperty(name = "The automatically generated database id")
+    @ApiModelProperty(name = "The artist name under which the person introduces himself or herself")
     private String artistname;
 
-    @ApiModelProperty(name = "The automatically generated database id")
+    @ApiModelProperty(name = "The events in which the artists has or will participate")
     private HashSet<EventDTO> eventParticipations;
 
     public Long getId() {

@@ -3,7 +3,7 @@ package at.ac.tuwien.sepm.groupphase.backend.entity;
 import javax.persistence.*;
 import java.util.List;
 
-//the class is unfinished, add missing attributes
+//TODO add missing attributes
 @Entity
 public class Hall {
 
@@ -18,4 +18,28 @@ public class Hall {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "hall")
     private List<Show> shows;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public List<Show> getShows() {
+        return shows;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setShows(List<Show> shows) {
+        this.shows = shows;
+    }
 }
