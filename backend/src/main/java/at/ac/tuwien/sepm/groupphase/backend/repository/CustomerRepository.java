@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface CustomerRepository extends JpaRepository<Customer, Long> {
@@ -17,6 +18,14 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
      * @return list of all customers
      */
     List<Customer> findAllByOrderByIdAsc();
+
+    /**
+     * Find a single customer entry by id.
+     *
+     * @param id id of the customer entry
+     * @return Optional containing the found customer entry
+     */
+    Optional<Customer> findOneById(Long id);
 
     /**
      * Find all customers filtered by the following attributes:

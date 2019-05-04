@@ -34,6 +34,12 @@ public class CustomerEndpoint {
         this.customerMapper = customerMapper;
     }
 
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @ApiOperation(value = "Get detailed information about a specific customer entry", authorizations = {@Authorization(value = "apiKey")})
+    public CustomerDTO find(@PathVariable Long id) {
+        return customerMapper.customerToCustomerDTO(customerService.findOne(id));
+    }
+
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     public void adaptCustomer(@RequestBody CustomerDTO customerdto, @PathVariable("id") Long id) {
         LOGGER.info("Adapt customer " + customerdto.toString());

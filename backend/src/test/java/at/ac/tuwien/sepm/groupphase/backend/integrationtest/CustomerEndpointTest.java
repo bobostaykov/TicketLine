@@ -19,6 +19,7 @@ import static org.hamcrest.core.Is.is;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Optional;
 
 public class CustomerEndpointTest extends BaseIntegrationTest {
     private static final String CUSTOMER_ENDPOINT = "/customers";
@@ -305,4 +306,46 @@ public class CustomerEndpointTest extends BaseIntegrationTest {
                 .birthday(CUSTOMER_BIRTHDAY)
                 .build())));
     }
+
+    @Test
+    public void findSpecificCustomerAsUser() {
+        BDDMockito.
+            given(customerRepository.findOneById(CUSTOMER_ID)).
+            willReturn(Optional.of(Customer.builder()
+                .id(CUSTOMER_ID)
+                .name(CUSTOMER_NAME)
+                .firstname(CUSTOMER_FIRSTNAME)
+                .email(CUSTOMER_EMAIL)
+                .birthday(CUSTOMER_BIRTHDAY)
+                .build()));
+        Response response = RestAssured
+            .given()
+            .contentType(ContentType.JSON)
+            .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
+            .when().get(CUSTOMER_ENDPOINT + SPECIFIC_CUSTOMER_PATH, CUSTOMER_ID)
+            .then().extract().response();
+        Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
+        Assert.assertThat(response.as(CustomerDTO.class), is(CustomerDTO.builder()
+            .id(CUSTOMER_ID)
+            .name(CUSTOMER_NAME)
+            .firstname(CUSTOMER_FIRSTNAME)
+            .email(CUSTOMER_EMAIL)
+            .birthday(CUSTOMER_BIRTHDAY)
+            .build()));
+    }
+
+    @Test
+    public void findSpecificNonExistingCustomerNotFoundAsUser() {
+        BDDMockito.
+            given(customerRepository.findOneById(CUSTOMER_ID)).
+            willReturn(Optional.empty());
+        Response response = RestAssured
+            .given()
+            .contentType(ContentType.JSON)
+            .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
+            .when().get(CUSTOMER_ENDPOINT + SPECIFIC_CUSTOMER_PATH, CUSTOMER_ID)
+            .then().extract().response();
+        Assert.assertThat(response.getStatusCode(), is(HttpStatus.NOT_FOUND.value()));
+    }
+
 }

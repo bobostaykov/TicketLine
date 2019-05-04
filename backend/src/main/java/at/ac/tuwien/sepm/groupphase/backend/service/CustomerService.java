@@ -21,6 +21,14 @@ public interface CustomerService {
     List<Customer> findAll();
 
     /**
+     * Find a single customer entry by id.
+     *
+     * @param id id of the customer entry
+     * @return found customer entry
+     */
+    Customer findOne(Long id);
+
+    /**
      * Find all customers filtered by the following attributes:
      * ID - ID of customer
      * name - part of the name of customer
