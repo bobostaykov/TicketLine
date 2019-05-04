@@ -27,6 +27,9 @@ public class CustomerEndpointTest extends BaseIntegrationTest {
     private static final String CUSTOMER_FILTERED_FIRSTNAME = "/customers?firstname=etr";
     private static final String CUSTOMER_FILTERED_EMAIL = "/customers?email=ller@gmail.co";
     private static final String CUSTOMER_FILTERED_BIRTHDAY = "/customers?birthday=22.07.1982";
+    private static final String CUSTOMER_FILTERED_BIRTHDAY_AND_NAME = "/customers?birthday=22.07.1982&name=Müller";
+    private static final String CUSTOMER_FILTERED_FIRSTNAME_AND_NAME = "/customers?firstname=Pe&name=Müller";
+    private static final String CUSTOMER_FILTERED_FIRSTNAME_AND_NAME_AND_EMAIL = "/customers?firstname=Pe&name=Müller&email=@gmail.com";
     private static final String SPECIFIC_CUSTOMER_PATH = "/{customerID}";
 
     private static final Long CUSTOMER_ID = 1L;
@@ -34,7 +37,7 @@ public class CustomerEndpointTest extends BaseIntegrationTest {
     private static final String CUSTOMER_FIRSTNAME = "Petra";
     private static final String CUSTOMER_EMAIL = "petra.mueller@gmail.com";
     private static final LocalDate CUSTOMER_BIRTHDAY =
-        LocalDate.of(1982,07,22);
+        LocalDate.of(1982,7,22);
 
 
     @MockBean
@@ -194,7 +197,7 @@ public class CustomerEndpointTest extends BaseIntegrationTest {
     @Test
     public void findAllCustomersAsUserFilteredAfterSpecifiedBirthday() {
         BDDMockito.
-            given(customerRepository.findCustomersFiltered(null, null, null, null, LocalDate.of(1982,07,22))).
+            given(customerRepository.findCustomersFiltered(null, null, null, null, LocalDate.of(1982,7,22))).
             willReturn(Collections.singletonList(
                 Customer.builder()
                     .id(CUSTOMER_ID)
@@ -208,6 +211,90 @@ public class CustomerEndpointTest extends BaseIntegrationTest {
             .contentType(ContentType.JSON)
             .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
             .when().get(CUSTOMER_FILTERED_BIRTHDAY)
+            .then().extract().response();
+        Assert.assertThat(Arrays.asList(response.as(CustomerDTO[].class)), is(Collections.singletonList(
+            CustomerDTO.builder()
+                .id(CUSTOMER_ID)
+                .name(CUSTOMER_NAME)
+                .firstname(CUSTOMER_FIRSTNAME)
+                .email(CUSTOMER_EMAIL)
+                .birthday(CUSTOMER_BIRTHDAY)
+                .build())));
+    }
+
+    @Test
+    public void findAllCustomersAsUserFilteredAfterSpecifiedBirthdayAndName() {
+        BDDMockito.
+            given(customerRepository.findCustomersFiltered(null, "Müller", null, null, LocalDate.of(1982,7,22))).
+            willReturn(Collections.singletonList(
+                Customer.builder()
+                    .id(CUSTOMER_ID)
+                    .name(CUSTOMER_NAME)
+                    .firstname(CUSTOMER_FIRSTNAME)
+                    .email(CUSTOMER_EMAIL)
+                    .birthday(CUSTOMER_BIRTHDAY)
+                    .build()));
+        Response response = RestAssured
+            .given()
+            .contentType(ContentType.JSON)
+            .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
+            .when().get(CUSTOMER_FILTERED_BIRTHDAY_AND_NAME)
+            .then().extract().response();
+        Assert.assertThat(Arrays.asList(response.as(CustomerDTO[].class)), is(Collections.singletonList(
+            CustomerDTO.builder()
+                .id(CUSTOMER_ID)
+                .name(CUSTOMER_NAME)
+                .firstname(CUSTOMER_FIRSTNAME)
+                .email(CUSTOMER_EMAIL)
+                .birthday(CUSTOMER_BIRTHDAY)
+                .build())));
+    }
+
+    @Test
+    public void findAllCustomersAsUserFilteredAfterSpecifiedFirstnameAndName() {
+        BDDMockito.
+            given(customerRepository.findCustomersFiltered(null, "Müller", "Pe", null, null)).
+            willReturn(Collections.singletonList(
+                Customer.builder()
+                    .id(CUSTOMER_ID)
+                    .name(CUSTOMER_NAME)
+                    .firstname(CUSTOMER_FIRSTNAME)
+                    .email(CUSTOMER_EMAIL)
+                    .birthday(CUSTOMER_BIRTHDAY)
+                    .build()));
+        Response response = RestAssured
+            .given()
+            .contentType(ContentType.JSON)
+            .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
+            .when().get(CUSTOMER_FILTERED_FIRSTNAME_AND_NAME)
+            .then().extract().response();
+        Assert.assertThat(Arrays.asList(response.as(CustomerDTO[].class)), is(Collections.singletonList(
+            CustomerDTO.builder()
+                .id(CUSTOMER_ID)
+                .name(CUSTOMER_NAME)
+                .firstname(CUSTOMER_FIRSTNAME)
+                .email(CUSTOMER_EMAIL)
+                .birthday(CUSTOMER_BIRTHDAY)
+                .build())));
+    }
+
+    @Test
+    public void findAllCustomersAsUserFilteredAfterSpecifiedFirstnameAndNameAndEmail() {
+        BDDMockito.
+            given(customerRepository.findCustomersFiltered(null, "Müller", "Pe", "@gmail.com", null)).
+            willReturn(Collections.singletonList(
+                Customer.builder()
+                    .id(CUSTOMER_ID)
+                    .name(CUSTOMER_NAME)
+                    .firstname(CUSTOMER_FIRSTNAME)
+                    .email(CUSTOMER_EMAIL)
+                    .birthday(CUSTOMER_BIRTHDAY)
+                    .build()));
+        Response response = RestAssured
+            .given()
+            .contentType(ContentType.JSON)
+            .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
+            .when().get(CUSTOMER_FILTERED_FIRSTNAME_AND_NAME_AND_EMAIL)
             .then().extract().response();
         Assert.assertThat(Arrays.asList(response.as(CustomerDTO[].class)), is(Collections.singletonList(
             CustomerDTO.builder()
