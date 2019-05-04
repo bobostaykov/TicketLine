@@ -62,15 +62,22 @@ public class Customer {
         this.birthday = birthday;
     }
 
+    public static CustomerBuilder builder() {
+        return new CustomerBuilder();
+    }
+
+
     @Override
     public String toString() {
-        return "Customer{" +
+        String customer  = "CustomerDTO{" +
             "id=" + id +
-            ", name=" + name +
-            ", firstname='" + firstname + '\'' +
-            ", e-mail='" + email + '\'' +
-            ", birthday='" + birthday.toString() + '\'' +
-            '}';
+            ", name='" + name + '\'' +
+            ", firstname=" + firstname +
+            ", e-mail=" + email;
+        if (birthday != null)
+            customer += ", birthday=" + birthday.toString();
+        customer += '}';
+        return customer;
     }
 
     @Override

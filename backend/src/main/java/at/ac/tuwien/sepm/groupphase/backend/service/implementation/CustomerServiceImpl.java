@@ -3,6 +3,7 @@ package at.ac.tuwien.sepm.groupphase.backend.service.implementation;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Customer;
 import at.ac.tuwien.sepm.groupphase.backend.repository.CustomerRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.CustomerService;
+import org.hibernate.service.spi.ServiceException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -11,6 +12,25 @@ public class CustomerServiceImpl implements CustomerService {
 
     public CustomerServiceImpl(CustomerRepository customerRepository) {
         this.customerRepository = customerRepository;
+    }
+
+    @Override
+    public Customer addCustomer(Customer customer) {
+        if (customer != null) {
+            // VALIDATION START
+            if (customer.getName().isBlank())
+                throw new ServiceException("Customer " + customer.toString() + "could not be added: name must not be empty");
+            if (customer.getFirstname().isBlank())
+                throw new ServiceException("Customer " + customer.toString() + "could not be added: first name must not be empty");
+            if (customer.getEmail().isBlank())
+                throw new ServiceException("Customer " + customer.toString() + "could not be added: email must not be empty");
+            if (customer.getBirthday() == null)
+                throw new ServiceException("Customer " + customer.toString() + "could not be added: birthday must not be empty");
+            //VALIDATION END
+            return customerRepository.save(customer);
+        }
+        else
+            throw new ServiceException("Customer could not be added " + customer.toString());
     }
 
     @Override

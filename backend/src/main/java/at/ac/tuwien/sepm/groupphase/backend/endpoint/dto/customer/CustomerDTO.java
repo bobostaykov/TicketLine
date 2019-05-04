@@ -64,13 +64,15 @@ public class CustomerDTO {
 
     @Override
     public String toString() {
-        return "CustomerDTO{" +
+        String customer  = "CustomerDTO{" +
             "id=" + id +
             ", name='" + name + '\'' +
             ", firstname=" + firstname +
-            ", e-mail=" + email +
-            ", birthday=" + birthday.toString() +
-            '}';
+            ", e-mail=" + email;
+        if (birthday != null)
+            customer += ", birthday=" + birthday.toString();
+        customer += '}';
+        return customer;
     }
 
     @Override
@@ -95,6 +97,10 @@ public class CustomerDTO {
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (email != null ? email.hashCode() : 0);
         return result;
+    }
+
+    public static CustomerDTOBuilder builder() {
+        return new CustomerDTOBuilder();
     }
 
     public static final class CustomerDTOBuilder {
