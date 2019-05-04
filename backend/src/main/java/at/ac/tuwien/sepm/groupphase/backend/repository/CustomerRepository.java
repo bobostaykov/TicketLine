@@ -12,11 +12,37 @@ import java.util.List;
 @Repository
 public interface CustomerRepository extends JpaRepository<Customer, Long> {
     /**
-     * Find alle customers and order the list by the ID ascending.
+     * Find all customers and order the list by the ID ascending.
      *
      * @return list of all customers
      */
     List<Customer> findAllByOrderByIdAsc();
+
+    /**
+     * Find all customers filtered by the following attributes:
+     * ID - ID of customer
+     * name - part of the name of customer
+     * firstname - part of the first name of customer
+     * email - part of the e-mail address of customer
+     * birthday - birthday of customer
+     *
+     * @param id ID of customer to search for
+     * @param name name of customer to search for
+     * @param firstname first name of customer to search for
+     * @param email e-mail adress of customer to search for
+     * @param birthday birthday of customer to search for
+     * @return List of customers that met the requested filter methods
+     */
+    @Query(value = "SELECT DISTINCT c " +
+        "FROM customer c " +
+        "WHERE (c.name LIKE CONCAT('%',:name,'%') OR :name IS NULL) " +
+        "AND (c.firstname LIKE CONCAT('%',:firstname,'%') OR :firstname IS NULL) " +
+        "AND (c.email LIKE CONCAT('%',:email,'%') OR :email IS NULL) " +
+        "AND (c.birthday = :birthday OR :birthday IS NULL) " +
+        "AND (c.id = :id OR :id IS NULL)", nativeQuery = true)
+    List<Customer> findCustomersFiltered(@Param("id") Long id, @Param("name") String name,
+                                         @Param("firstname") String firstname, @Param("email") String email,
+                                         @Param("birthday") LocalDate birthday);
 
     /**
      * Change the name of customer with ID id.

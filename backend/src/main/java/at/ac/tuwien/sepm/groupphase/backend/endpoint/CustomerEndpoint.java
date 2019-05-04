@@ -17,6 +17,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @RestController
@@ -47,8 +49,35 @@ public class CustomerEndpoint {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    @ApiOperation(value = "Get list of all customer entries", authorizations = {@Authorization(value = "apiKey")})
-    public List<CustomerDTO> findAll() {
-        return customerMapper.customerToCustomerDTO(customerService.findAll());
+    @ApiOperation(value = "Get list of all customer entries filtered by specified attributes", authorizations = {@Authorization(value = "apiKey")})
+    public List<CustomerDTO> findAllFiltered(
+        @RequestParam(value = "id", required = false) Long id,
+        @RequestParam(value = "name", required = false) String name,
+        @RequestParam(value = "firstname", required = false) String firstname,
+        @RequestParam(value = "email", required = false) String email,
+        @RequestParam(value = "birthday", required = false) String birthday_str) {
+
+        boolean filterData = !(id == null && name == null && firstname == null && email == null && birthday_str == null);
+        LocalDate birthday = null;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+        if (birthday_str != null) {
+            birthday = LocalDate.parse(birthday_str, formatter);
+        }
+        if (filterData) {
+            LOGGER.info("Get all customers filtered by specified attributes");
+        } else {
+            LOGGER.info("Get all customers");
+        }
+        try {
+            List<Customer> result;
+            if (filterData) {
+                result = customerService.findCustomersFiltered(id, name, firstname, email, birthday);
+            } else {
+                result = customerService.findAll();
+            }
+            return customerMapper.customerToCustomerDTO(result);
+        } catch (ServiceException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error during reading filtered customers", e);
+        }
     }
 }
