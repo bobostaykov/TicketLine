@@ -7,9 +7,17 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Repository
 public interface CustomerRepository extends JpaRepository<Customer, Long> {
+    /**
+     * Find alle customers and order the list by the ID ascending.
+     *
+     * @return list of all customers
+     */
+    List<Customer> findAllByOrderByIdAsc();
+
     /**
      * Change the name of customer with ID id.
      *
