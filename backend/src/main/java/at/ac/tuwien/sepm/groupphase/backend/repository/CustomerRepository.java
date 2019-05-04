@@ -1,6 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.repository;
 
-import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
+import at.ac.tuwien.sepm.groupphase.backend.entity.Customer;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -9,14 +9,14 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
 
 @Repository
-public interface CustomerRepository extends JpaRepository<Message, Long> {
+public interface CustomerRepository extends JpaRepository<Customer, Long> {
     /**
      * Change the name of customer with ID id.
      *
      * @param name new name for customer
      * @param id ID of customer
      */
-    @Query("UPDATE customer SET name = :name WHERE id = :id")
+    @Query(value = "UPDATE customer c SET c.name = :name WHERE c.id = :id", nativeQuery = true)
     void updateName(@Param("name") String name, @Param("id") Long id);
 
     /**
@@ -25,7 +25,7 @@ public interface CustomerRepository extends JpaRepository<Message, Long> {
      * @param firstname new first name for customer
      * @param id ID of the customer
      */
-    @Query("UPDATE customer SET firstname = :firstname WHERE id = :id")
+    @Query(value = "UPDATE customer SET firstname = :firstname WHERE id = :id", nativeQuery = true)
     void updateFirstname(@Param("firstname") String firstname, @Param("id") Long id);
 
     /**
@@ -34,7 +34,7 @@ public interface CustomerRepository extends JpaRepository<Message, Long> {
      * @param email new e-mail address for customer
      * @param id ID of the customer
      */
-    @Query("UPDATE customer SET email = :email WHERE id = :id")
+    @Query(value = "UPDATE customer SET email = :email WHERE id = :id", nativeQuery = true)
     void updateEmail(@Param("email") String email, @Param("id") Long id);
 
     /**
@@ -43,6 +43,6 @@ public interface CustomerRepository extends JpaRepository<Message, Long> {
      * @param birthday new birthday for customer
      * @param id ID of the customer
      */
-    @Query("UPDATE customer SET birthday = :birthday WHERE id = :id")
+    @Query(value = "UPDATE customer SET birthday = :birthday WHERE id = :id", nativeQuery = true)
     void updateBirthday(@Param("birthday") LocalDate birthday, @Param("id") Long id);
 }

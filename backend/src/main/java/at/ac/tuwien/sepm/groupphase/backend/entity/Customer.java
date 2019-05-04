@@ -62,6 +62,10 @@ public class Customer {
         this.birthday = birthday;
     }
 
+    public static CustomerBuilder builder() {
+        return new CustomerBuilder();
+    }
+
     @Override
     public String toString() {
         return "Customer{" +

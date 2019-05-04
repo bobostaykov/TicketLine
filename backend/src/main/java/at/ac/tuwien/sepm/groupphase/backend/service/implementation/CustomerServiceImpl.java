@@ -16,9 +16,11 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public void adaptCustomer(Customer customer) {
         Long id = customer.getId();
+
         if (customer.getName() != null) {
             customerRepository.updateName(customer.getName(), id);
         }
+        /**
         if (customer.getFirstname() != null) {
             customerRepository.updateFirstname(customer.getFirstname(), id);
         }
@@ -28,5 +30,6 @@ public class CustomerServiceImpl implements CustomerService {
         if (customer.getBirthday() != null) {
             customerRepository.updateBirthday(customer.getBirthday(), id);
         }
+         */
     }
 }

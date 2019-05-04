@@ -62,6 +62,8 @@ public class CustomerDTO {
         this.birthday = birthday;
     }
 
+    public static CustomerDTOBuilder builder() {return new CustomerDTOBuilder();}
+
     @Override
     public String toString() {
         return "CustomerDTO{" +
