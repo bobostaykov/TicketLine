@@ -1,8 +1,9 @@
-package at.ac.tuwien.sepm.groupphase.backend.integrationtest.base;
+package at.ac.tuwien.sepm.groupphase.backend.integrationtest;
 
 import at.ac.tuwien.sepm.groupphase.backend.datatype.UserType;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.user.UserDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.User;
+import at.ac.tuwien.sepm.groupphase.backend.integrationtest.base.BaseIntegrationTest;
 import at.ac.tuwien.sepm.groupphase.backend.repository.UserRepository;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;

@@ -40,6 +40,7 @@ export class TopTenEventsComponent implements OnInit {
   constructor(private eventService: EventService, private router: Router) { }
 
   ngOnInit() {
+    this.loadEvents();
   }
 
   setSelectedMonth(month: string) {
@@ -51,7 +52,7 @@ export class TopTenEventsComponent implements OnInit {
    */
   loadEvents() {
     this.eventService.getTopTenEvents().subscribe(
-      (events: Event[]) => { this.events = events; },
+      (events: Event[]) => { this.events = events.slice(0, 10); },
       error => { this.defaultServiceErrorHandling(error); }
     );
   }

@@ -17,8 +17,7 @@ export class EventService {
    * Get top ten events from backend
    */
   getTopTenEvents(): Observable<Event[]> {
-    // return this.httpClient.get<Event[]>(this.eventBaseUri + '/topten');
-    return null;
+    return this.httpClient.get<Event[]>(this.eventBaseUri + '/topten');
   }
 
 }
