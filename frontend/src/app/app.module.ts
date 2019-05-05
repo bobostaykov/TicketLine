@@ -14,6 +14,7 @@ import {UserComponent} from './components/user/user.component';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {httpInterceptorProviders} from './interceptors';
 import {Globals} from './global/globals';
+import { CustomerAddComponent } from './components/customerAdd/customer-add.component';
 
 @NgModule({
   declarations: [
@@ -24,6 +25,7 @@ import {Globals} from './global/globals';
     LoginComponent,
     MessageComponent,
     UserComponent,
+    CustomerAddComponent,
   ],
   imports: [
     BrowserModule,
