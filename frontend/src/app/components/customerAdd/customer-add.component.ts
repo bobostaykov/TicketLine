@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {Customer} from "../../dtos/customer";
 import {CustomerService} from "../../services/customer.service";
+import {composeValidators} from "@angular/forms/src/directives/shared";
 
 @Component({
   selector: 'app-customer',
@@ -19,7 +20,7 @@ export class CustomerAddComponent implements OnInit {
     this.customerForm = this.formBuilder.group({
       name: ['', [Validators.required]],
       firstname: ['', [Validators.required]],
-      email: ['', [Validators.required]],
+      email: ['', [Validators.email, Validators.required]],
       birthday: ['', [Validators.required]]
     });
   }

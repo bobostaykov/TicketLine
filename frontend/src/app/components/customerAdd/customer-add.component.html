@@ -30,6 +30,8 @@
       <small class="form-text text-warning" *ngIf="customerForm.controls.email.errors.required">Customer e-mail address is
         required!
       </small>
+      <small class="form-text text-warning" *ngIf="customerForm.controls.email.errors.email && !customerForm.controls.email.errors.required">Please enter a valid e-mail address!
+      </small>
     </div>
   </div>
 
