@@ -18,11 +18,11 @@ public class CustomerServiceImpl implements CustomerService {
     public Customer addCustomer(Customer customer) {
         if (customer != null) {
             // VALIDATION START
-            if (customer.getName().isBlank())
+            if (customer.getName() == null || customer.getName().isBlank())
                 throw new ServiceException("Customer " + customer.toString() + "could not be added: name must not be empty");
-            if (customer.getFirstname().isBlank())
+            if (customer.getFirstname() == null || customer.getFirstname().isBlank())
                 throw new ServiceException("Customer " + customer.toString() + "could not be added: first name must not be empty");
-            if (customer.getEmail().isBlank())
+            if (customer.getEmail() == null || customer.getEmail().isBlank())
                 throw new ServiceException("Customer " + customer.toString() + "could not be added: email must not be empty");
             if (customer.getBirthday() == null)
                 throw new ServiceException("Customer " + customer.toString() + "could not be added: birthday must not be empty");
