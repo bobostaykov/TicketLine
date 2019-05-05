@@ -21,6 +21,10 @@ public class Seat {
     @Column(nullable = false)
     private PriceCategory priceCategory;
 
+    @ManyToOne
+    @JoinColumn(name = "hall_id", referencedColumnName = "ID")
+    private Long hallID;
+
     public Integer getId() {
         return id;
     }
@@ -53,6 +57,14 @@ public class Seat {
         this.priceCategory = priceCategory;
     }
 
+    public Long getHallID() {
+        return hallID;
+    }
+
+    public void setHallID(Long hallID) {
+        this.hallID = hallID;
+    }
+
     public static SeatBuilder builder(){
         return new SeatBuilder();
     }
@@ -64,6 +76,7 @@ public class Seat {
             ", seatNumber=" + seatNumber +
             ", seatRow=" + seatRow +
             ", priceCategory='" + priceCategory + "\'" +
+            ", hallId=" + hallID +
             '}';
     }
 
@@ -75,6 +88,7 @@ public class Seat {
         if(id != null ? ! id.equals(seat.id) : seat.id != null) return false;
         if(seatNumber != null ? ! seatNumber.equals(seat.getSeatNumber()) : seat.getSeatNumber() != null) return false;
         if(seatRow != null ? ! seatRow.equals(seat.getSeatRow()) : seat.getSeatRow() != null) return false;
+        if(hallID != null ? ! hallID.equals(seat.getHallID()) : seat.getHallID() != null) return false;
         return priceCategory != null ? priceCategory.equals(seat.getPriceCategory()) : seat.getPriceCategory() == null;
     }
 
@@ -84,6 +98,7 @@ public class Seat {
         result = 31 * result + (seatNumber != null ? seatNumber.hashCode() : 0);
         result = 31 * result + (seatRow != null ? seatRow.hashCode() : 0);
         result = 31 * result + (priceCategory != null ? priceCategory.hashCode() : 0);
+        result = 31 * result + (hallID != null ? hallID.hashCode() : 0);
         return result;
     }
 
@@ -92,6 +107,7 @@ public class Seat {
         private Integer seatNumber;
         private Integer seatRow;
         private PriceCategory priceCategory;
+        private Long hallId;
 
         private SeatBuilder(){}
 
@@ -115,12 +131,18 @@ public class Seat {
             return this;
         }
 
+        public SeatBuilder hallId(Long hallId){
+            this.hallId = hallId;
+            return this;
+        }
+
         public Seat build(){
             Seat seat = new Seat();
             seat.setId(id);
             seat.setSeatNumber(seatNumber);
             seat.setSeatRow(seatRow);
             seat.setPriceCategory(priceCategory);
+            seat.setHallID(hallId);
             return seat;
         }
     }

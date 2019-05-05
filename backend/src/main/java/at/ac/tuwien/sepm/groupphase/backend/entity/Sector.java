@@ -18,6 +18,10 @@ public class Sector {
     @Column(nullable = false)
     private PriceCategory priceCategory;
 
+    @ManyToOne
+    @JoinColumn(name = "hall_id", referencedColumnName = "ID")
+    private Long hallID;
+
     public Integer getId() {
         return id;
     }
@@ -42,6 +46,14 @@ public class Sector {
         this.priceCategory = priceCategory;
     }
 
+    public Long getHallID() {
+        return hallID;
+    }
+
+    public void setHallID(Long hallID) {
+        this.hallID = hallID;
+    }
+
     public static SectorBuilder builder(){
         return new SectorBuilder();
     }
@@ -52,6 +64,7 @@ public class Sector {
             "id=" + id +
             ", sectorNumber=" + sectorNumber +
             ", priceCategory='" + priceCategory + "\'" +
+            ", hallId=" + hallID +
             '}';
     }
 
@@ -62,6 +75,7 @@ public class Sector {
         Sector sector = (Sector) o;
         if(id != null ? ! id.equals(sector.id) : sector.id != null) return false;
         if(sectorNumber != null ? ! sectorNumber.equals(sector.getSectorNumber()) : sector.getSectorNumber() != null) return false;
+        if(hallID != null ? ! hallID.equals(sector.getHallID()) : sector.getHallID() != null) return false;
         return priceCategory != null ? priceCategory.equals(sector.getPriceCategory()) : sector.getPriceCategory() == null;
     }
 
@@ -70,6 +84,7 @@ public class Sector {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (sectorNumber != null ? sectorNumber.hashCode() : 0);
         result = 31 * result + (priceCategory != null ? priceCategory.hashCode() : 0);
+        result = 31 * result + (hallID != null ? hallID.hashCode() : 0);
         return result;
     }
 
@@ -77,6 +92,7 @@ public class Sector {
         private Integer id;
         private Integer sectorNumber;
         private PriceCategory priceCategory;
+        private Long hallId;
 
         private SectorBuilder(){}
 
@@ -95,11 +111,17 @@ public class Sector {
             return this;
         }
 
+        public SectorBuilder hallId(Long hallId){
+            this.hallId = hallId;
+            return this;
+        }
+
         public Sector build(){
             Sector sector = new Sector();
             sector.setId(id);
             sector.setSectorNumber(sectorNumber);
             sector.setPriceCategory(priceCategory);
+            sector.setHallID(hallId);
             return sector;
         }
     }
