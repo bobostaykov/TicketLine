@@ -1,11 +1,9 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.user;
 
-import at.ac.tuwien.sepm.groupphase.backend.entity.User;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 @ApiModel(value = "UserDTO", description = "A DTO for user entries via rest")
 public class UserDTO {

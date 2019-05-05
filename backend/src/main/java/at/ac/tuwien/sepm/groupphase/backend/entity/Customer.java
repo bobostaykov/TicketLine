@@ -66,10 +66,9 @@ public class Customer {
         return new CustomerBuilder();
     }
 
-
     @Override
     public String toString() {
-        String customer  = "CustomerDTO{" +
+        String customer  = "Customer{" +
             "id=" + id +
             ", name='" + name + '\'' +
             ", firstname=" + firstname +
