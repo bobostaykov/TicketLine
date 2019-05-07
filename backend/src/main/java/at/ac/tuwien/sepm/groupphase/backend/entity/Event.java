@@ -3,7 +3,6 @@ package at.ac.tuwien.sepm.groupphase.backend.entity;
 import at.ac.tuwien.sepm.groupphase.backend.datatype.EventType;
 
 import javax.persistence.*;
-import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 import java.util.List;
@@ -26,10 +25,6 @@ public class Event {
     @Enumerated(EnumType.STRING)
     private EventType eventType;
 
-    @Column(nullable = false, name = "duration")
-    @Positive
-    private Integer durationInMinutes;
-
     @Column(nullable = false, name = "description")
     @Size(max = 256)
     private String description;
@@ -37,10 +32,6 @@ public class Event {
     @Column(name = "content")
     @Size(max = 512)
     private String content;
-
-    @Column(name = "ticketCount")
-    @PositiveOrZero
-    private Integer ticketCount;
 
     @ManyToMany
     @JoinTable(name = "participation",
@@ -75,14 +66,6 @@ public class Event {
         this.eventType = eventType;
     }
 
-    public Integer getDurationInMinutes() {
-        return durationInMinutes;
-    }
-
-    public void setDurationInMinutes(Integer durationInMinutes) {
-        this.durationInMinutes = durationInMinutes;
-    }
-
     public String getDescription() {
         return description;
     }
@@ -115,24 +98,14 @@ public class Event {
         this.shows = shows;
     }
 
-    public Integer getTicketCount() {
-        return ticketCount;
-    }
-
-    public void setTicketCount(Integer ticketCount) {
-        this.ticketCount = ticketCount;
-    }
-
     @Override
     public String toString() {
         return "Event{" +
             "id=" + id +
             ", name='" + name + '\'' +
             ", eventType=" + eventType +
-            ", durationInMinutes=" + durationInMinutes +
             ", description='" + description + '\'' +
             ", content='" + content + '\'' +
-            ", ticketCount=" + ticketCount +
             ", participatingArtists=" + participatingArtists +
             ", shows=" + shows +
             '}';
@@ -146,27 +119,23 @@ public class Event {
         return id.equals(event.id) &&
             name.equals(event.name) &&
             eventType == event.eventType &&
-            durationInMinutes.equals(event.durationInMinutes) &&
             Objects.equals(description, event.description) &&
             Objects.equals(content, event.content) &&
-            Objects.equals(ticketCount, event.ticketCount) &&
             Objects.equals(participatingArtists, event.participatingArtists) &&
             Objects.equals(shows, event.shows);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, eventType, durationInMinutes, description, content, ticketCount, participatingArtists, shows);
+        return Objects.hash(id, name, eventType, description, content, participatingArtists, shows);
     }
 
     public static final class EventBuilder {
         private Long id;
         private String name;
         private EventType eventType;
-        private Integer durationInMinutes;
         private String description;
         private String content;
-        private Integer ticketCount;
         private List<Artist> participatingArtists;
         private List<Show> shows;
 
@@ -187,11 +156,6 @@ public class Event {
             return this;
         }
 
-        public EventBuilder durationInMinutes(Integer durationInMinutes) {
-            this.durationInMinutes = durationInMinutes;
-            return this;
-        }
-
         public EventBuilder description(String description) {
             this.description = description;
             return this;
@@ -199,11 +163,6 @@ public class Event {
 
         public EventBuilder content(String content) {
             this.content = content;
-            return this;
-        }
-
-        public EventBuilder ticketCount(Integer ticketCount) {
-            this.ticketCount = ticketCount;
             return this;
         }
 
@@ -222,10 +181,8 @@ public class Event {
             event.setId(id);
             event.setName(name);
             event.setEventType(eventType);
-            event.setDurationInMinutes(durationInMinutes);
             event.setDescription(description);
             event.setContent(content);
-            event.setTicketCount(ticketCount);
             event.setParticipatingArtists(participatingArtists);
             event.setShows(shows);
             return event;

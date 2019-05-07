@@ -11,11 +11,11 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
-
+//TODO throw and catch exceptions
 @Service
 public class CustomerServiceImpl implements CustomerService {
     private final CustomerRepository customerRepository;
-    private static final Logger LOGGER = LoggerFactory.getLogger(SimpleHeaderTokenAuthenticationService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CustomerServiceImpl.class);
 
     public CustomerServiceImpl(CustomerRepository customerRepository) {
         this.customerRepository = customerRepository;
@@ -23,6 +23,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public Customer addCustomer(Customer customer) {
+        LOGGER.info("Add a customer");
         if (customer != null) {
             // VALIDATION START
             if (customer.getName().isBlank())
@@ -42,6 +43,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public Customer findOne(Long id) {
+        LOGGER.info("Find one customer by ID");
         return customerRepository.findOneById(id).orElseThrow(NotFoundException::new);
     }
 

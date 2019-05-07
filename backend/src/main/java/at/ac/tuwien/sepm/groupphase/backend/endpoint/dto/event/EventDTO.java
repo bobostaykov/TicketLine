@@ -21,17 +21,11 @@ public class EventDTO {
     @ApiModelProperty(name = "The type of the event (THEATER | OPER | FESTIVAL | CONCERT | MOVIE | MUSICAL)")
     private EventType eventType;
 
-    @ApiModelProperty(name = "The duration of the event in minutes")
-    private Integer durationInMinutes;
-
     @ApiModelProperty(name = "A description of the event")
     private String description;
 
     @ApiModelProperty(name = "A content of the event")
     private String content;
-
-    @ApiModelProperty(name = "The number of sold tickets for the event")
-    private Integer ticketCount;
 
     @ApiModelProperty(name = "The artists that participate in the event")
     private HashSet<ArtistDTO> participatingArtists;
@@ -63,14 +57,6 @@ public class EventDTO {
         this.eventType = eventType;
     }
 
-    public Integer getDurationInMinutes() {
-        return durationInMinutes;
-    }
-
-    public void setDurationInMinutes(Integer durationInMinutes) {
-        this.durationInMinutes = durationInMinutes;
-    }
-
     public String getDescription() {
         return description;
     }
@@ -85,14 +71,6 @@ public class EventDTO {
 
     public void setContent(String content) {
         this.content = content;
-    }
-
-    public Integer getTicketCount() {
-        return ticketCount;
-    }
-
-    public void setTicketCount(Integer ticketCount) {
-        this.ticketCount = ticketCount;
     }
 
     public HashSet<ArtistDTO> getParticipatingArtists() {
@@ -119,27 +97,36 @@ public class EventDTO {
         return id.equals(eventDTO.id) &&
             name.equals(eventDTO.name) &&
             eventType == eventDTO.eventType &&
-            durationInMinutes.equals(eventDTO.durationInMinutes) &&
             Objects.equals(description, eventDTO.description) &&
             Objects.equals(content, eventDTO.content) &&
-            Objects.equals(ticketCount, eventDTO.ticketCount) &&
             Objects.equals(participatingArtists, eventDTO.participatingArtists) &&
             Objects.equals(shows, eventDTO.shows);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, eventType, durationInMinutes, description, content, ticketCount, participatingArtists, shows);
+        return Objects.hash(id, name, eventType, description, content, participatingArtists, shows);
+    }
+
+    @Override
+    public String toString() {
+        return "EventDTO{" +
+            "id=" + id +
+            ", name='" + name + '\'' +
+            ", eventType=" + eventType +
+            ", description='" + description + '\'' +
+            ", content='" + content + '\'' +
+            ", participatingArtists=" + participatingArtists +
+            ", shows=" + shows +
+            '}';
     }
 
     public static final class EventDTOBuilder {
         private Long id;
         private String name;
         private EventType eventType;
-        private Integer durationInMinutes;
         private String description;
         private String content;
-        private Integer ticketCount;
         private HashSet<ShowDTO> shows;
         private HashSet<ArtistDTO> participatingArtists;
 
@@ -160,11 +147,6 @@ public class EventDTO {
             return this;
         }
 
-        public EventDTOBuilder durationInMinutes(Integer durationInMinutes) {
-            this.durationInMinutes = durationInMinutes;
-            return this;
-        }
-
         public EventDTOBuilder description(String description) {
             this.description = description;
             return this;
@@ -172,11 +154,6 @@ public class EventDTO {
 
         public EventDTOBuilder content(String content) {
             this.content = content;
-            return this;
-        }
-
-        public EventDTOBuilder ticketCount(Integer ticketCount) {
-            this.ticketCount = ticketCount;
             return this;
         }
 
@@ -195,10 +172,8 @@ public class EventDTO {
             eventDTO.setId(id);
             eventDTO.setName(name);
             eventDTO.setEventType(eventType);
-            eventDTO.setDurationInMinutes(durationInMinutes);
             eventDTO.setDescription(description);
             eventDTO.setContent(content);
-            eventDTO.setTicketCount(ticketCount);
             eventDTO.setParticipatingArtists(participatingArtists);
             eventDTO.setShows(shows);
             return eventDTO;
