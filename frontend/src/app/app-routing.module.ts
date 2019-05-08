@@ -6,13 +6,15 @@ import {AuthGuard, AuthGuardUser} from './guards/auth.guard';
 import {MessageComponent} from './components/message/message.component';
 import {UserComponent} from './components/user/user.component';
 import {CustomerAddComponent} from "./components/customerAdd/customer-add.component";
+import {CustomerComponent} from './components/customer/customer.component';
 
 const routes: Routes = [
   {path: '', component: HomeComponent},
   {path: 'login', component: LoginComponent},
   {path: 'message', canActivate: [AuthGuard], component: MessageComponent},
   {path: 'user', canActivate: [AuthGuard], component: UserComponent},
-  {path: 'customer-add', canActivate: [AuthGuard], component: CustomerAddComponent}
+  {path: 'customer-add', canActivate: [AuthGuard], component: CustomerAddComponent},
+  {path: 'customers', canActivate: [AuthGuard], component: CustomerComponent}
 ];
 
 @NgModule({
