@@ -34,6 +34,17 @@ public class CustomerEndpoint {
         this.customerMapper = customerMapper;
     }
 
+    @RequestMapping(method = RequestMethod.POST)
+    public CustomerDTO postCustomer(@RequestBody CustomerDTO customerdto) {
+        LOGGER.info("Post customer " + customerdto.toString());
+        Customer customer = customerMapper.customerDTOToCustomer(customerdto);
+        try {
+            return customerMapper.customerToCustomerDTO(customerService.addCustomer(customer));
+        } catch (ServiceException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error during adding of customer: " + e.getMessage(), e);
+        }
+    }
+
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ApiOperation(value = "Get detailed information about a specific customer entry", authorizations = {@Authorization(value = "apiKey")})
     public CustomerDTO find(@PathVariable Long id) {

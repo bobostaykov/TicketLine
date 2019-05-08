@@ -59,7 +59,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
      * @param name new name for customer
      * @param id ID of customer
      */
-    @Query(value = "UPDATE customer c SET c.name = :name WHERE c.id = :id", nativeQuery = true)
+    @Query(value = "UPDATE Customer c SET c.name = :name WHERE c.id = :id", nativeQuery = true)
     void updateName(@Param("name") String name, @Param("id") Long id);
 
     /**
@@ -68,7 +68,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
      * @param firstname new first name for customer
      * @param id ID of the customer
      */
-    @Query(value = "UPDATE customer SET firstname = :firstname WHERE id = :id", nativeQuery = true)
+    @Query(value = "UPDATE Customer SET firstname = :firstname WHERE id = :id", nativeQuery = true)
     void updateFirstname(@Param("firstname") String firstname, @Param("id") Long id);
 
     /**
@@ -77,7 +77,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
      * @param email new e-mail address for customer
      * @param id ID of the customer
      */
-    @Query(value = "UPDATE customer SET email = :email WHERE id = :id", nativeQuery = true)
+    @Query(value = "UPDATE Customer SET email = :email WHERE id = :id", nativeQuery = true)
     void updateEmail(@Param("email") String email, @Param("id") Long id);
 
     /**
@@ -86,6 +86,6 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
      * @param birthday new birthday for customer
      * @param id ID of the customer
      */
-    @Query(value = "UPDATE customer SET birthday = :birthday WHERE id = :id", nativeQuery = true)
+    @Query(value = "UPDATE Customer SET birthday = :birthday WHERE id = :id", nativeQuery = true)
     void updateBirthday(@Param("birthday") LocalDate birthday, @Param("id") Long id);
 }

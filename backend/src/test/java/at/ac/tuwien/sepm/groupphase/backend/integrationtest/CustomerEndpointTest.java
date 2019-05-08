@@ -11,8 +11,8 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.BDDMockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 
 import static org.hamcrest.core.Is.is;
 
@@ -21,8 +21,18 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
 
+import static org.mockito.Matchers.any;
+
 public class CustomerEndpointTest extends BaseIntegrationTest {
+
     private static final String CUSTOMER_ENDPOINT = "/customers";
+
+    private static final String TEST_CUSTOMER_NAME = "TestName";
+    private static final String TEST_CUSTOMER_FIRSTNAME = "TestFirstName";
+    private static final String TEST_CUSTOMER_EMAIL = "testCustomer@test.com";
+    private static final LocalDate TEST_CUSTOMER_BIRTHDATE = LocalDate.of(1996, 11, 13);
+    private static final long TEST_CUSTOMER_ID = 1L;
+
     private static final String CUSTOMER_FILTERED_ID = "/customers?id=1";
     private static final String CUSTOMER_FILTERED_NAME = "/customers?name=ller";
     private static final String CUSTOMER_FILTERED_FIRSTNAME = "/customers?firstname=etr";
@@ -224,6 +234,55 @@ public class CustomerEndpointTest extends BaseIntegrationTest {
     }
 
     @Test
+    public void addUserThenHTTPResponseOKAndCustomerIsReturned() {
+        BDDMockito.
+            given(customerRepository.save(any(Customer.class))).
+            willReturn(Customer.builder()
+                .id(TEST_CUSTOMER_ID)
+                .name(TEST_CUSTOMER_NAME)
+                .firstname(TEST_CUSTOMER_FIRSTNAME)
+                .email(TEST_CUSTOMER_EMAIL)
+                .birthday(TEST_CUSTOMER_BIRTHDATE)
+                .build());
+        Response response = RestAssured
+            .given()
+            .contentType(ContentType.JSON)
+            .header(HttpHeaders.AUTHORIZATION, validAdminTokenWithPrefix)
+            .body(CustomerDTO.builder()
+                .name(TEST_CUSTOMER_NAME)
+                .firstname(TEST_CUSTOMER_FIRSTNAME)
+                .email(TEST_CUSTOMER_EMAIL)
+                .birthday(TEST_CUSTOMER_BIRTHDATE)
+                .build())
+            .when().post(CUSTOMER_ENDPOINT)
+            .then().extract().response();
+        Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
+        Assert.assertThat(response.as(CustomerDTO.class), is(CustomerDTO.builder()
+            .id(TEST_CUSTOMER_ID)
+            .name(TEST_CUSTOMER_NAME)
+            .firstname(TEST_CUSTOMER_FIRSTNAME)
+            .email(TEST_CUSTOMER_EMAIL)
+            .birthday(TEST_CUSTOMER_BIRTHDATE)
+            .build()));
+    }
+
+    @Test
+    public void addIllegalUserThenHTPPResponseBADREQUEST() {
+        Response response = RestAssured
+            .given()
+            .contentType(ContentType.JSON)
+            .header(HttpHeaders.AUTHORIZATION, validAdminTokenWithPrefix)
+            .body(CustomerDTO.builder()
+                .name(TEST_CUSTOMER_NAME)
+                .firstname(TEST_CUSTOMER_FIRSTNAME)
+                .email(TEST_CUSTOMER_EMAIL)
+                .birthday(null)
+                .build())
+            .when().post(CUSTOMER_ENDPOINT)
+            .then().extract().response();
+        Assert.assertThat(response.getStatusCode(), is(HttpStatus.BAD_REQUEST.value()));
+    }
+
     public void findAllCustomersAsUserFilteredAfterSpecifiedBirthdayAndName() {
         BDDMockito.
             given(customerRepository.findCustomersFiltered(null, "Müller", null, null, LocalDate.of(1982,7,22))).

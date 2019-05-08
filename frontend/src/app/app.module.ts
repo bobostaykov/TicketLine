@@ -18,6 +18,7 @@ import { TopTenEventsComponent } from './components/events/top-ten-events/top-te
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MatButtonModule, MatCheckboxModule, MatInputModule, MatSelectModule} from '@angular/material';
 import {NgxChartsModule} from '@swimlane/ngx-charts';
+import { CustomerAddComponent } from './components/customerAdd/customer-add.component';
 
 @NgModule({
   declarations: [
@@ -29,6 +30,7 @@ import {NgxChartsModule} from '@swimlane/ngx-charts';
     MessageComponent,
     UserComponent,
     TopTenEventsComponent,
+    CustomerAddComponent,
   ],
   imports: [
     BrowserModule,

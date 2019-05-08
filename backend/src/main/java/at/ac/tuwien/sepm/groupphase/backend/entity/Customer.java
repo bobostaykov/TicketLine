@@ -68,13 +68,15 @@ public class Customer {
 
     @Override
     public String toString() {
-        return "Customer{" +
+        String customer  = "Customer{" +
             "id=" + id +
-            ", name=" + name +
-            ", firstname='" + firstname + '\'' +
-            ", e-mail='" + email + '\'' +
-            ", birthday='" + birthday.toString() + '\'' +
-            '}';
+            ", name='" + name + '\'' +
+            ", firstname=" + firstname +
+            ", e-mail=" + email;
+        if (birthday != null)
+            customer += ", birthday=" + birthday.toString();
+        customer += '}';
+        return customer;
     }
 
     @Override

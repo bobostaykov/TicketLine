@@ -2,9 +2,8 @@ package at.ac.tuwien.sepm.groupphase.backend.entity;
 
 import javax.persistence.*;
 import java.util.List;
-import java.util.Objects;
 
-//the class is unfinished, add missing attributes
+//TODO add missing attributes
 @Entity
 public class Hall {
 
@@ -20,9 +19,6 @@ public class Hall {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "hall")
     private List<Show> shows;
 
-    public Hall() {
-    }
-
     public Long getId() {
         return id;
     }
@@ -31,43 +27,19 @@ public class Hall {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public List<Show> getShows() {
+        return shows;
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
-    public List<Show> getShows() {
-        return shows;
+    public String getName() {
+        return name;
     }
 
     public void setShows(List<Show> shows) {
         this.shows = shows;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Hall hall = (Hall) o;
-        return id.equals(hall.id) &&
-            name.equals(hall.name) &&
-            shows.equals(hall.shows);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, name, shows);
-    }
-
-    @Override
-    public String toString() {
-        return "Hall{" +
-            "id=" + id +
-            ", name='" + name + '\'' +
-            ", shows=" + shows +
-            '}';
     }
 }
