@@ -66,18 +66,15 @@ public class Customer {
         return new CustomerBuilder();
     }
 
-
     @Override
     public String toString() {
-        String customer  = "CustomerDTO{" +
+        return "Customer{" +
             "id=" + id +
-            ", name='" + name + '\'' +
-            ", firstname=" + firstname +
-            ", e-mail=" + email;
-        if (birthday != null)
-            customer += ", birthday=" + birthday.toString();
-        customer += '}';
-        return customer;
+            ", name=" + name +
+            ", firstname='" + firstname + '\'' +
+            ", e-mail='" + email + '\'' +
+            ", birthday='" + birthday.toString() + '\'' +
+            '}';
     }
 
     @Override

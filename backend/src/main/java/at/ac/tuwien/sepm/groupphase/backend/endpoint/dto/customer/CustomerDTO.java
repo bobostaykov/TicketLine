@@ -62,6 +62,8 @@ public class CustomerDTO {
         this.birthday = birthday;
     }
 
+    public static CustomerDTOBuilder builder() {return new CustomerDTOBuilder();}
+
     @Override
     public String toString() {
         String customer  = "CustomerDTO{" +
@@ -97,10 +99,6 @@ public class CustomerDTO {
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (email != null ? email.hashCode() : 0);
         return result;
-    }
-
-    public static CustomerDTOBuilder builder() {
-        return new CustomerDTOBuilder();
     }
 
     public static final class CustomerDTOBuilder {

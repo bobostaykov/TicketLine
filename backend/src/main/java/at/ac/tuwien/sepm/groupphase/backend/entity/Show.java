@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -17,7 +18,7 @@ public class Show {
     @JoinColumn(nullable = false, name = "event_id")
     private Event event;
 
-    @Column(nullable = false, name = "dateTime")
+    @Column(nullable = false, name = "date_time")
     private LocalDateTime dateTime;
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -27,6 +28,10 @@ public class Show {
     @Column(name = "description")
     @Size(max = 256)
     private String description;
+
+    @Column(nullable = false, name = "tickets_sold")
+    @PositiveOrZero
+    private Long ticketsSold;
 
     public Long getId() {
         return id;
@@ -68,6 +73,14 @@ public class Show {
         this.description = description;
     }
 
+    public Long getTicketsSold() {
+        return ticketsSold;
+    }
+
+    public void setTicketsSold(Long ticketsSold) {
+        this.ticketsSold = ticketsSold;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -77,12 +90,13 @@ public class Show {
             event.equals(show.event) &&
             dateTime.equals(show.dateTime) &&
             hall.equals(show.hall) &&
-            Objects.equals(description, show.description);
+            Objects.equals(description, show.description) &&
+            ticketsSold.equals(show.ticketsSold);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, event, dateTime, hall, description);
+        return Objects.hash(id, event, dateTime, hall, description, ticketsSold);
     }
 
     @Override
@@ -93,6 +107,7 @@ public class Show {
             ", dateTime=" + dateTime +
             ", hall=" + hall +
             ", description='" + description + '\'' +
+            ", ticketsSold=" + ticketsSold +
             '}';
     }
 
@@ -102,6 +117,7 @@ public class Show {
         private LocalDateTime dateTime;
         private Hall hall;
         private String description;
+        private Long ticketsSold;
 
         private ShowBuilder() {}
 
@@ -130,6 +146,11 @@ public class Show {
             return this;
         }
 
+        public ShowBuilder ticketsSold(Long ticketsSold) {
+            this.ticketsSold = ticketsSold;
+            return this;
+        }
+
         public Show build() {
             Show show = new Show();
             show.setId(id);
@@ -137,6 +158,7 @@ public class Show {
             show.setDateTime(dateTime);
             show.setHall(hall);
             show.setDescription(description);
+            show.setTicketsSold(ticketsSold);
             return show;
         }
     }

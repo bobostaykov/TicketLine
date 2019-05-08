@@ -13,8 +13,7 @@ import java.util.Objects;
 public class Event {
 
     @Id
-    @Column(name="id")
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "seq_event_id")
+    @Column(name="id")    @GeneratedValue(strategy = GenerationType.AUTO, generator = "seq_event_id")
     @SequenceGenerator(name = "seq_event_id", sequenceName = "seq_event_id")
     private Long id;
 
@@ -37,10 +36,6 @@ public class Event {
     @Column(name = "content")
     @Size(max = 512)
     private String content;
-
-    @Column(name = "ticketCount")
-    @PositiveOrZero
-    private Integer ticketCount;
 
     @ManyToMany
     @JoinTable(name = "participation",
@@ -115,12 +110,24 @@ public class Event {
         this.shows = shows;
     }
 
-    public Integer getTicketCount() {
-        return ticketCount;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Event event = (Event) o;
+        return id.equals(event.id) &&
+            name.equals(event.name) &&
+            eventType == event.eventType &&
+            durationInMinutes.equals(event.durationInMinutes) &&
+            description.equals(event.description) &&
+            Objects.equals(content, event.content) &&
+            participatingArtists.equals(event.participatingArtists) &&
+            shows.equals(event.shows);
     }
 
-    public void setTicketCount(Integer ticketCount) {
-        this.ticketCount = ticketCount;
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, eventType, durationInMinutes, description, content, participatingArtists, shows);
     }
 
     @Override
@@ -132,31 +139,9 @@ public class Event {
             ", durationInMinutes=" + durationInMinutes +
             ", description='" + description + '\'' +
             ", content='" + content + '\'' +
-            ", ticketCount=" + ticketCount +
             ", participatingArtists=" + participatingArtists +
             ", shows=" + shows +
             '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Event event = (Event) o;
-        return id.equals(event.id) &&
-            name.equals(event.name) &&
-            eventType == event.eventType &&
-            durationInMinutes.equals(event.durationInMinutes) &&
-            Objects.equals(description, event.description) &&
-            Objects.equals(content, event.content) &&
-            Objects.equals(ticketCount, event.ticketCount) &&
-            Objects.equals(participatingArtists, event.participatingArtists) &&
-            Objects.equals(shows, event.shows);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, name, eventType, durationInMinutes, description, content, ticketCount, participatingArtists, shows);
     }
 
     public static final class EventBuilder {
@@ -166,7 +151,6 @@ public class Event {
         private Integer durationInMinutes;
         private String description;
         private String content;
-        private Integer ticketCount;
         private List<Artist> participatingArtists;
         private List<Show> shows;
 
@@ -202,11 +186,6 @@ public class Event {
             return this;
         }
 
-        public EventBuilder ticketCount(Integer ticketCount) {
-            this.ticketCount = ticketCount;
-            return this;
-        }
-
         public EventBuilder participatingArtists(List<Artist> participatingArtists) {
             this.participatingArtists = participatingArtists;
             return this;
@@ -225,7 +204,6 @@ public class Event {
             event.setDurationInMinutes(durationInMinutes);
             event.setDescription(description);
             event.setContent(content);
-            event.setTicketCount(ticketCount);
             event.setParticipatingArtists(participatingArtists);
             event.setShows(shows);
             return event;

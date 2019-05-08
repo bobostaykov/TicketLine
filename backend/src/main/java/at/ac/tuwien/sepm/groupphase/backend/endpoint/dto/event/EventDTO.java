@@ -9,7 +9,7 @@ import io.swagger.annotations.ApiModelProperty;
 import java.util.HashSet;
 import java.util.Objects;
 
-@ApiModel(value = "EventDTO")
+@ApiModel(value = "EventDTO", description = "A DTO for event entries via rest")
 public class EventDTO {
 
     @ApiModelProperty(name = "The automatically generated database id")
@@ -18,7 +18,7 @@ public class EventDTO {
     @ApiModelProperty(name = "The unique name of the event")
     private String name;
 
-    @ApiModelProperty(name = "The type of the event (THEATER | OPER | FESTIVAL | CONCERT | MOVIE | MUSICAL)")
+    @ApiModelProperty(name = "The type of the event (THEATRE | OPERA | FESTIVAL | CONCERT | MOVIE | MUSICAL)")
     private EventType eventType;
 
     @ApiModelProperty(name = "The duration of the event in minutes")
@@ -29,9 +29,6 @@ public class EventDTO {
 
     @ApiModelProperty(name = "A content of the event")
     private String content;
-
-    @ApiModelProperty(name = "The number of sold tickets for the event")
-    private Integer ticketCount;
 
     @ApiModelProperty(name = "The artists that participate in the event")
     private HashSet<ArtistDTO> participatingArtists;
@@ -87,14 +84,6 @@ public class EventDTO {
         this.content = content;
     }
 
-    public Integer getTicketCount() {
-        return ticketCount;
-    }
-
-    public void setTicketCount(Integer ticketCount) {
-        this.ticketCount = ticketCount;
-    }
-
     public HashSet<ArtistDTO> getParticipatingArtists() {
         return participatingArtists;
     }
@@ -120,16 +109,15 @@ public class EventDTO {
             name.equals(eventDTO.name) &&
             eventType == eventDTO.eventType &&
             durationInMinutes.equals(eventDTO.durationInMinutes) &&
-            Objects.equals(description, eventDTO.description) &&
+            description.equals(eventDTO.description) &&
             Objects.equals(content, eventDTO.content) &&
-            Objects.equals(ticketCount, eventDTO.ticketCount) &&
-            Objects.equals(participatingArtists, eventDTO.participatingArtists) &&
-            Objects.equals(shows, eventDTO.shows);
+            participatingArtists.equals(eventDTO.participatingArtists) &&
+            shows.equals(eventDTO.shows);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, eventType, durationInMinutes, description, content, ticketCount, participatingArtists, shows);
+        return Objects.hash(id, name, eventType, durationInMinutes, description, content, participatingArtists, shows);
     }
 
     public static final class EventDTOBuilder {
@@ -139,7 +127,6 @@ public class EventDTO {
         private Integer durationInMinutes;
         private String description;
         private String content;
-        private Integer ticketCount;
         private HashSet<ShowDTO> shows;
         private HashSet<ArtistDTO> participatingArtists;
 
@@ -175,11 +162,6 @@ public class EventDTO {
             return this;
         }
 
-        public EventDTOBuilder ticketCount(Integer ticketCount) {
-            this.ticketCount = ticketCount;
-            return this;
-        }
-
         public EventDTOBuilder shows(HashSet<ShowDTO> shows) {
             this.shows = shows;
             return this;
@@ -198,7 +180,6 @@ public class EventDTO {
             eventDTO.setDurationInMinutes(durationInMinutes);
             eventDTO.setDescription(description);
             eventDTO.setContent(content);
-            eventDTO.setTicketCount(ticketCount);
             eventDTO.setParticipatingArtists(participatingArtists);
             eventDTO.setShows(shows);
             return eventDTO;

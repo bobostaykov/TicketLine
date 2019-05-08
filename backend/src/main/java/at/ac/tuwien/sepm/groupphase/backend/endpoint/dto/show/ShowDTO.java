@@ -26,6 +26,17 @@ public class ShowDTO {
     @ApiModelProperty(name = "A description of the show")
     private String description;
 
+    @ApiModelProperty(name = "The number of sold tickets for the event")
+    private Long ticketsSold;
+
+    public Long getTicketsSold() {
+        return ticketsSold;
+    }
+
+    public void setTicketsSold(Long ticketsSold) {
+        this.ticketsSold = ticketsSold;
+    }
+
     public Long getId() {
         return id;
     }
@@ -75,12 +86,13 @@ public class ShowDTO {
             event.equals(showDTO.event) &&
             dateTime.equals(showDTO.dateTime) &&
             hall.equals(showDTO.hall) &&
-            Objects.equals(description, showDTO.description);
+            Objects.equals(description, showDTO.description) &&
+            ticketsSold.equals(showDTO.ticketsSold);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, event, dateTime, hall, description);
+        return Objects.hash(id, event, dateTime, hall, description, ticketsSold);
     }
 
     @Override
@@ -91,6 +103,7 @@ public class ShowDTO {
             ", dateTime=" + dateTime +
             ", hall=" + hall +
             ", description='" + description + '\'' +
+            ", ticketsSold=" + ticketsSold +
             '}';
     }
 
@@ -101,6 +114,7 @@ public class ShowDTO {
         private LocalDateTime dateTime;
         private HallDTO hall;
         private String description;
+        private Long ticketsSold;
 
         private ShowDTOBuilder() {}
 
@@ -129,6 +143,11 @@ public class ShowDTO {
             return this;
         }
 
+        public ShowDTOBuilder ticketsSold(Long ticketsSold) {
+            this.ticketsSold = ticketsSold;
+            return this;
+        }
+
         public ShowDTO build() {
             ShowDTO showDTO = new ShowDTO();
             showDTO.setId(id);
@@ -136,6 +155,7 @@ public class ShowDTO {
             showDTO.setDateTime(dateTime);
             showDTO.setHall(hall);
             showDTO.setDescription(description);
+            showDTO.setTicketsSold(ticketsSold);
             return showDTO;
         }
     }

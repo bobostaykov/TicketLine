@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {EventService} from '../../../services/event/event.service';
-import {Event} from '../../../dtos/event';
+import {eventType} from '../../../dtos/event';
 import {Router} from '@angular/router';
+import {EventTickets} from '../../../dtos/event_tickets';
 
 @Component({
   selector: 'app-top-ten-events',
@@ -10,10 +11,26 @@ import {Router} from '@angular/router';
 })
 export class TopTenEventsComponent implements OnInit {
 
+  constructor(private eventService: EventService, private router: Router) { }
+
+  width: number;
+  height: number;
   error: boolean = false;
+  dataReady: boolean = false;
   errorMessage: string = '';
-  categories = ['all', 'concert', 'cabaret/comedy', 'sport', 'musical', 'theatre'];
-  months = [
+  var: eventType = eventType.CONCERT;
+  categories: Map<string, boolean> = new Map([
+    ['all', true],
+    ['concert', false],
+    ['opera', false],
+    ['sport', false],
+    ['musical', false],
+    ['theatre', false],
+    ['festival', false],
+    ['movie', false],
+  ]);
+  months: string[] = [
+    'all',
     'January',
     'February',
     'March',
@@ -27,39 +44,109 @@ export class TopTenEventsComponent implements OnInit {
     'November',
     'December'
   ];
-  selectedMonth = 'Month';
-  // for chart
-  colorScheme = {domain: ['#fa8585']};
-  events: Event[];
-  data = [
-    {'name': 'Event3', 'value': 17000},
-    {'name': 'Event1', 'value': 12000},
-    {'name': 'Event2', 'value': 8000}
-  ];
+  selectedMonth: string = 'Month';
+  colorScheme: any = {domain: ['#fa8585']};
+  data: any = [];
 
-  constructor(private eventService: EventService, private router: Router) { }
+
+  /**
+   * Transform the events array to a 'data' dictionary suitable for the chart
+   */
+  private eventsToData(events: EventTickets[]) {
+    const data = [];
+    for (let i = 0; i < events.length; i++) {
+      data.push({'name': events[i].eventName, 'value': events[i].ticketsSold});
+      console.log('\n' + data[i].name + '\n');
+    }
+    return data;
+  }
+
 
   ngOnInit() {
-    this.loadEvents();
+    this.width = window.innerWidth * 0.63;
+    this.height = window.innerHeight * 0.5;
+    this.loadEvents(['all']);
   }
 
-  setSelectedMonth(month: string) {
+
+  private selectMonth(month: string) {
     this.selectedMonth = month;
+
+    const categoriesArray: string[] = [];
+    this.categories.forEach((value: boolean, key: string) => {
+      if (value) {
+        categoriesArray.push(key);
+      }
+    });
+
+    this.loadEvents(categoriesArray);
   }
+
 
   /**
    * Load top ten events from backend
    */
-  loadEvents() {
-    this.eventService.getTopTenEvents().subscribe(
-      (events: Event[]) => { this.events = events.slice(0, 10); },
-      error => { this.defaultServiceErrorHandling(error); }
+  private loadEvents(categoriesArray: string[]) {
+    let monthsArray: string[] = [];
+    if (this.selectedMonth === 'Month' || this.selectedMonth === 'all') {
+      monthsArray = this.months;
+    } else {
+      monthsArray = [this.selectedMonth];
+    }
+
+    if (categoriesArray.length === 1 && categoriesArray[0] === 'all') {
+      categoriesArray.pop();
+      this.categories.forEach((value: boolean, key: string) => {
+        if (key !== 'all') {
+          categoriesArray.push(key.toUpperCase());
+        }
+      });
+    } else {
+      for (let i = 0; i < categoriesArray.length; i++) {
+        categoriesArray[i] = categoriesArray[i].toUpperCase();
+      }
+    }
+
+    this.eventService.getTopTenEvents(monthsArray, categoriesArray).subscribe(
+      (events: EventTickets[]) => { this.data = this.eventsToData(events.slice(0, 10)); },
+      error => { this.defaultServiceErrorHandling(error); },
+    () => { this.dataReady = true; }
     );
   }
 
-  goToTickets() {
+
+  /**
+   * On checkbox change reload events
+   */
+  private reload(category: string) {
+    const categoriesArray: string[] = [];
+    if (category === 'all') {
+      this.categories.forEach((value: boolean, key: string) => {
+        if (key !==  'all') {
+          this.categories.set(key, false);
+        }
+      });
+    } else {
+      this.categories.set('all', false);
+    }
+
+    this.categories.forEach((value: boolean, key: string) => {
+      if (value) {
+        categoriesArray.push(key);
+      }
+    });
+
+    this.loadEvents(categoriesArray);
+  }
+
+
+  /**
+   * Navigate to the 'tickets' page
+   */
+  private goToTickets() {
     this.router.navigate(['/tickets']);
   }
+
 
   private defaultServiceErrorHandling(error: any) {
     console.log(error);

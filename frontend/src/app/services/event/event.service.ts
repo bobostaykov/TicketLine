@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Globals} from '../../global/globals';
 import {Observable} from 'rxjs';
-import {Event} from '../../dtos/event';
+import {EventTickets} from '../../dtos/event_tickets';
 
 @Injectable({
   providedIn: 'root'
@@ -16,8 +16,9 @@ export class EventService {
   /**
    * Get top ten events from backend
    */
-  getTopTenEvents(): Observable<Event[]> {
-    return this.httpClient.get<Event[]>(this.eventBaseUri + '/topten');
+  getTopTenEvents(monthsArray: string[], categoriesArray: string[]): Observable<EventTickets[]> {
+    return this.httpClient.get<EventTickets[]>(this.eventBaseUri + '/topten?months='
+                                              + monthsArray.join(',') + '&categories=' + categoriesArray.join(','));
   }
 
 }
