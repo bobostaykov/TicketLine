@@ -15,6 +15,7 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {httpInterceptorProviders} from './interceptors';
 import {Globals} from './global/globals';
 import { CustomerAddComponent } from './components/customerAdd/customer-add.component';
+import { CustomerComponent } from './components/customer/customer.component';
 
 @NgModule({
   declarations: [
@@ -26,6 +27,7 @@ import { CustomerAddComponent } from './components/customerAdd/customer-add.comp
     MessageComponent,
     UserComponent,
     CustomerAddComponent,
+    CustomerComponent,
   ],
   imports: [
     BrowserModule,

@@ -1,0 +1,81 @@
+<div class="row">
+  <button *ngIf="isAdmin()" type="button" class="btn btn-secondary btn-sm my-2" routerLink="/customer-add">Add
+    Customer
+  </button>
+  <button type="button" class="btn btn-secondary btn-sm m-2" data-toggle="modal" data-target=".search-customers-modal">
+    Search Customers
+  </button>
+</div>
+
+<div class="modal fade search-customers-modal" tabindex="-1" role="dialog" aria-labelledby="Search customers modal"
+     aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Search Customers</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="close">
+          <span aria-hidden="true">x</span>
+        </button>
+      </div>
+      <div class="form-group m-4 row">
+        <label for="searchId" class="col-2">ID</label>
+        <input id="searchId" name="id" formControlName="id" class="form-control col-10"
+               aria-describedby="idHelp" placeholder="Enter ID"/>
+      </div>
+      <div class="form-group m-4 row">
+        <label for="searchName">Name</label>
+        <input id="searchName" name="name" formControlName="name" class="form-control"
+               aria-describedby="nameHelp" placeholder="Enter name"/>
+      </div>
+      <div class="form-group m-4 row">
+        <label for="searchFirstName">First Name</label>
+        <input id="searchFirstName" name="firstName" formControlName="firstName" class="form-control"
+               aria-describedby="firstNameHelp" placeholder="Enter First Name"/>
+      </div>
+      <div class="form-group m-4 row">
+        <label for="searchEmail">E-Mail</label>
+        <input id="searchEmail" name="email" formControlName="email" class="form-control"
+               aria-describedby="emailHelp" placeholder="Enter Customer E-Mail"/>
+      </div>
+      <div class="form-group m-4 row">
+        <label for="searchBirthday">Birthday</label>
+        <input id="searchBirthday" name="birthday" formControlName="birthday" class="form-control"
+               aria-describedby="birthdayHelp" placeholder="Enter Customer Birthday"/>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<table class="table">
+  <thead>
+  <tr>
+    <th scope="col">
+      ID
+    </th>
+    <th scope="col">
+      Name
+    </th>
+    <th scope="col">
+      First Name
+    </th>
+    <th scope="col">
+      E-Mail
+    </th>
+    <th scope="col">
+      Date
+    </th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let customer of customers">
+    <th scope="row">{{customer.id}}</th>
+    <td>{{customer.name}}</td>
+    <td>{{customer.firstname}}</td>
+    <td>{{customer.email}}</td>
+    <td>{{customer.birthday}}</td>
+  </tr>
+  </tbody>
+
+</table>
