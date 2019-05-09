@@ -1,4 +1,11 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output, SimpleChanges
+} from '@angular/core';
 import {Customer} from '../../dtos/customer';
 
 @Component({
@@ -6,19 +13,30 @@ import {Customer} from '../../dtos/customer';
   templateUrl: './customer-dialog.component.html',
   styleUrls: ['./customer-dialog.component.scss']
 })
-export class CustomerDialogComponent implements OnInit {
+export class CustomerDialogComponent implements OnInit, OnChanges {
 
   @Input() title: string;
-  @Input() customer?: Customer;
+  @Input() customer: Customer;
   @Output() submitCustomer = new EventEmitter<Customer>();
-  constructor() { }
+  private customerModel: Customer = new Customer(null, null, null, null, null);
+  private requiredValues: boolean;
+
+  constructor() {
+  }
+
+  onSubmit() {
+    this.submitCustomer.emit(this.customerModel);
+  }
 
   ngOnInit() {
-    if (this.customer === undefined) {
-      this.customer = new Customer(null, null, null, null, null);
-    }
+    this.requiredValues = this.title === 'Update Customer' || this.title === 'Add Customer';
   }
-  onSubmit() {
-    this.submitCustomer.emit(this.customer);
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['customer']) {
+      if (this.customer !== undefined) {
+        this.customerModel = Object.assign({}, this.customer);
+      }
+    }
   }
 }
