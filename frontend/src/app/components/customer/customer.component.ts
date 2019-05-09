@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {Customer} from '../../dtos/customer';
 import {CustomerService} from '../../services/customer.service';
-import {AuthService} from '../../services/auth.service';
+import {AuthService} from '../../services/auth/auth.service';
 
 @Component({
   selector: 'app-customer',
