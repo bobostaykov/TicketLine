@@ -9,6 +9,7 @@ import {CustomerService} from '../../services/customer.service';
 })
 export class CustomerComponent implements OnInit {
   customers: Customer[];
+  customerModel: Customer = new Customer(null, null, null, null, null);
 
   constructor(private customerService: CustomerService) { }
 
@@ -34,4 +35,10 @@ export class CustomerComponent implements OnInit {
     this.loadCustomers();
   }
 
+  searchCustomers(customer: Customer) {
+    this.customerService.searchCustomers(customer).subscribe(
+      (customers: Customer[]) => {this.customers = customers; },
+      error1 => console.log(error1)
+    );
+  }
 }
