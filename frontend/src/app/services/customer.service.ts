@@ -36,23 +36,16 @@ export class CustomerService {
    * @param customer dto containing search parameters
    */
   searchCustomers(customer: Customer): Observable<Customer[]> {
-    console.log('Getting all customers from search parameters: ' + customer);
-    const options = {params: new HttpParams()};
-    if (customer.id) {
-      options.params.set('id', customer.id.toString());
-    }
-    if (customer.name) {
-      options.params.set('name', customer.name);
-    }
-    if (customer.firstname) {
-      options.params.set('firstname', customer.firstname);
-    }
-    if (customer.email) {
-      options.params.set('email', customer.email);
-    }
+    console.log('Getting all customers from search parameters: ' + JSON.stringify(customer));
+    let parameters = new HttpParams();
+    parameters = customer.id ? parameters.append('id', customer.id.toString()) : parameters;
+    parameters = customer.name ? parameters.append('name', customer.name.trim()) : parameters;
+    parameters = customer.firstname ? parameters.append('firstname', customer.firstname.trim()) : parameters;
+    parameters = customer.email ? parameters.append('email', customer.email.trim()) : parameters;
     if (customer.birthday) {
-      options.params.set('birthday', customer.birthday.toString());
+      const date: string[] = customer.birthday.split('-');
+      parameters = parameters.append('birthday', date[2] + '.' + date[1] + '.' + date[0]);
     }
-    return this.httpClient.get<Customer[]>(this.customerBaseUri, options);
+    return this.httpClient.get<Customer[]>(this.customerBaseUri, {params: parameters});
   }
 }
