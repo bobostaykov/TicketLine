@@ -94,6 +94,10 @@ public class Show {
         this.ticketsSold = ticketsSold;
     }
 
+    public static ShowBuilder builder() {
+        return new ShowBuilder();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

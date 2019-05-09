@@ -27,8 +27,8 @@ public class EventDTO {
     @ApiModelProperty(name = "A content of the event")
     private String content;
 
-    @ApiModelProperty(name = "The artists that participate in the event")
-    private HashSet<ArtistDTO> participatingArtists;
+    @ApiModelProperty(name = "The artist that participates in the event")
+    private ArtistDTO artist;
 
     @ApiModelProperty(name = "The shows from which the event consists")
     private HashSet<ShowDTO> shows;
@@ -73,12 +73,12 @@ public class EventDTO {
         this.content = content;
     }
 
-    public HashSet<ArtistDTO> getParticipatingArtists() {
-        return participatingArtists;
+    public ArtistDTO getArtist() {
+        return artist;
     }
 
-    public void setParticipatingArtists(HashSet<ArtistDTO> participatingArtists) {
-        this.participatingArtists = participatingArtists;
+    public void setArtist(ArtistDTO artist) {
+        this.artist = artist;
     }
 
     public HashSet<ShowDTO> getShows() {
@@ -87,6 +87,10 @@ public class EventDTO {
 
     public void setShows(HashSet<ShowDTO> shows) {
         this.shows = shows;
+    }
+
+    public static EventDTOBuilder builder() {
+        return new EventDTOBuilder();
     }
 
     @Override
@@ -99,13 +103,13 @@ public class EventDTO {
             eventType == eventDTO.eventType &&
             Objects.equals(description, eventDTO.description) &&
             Objects.equals(content, eventDTO.content) &&
-            Objects.equals(participatingArtists, eventDTO.participatingArtists) &&
+            Objects.equals(artist, eventDTO.artist) &&
             Objects.equals(shows, eventDTO.shows);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, eventType, description, content, participatingArtists, shows);
+        return Objects.hash(id, name, eventType, description, content, artist, shows);
     }
 
     @Override
@@ -116,7 +120,7 @@ public class EventDTO {
             ", eventType=" + eventType +
             ", description='" + description + '\'' +
             ", content='" + content + '\'' +
-            ", participatingArtists=" + participatingArtists +
+            ", artist=" + artist +
             ", shows=" + shows +
             '}';
     }
@@ -128,7 +132,7 @@ public class EventDTO {
         private String description;
         private String content;
         private HashSet<ShowDTO> shows;
-        private HashSet<ArtistDTO> participatingArtists;
+        private ArtistDTO artist;
 
         private EventDTOBuilder() {}
 
@@ -162,8 +166,8 @@ public class EventDTO {
             return this;
         }
 
-        public EventDTOBuilder participatingArtists(HashSet<ArtistDTO> participatingArtists) {
-            this.participatingArtists = participatingArtists;
+        public EventDTOBuilder artist(ArtistDTO artist) {
+            this.artist = artist;
             return this;
         }
 
@@ -174,7 +178,7 @@ public class EventDTO {
             eventDTO.setEventType(eventType);
             eventDTO.setDescription(description);
             eventDTO.setContent(content);
-            eventDTO.setParticipatingArtists(participatingArtists);
+            eventDTO.setArtist(artist);
             eventDTO.setShows(shows);
             return eventDTO;
         }

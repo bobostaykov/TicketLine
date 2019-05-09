@@ -88,6 +88,8 @@ public class ShowDTO {
         this.ticketsSold = ticketsSold;
     }
 
+    public static ShowDTOBuilder builder() { return new ShowDTOBuilder(); }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

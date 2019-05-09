@@ -80,6 +80,10 @@ public class Location {
         this.description = description;
     }
 
+    public static LocationBuilder builder() {
+        return new LocationBuilder();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

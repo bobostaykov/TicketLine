@@ -14,14 +14,8 @@ public class ArtistDTO {
     @ApiModelProperty(name = "The automatically generated database id")
     private Long id;
 
-    @ApiModelProperty(name = "The first birth name of name of artist")
-    private String firstname;
-
-    @ApiModelProperty(name = "The last birth name of name of artist")
-    private String lastname;
-
-    @ApiModelProperty(name = "The artist name under which the person introduces himself or herself")
-    private String artistname;
+    @ApiModelProperty(name = "The name of the artist")
+    private String name;
 
     @ApiModelProperty(name = "The events in which the artists has or will participate")
     private HashSet<EventDTO> eventParticipations;
@@ -34,28 +28,12 @@ public class ArtistDTO {
         this.id = id;
     }
 
-    public String getFirstname() {
-        return firstname;
+    public String getName() {
+        return name;
     }
 
-    public void setFirstname(String firstname) {
-        this.firstname = firstname;
-    }
-
-    public String getLastname() {
-        return lastname;
-    }
-
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
-    }
-
-    public String getArtistname() {
-        return artistname;
-    }
-
-    public void setArtistname(String artistname) {
-        this.artistname = artistname;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public HashSet<EventDTO> getEventParticipations() {
@@ -66,31 +44,30 @@ public class ArtistDTO {
         this.eventParticipations = eventParticipations;
     }
 
+    public static ArtistDTOBuilder builder() {
+        return new ArtistDTOBuilder();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ArtistDTO artistDTO = (ArtistDTO) o;
         return id.equals(artistDTO.id) &&
-            firstname.equals(artistDTO.firstname) &&
-            lastname.equals(artistDTO.lastname) &&
-            artistname.equals(artistDTO.artistname) &&
+            name.equals(artistDTO.name) &&
             Objects.equals(eventParticipations, artistDTO.eventParticipations);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, firstname, lastname, artistname, eventParticipations);
+        return Objects.hash(id, name, eventParticipations);
     }
-
 
     @Override
     public String toString() {
         return "ArtistDTO{" +
             "id=" + id +
-            ", firstname='" + firstname + '\'' +
-            ", lastname='" + lastname + '\'' +
-            ", artistname='" + artistname + '\'' +
+            ", name='" + name + '\'' +
             ", eventParticipations=" + eventParticipations +
             '}';
     }
@@ -98,9 +75,7 @@ public class ArtistDTO {
     public static final class ArtistDTOBuilder {
 
         private Long id;
-        private String firstname;
-        private String lastname;
-        private String artistname;
+        private String name;
         private HashSet<EventDTO> eventParticipations;
 
         private ArtistDTOBuilder() {}
@@ -110,18 +85,8 @@ public class ArtistDTO {
             return this;
         }
 
-        public ArtistDTOBuilder firstname(String firstname) {
-            this.firstname = firstname;
-            return this;
-        }
-
-        public ArtistDTOBuilder lastname(String lastname) {
-            this.lastname = lastname;
-            return this;
-        }
-
-        public ArtistDTOBuilder artistname(String artistname) {
-            this.artistname = artistname;
+        public ArtistDTOBuilder name(String name) {
+            this.name = name;
             return this;
         }
 
@@ -133,9 +98,7 @@ public class ArtistDTO {
         public ArtistDTO build() {
             ArtistDTO artist = new ArtistDTO();
             artist.setId(id);
-            artist.setFirstname(firstname);
-            artist.setLastname(lastname);
-            artist.setArtistname(artistname);
+            artist.setName(name);
             artist.setEventParticipations(eventParticipations);
             return artist;
         }

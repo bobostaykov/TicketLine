@@ -74,6 +74,8 @@ public class LocationDTO {
         this.description = description;
     }
 
+    public static LocationDTOBuilder builder() { return new LocationDTOBuilder(); }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

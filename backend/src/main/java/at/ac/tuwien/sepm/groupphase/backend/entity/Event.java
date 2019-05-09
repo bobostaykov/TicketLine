@@ -3,7 +3,6 @@ package at.ac.tuwien.sepm.groupphase.backend.entity;
 import at.ac.tuwien.sepm.groupphase.backend.datatype.EventType;
 
 import javax.persistence.*;
-import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 import java.util.List;
 import java.util.Objects;
@@ -33,11 +32,8 @@ public class Event {
     @Size(max = 512)
     private String content;
 
-    @ManyToMany
-    @JoinTable(name = "participation",
-        joinColumns = {@JoinColumn(name = "event_id", referencedColumnName = "id")},
-        inverseJoinColumns = {@JoinColumn(name = "artist_id", referencedColumnName = "id")})
-    private List<Artist> participatingArtists;
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Artist artist;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "event")
     private List<Show> shows;
@@ -82,14 +78,6 @@ public class Event {
         this.content = content;
     }
 
-    public List<Artist> getParticipatingArtists() {
-        return participatingArtists;
-    }
-
-    public void setParticipatingArtists(List<Artist> participatingArtists) {
-        this.participatingArtists = participatingArtists;
-    }
-
     public List<Show> getShows() {
         return shows;
     }
@@ -98,17 +86,16 @@ public class Event {
         this.shows = shows;
     }
 
-    @Override
-    public String toString() {
-        return "Event{" +
-            "id=" + id +
-            ", name='" + name + '\'' +
-            ", eventType=" + eventType +
-            ", description='" + description + '\'' +
-            ", content='" + content + '\'' +
-            ", participatingArtists=" + participatingArtists +
-            ", shows=" + shows +
-            '}';
+    public Artist getArtist() {
+        return artist;
+    }
+
+    public void setArtist(Artist artist) {
+        this.artist = artist;
+    }
+
+    public static EventBuilder builder() {
+        return new EventBuilder();
     }
 
     @Override
@@ -121,13 +108,26 @@ public class Event {
             eventType == event.eventType &&
             Objects.equals(description, event.description) &&
             Objects.equals(content, event.content) &&
-            Objects.equals(participatingArtists, event.participatingArtists) &&
+            Objects.equals(artist, event.artist) &&
             Objects.equals(shows, event.shows);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, eventType, description, content, participatingArtists, shows);
+        return Objects.hash(id, name, eventType, description, content, artist, shows);
+    }
+
+    @Override
+    public String toString() {
+        return "Event{" +
+            "id=" + id +
+            ", name='" + name + '\'' +
+            ", eventType=" + eventType +
+            ", description='" + description + '\'' +
+            ", content='" + content + '\'' +
+            ", artist=" + artist +
+            ", shows=" + shows +
+            '}';
     }
 
     public static final class EventBuilder {
@@ -136,7 +136,7 @@ public class Event {
         private EventType eventType;
         private String description;
         private String content;
-        private List<Artist> participatingArtists;
+        private Artist artist;
         private List<Show> shows;
 
         private EventBuilder() {}
@@ -166,8 +166,8 @@ public class Event {
             return this;
         }
 
-        public EventBuilder participatingArtists(List<Artist> participatingArtists) {
-            this.participatingArtists = participatingArtists;
+        public EventBuilder artist(Artist artist) {
+            this.artist = artist;
             return this;
         }
 
@@ -183,7 +183,7 @@ public class Event {
             event.setEventType(eventType);
             event.setDescription(description);
             event.setContent(content);
-            event.setParticipatingArtists(participatingArtists);
+            event.setArtist(artist);
             event.setShows(shows);
             return event;
         }

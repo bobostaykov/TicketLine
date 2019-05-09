@@ -34,7 +34,7 @@ public class ShowEndpoint {
         this.showMapper = showMapper;
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/event{id}", method = RequestMethod.GET)
     @ApiOperation(value = "Get list of all shows filtered by eventID", authorizations = {@Authorization(value = "apiKey")})
     public List<ShowDTO> findAllByEventID(@PathVariable("id") Integer eventID){
         LOGGER.info("Get all shows which belong to event with id " + eventID);
@@ -122,5 +122,5 @@ public class ShowEndpoint {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No shows are found for the given parameters:" + e.getMessage(), e);
         }
     }
-    */
+*/
 }
