@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {Customer} from '../../dtos/customer';
 import {CustomerService} from '../../services/customer.service';
+import {AuthService} from '../../services/auth.service';
 
 @Component({
   selector: 'app-customer',
@@ -8,43 +9,95 @@ import {CustomerService} from '../../services/customer.service';
   styleUrls: ['./customer.component.scss']
 })
 export class CustomerComponent implements OnInit {
-  customers: Customer[];
-  activeCustomer: Customer;
+  private customers: Customer[];
+  private activeCustomer: Customer;
+  private error: boolean = false;
+  private errorMessage: string;
 
-  constructor(private customerService: CustomerService) { }
-
-  /**
-   * uses CustomerService to load all customers from backend
-   */
-  loadCustomers() {
-    this.customerService.findAllCustomers().subscribe(
-      (customers: Customer[]) => {this.customers = customers; },
-      error => {console.log(error); }
-    );
+  constructor(private customerService: CustomerService, private authService: AuthService) {
   }
 
   /**
    * Returns true if user is logged in as admin
    * determines whether user is allowed to add customers or update existing customer
    */
-  isAdmin() {
-    return true;
+  private isAdmin() {
+    return this.authService.getUserRole() === 'ADMIN';
   }
 
-  ngOnInit() {
-    this.loadCustomers();
-  }
-
-  searchCustomers(customer: Customer) {
-    this.customerService.searchCustomers(customer).subscribe(
-      (customers: Customer[]) => {this.customers = customers; },
-      error1 => console.log(error1)
+  /**
+   * uses CustomerService to load all customers from backend
+   */
+  private loadCustomers() {
+    console.log('Queries customerService to load all customers');
+    this.customerService.findAllCustomers().subscribe(
+      (customers: Customer[]) => {
+        this.customers = customers;
+      },
+      error => this.defaultServiceErrorHandling(error)
     );
   }
-  setUpdateCustomer(customer: Customer) {
+
+  /**
+   * uses CustomerService to search for customers matching parameter
+   * @param customer dto that includes search parameters for customerService
+   */
+  private searchCustomers(customer: Customer) {
+    console.log('Queries customerService to search for customers resembling ' + JSON.stringify(customer));
+    this.customerService.searchCustomers(customer).subscribe(
+      (customers: Customer[]) => {
+        this.customers = customers;
+      },
+      error => this.defaultServiceErrorHandling(error)
+    );
+  }
+
+  /**
+   * sets specific customer as variable activeCustomer
+   * @param customer to be set as activeCustomer
+   */
+  setActiveCustomer(customer: Customer) {
     this.activeCustomer = customer;
   }
+
+  /**
+   * uses CustomerService to update customer passed as param, should be activeCustomer
+   * @param customer to be updated
+   */
   updateCustomer(customer: Customer) {
+    console.log('Updates custoemr with id ' + customer.id + ' to ' + JSON.stringify(customer));
+    Object.assign(this.activeCustomer, customer);
     this.customerService.updateCustomer(customer);
+  }
+
+  /**
+   * activates error flag and sets error message to display to user
+   * @param error that was encountered, includes error message
+   */
+  private defaultServiceErrorHandling(error: any) {
+    console.log(error);
+    this.error = true;
+    if (error.error.message !== 'No message available') {
+      this.errorMessage = error.error.message;
+    } else {
+      this.errorMessage = error.error.error;
+    }
+  }
+
+  /**
+   * deactivates error flag, stops displaying error to user
+   */
+  private vanishError() {
+    this.error = false;
+  }
+
+  /**
+   * runs after component initialization
+   * loads all customers from backend for tutorial purposes
+   * TODO: either implement lazy loading or stop loading all customers
+   */
+  ngOnInit() {
+    console.log('Customer Component was initialized!');
+    this.loadCustomers();
   }
 }
