@@ -4,6 +4,6 @@ export class Customer {
     public name: string,
     public firstname: string,
     public email: string,
-    public birthday: Date) {
+    public birthday: string) {
   }
 }

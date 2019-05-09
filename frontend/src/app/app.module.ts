@@ -19,6 +19,8 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MatButtonModule, MatCheckboxModule, MatInputModule, MatSelectModule} from '@angular/material';
 import {NgxChartsModule} from '@swimlane/ngx-charts';
 import { CustomerAddComponent } from './components/customerAdd/customer-add.component';
+import { CustomerComponent } from './components/customer/customer.component';
+import { CustomerDialogComponent } from './components/customer-dialog/customer-dialog.component';
 
 @NgModule({
   declarations: [
@@ -31,6 +33,8 @@ import { CustomerAddComponent } from './components/customerAdd/customer-add.comp
     UserComponent,
     TopTenEventsComponent,
     CustomerAddComponent,
+    CustomerComponent,
+    CustomerDialogComponent,
   ],
   imports: [
     BrowserModule,
