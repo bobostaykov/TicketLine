@@ -9,7 +9,7 @@ import {CustomerService} from '../../services/customer.service';
 })
 export class CustomerComponent implements OnInit {
   customers: Customer[];
-  customerModel: Customer = new Customer(null, null, null, null, null);
+  activeCustomer: Customer;
 
   constructor(private customerService: CustomerService) { }
 
@@ -39,6 +39,15 @@ export class CustomerComponent implements OnInit {
     this.customerService.searchCustomers(customer).subscribe(
       (customers: Customer[]) => {this.customers = customers; },
       error1 => console.log(error1)
+    );
+  }
+  setUpdateCustomer(customer: Customer) {
+    this.activeCustomer = customer;
+  }
+  updateCustomer(customer: Customer) {
+    this.customerService.updateCustomer(customer).subscribe(
+      (updatedCustomer: Customer) => {this.activeCustomer = updatedCustomer; },
+      error2 => console.log(error2)
     );
   }
 }

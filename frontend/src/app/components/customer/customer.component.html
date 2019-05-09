@@ -7,11 +7,6 @@
   </button>
 </div>
 
-<app-customer-dialog
-  title="Search Customers"
-  (submitCustomer)="searchCustomers($event)">
-</app-customer-dialog>
-
 <table class="table">
   <thead>
   <tr>
@@ -28,7 +23,10 @@
       E-Mail
     </th>
     <th scope="col">
-      Date
+      Birthday
+    </th>
+    <th scope="col">
+      Change
     </th>
   </tr>
   </thead>
@@ -39,8 +37,30 @@
     <td>{{customer.firstname}}</td>
     <td>{{customer.email}}</td>
     <td>{{customer.birthday}}</td>
+    <td>
+      <button type="button" class="btn btn-secondary btn-sm m-2" data-toggle="modal" data-target="#update-customer"
+      (click)="setUpdateCustomer(customer)">
+        +
+      </button>
+    </td>
   </tr>
   </tbody>
 
 </table>
 
+<div class="modal fade" id="search-customers" tabindex="-1" role="dialog" aria-labelledby="Search costumers modal"
+     aria-hidden="true">
+  <app-customer-dialog
+    title="Search Customers"
+    (submitCustomer)="searchCustomers($event)">
+  </app-customer-dialog>
+</div>
+
+<div class="modal fade" id="update-customer" tabindex="-1" role="dialog" aria-labelledby="Update costumer modal"
+     aria-hidden="true">
+  <app-customer-dialog
+    title="Update Customer"
+    [customer]="this.activeCustomer"
+    (submitCustomer)="updateCustomer($event)">
+  </app-customer-dialog>
+</div>
