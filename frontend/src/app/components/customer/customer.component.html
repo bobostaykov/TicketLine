@@ -1,14 +1,14 @@
 <!-- bootstrap alert displaying error message -->
-<div *ngIf="error" class="alert alert-danger alert-dismissable fade show" role="alert">
-  <strong>Error!</strong>
+<div *ngIf="error" id="errorMessage" class="alert alert-danger alert-dismissable fade show shadow-lg p-3 mb-5 rounded" role="alert">
   <button type="button" (click)="vanishError()" class="close" data-dismiss="alert" aria-label="Close Error message">
     <span aria-hidden="true">x</span>
   </button>
+  <strong>Error!</strong>
 </div>
 
 <!-- table displaying customer search results -->
 <div class="row">
-  <button *ngIf="isAdmin()" type="button" class="btn btn-secondary btn-sm my-2" routerLink="/customer-add">Add
+  <button *ngIf="isAdmin()" type="button" class="btn btn-secondary btn-sm my-2" data-toggle="modal" data-target="#add-customer">Add
     Customer
   </button>
   <button type="button" class="btn btn-secondary btn-sm m-2" data-toggle="modal" data-target="#search-customers">
@@ -34,7 +34,7 @@
     <th scope="col">
       Birthday
     </th>
-    <th scope="col">
+    <th scope="col" *ngIf="isAdmin()">
       Change
     </th>
   </tr>
@@ -46,7 +46,7 @@
     <td>{{customer.firstname}}</td>
     <td>{{customer.email}}</td>
     <td>{{customer.birthday}}</td>
-    <td>
+    <td *ngIf="isAdmin()">
       <button type="button" class="btn btn-secondary btn-sm m-2" data-toggle="modal" data-target="#update-customer"
               (click)="setActiveCustomer(customer)">
         Edit
@@ -54,7 +54,6 @@
     </td>
   </tr>
   </tbody>
-
 </table>
 
 <!-- Modal to search for customers using costumer dialog component -->
@@ -66,7 +65,7 @@
   </app-customer-dialog>
 </div>
 
-<!-- Modal to update costuemr using costumer dialog component -->
+<!-- Modal to update customer using costumer dialog component -->
 <div class="modal fade" id="update-customer" tabindex="-1" role="dialog" aria-labelledby="Update costumer modal"
      aria-hidden="true"
      *ngIf="activeCustomer !== undefined">
@@ -76,3 +75,13 @@
     (submitCustomer)="updateCustomer($event)">
   </app-customer-dialog>
 </div>
+
+<!-- Modal to add customer using costumer dialog component -->
+<div class="modal fade" id="add-customer" tabindex="-1" role="dialog" aria-labelledby="Add costumer modal"
+     aria-hidden="true">
+  <app-customer-dialog
+    title="Add Customer"
+    (submitCustomer)="addCustomer($event)">
+  </app-customer-dialog>
+</div>
+

@@ -6,7 +6,7 @@ import {AuthService} from '../../services/auth.service';
 @Component({
   selector: 'app-customer',
   templateUrl: './customer.component.html',
-  styleUrls: ['./customer.component.scss']
+  styles: ['#errorMessage{z-index: 9999; }']
 })
 export class CustomerComponent implements OnInit {
   private customers: Customer[];
@@ -56,7 +56,7 @@ export class CustomerComponent implements OnInit {
    * sets specific customer as variable activeCustomer
    * @param customer to be set as activeCustomer
    */
-  setActiveCustomer(customer: Customer) {
+  private setActiveCustomer(customer: Customer) {
     this.activeCustomer = customer;
   }
 
@@ -64,10 +64,22 @@ export class CustomerComponent implements OnInit {
    * uses CustomerService to update customer passed as param, should be activeCustomer
    * @param customer to be updated
    */
-  updateCustomer(customer: Customer) {
+  private updateCustomer(customer: Customer) {
     console.log('Updates custoemr with id ' + customer.id + ' to ' + JSON.stringify(customer));
     Object.assign(this.activeCustomer, customer);
     this.customerService.updateCustomer(customer);
+  }
+
+  /**
+   * adds newly created customer to backend
+   * @param customer to be added
+   */
+  private addCustomer(customer: Customer) {
+    console.log('Adding customer: ' + JSON.stringify(customer));
+    this.customerService.createCustomer(customer).subscribe(
+      addedCustomer => this.customers.push(addedCustomer),
+      error => this.defaultServiceErrorHandling(error)
+    );
   }
 
   /**
