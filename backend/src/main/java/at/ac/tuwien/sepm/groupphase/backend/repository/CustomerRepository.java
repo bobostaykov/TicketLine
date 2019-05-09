@@ -42,7 +42,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
      * @param birthday birthday of customer to search for
      * @return List of customers that met the requested filter methods
      */
-    @Query(value = "SELECT DISTINCT c " +
+    @Query(value = "SELECT DISTINCT * " +
         "FROM customer c " +
         "WHERE (c.name LIKE CONCAT('%',:name,'%') OR :name IS NULL) " +
         "AND (c.firstname LIKE CONCAT('%',:firstname,'%') OR :firstname IS NULL) " +
