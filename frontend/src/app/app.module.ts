@@ -16,6 +16,7 @@ import {httpInterceptorProviders} from './interceptors';
 import {Globals} from './global/globals';
 import { CustomerAddComponent } from './components/customerAdd/customer-add.component';
 import { CustomerComponent } from './components/customer/customer.component';
+import { CustomerDialogComponent } from './components/customer-dialog/customer-dialog.component';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import { CustomerComponent } from './components/customer/customer.component';
     UserComponent,
     CustomerAddComponent,
     CustomerComponent,
+    CustomerDialogComponent,
   ],
   imports: [
     BrowserModule,

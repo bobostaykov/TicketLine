@@ -1,0 +1,60 @@
+<!-- dialog to search for customers -->
+<div class="modal fade" id="search-customers" tabindex="-1" role="dialog" aria-labelledby="Search costumers modal"
+     aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{{title}}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">x</span> <!--TODO: why aria-hidden = true? -->
+        </button>
+      </div>
+      <div class="modal-body">
+        <form class="form" (ngSubmit)="onSubmit()">
+          <div class="form-group">
+            <label for="customerId">ID</label>
+            <input id="customerId" type="number" name="id" class="form-control"
+                   aria-labelledby="customer ID"
+                   placeholder="Enter Customer ID"
+                   [(ngModel)]="customer.id"/>
+          </div>
+          <div class="form-group form-row">
+            <div class="col">
+              <label for="customerFirstName">First Name</label>
+              <input id="customerFirstName" type="text" name="firstName" class="form-control"
+                     aria-labelledby="customer first name"
+                     placeholder="Enter First Name"
+                     [(ngModel)]="customer.firstname"/>
+            </div>
+            <div class="col">
+              <label for="customerName">Last Name</label>
+              <input id="customerName" type="text" name="lastName" class="form-control"
+                     aria-labelledby="customer last name"
+                     placeholder="Enter Last Name"
+                     [(ngModel)]="customer.name"/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="customerMail">E-Mail</label>
+            <input id="customerMail" type="email" name="mail" class="form-control"
+                   aria-labelledby="customer email"
+                   placeholder="Enter Customer E-Mail"
+                   [(ngModel)]="customer.email"/>
+          </div>
+          <div class="form-group">
+            <label for="customerBirthday">Birthday</label>
+            <input id="customerBirthday" type="date" name="birthday" class="form-control"
+                   aria-labelledby="customer birthday"
+                   placeholder="Enter Customer Birthday"
+                   pattern="[0-9]{2}-[0-9]{2}-[0-9]{4}"
+                   [(ngModel)]="customer.birthday"/>
+          </div>
+          <button type="submit" class="btn btn-success float-right">{{title}}</button>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
