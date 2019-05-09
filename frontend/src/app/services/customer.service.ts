@@ -27,9 +27,9 @@ export class CustomerService {
    * updates specified customer in backend
    * @param customer updated customer dto
    */
-  updateCustomer(customer: Customer): Observable<Customer> {
+  updateCustomer(customer: Customer) {
     console.log('Update customer with id ' + customer.id + ' to ' + JSON.stringify(customer));
-    return this.httpClient.put<Customer>(this.customerBaseUri + '/' + customer.id, customer);
+    this.httpClient.put<Customer>(this.customerBaseUri + '/' + customer.id, customer).subscribe();
   }
 
   /**

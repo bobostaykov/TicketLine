@@ -45,9 +45,6 @@ export class CustomerComponent implements OnInit {
     this.activeCustomer = customer;
   }
   updateCustomer(customer: Customer) {
-    this.customerService.updateCustomer(customer).subscribe(
-      (updatedCustomer: Customer) => {this.activeCustomer = updatedCustomer; },
-      error2 => console.log(error2)
-    );
+    this.customerService.updateCustomer(customer);
   }
 }
