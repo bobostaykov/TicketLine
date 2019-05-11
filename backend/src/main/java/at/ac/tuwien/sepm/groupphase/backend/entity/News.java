@@ -5,11 +5,11 @@ import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 @Entity
-public class Message {
+public class News {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "seq_message_id")
-    @SequenceGenerator(name = "seq_message_id", sequenceName = "seq_message_id")
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "seq_news_id")
+    @SequenceGenerator(name = "seq_news_id", sequenceName = "seq_news_id")
     private Long id;
 
     @Column(nullable = false, name = "published_at")
@@ -54,13 +54,13 @@ public class Message {
         this.text = text;
     }
 
-    public static MessageBuilder builder() {
-        return new MessageBuilder();
+    public static NewsBuilder builder() {
+        return new NewsBuilder();
     }
 
     @Override
     public String toString() {
-        return "Message{" +
+        return "News{" +
             "id=" + id +
             ", publishedAt=" + publishedAt +
             ", title='" + title + '\'' +
@@ -73,12 +73,12 @@ public class Message {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Message message = (Message) o;
+        News news = (News) o;
 
-        if (id != null ? !id.equals(message.id) : message.id != null) return false;
-        if (publishedAt != null ? !publishedAt.equals(message.publishedAt) : message.publishedAt != null) return false;
-        if (title != null ? !title.equals(message.title) : message.title != null) return false;
-        return text != null ? text.equals(message.text) : message.text == null;
+        if (id != null ? !id.equals(news.id) : news.id != null) return false;
+        if (publishedAt != null ? !publishedAt.equals(news.publishedAt) : news.publishedAt != null) return false;
+        if (title != null ? !title.equals(news.title) : news.title != null) return false;
+        return text != null ? text.equals(news.text) : news.text == null;
 
     }
 
@@ -91,42 +91,42 @@ public class Message {
         return result;
     }
 
-    public static final class MessageBuilder {
+    public static final class NewsBuilder {
         private Long id;
         private LocalDateTime publishedAt;
         private String title;
         private String text;
 
-        private MessageBuilder() {
+        private NewsBuilder() {
         }
 
-        public MessageBuilder id(Long id) {
+        public NewsBuilder id(Long id) {
             this.id = id;
             return this;
         }
 
-        public MessageBuilder publishedAt(LocalDateTime publishedAt) {
+        public NewsBuilder publishedAt(LocalDateTime publishedAt) {
             this.publishedAt = publishedAt;
             return this;
         }
 
-        public MessageBuilder title(String title) {
+        public NewsBuilder title(String title) {
             this.title = title;
             return this;
         }
 
-        public MessageBuilder text(String text) {
+        public NewsBuilder text(String text) {
             this.text = text;
             return this;
         }
 
-        public Message build() {
-            Message message = new Message();
-            message.setId(id);
-            message.setPublishedAt(publishedAt);
-            message.setTitle(title);
-            message.setText(text);
-            return message;
+        public News build() {
+            News news = new News();
+            news.setId(id);
+            news.setPublishedAt(publishedAt);
+            news.setTitle(title);
+            news.setText(text);
+            return news;
         }
     }
 }

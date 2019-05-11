@@ -20,7 +20,7 @@ public class UserMapperTest {
 
     @Configuration
     @ComponentScan(basePackages = "at.ac.tuwien.sepm.groupphase.backend.entity.mapper")
-    public static class MessageMapperTestContextConfiguration {
+    public static class NewsMapperTestContextConfiguration {
     }
 
     @Autowired

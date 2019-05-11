@@ -1,10 +1,8 @@
 package at.ac.tuwien.sepm.groupphase.backend.integrationtest;
 
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.message.DetailedMessageDTO;
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.message.SimpleMessageDTO;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
+import at.ac.tuwien.sepm.groupphase.backend.entity.News;
 import at.ac.tuwien.sepm.groupphase.backend.integrationtest.base.BaseIntegrationTest;
-import at.ac.tuwien.sepm.groupphase.backend.repository.MessageRepository;
+import at.ac.tuwien.sepm.groupphase.backend.repository.NewsRepository;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
@@ -24,23 +22,23 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.Matchers.any;
 
-public class MessageEndpointTest extends BaseIntegrationTest {
+public class NewsEndpointTest extends BaseIntegrationTest {
 
-    private static final String NEWS_ENDPOINT = "/messages";
-    private static final String LATEST_NEWS_ENDPOINT = "/messages/unread";
-    private static final String SPECIFIC_NEWS_PATH = "/{messageId}";
+    private static final String NEWS_ENDPOINT = "/news";
+    private static final String LATEST_NEWS_ENDPOINT = "/news/unread";
+    private static final String SPECIFIC_NEWS_PATH = "/{newsId}";
 
-    private static final String TEST_NEWS_TEXT = "TestMessageText";
+    private static final String TEST_NEWS_TEXT = "TestNewsText";
     private static final String TEST_NEWS_TITLE = "title";
     private static final LocalDateTime TEST_NEWS_PUBLISHED_AT =
         LocalDateTime.of(2016, 11, 13, 12, 15, 0, 0);
     private static final long TEST_NEWS_ID = 1L;
 
     @MockBean
-    private MessageRepository messageRepository;
+    private NewsRepository newsRepository;
 
     @Test
-    public void findAllMessageUnauthorizedAsAnonymous() {
+    public void findAllNewsUnauthorizedAsAnonymous() {
         Response response = RestAssured
             .given()
             .contentType(ContentType.JSON)
@@ -51,11 +49,11 @@ public class MessageEndpointTest extends BaseIntegrationTest {
     }
 
     @Test
-    public void findAllMessageAsUser() {
+    public void findAllNewsAsUser() {
         BDDMockito.
-            given(messageRepository.findAllByOrderByPublishedAtDesc()).
+            given(newsRepository.findAllByOrderByPublishedAtDesc()).
             willReturn(Collections.singletonList(
-                Message.builder()
+                News.builder()
                     .id(TEST_NEWS_ID)
                     .title(TEST_NEWS_TITLE)
                     .text(TEST_NEWS_TEXT)
@@ -68,8 +66,8 @@ public class MessageEndpointTest extends BaseIntegrationTest {
             .when().get(NEWS_ENDPOINT)
             .then().extract().response();
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
-        Assert.assertThat(Arrays.asList(response.as(SimpleMessageDTO[].class)), is(Collections.singletonList(
-            SimpleMessageDTO.builder()
+        Assert.assertThat(Arrays.asList(response.as(at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.SimpleNewsDTO[].class)), is(Collections.singletonList(
+            at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.SimpleNewsDTO.builder()
                 .id(TEST_NEWS_ID)
                 .title(TEST_NEWS_TITLE)
                 .summary(TEST_NEWS_TEXT)
@@ -78,7 +76,7 @@ public class MessageEndpointTest extends BaseIntegrationTest {
     }
 
     @Test
-    public void findSpecificMessageUnauthorizedAsAnonymous() {
+    public void findSpecificNewsUnauthorizedAsAnonymous() {
         Response response = RestAssured
             .given()
             .contentType(ContentType.JSON)
@@ -88,10 +86,10 @@ public class MessageEndpointTest extends BaseIntegrationTest {
     }
 
     @Test
-    public void findSpecificMessageAsUser() {
+    public void findSpecificNewsAsUser() {
         BDDMockito.
-            given(messageRepository.findOneById(TEST_NEWS_ID)).
-            willReturn(Optional.of(Message.builder()
+            given(newsRepository.findOneById(TEST_NEWS_ID)).
+            willReturn(Optional.of(News.builder()
                 .id(TEST_NEWS_ID)
                 .title(TEST_NEWS_TITLE)
                 .text(TEST_NEWS_TEXT)
@@ -104,7 +102,7 @@ public class MessageEndpointTest extends BaseIntegrationTest {
             .when().get(NEWS_ENDPOINT + SPECIFIC_NEWS_PATH, TEST_NEWS_ID)
             .then().extract().response();
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
-        Assert.assertThat(response.as(DetailedMessageDTO.class), is(DetailedMessageDTO.builder()
+        Assert.assertThat(response.as(at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.DetailedNewsDTO.class), is(at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.DetailedNewsDTO.builder()
             .id(TEST_NEWS_ID)
             .title(TEST_NEWS_TITLE)
             .text(TEST_NEWS_TEXT)
@@ -113,9 +111,9 @@ public class MessageEndpointTest extends BaseIntegrationTest {
     }
 
     @Test
-    public void findSpecificNonExistingMessageNotFoundAsUser() {
+    public void findSpecificNonExistingNewsNotFoundAsUser() {
         BDDMockito.
-            given(messageRepository.findOneById(TEST_NEWS_ID)).
+            given(newsRepository.findOneById(TEST_NEWS_ID)).
             willReturn(Optional.empty());
         Response response = RestAssured
             .given()
@@ -127,11 +125,11 @@ public class MessageEndpointTest extends BaseIntegrationTest {
     }
 
     @Test
-    public void publishMessageUnauthorizedAsAnonymous() {
+    public void publishNewsUnauthorizedAsAnonymous() {
         Response response = RestAssured
             .given()
             .contentType(ContentType.JSON)
-            .body(DetailedMessageDTO.builder()
+            .body(at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.DetailedNewsDTO.builder()
                 .id(TEST_NEWS_ID)
                 .title(TEST_NEWS_TITLE)
                 .text(TEST_NEWS_TEXT)
@@ -143,12 +141,12 @@ public class MessageEndpointTest extends BaseIntegrationTest {
     }
 
     @Test
-    public void publishMessageUnauthorizedAsUser() {
+    public void publishNewsUnauthorizedAsUser() {
         Response response = RestAssured
             .given()
             .contentType(ContentType.JSON)
             .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
-            .body(DetailedMessageDTO.builder()
+            .body(at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.DetailedNewsDTO.builder()
                 .id(TEST_NEWS_ID)
                 .title(TEST_NEWS_TITLE)
                 .text(TEST_NEWS_TEXT)
@@ -160,10 +158,10 @@ public class MessageEndpointTest extends BaseIntegrationTest {
     }
 
     @Test
-    public void publishMessageAsAdmin() {
+    public void publishNewsAsAdmin() {
         BDDMockito.
-            given(messageRepository.save(any(Message.class))).
-            willReturn(Message.builder()
+            given(newsRepository.save(any(News.class))).
+            willReturn(News.builder()
                 .id(TEST_NEWS_ID)
                 .title(TEST_NEWS_TITLE)
                 .text(TEST_NEWS_TEXT)
@@ -173,14 +171,14 @@ public class MessageEndpointTest extends BaseIntegrationTest {
             .given()
             .contentType(ContentType.JSON)
             .header(HttpHeaders.AUTHORIZATION, validAdminTokenWithPrefix)
-            .body(DetailedMessageDTO.builder()
+            .body(at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.DetailedNewsDTO.builder()
                 .title(TEST_NEWS_TITLE)
                 .text(TEST_NEWS_TEXT)
                 .build())
             .when().post(NEWS_ENDPOINT)
             .then().extract().response();
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
-        Assert.assertThat(response.as(DetailedMessageDTO.class), is(DetailedMessageDTO.builder()
+        Assert.assertThat(response.as(at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.DetailedNewsDTO.class), is(at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.DetailedNewsDTO.builder()
             .id(TEST_NEWS_ID)
             .title(TEST_NEWS_TITLE)
             .text(TEST_NEWS_TEXT)

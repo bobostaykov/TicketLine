@@ -9,8 +9,8 @@ import java.time.LocalDateTime;
 public class UserNews {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "seq_message_id")
-    @SequenceGenerator(name = "seq_message_id", sequenceName = "seq_message_id")
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "seq_news_id")
+    @SequenceGenerator(name = "seq_news_id", sequenceName = "seq_news_id")
     private Long id;
 
     @ApiModelProperty(readOnly = true, name = "userId")
