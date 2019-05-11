@@ -7,6 +7,7 @@ import at.ac.tuwien.sepm.groupphase.backend.service.UserService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -18,6 +19,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> findAll() {
         return userRepository.findAll();
+    }
+
+    @Override
+    public Optional<User> findOneByName(String username) {
+        return userRepository.findOneByName(username);
     }
 
     @Override

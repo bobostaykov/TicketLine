@@ -73,8 +73,11 @@ public class SimpleHeaderTokenAuthenticationService implements HeaderTokenAuthen
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList()));
         } catch (JsonProcessingException e) {
+
             LOGGER.error("Failed to wrap authorities", e);
         }
+
+
         String currentToken = Jwts.builder()
             .claim(AuthenticationConstants.JWT_CLAIM_PRINCIPAL_ID, null)
             .claim(AuthenticationConstants.JWT_CLAIM_PRINCIPAL, authentication.getName())

@@ -3,6 +3,7 @@ package at.ac.tuwien.sepm.groupphase.backend.service;
 import at.ac.tuwien.sepm.groupphase.backend.entity.User;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UserService {
 
@@ -29,5 +30,7 @@ public interface UserService {
      * @return created user
      */
     User createUser(User user);
+
+    Optional<User> findOneByName(String username);
 
 }
