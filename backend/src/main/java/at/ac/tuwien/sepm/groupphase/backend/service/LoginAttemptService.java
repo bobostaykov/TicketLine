@@ -21,4 +21,6 @@ public interface LoginAttemptService {
     void unblockUser(User user);
 
     void blockUser(User user);
+
+    void initializeLoginAttempts(User user);
 }

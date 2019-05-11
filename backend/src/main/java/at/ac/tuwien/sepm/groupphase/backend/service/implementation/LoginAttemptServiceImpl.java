@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.implementation;
 
+import at.ac.tuwien.sepm.groupphase.backend.entity.LoginAttempts;
 import at.ac.tuwien.sepm.groupphase.backend.entity.User;
 import at.ac.tuwien.sepm.groupphase.backend.repository.LoginAttemptsRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.LoginAttemptService;
@@ -8,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.Locale;
 import java.util.Optional;
 @Service
 public class LoginAttemptServiceImpl implements LoginAttemptService {
@@ -26,7 +28,7 @@ public class LoginAttemptServiceImpl implements LoginAttemptService {
         Optional<User> found = userService.findOneByName(username);
         if (found.isPresent() && !found.get().getType().equals("ADMIN")){
             Long id = found.get().getId();
-            Integer attempts = loginAttemptsRepository.getAttempts(id);
+            Integer attempts = loginAttemptsRepository.findById(id).get().getNumberOfAttempts();
             LOGGER.info("Failed Login Attempt number: "+ attempts +"by user: "+ found.get().getName());
             if(attempts > MAX_NUMBER_OF_ATTEMPTS){
                 loginAttemptsRepository.blockUser(id);
@@ -42,7 +44,6 @@ public class LoginAttemptServiceImpl implements LoginAttemptService {
         if (found.isPresent() && !found.get().getType().equals("ADMIN")){
             loginAttemptsRepository.setAttemps(0, found.get().getId());
         }
-
     }
 
     @Override
@@ -55,6 +56,10 @@ public class LoginAttemptServiceImpl implements LoginAttemptService {
     public void blockUser(User user) {
         LOGGER.info("user: " + user.getName() + " was blocked");
         loginAttemptsRepository.blockUser(user.getId());
+    }
 
+    @Override
+    public void initializeLoginAttempts(User user) {
+        loginAttemptsRepository.save(new LoginAttempts(user.getId(), user, 0, false));
     }
 }

@@ -11,11 +11,12 @@ public class LoginAttempts {
 
     @Column
 
-    @Id
+    @EmbeddedId
     private Long id;
 
     @OneToOne
-    @MapsId
+    @MapsId(value = "id")
+    @JoinColumn(name = "id")
     private User user;
 
     @Column(name = "attempts")
@@ -24,13 +25,19 @@ public class LoginAttempts {
     @Column(name = "blocked")
      private boolean blocked;
 
+
+    public LoginAttempts(Long id, User user, int attempts, boolean blocked) {
+        this.id = id;
+        this.user = user;
+        this.attempts = attempts;
+        this.blocked = blocked;
+    }
+
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public void setId() {this.id = id;}
 
     public User getUser() {
         return user;
@@ -54,5 +61,38 @@ public class LoginAttempts {
 
     public void setBlocked(boolean blocked) {
         this.blocked = blocked;
+    }
+
+    public static class LoginAttemptsBuilder {
+        private Long id;
+        private User user;
+        private int attempts;
+        private boolean blocked;
+
+        private LoginAttemptsBuilder(){}
+
+        public LoginAttemptsBuilder setId(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public LoginAttemptsBuilder setUser(User user) {
+            this.user = user;
+            return this;
+        }
+
+        public LoginAttemptsBuilder setAttempts(int attempts) {
+            this.attempts = attempts;
+            return this;
+        }
+
+        public LoginAttemptsBuilder setBlocked(boolean blocked) {
+            this.blocked = blocked;
+            return this;
+        }
+
+        public LoginAttempts createLoginAttempts() {
+            return new LoginAttempts(id, user, attempts, blocked);
+        }
     }
 }

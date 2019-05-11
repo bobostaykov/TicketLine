@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
+import java.util.Optional;
 
 
 @Repository
@@ -49,5 +50,8 @@ public interface LoginAttemptsRepository extends JpaRepository<LoginAttempts, Lo
     @Transactional
     @Query(value = "SELECT attempts  WHERE id = :id", nativeQuery = true)
     int getAttempts(@Param("id") Long id);
+
+
+    Optional<LoginAttempts> findById(Long id);
 
 }
