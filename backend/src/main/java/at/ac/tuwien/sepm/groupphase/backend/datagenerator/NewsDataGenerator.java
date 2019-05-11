@@ -1,7 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.datagenerator;
 
-import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
-import at.ac.tuwien.sepm.groupphase.backend.repository.MessageRepository;
+import at.ac.tuwien.sepm.groupphase.backend.entity.News;
+import at.ac.tuwien.sepm.groupphase.backend.repository.NewsRepository;
 import com.github.javafaker.Faker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,27 +15,27 @@ import java.util.concurrent.TimeUnit;
 
 @Profile("generateData")
 @Component
-public class MessageDataGenerator {
+public class NewsDataGenerator {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MessageDataGenerator.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(NewsDataGenerator.class);
     private static final int NUMBER_OF_NEWS_TO_GENERATE = 25;
 
-    private final MessageRepository messageRepository;
+    private final NewsRepository newsRepository;
     private final Faker faker;
 
-    public MessageDataGenerator(MessageRepository messageRepository) {
-        this.messageRepository = messageRepository;
+    public NewsDataGenerator(NewsRepository newsRepository) {
+        this.newsRepository = newsRepository;
         faker = new Faker();
     }
 
     @PostConstruct
-    private void generateMessage() {
-        if (messageRepository.count() > 0) {
-            LOGGER.info("message already generated");
+    private void generateNews() {
+        if (newsRepository.count() > 0) {
+            LOGGER.info("news already generated");
         } else {
-            LOGGER.info("generating {} message entries", NUMBER_OF_NEWS_TO_GENERATE);
+            LOGGER.info("generating {} news entries", NUMBER_OF_NEWS_TO_GENERATE);
             for (int i = 0; i < NUMBER_OF_NEWS_TO_GENERATE; i++) {
-                Message message = Message.builder()
+                News news = News.builder()
                     .title(faker.lorem().characters(30, 40))
                     .text(faker.lorem().paragraph(faker.number().numberBetween(5, 10)))
                     .publishedAt(
@@ -46,8 +46,8 @@ public class MessageDataGenerator {
                             ZoneId.systemDefault()
                         ))
                     .build();
-                LOGGER.debug("saving message {}", message);
-                messageRepository.save(message);
+                LOGGER.debug("saving news {}", news);
+                newsRepository.save(news);
             }
         }
     }

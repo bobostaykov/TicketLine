@@ -55,7 +55,7 @@ public class CustomerEndpointTest extends BaseIntegrationTest {
     private CustomerRepository customerRepository;
 
     @Test
-    public void findAllMessageUnauthorizedAsAnonymous() {
+    public void findAllNewsUnauthorizedAsAnonymous() {
         Response response = RestAssured
             .given()
             .contentType(ContentType.JSON)
