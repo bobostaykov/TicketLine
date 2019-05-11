@@ -1,5 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.entity;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
@@ -21,6 +23,19 @@ public class Message {
 
     @Column(nullable = false, length = 10_000)
     private String text;
+
+    @Column(nullable = true)
+    private MultipartFile image;
+
+    /*
+    @Column(nullable = true, name = "image_name")
+    private String imageName;
+
+    @Lob
+    @Column(nullable = true, name = "image_data")
+    private byte[] imageData;
+    */
+
 
     public Long getId() {
         return id;
@@ -53,6 +68,32 @@ public class Message {
     public void setText(String text) {
         this.text = text;
     }
+
+    public MultipartFile getImage() {
+        return image;
+    }
+
+    public void setImage(MultipartFile image) {
+        this.image = image;
+    }
+
+    /*
+    public String getImageName() {
+        return imageName;
+    }
+
+    public void setImageName(String imageName) {
+        this.imageName = imageName;
+    }
+
+    public byte[] getImageData() {
+        return imageData;
+    }
+
+    public void setImageData(byte[] imageData) {
+        this.imageData = imageData;
+    }
+    */
 
     public static MessageBuilder builder() {
         return new MessageBuilder();
@@ -96,6 +137,7 @@ public class Message {
         private LocalDateTime publishedAt;
         private String title;
         private String text;
+        private  MultipartFile image;
 
         private MessageBuilder() {
         }
@@ -117,6 +159,11 @@ public class Message {
 
         public MessageBuilder text(String text) {
             this.text = text;
+            return this;
+        }
+
+        public MessageBuilder image(MultipartFile image) {
+            this.image = image;
             return this;
         }
 

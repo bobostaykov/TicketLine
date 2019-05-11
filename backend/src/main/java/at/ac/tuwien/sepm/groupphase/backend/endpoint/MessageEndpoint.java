@@ -10,6 +10,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -50,9 +51,12 @@ public class MessageEndpoint {
     @RequestMapping(method = RequestMethod.POST)
     @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "Publish a new messages entry", authorizations = {@Authorization(value = "apiKey")})
-    public DetailedMessageDTO publishMessage(@RequestBody DetailedMessageDTO detailedMessageDTO) {
+    public DetailedMessageDTO publishMessage(@RequestBody DetailedMessageDTO detailedMessageDTO, @RequestBody MultipartFile image) {
         Message message = messageMapper.detailedMessageDTOToMessage(detailedMessageDTO);
-        message = messageService.publishMessage(message);
+        if (image != null)
+            message = messageService.publishMessageWithImage(message, image);
+        else
+            message = messageService.publishMessage(message);
         return messageMapper.messageToDetailedMessageDTO(message);
     }
 

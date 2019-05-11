@@ -8,8 +8,11 @@ import at.ac.tuwien.sepm.groupphase.backend.repository.MessageRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.UserNewsRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.UserRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.MessageService;
+import org.hibernate.service.spi.ServiceException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
@@ -50,6 +53,19 @@ public class SimpleMessageService implements MessageService {
     @Override
     public Message publishMessage(Message message) {
         message.setPublishedAt(LocalDateTime.now());
+        return messageRepository.save(message);
+    }
+
+    @Override
+    public Message publishMessageWithImage(Message message, MultipartFile image) {
+        message.setPublishedAt(LocalDateTime.now());
+        message.setImageName(image.getName());
+        try {
+            message.setImageData(image.getBytes());
+        }
+        catch (IOException e) {
+            throw new ServiceException("Problem while processing attached image: " + e.getMessage(), e);
+        }
         return messageRepository.save(message);
     }
 

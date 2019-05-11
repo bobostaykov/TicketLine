@@ -2,6 +2,7 @@ package at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.message;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 
@@ -19,6 +20,9 @@ public class DetailedMessageDTO {
 
     @ApiModelProperty(required = true, name = "The text content of the message")
     private String text;
+
+    @ApiModelProperty(required = false, name = "Optional image attached to the message")
+    private MultipartFile image;
 
     public Long getId() {
         return id;
@@ -50,6 +54,14 @@ public class DetailedMessageDTO {
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    public MultipartFile getImage() {
+        return image;
+    }
+
+    public void setImage(MultipartFile image) {
+        this.image = image;
     }
 
     @Override
@@ -95,6 +107,7 @@ public class DetailedMessageDTO {
         private LocalDateTime publishedAt;
         private String title;
         private String text;
+        private MultipartFile image;
 
         public MessageDTOBuilder id(Long id) {
             this.id = id;
@@ -116,12 +129,18 @@ public class DetailedMessageDTO {
             return this;
         }
 
+        public MessageDTOBuilder image(MultipartFile image) {
+            this.image = image;
+            return this;
+        }
+
         public DetailedMessageDTO build() {
             DetailedMessageDTO messageDTO = new DetailedMessageDTO();
             messageDTO.setId(id);
             messageDTO.setPublishedAt(publishedAt);
             messageDTO.setTitle(title);
             messageDTO.setText(text);
+            messageDTO.setImage(image);
             return messageDTO;
         }
     }

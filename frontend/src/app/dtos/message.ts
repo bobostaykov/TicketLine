@@ -4,6 +4,7 @@ export class Message {
     public title: string,
     public summary: string,
     public text: string,
+    public image: File,
     public publishedAt: string) {
   }
 }

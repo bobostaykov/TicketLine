@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.service;
 
 import at.ac.tuwien.sepm.groupphase.backend.entity.Message;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -37,5 +38,14 @@ public interface MessageService {
      * @return published message entry
      */
     Message publishMessage(Message message);
+
+    /**
+     * Publish a single message entry
+     *
+     * @param message to publish
+     * @param image to be attached to the message entry
+     * @return published message entry
+     */
+    Message publishMessageWithImage(Message message, MultipartFile image);
 
 }
