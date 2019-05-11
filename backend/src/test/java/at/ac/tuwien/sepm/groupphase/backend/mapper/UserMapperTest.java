@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.mapper;
 
+import at.ac.tuwien.sepm.groupphase.backend.datatype.UserType;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.user.UserDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.User;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.user.UserMapper;
@@ -29,7 +30,7 @@ public class UserMapperTest {
 
     private static final long USER_ID = 1L;
     private static final String USER_NAME = "Ken";
-    private static final String USER_TYPE = "SELLER";
+    private static final UserType USER_TYPE = UserType.SELLER;
     private static final LocalDateTime USER_SINCE = LocalDateTime.of(2019, 1, 1, 12, 0, 0, 0);
     private static final LocalDateTime USER_LAST_LOGIN = LocalDateTime.of(2030, 6, 15, 3, 0, 0, 0);
 

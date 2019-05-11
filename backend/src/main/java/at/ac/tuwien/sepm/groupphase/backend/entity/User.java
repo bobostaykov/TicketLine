@@ -1,5 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.entity;
 
+import at.ac.tuwien.sepm.groupphase.backend.datatype.UserType;
+
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
@@ -17,12 +19,13 @@ public class User {
     private String name;
 
     @Column(nullable = false)
-    private String type;
+    @Enumerated(EnumType.STRING)
+    private UserType type;
 
     @Column(nullable = false, name = "user_since")
     private LocalDateTime userSince;
 
-    @Column(nullable = false, name = "last_login")
+    @Column(name = "last_login")
     private LocalDateTime lastLogin;
 
     public Long getId() {
@@ -41,11 +44,11 @@ public class User {
         this.name = name;
     }
 
-    public String getType() {
+    public UserType getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(UserType type) {
         this.type = type;
     }
 
@@ -109,7 +112,7 @@ public class User {
 
         private Long id;
         private String name;
-        private String type;
+        private UserType type;
         private LocalDateTime userSince;
         private LocalDateTime lastLogin;
 
@@ -126,7 +129,7 @@ public class User {
             return this;
         }
 
-        public UserBuilder type(String type) {
+        public UserBuilder type(UserType type) {
             this.type = type;
             return this;
         }

@@ -3,6 +3,7 @@ package at.ac.tuwien.sepm.groupphase.backend.entity;
 import javax.persistence.*;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
+import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -19,16 +20,12 @@ public class Show {
     @JoinColumn(nullable = false, name = "event_id")
     private Event event;
 
-    @Column(nullable = false, name = "dateTime")
+    @Column(nullable = false, name = "date_time")
     private LocalDateTime dateTime;
 
     @Column(nullable = false, name = "duration")
     @Positive
     private Integer durationInMinutes;
-
-    @Column(name = "ticketsSold")
-    @PositiveOrZero
-    private Integer ticketsSold;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(nullable = false, name = "hall_id")
@@ -37,6 +34,10 @@ public class Show {
     @Column(name = "description")
     @Size(max = 256)
     private String description;
+
+    @Column(nullable = false, name = "tickets_sold")
+    @PositiveOrZero
+    private Long ticketsSold;
 
     public Long getId() {
         return id;
@@ -86,16 +87,16 @@ public class Show {
         this.durationInMinutes = durationInMinutes;
     }
 
-    public Integer getTicketsSold() {
+    public static ShowBuilder builder() {
+        return new ShowBuilder();
+    }
+
+    public Long getTicketsSold() {
         return ticketsSold;
     }
 
-    public void setTicketsSold(Integer ticketsSold) {
+    public void setTicketsSold(Long ticketsSold) {
         this.ticketsSold = ticketsSold;
-    }
-
-    public static ShowBuilder builder() {
-        return new ShowBuilder();
     }
 
     @Override
@@ -107,9 +108,9 @@ public class Show {
             event.equals(show.event) &&
             dateTime.equals(show.dateTime) &&
             durationInMinutes.equals(show.durationInMinutes) &&
-            ticketsSold.equals(show.ticketsSold) &&
             hall.equals(show.hall) &&
-            Objects.equals(description, show.description);
+            Objects.equals(description, show.description) &&
+            ticketsSold.equals(show.ticketsSold);
     }
 
     @Override
@@ -135,9 +136,9 @@ public class Show {
         private Event event;
         private LocalDateTime dateTime;
         private Integer durationInMinutes;
-        private Integer ticketsSold;
         private Hall hall;
         private String description;
+        private Long ticketsSold;
 
         private ShowBuilder() {}
 
@@ -156,11 +157,6 @@ public class Show {
             return this;
         }
 
-        public ShowBuilder ticketsSold(Integer ticketsSold) {
-            this.ticketsSold = ticketsSold;
-            return this;
-        }
-
         public ShowBuilder dateTime(LocalDateTime dateTime) {
             this.dateTime = dateTime;
             return this;
@@ -176,15 +172,20 @@ public class Show {
             return this;
         }
 
+        public ShowBuilder ticketsSold(Long ticketsSold) {
+            this.ticketsSold = ticketsSold;
+            return this;
+        }
+
         public Show build() {
             Show show = new Show();
             show.setId(id);
             show.setEvent(event);
             show.setDurationInMinutes(durationInMinutes);
-            show.setTicketsSold(ticketsSold);
             show.setDateTime(dateTime);
             show.setHall(hall);
             show.setDescription(description);
+            show.setTicketsSold(ticketsSold);
             return show;
         }
     }

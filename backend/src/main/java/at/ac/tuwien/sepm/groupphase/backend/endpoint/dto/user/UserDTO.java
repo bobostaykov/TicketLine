@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.user;
 
+import at.ac.tuwien.sepm.groupphase.backend.datatype.UserType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -15,7 +16,7 @@ public class UserDTO {
     private String name;
 
     @ApiModelProperty(name = "The type of the user (admin/seller)")
-    private String type;
+    private UserType type;
 
     @ApiModelProperty(name = "The timestamp since when the user is in the system")
     private LocalDateTime userSince;
@@ -39,11 +40,11 @@ public class UserDTO {
         this.name = name;
     }
 
-    public String getType() {
+    public UserType getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(UserType type) {
         this.type = type;
     }
 
@@ -106,7 +107,7 @@ public class UserDTO {
 
         private Long id;
         private String name;
-        private String type;
+        private UserType type;
         private LocalDateTime userSince;
         private LocalDateTime lastLogin;
 
@@ -120,7 +121,7 @@ public class UserDTO {
             return this;
         }
 
-        public UserDTOBuilder type(String type) {
+        public UserDTOBuilder type(UserType type) {
             this.type = type;
             return this;
         }

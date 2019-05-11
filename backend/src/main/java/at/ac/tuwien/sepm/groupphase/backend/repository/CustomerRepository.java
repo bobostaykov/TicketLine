@@ -2,10 +2,12 @@ package at.ac.tuwien.sepm.groupphase.backend.repository;
 
 import at.ac.tuwien.sepm.groupphase.backend.entity.Customer;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -42,7 +44,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
      * @param birthday birthday of customer to search for
      * @return List of customers that met the requested filter methods
      */
-    @Query(value = "SELECT DISTINCT c " +
+    @Query(value = "SELECT DISTINCT * " +
         "FROM customer c " +
         "WHERE (c.name LIKE CONCAT('%',:name,'%') OR :name IS NULL) " +
         "AND (c.firstname LIKE CONCAT('%',:firstname,'%') OR :firstname IS NULL) " +
@@ -59,7 +61,9 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
      * @param name new name for customer
      * @param id ID of customer
      */
-    @Query(value = "UPDATE customer c SET c.name = :name WHERE c.id = :id", nativeQuery = true)
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE Customer c SET c.name = :name WHERE c.id = :id", nativeQuery = true)
     void updateName(@Param("name") String name, @Param("id") Long id);
 
     /**
@@ -68,7 +72,9 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
      * @param firstname new first name for customer
      * @param id ID of the customer
      */
-    @Query(value = "UPDATE customer SET firstname = :firstname WHERE id = :id", nativeQuery = true)
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE Customer SET firstname = :firstname WHERE id = :id", nativeQuery = true)
     void updateFirstname(@Param("firstname") String firstname, @Param("id") Long id);
 
     /**
@@ -77,7 +83,9 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
      * @param email new e-mail address for customer
      * @param id ID of the customer
      */
-    @Query(value = "UPDATE customer SET email = :email WHERE id = :id", nativeQuery = true)
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE Customer SET email = :email WHERE id = :id", nativeQuery = true)
     void updateEmail(@Param("email") String email, @Param("id") Long id);
 
     /**
@@ -86,6 +94,8 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
      * @param birthday new birthday for customer
      * @param id ID of the customer
      */
-    @Query(value = "UPDATE customer SET birthday = :birthday WHERE id = :id", nativeQuery = true)
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE Customer SET birthday = :birthday WHERE id = :id", nativeQuery = true)
     void updateBirthday(@Param("birthday") LocalDate birthday, @Param("id") Long id);
 }

@@ -9,8 +9,6 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    // findById() and save() inherited from superinterface CrudRepository
-
     /**
      * Find user entry by username.
      *

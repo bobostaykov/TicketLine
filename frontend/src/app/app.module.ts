@@ -14,6 +14,13 @@ import {UserComponent} from './components/user/user.component';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {httpInterceptorProviders} from './interceptors';
 import {Globals} from './global/globals';
+import { TopTenEventsComponent } from './components/events/top-ten-events/top-ten-events.component';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {MatButtonModule, MatCheckboxModule, MatInputModule, MatSelectModule} from '@angular/material';
+import {NgxChartsModule} from '@swimlane/ngx-charts';
+import { CustomerAddComponent } from './components/customerAdd/customer-add.component';
+import { CustomerComponent } from './components/customer/customer.component';
+import { CustomerDialogComponent } from './components/customer-dialog/customer-dialog.component';
 
 @NgModule({
   declarations: [
@@ -24,6 +31,10 @@ import {Globals} from './global/globals';
     LoginComponent,
     MessageComponent,
     UserComponent,
+    TopTenEventsComponent,
+    CustomerAddComponent,
+    CustomerComponent,
+    CustomerDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -31,7 +42,13 @@ import {Globals} from './global/globals';
     ReactiveFormsModule,
     HttpClientModule,
     NgbModule,
-    FormsModule
+    FormsModule,
+    BrowserAnimationsModule,
+    MatButtonModule,
+    MatCheckboxModule,
+    MatInputModule,
+    MatSelectModule,
+    NgxChartsModule
   ],
   providers: [httpInterceptorProviders, Globals],
   bootstrap: [AppComponent]
