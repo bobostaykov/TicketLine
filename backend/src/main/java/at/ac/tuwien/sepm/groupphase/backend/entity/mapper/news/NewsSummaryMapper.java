@@ -1,4 +1,4 @@
-package at.ac.tuwien.sepm.groupphase.backend.entity.mapper.message;
+package at.ac.tuwien.sepm.groupphase.backend.entity.mapper.news;
 
 import org.mapstruct.Qualifier;
 import org.springframework.stereotype.Component;
@@ -11,7 +11,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Component
-public class MessageSummaryMapper {
+public class NewsSummaryMapper {
 
     private static final int NUMBER_OF_ALLOWED_CHARACTERS = 50;
     private static final Pattern PATTERN = Pattern.compile("^(.{0," + NUMBER_OF_ALLOWED_CHARACTERS + "})(\\s|$)|.*$");
@@ -19,7 +19,7 @@ public class MessageSummaryMapper {
     @Qualifier
     @Target(ElementType.METHOD)
     @Retention(RetentionPolicy.SOURCE)
-    public @interface MessageSummary {
+    public @interface NewsSummary {
     }
 
     /**
@@ -31,7 +31,7 @@ public class MessageSummaryMapper {
      * @param text which should be trimmed
      * @return trimmed text
      */
-    @MessageSummary
+    @NewsSummary
     public String trimTextToSummary(String text) {
         Matcher matcher = PATTERN.matcher(text);
         if (!matcher.find()) {

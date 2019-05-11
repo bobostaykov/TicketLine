@@ -1,4 +1,4 @@
-export class Message {
+export class News {
   constructor(
     public id: number,
     public title: string,
