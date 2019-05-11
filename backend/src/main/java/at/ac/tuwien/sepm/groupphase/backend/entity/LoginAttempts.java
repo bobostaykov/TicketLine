@@ -1,16 +1,14 @@
 package at.ac.tuwien.sepm.groupphase.backend.entity;
-
-import io.micrometer.core.lang.Nullable;
-import net.bytebuddy.implementation.bind.annotation.Default;
-
 import javax.persistence.*;
 
 @Entity
 @Table(name = "Login_attempts")
 public class LoginAttempts {
 
-    @Column
 
+    public LoginAttempts() { }
+
+    @Column
     @EmbeddedId
     private Long id;
 
@@ -24,6 +22,8 @@ public class LoginAttempts {
 
     @Column(name = "blocked")
      private boolean blocked;
+
+
 
 
     public LoginAttempts(Long id, User user, int attempts, boolean blocked) {

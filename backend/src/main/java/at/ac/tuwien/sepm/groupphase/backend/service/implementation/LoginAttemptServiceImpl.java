@@ -8,8 +8,6 @@ import at.ac.tuwien.sepm.groupphase.backend.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
-import java.util.Locale;
 import java.util.Optional;
 @Service
 public class LoginAttemptServiceImpl implements LoginAttemptService {
@@ -60,6 +58,7 @@ public class LoginAttemptServiceImpl implements LoginAttemptService {
 
     @Override
     public void initializeLoginAttempts(User user) {
+        LOGGER.info("InitializingLoginAttempts for user: "+ user.getName());
         loginAttemptsRepository.save(new LoginAttempts(user.getId(), user, 0, false));
     }
 }
