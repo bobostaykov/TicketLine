@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.service;
 
 import at.ac.tuwien.sepm.groupphase.backend.entity.News;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
