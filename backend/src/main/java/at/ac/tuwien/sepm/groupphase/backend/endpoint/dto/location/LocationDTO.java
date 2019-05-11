@@ -1,8 +1,10 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.location;
 
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.hall.HallDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import java.util.List;
 import java.util.Objects;
 
 @ApiModel(value = "LocationDTO")
@@ -25,6 +27,9 @@ public class LocationDTO {
 
     @ApiModelProperty(name = "Location's description")
     private String description;
+
+    @ApiModelProperty(name = "A list of halls at that location")
+    private List<HallDTO> halls;
 
     public Long getId() {
         return id;
@@ -74,6 +79,14 @@ public class LocationDTO {
         this.description = description;
     }
 
+    public List<HallDTO> getHalls() {
+        return halls;
+    }
+
+    public void setHalls(List<HallDTO> halls) {
+        this.halls = halls;
+    }
+
     public static LocationDTOBuilder builder() { return new LocationDTOBuilder(); }
 
     @Override
@@ -86,12 +99,13 @@ public class LocationDTO {
             city.equals(that.city) &&
             postalcode.equals(that.postalcode) &&
             street.equals(that.street) &&
-            Objects.equals(description, that.description);
+            Objects.equals(description, that.description) &&
+            Objects.equals(halls, that.halls);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, country, city, postalcode, street, description);
+        return Objects.hash(id, country, city, postalcode, street, description, halls);
     }
 
     @Override
@@ -103,6 +117,7 @@ public class LocationDTO {
             ", postalcode='" + postalcode + '\'' +
             ", street='" + street + '\'' +
             ", description='" + description + '\'' +
+            ", halls=" + halls +
             '}';
     }
 
@@ -113,6 +128,7 @@ public class LocationDTO {
         private String postalcode;
         private String street;
         private String description;
+        private List<HallDTO> halls;
 
         private LocationDTOBuilder() {}
 
@@ -146,15 +162,20 @@ public class LocationDTO {
             return this;
         }
 
+        public LocationDTOBuilder halls(List<HallDTO> halls) {
+            this.halls = halls;
+            return this;
+        }
         public LocationDTO build() {
-            LocationDTO location = new LocationDTO();
-            location.setId(id);
-            location.setCountry(country);
-            location.setCity(city);
-            location.setPostalcode(postalcode);
-            location.setStreet(street);
-            location.setDescription(description);
-            return location;
+            LocationDTO locationDTO = new LocationDTO();
+            locationDTO.setId(id);
+            locationDTO.setCountry(country);
+            locationDTO.setCity(city);
+            locationDTO.setPostalcode(postalcode);
+            locationDTO.setStreet(street);
+            locationDTO.setDescription(description);
+            locationDTO.setHalls(halls);
+            return locationDTO;
         }
     }
 }

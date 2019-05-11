@@ -12,13 +12,13 @@ import java.util.List;
 public interface ShowRepository extends JpaRepository<Show, Long> {
 
     /**
-     * Finds all shows filtered by event id
+     * Finds all shows filtered by event name
      *
-     * @param eventID id of event
+     * @param eventName name of event
      * @return a list of found shows matching the criteria
      */
-    @Query(value = "SELECT s FROM Show s WHERE event_id = :eventID")
-    List<Show> findAllByEventID(@Param("eventID") Integer eventID);
+    @Query(value = "SELECT s FROM Show s JOIN Event e WHERE e.name = :eventName")
+    List<Show> findAllShowsFilteredByEventName(@Param("eventName") String eventName);
 
     /*
      * Finds all shows filtered by location id

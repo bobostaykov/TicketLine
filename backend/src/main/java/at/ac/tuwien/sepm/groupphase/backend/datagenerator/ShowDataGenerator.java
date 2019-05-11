@@ -8,17 +8,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
+
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.concurrent.TimeUnit;
 
 @Profile("generateData")
 @Component
-public class ShowDataGenerator {
+public class ShowDataGenerator implements DataGenerator{
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MessageDataGenerator.class);
-    private static final int NUMBER_OF_SHOWS_TO_GENERATE = 25;
+    private static final Logger LOGGER = LoggerFactory.getLogger(ShowDataGenerator.class);
 
     private final ShowRepository showRepository;
     private final Faker faker;
@@ -28,18 +27,20 @@ public class ShowDataGenerator {
         faker = new Faker();
     }
 
-    @PostConstruct
-    private void generateShow() {
+    @Override
+    public void generate() {
+
         if (showRepository.count() > 0) {
-            LOGGER.info("show already generated");
+            LOGGER.info("Shows already generated");
         } else {
-            LOGGER.info("generating {} show entries", NUMBER_OF_SHOWS_TO_GENERATE);
+            LOGGER.info("Generating Show entries");
+            /*
             for (int i = 0; i < NUMBER_OF_SHOWS_TO_GENERATE; i++) {
 
-                /*
-                private Event event;
-                private Hall hall;
-                */
+
+                //private Event event;
+                //private Hall hall;
+
                 Show show = Show.builder()
                     .description(faker.lorem().characters(30, 40))
                     .durationInMinutes(faker.number().numberBetween(100,500))
@@ -50,9 +51,9 @@ public class ShowDataGenerator {
                         )
                     )
                     .build();
-                LOGGER.debug("saving show {}", show);
-                showRepository.save(show);
-            }
+            LOGGER.debug("Saving show {}", show);
+            showRepository.save(show);
+        */
         }
     }
 }

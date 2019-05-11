@@ -10,10 +10,10 @@ public interface ShowService {
     /**
      * Finds all shows filtered by event id
      *
-     * @param eventID id of event by which to filter the shows
+     * @param eventName name of event by which to filter the shows
      * @return a list of found shows matching the criteria
      */
-    List<Show> findAllByEventID(Integer eventID);
+    List<Show> findAllShowsFilteredByEventName(String eventName);
 
     /*
      * Finds all shows filtered by location id
@@ -21,7 +21,7 @@ public interface ShowService {
      * @param locationID id of location by which to filter the shows
      * @return a list of found shows matching the criteria
      */
-    //List<Show> findAllByLocationID(Integer locationID);
+    //List<Show> findAllShowsFilteredByLocationID(Integer locationID);
 
     /*
      * Finds all shows

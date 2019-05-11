@@ -2,6 +2,7 @@ package at.ac.tuwien.sepm.groupphase.backend.entity;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -31,6 +32,9 @@ public class Location {
     @Column(name = "description")
     @Size(max = 128)
     private String description;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "location")
+    private List<Hall> halls;
 
     public Long getId() {
         return id;
@@ -80,6 +84,14 @@ public class Location {
         this.description = description;
     }
 
+    public List<Hall> getHalls() {
+        return halls;
+    }
+
+    public void setHalls(List<Hall> halls) {
+        this.halls = halls;
+    }
+
     public static LocationBuilder builder() {
         return new LocationBuilder();
     }
@@ -94,12 +106,13 @@ public class Location {
             city.equals(location.city) &&
             postalcode.equals(location.postalcode) &&
             street.equals(location.street) &&
-            Objects.equals(description, location.description);
+            Objects.equals(description, location.description) &&
+            Objects.equals(halls, location.halls);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, country, city, postalcode, street, description);
+        return Objects.hash(id, country, city, postalcode, street, description, halls);
     }
 
     @Override
@@ -111,6 +124,7 @@ public class Location {
             ", postalcode='" + postalcode + '\'' +
             ", street='" + street + '\'' +
             ", description='" + description + '\'' +
+            ", halls=" + halls +
             '}';
     }
 
@@ -121,6 +135,7 @@ public class Location {
         private String postalcode;
         private String street;
         private String description;
+        private List<Hall> halls;
 
         private LocationBuilder() {}
 
@@ -154,6 +169,12 @@ public class Location {
             return this;
         }
 
+        public LocationBuilder hall(List<Hall> halls) {
+            this.halls = halls;
+            return this;
+        }
+
+
         public Location build() {
             Location location = new Location();
             location.setId(id);
@@ -162,6 +183,7 @@ public class Location {
             location.setPostalcode(postalcode);
             location.setStreet(street);
             location.setDescription(description);
+            location.setHalls(halls);
             return location;
         }
     }

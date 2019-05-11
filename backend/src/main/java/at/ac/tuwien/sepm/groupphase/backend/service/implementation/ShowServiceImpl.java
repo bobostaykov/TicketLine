@@ -24,11 +24,10 @@ public class ShowServiceImpl implements ShowService {
     }
 
     @Override
-    public List<Show> findAllByEventID(Integer eventID) {
+    public List<Show> findAllShowsFilteredByEventName(String eventName) {
         LOGGER.info("Find all shows filtered by event id");
         try {
-            if (eventID < 0) throw new IllegalArgumentException("The event id is negative");
-            return showRepository.findAllByEventID(eventID);
+            return showRepository.findAllShowsFilteredByEventName(eventName);
         } catch (PersistenceException e) {
             throw new ServiceException(e.getMessage(), e);
         }
@@ -36,7 +35,7 @@ public class ShowServiceImpl implements ShowService {
 
     /*
     @Override
-    public List<Show> findAllByLocationID(Integer locationID) {
+    public List<Show> findAllShowsFilteredByLocationID(Integer locationID) {
         LOGGER.info("Find all shows filtered by location id");
         try {
             if (locationID < 0) throw new IllegalArgumentException("The location id is negative");
@@ -47,7 +46,7 @@ public class ShowServiceImpl implements ShowService {
     }
 
     @Override
-    public List<Show> findAll() {
+    public List<Show> findAllShows() {
         LOGGER.info("Find all shows");
         try{
             return showRepository.findAll();

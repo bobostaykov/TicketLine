@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 
 @Profile("generateData")
 @Component
-public class MessageDataGenerator {
+public class MessageDataGenerator implements DataGenerator{
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MessageDataGenerator.class);
     private static final int NUMBER_OF_NEWS_TO_GENERATE = 25;
@@ -28,12 +28,12 @@ public class MessageDataGenerator {
         faker = new Faker();
     }
 
-    @PostConstruct
-    private void generateMessage() {
+    @Override
+    public void generate() {
         if (messageRepository.count() > 0) {
-            LOGGER.info("message already generated");
+            LOGGER.info("Messages already generated");
         } else {
-            LOGGER.info("generating {} message entries", NUMBER_OF_NEWS_TO_GENERATE);
+            LOGGER.info("Generating {} message entries", NUMBER_OF_NEWS_TO_GENERATE);
             for (int i = 0; i < NUMBER_OF_NEWS_TO_GENERATE; i++) {
                 Message message = Message.builder()
                     .title(faker.lorem().characters(30, 40))
@@ -46,7 +46,7 @@ public class MessageDataGenerator {
                             ZoneId.systemDefault()
                         ))
                     .build();
-                LOGGER.debug("saving message {}", message);
+                LOGGER.debug("Saving message {}", message);
                 messageRepository.save(message);
             }
         }

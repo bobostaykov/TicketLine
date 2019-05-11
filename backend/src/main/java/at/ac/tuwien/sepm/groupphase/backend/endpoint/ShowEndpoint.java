@@ -34,24 +34,25 @@ public class ShowEndpoint {
         this.showMapper = showMapper;
     }
 
-    @RequestMapping(value = "/event{id}", method = RequestMethod.GET)
-    @ApiOperation(value = "Get list of all shows filtered by eventID", authorizations = {@Authorization(value = "apiKey")})
-    public List<ShowDTO> findAllByEventID(@PathVariable("id") Integer eventID){
-        LOGGER.info("Get all shows which belong to event with id " + eventID);
+    @RequestMapping(method = RequestMethod.GET) //should the request mapping has a value
+    @ApiOperation(value = "Get list of all shows filtered by eventName", authorizations = {@Authorization(value = "apiKey")})
+    public List<ShowDTO> findAllShowsFilteredByEventName(@PathVariable("eventName") String eventName){
+        LOGGER.info("Get all shows which belong to event with id " + eventName);
         try{
-            return showMapper.showToShowDTO(showService.findAllByEventID(eventID));
+            return showMapper.showToShowDTO(showService.findAllShowsFilteredByEventName(eventName));
         }catch (IllegalArgumentException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error while looking for shows belonging to event with id " + eventID, e);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error while looking for shows belonging to event with name " + eventName, e);
         }catch (ServiceException e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error while looking for shows belonging to event with id " + eventID, e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error while looking for shows belonging to event with name " + eventName, e);
         }catch(NotFoundException e){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No shows belonging to event with id " + eventID + "were found: " + e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No shows belonging to event with name " + eventName + "were found: " + e.getMessage(), e);
         }
     }
 /*
+//
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ApiOperation(value = "Get list of all shows filtered by location id", authorizations = {@Authorization(value = "apiKey")})
-    public List<ShowDTO> findAllByLocationID(@PathVariable("id") Integer locationID){
+    public List<ShowDTO> findAllShowsFilteredByLocationID(@PathVariable("id") Integer locationID){
         LOGGER.info("Get all shows filtered by location id");
         try{
             return showMapper.showToShowDTO(showService.findAllByLocationID(locationID));
@@ -98,7 +99,7 @@ public class ShowEndpoint {
         }
     }
 
-    @RequestMapping(value = "/bylocation", method = RequestMethod.GET)
+    @RequestMapping(value = "/location", method = RequestMethod.GET)
     @ApiOperation(value = "Get all shows filtered by location parameters", authorizations = {@Authorization(value = "apiKey")})
     public List<ShowDTO> findAllShowsFilteredByLocation(
         @RequestParam(value="country", required = false) String country,

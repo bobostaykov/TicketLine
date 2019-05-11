@@ -19,6 +19,10 @@ public class Hall {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "hall")
     private List<Show> shows;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(nullable = false, name = "location_id")
+    private Location location;
+
     public Long getId() {
         return id;
     }
@@ -41,5 +45,13 @@ public class Hall {
 
     public void setShows(List<Show> shows) {
         this.shows = shows;
+    }
+
+    public Location getLocation() {
+        return location;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
     }
 }
