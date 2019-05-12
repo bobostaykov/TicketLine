@@ -21,6 +21,7 @@ import {NgxChartsModule} from '@swimlane/ngx-charts';
 import { CustomerAddComponent } from './components/customerAdd/customer-add.component';
 import { CustomerComponent } from './components/customer/customer.component';
 import { CustomerDialogComponent } from './components/customer-dialog/customer-dialog.component';
+import { BlockedUsersComponent } from './components/blocked-users/blocked-users.component';
 
 @NgModule({
   declarations: [
@@ -35,6 +36,7 @@ import { CustomerDialogComponent } from './components/customer-dialog/customer-d
     CustomerAddComponent,
     CustomerComponent,
     CustomerDialogComponent,
+    BlockedUsersComponent,
   ],
   imports: [
     BrowserModule,
