@@ -33,7 +33,7 @@ public class Location {
     @Size(max = 128)
     private String description;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "location")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "location", orphanRemoval = true)
     private List<Hall> halls;
 
     public Long getId() {

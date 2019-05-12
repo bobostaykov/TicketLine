@@ -41,7 +41,7 @@ public class ShowMapperTest {
         .shows(null)
         .build();
     //private static final Hall HALL = Hall.builder().build();
-    private static final Integer TICKETSSOLD = 25;
+    private static final Long TICKETSSOLD = 25L;
     private static final Integer DURATION_IN_MINUTES = 180;
     private static final String DESCRIPTION = "This is the description of the show";
     private static final LocalDateTime DATE_TIME =

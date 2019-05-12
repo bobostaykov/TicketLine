@@ -21,7 +21,7 @@ public class ShowDTO {
     private Integer durationInMinutes;
 
     @ApiModelProperty(name = "The number of tickets sold for that show")
-    private Integer ticketsSold;
+    private Long ticketsSold;
 
     @ApiModelProperty(name = "The date and time of the show")
     private LocalDateTime dateTime;
@@ -80,11 +80,11 @@ public class ShowDTO {
         this.durationInMinutes = durationInMinutes;
     }
 
-    public Integer getTicketsSold() {
+    public Long getTicketsSold() {
         return ticketsSold;
     }
 
-    public void setTicketsSold(Integer ticketsSold) {
+    public void setTicketsSold(Long ticketsSold) {
         this.ticketsSold = ticketsSold;
     }
 
@@ -127,7 +127,7 @@ public class ShowDTO {
         private Long id;
         private EventDTO event;
         private Integer durationInMinutes;
-        private Integer ticketsSold;
+        private Long ticketsSold;
         private LocalDateTime dateTime;
         private HallDTO hall;
         private String description;
@@ -149,7 +149,7 @@ public class ShowDTO {
             return this;
         }
 
-        public ShowDTOBuilder ticketsSold(Integer ticketsSold) {
+        public ShowDTOBuilder ticketsSold(Long ticketsSold) {
             this.ticketsSold = ticketsSold;
             return this;
         }
