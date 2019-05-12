@@ -2,8 +2,10 @@ package at.ac.tuwien.sepm.groupphase.backend.entity;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
+import java.util.List;
 import java.util.Objects;
 
+//TODO put nullable in some classes by the references
 @Entity
 public class Location {
 
@@ -78,6 +80,10 @@ public class Location {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public static LocationBuilder builder() {
+        return new LocationBuilder();
     }
 
     @Override

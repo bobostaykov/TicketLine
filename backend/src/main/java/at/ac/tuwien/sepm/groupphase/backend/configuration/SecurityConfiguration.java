@@ -115,7 +115,7 @@ public class SecurityConfiguration {
                 .addFilterBefore(new HeaderTokenAuthenticationFilter(authenticationManager), UsernamePasswordAuthenticationFilter.class);
         }
 
-           @Bean
+            @Bean
           @Override
             public AuthenticationManager authenticationManagerBean() throws Exception {
               return super.authenticationManagerBean();

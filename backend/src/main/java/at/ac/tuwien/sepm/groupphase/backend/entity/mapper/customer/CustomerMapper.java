@@ -8,6 +8,7 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface CustomerMapper {
+
     Customer customerDTOToCustomer(CustomerDTO customerDTO);
 
     CustomerDTO customerToCustomerDTO(Customer customer);
