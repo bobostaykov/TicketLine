@@ -1,8 +1,10 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.location;
 
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.hall.HallDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import java.util.List;
 import java.util.Objects;
 
 @ApiModel(value = "LocationDTO")
@@ -73,6 +75,8 @@ public class LocationDTO {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    public static LocationDTOBuilder builder() { return new LocationDTOBuilder(); }
 
     @Override
     public boolean equals(Object o) {
@@ -145,14 +149,14 @@ public class LocationDTO {
         }
 
         public LocationDTO build() {
-            LocationDTO location = new LocationDTO();
-            location.setId(id);
-            location.setCountry(country);
-            location.setCity(city);
-            location.setPostalcode(postalcode);
-            location.setStreet(street);
-            location.setDescription(description);
-            return location;
+            LocationDTO locationDTO = new LocationDTO();
+            locationDTO.setId(id);
+            locationDTO.setCountry(country);
+            locationDTO.setCity(city);
+            locationDTO.setPostalcode(postalcode);
+            locationDTO.setStreet(street);
+            locationDTO.setDescription(description);
+            return locationDTO;
         }
     }
 }

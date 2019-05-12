@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.entity;
 
+
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.util.List;
@@ -14,14 +15,11 @@ public class Artist {
     @SequenceGenerator(name = "seq_artist_id", sequenceName = "seq_artist_id")
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     @Size(max = 64)
     private String name;
 
-    @ManyToMany
-    @JoinTable(name = "participation",
-        joinColumns = {@JoinColumn(name = "artist_id", referencedColumnName = "id")},
-        inverseJoinColumns = {@JoinColumn(name = "event_id", referencedColumnName = "id")})
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "artist")
     private List<Event> eventParticipations;
 
     public Long getId() {
@@ -48,37 +46,24 @@ public class Artist {
         this.eventParticipations = eventParticipations;
     }
 
+    public static ArtistBuilder builder() {
+        return new ArtistBuilder();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         Artist artist = (Artist) o;
-
-        if (id != null ? !id.equals(artist.id) : artist.id != null) return false;
-        if (name != null ? !name.equals(artist.name) : artist.name != null) return false;
-        return eventParticipations != null ? eventParticipations.equals(artist.eventParticipations) : artist.eventParticipations == null;
-
+        return id.equals(artist.id) &&
+            name.equals(artist.name) &&
+            Objects.equals(eventParticipations, artist.eventParticipations);
     }
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (eventParticipations != null ? eventParticipations.hashCode() : 0);
-        return result;
+        return Objects.hash(id, name, eventParticipations);
     }
-
-    @Override
-    public String toString() {
-        return "Artist{" +
-            "id=" + id +
-            ", name='" + name + '\'' +
-            ", eventParticipations=" + eventParticipations +
-            '}';
-    }
-
-    public static ArtistBuilder builder() { return new ArtistBuilder(); }
 
     public static final class ArtistBuilder {
 

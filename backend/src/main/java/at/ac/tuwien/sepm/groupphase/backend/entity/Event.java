@@ -3,8 +3,6 @@ package at.ac.tuwien.sepm.groupphase.backend.entity;
 import at.ac.tuwien.sepm.groupphase.backend.datatype.EventType;
 
 import javax.persistence.*;
-import javax.validation.constraints.Positive;
-import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 import java.util.List;
 import java.util.Objects;
@@ -13,7 +11,8 @@ import java.util.Objects;
 public class Event {
 
     @Id
-    @Column(name="id")    @GeneratedValue(strategy = GenerationType.AUTO, generator = "seq_event_id")
+    @Column(name="id")
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "seq_event_id")
     @SequenceGenerator(name = "seq_event_id", sequenceName = "seq_event_id")
     private Long id;
 
@@ -25,10 +24,6 @@ public class Event {
     @Enumerated(EnumType.STRING)
     private EventType eventType;
 
-    @Column(nullable = false, name = "duration")
-    @Positive
-    private Integer durationInMinutes;
-
     @Column(nullable = false, name = "description")
     @Size(max = 256)
     private String description;
@@ -37,11 +32,8 @@ public class Event {
     @Size(max = 512)
     private String content;
 
-    @ManyToMany
-    @JoinTable(name = "participation",
-        joinColumns = {@JoinColumn(name = "event_id", referencedColumnName = "id")},
-        inverseJoinColumns = {@JoinColumn(name = "artist_id", referencedColumnName = "id")})
-    private List<Artist> participatingArtists;
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Artist artist;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "event")
     private List<Show> shows;
@@ -70,14 +62,6 @@ public class Event {
         this.eventType = eventType;
     }
 
-    public Integer getDurationInMinutes() {
-        return durationInMinutes;
-    }
-
-    public void setDurationInMinutes(Integer durationInMinutes) {
-        this.durationInMinutes = durationInMinutes;
-    }
-
     public String getDescription() {
         return description;
     }
@@ -94,20 +78,24 @@ public class Event {
         this.content = content;
     }
 
-    public List<Artist> getParticipatingArtists() {
-        return participatingArtists;
-    }
-
-    public void setParticipatingArtists(List<Artist> participatingArtists) {
-        this.participatingArtists = participatingArtists;
-    }
-
     public List<Show> getShows() {
         return shows;
     }
 
     public void setShows(List<Show> shows) {
         this.shows = shows;
+    }
+
+    public Artist getArtist() {
+        return artist;
+    }
+
+    public void setArtist(Artist artist) {
+        this.artist = artist;
+    }
+
+    public static EventBuilder builder() {
+        return new EventBuilder();
     }
 
     @Override
@@ -118,16 +106,15 @@ public class Event {
         return id.equals(event.id) &&
             name.equals(event.name) &&
             eventType == event.eventType &&
-            durationInMinutes.equals(event.durationInMinutes) &&
-            description.equals(event.description) &&
+            Objects.equals(description, event.description) &&
             Objects.equals(content, event.content) &&
-            participatingArtists.equals(event.participatingArtists) &&
-            shows.equals(event.shows);
+            Objects.equals(artist, event.artist) &&
+            Objects.equals(shows, event.shows);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, eventType, durationInMinutes, description, content, participatingArtists, shows);
+        return Objects.hash(id, name, eventType, description, content, artist, shows);
     }
 
     @Override
@@ -136,10 +123,9 @@ public class Event {
             "id=" + id +
             ", name='" + name + '\'' +
             ", eventType=" + eventType +
-            ", durationInMinutes=" + durationInMinutes +
             ", description='" + description + '\'' +
             ", content='" + content + '\'' +
-            ", participatingArtists=" + participatingArtists +
+            ", artist=" + artist +
             ", shows=" + shows +
             '}';
     }
@@ -148,10 +134,9 @@ public class Event {
         private Long id;
         private String name;
         private EventType eventType;
-        private Integer durationInMinutes;
         private String description;
         private String content;
-        private List<Artist> participatingArtists;
+        private Artist artist;
         private List<Show> shows;
 
         private EventBuilder() {}
@@ -171,11 +156,6 @@ public class Event {
             return this;
         }
 
-        public EventBuilder durationInMinutes(Integer durationInMinutes) {
-            this.durationInMinutes = durationInMinutes;
-            return this;
-        }
-
         public EventBuilder description(String description) {
             this.description = description;
             return this;
@@ -186,8 +166,8 @@ public class Event {
             return this;
         }
 
-        public EventBuilder participatingArtists(List<Artist> participatingArtists) {
-            this.participatingArtists = participatingArtists;
+        public EventBuilder artist(Artist artist) {
+            this.artist = artist;
             return this;
         }
 
@@ -201,10 +181,9 @@ public class Event {
             event.setId(id);
             event.setName(name);
             event.setEventType(eventType);
-            event.setDurationInMinutes(durationInMinutes);
             event.setDescription(description);
             event.setContent(content);
-            event.setParticipatingArtists(participatingArtists);
+            event.setArtist(artist);
             event.setShows(shows);
             return event;
         }
