@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 import static at.ac.tuwien.sepm.groupphase.backend.datatype.EventType.MOVIE;
 import static org.assertj.core.api.Assertions.assertThat;
 
-//TODO Hall and Event mapping
+//TODO Hall mapping, unfinished because of missing Attributes
 @RunWith(SpringJUnit4ClassRunner.class)
 public class ShowMapperTest {
 

@@ -19,6 +19,7 @@ import java.util.Collections;
 
 import static org.hamcrest.core.Is.is;
 
+//TODO Unfinished Tests
 public class ShowEndpointTest extends BaseIntegrationTest {
 
     private static final String SHOWS_ENDPOINT = "/shows";

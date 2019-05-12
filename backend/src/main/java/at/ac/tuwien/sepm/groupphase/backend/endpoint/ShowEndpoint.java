@@ -18,7 +18,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.LocalDateTime;
 import java.util.List;
 
-//TODO differentiate between the GET Methods, what are the api-s
+//TODO Class is unfinished
 
 @RestController
 @RequestMapping(value = "/shows")
@@ -36,7 +36,7 @@ public class ShowEndpoint {
 
     @RequestMapping(method = RequestMethod.GET) //should the request mapping has a value
     @ApiOperation(value = "Get list of all shows filtered by eventName", authorizations = {@Authorization(value = "apiKey")})
-    public List<ShowDTO> findAllShowsFilteredByEventName(@PathVariable("eventName") String eventName){
+    public List<ShowDTO> findAllShowsFilteredByEventName(@RequestParam(value = "eventName", required = false) String eventName){
         LOGGER.info("Get all shows which belong to event with id " + eventName);
         try{
             return showMapper.showToShowDTO(showService.findAllShowsFilteredByEventName(eventName));

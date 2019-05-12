@@ -269,52 +269,6 @@ public class SimpleDataGenerator {
             show24.setHall(hall10);
             show25.setHall(hall10);
 
-            hall1.setShows(new ArrayList<>() {{
-                add(show1);
-                add(show11);
-                add(show12);
-            }});
-            hall2.setShows(new ArrayList<>() {{
-                add(show2);
-                add(show13);
-            }});
-            hall3.setShows(new ArrayList<>() {{
-                add(show3);
-                add(show14);
-            }});
-            hall4.setShows(new ArrayList<>() {{
-                add(show4);
-                add(show15);
-                add(show16);
-            }});
-            hall5.setShows(new ArrayList<>() {{
-                add(show5);
-                add(show17);
-                add(show18);
-                add(show19);
-            }});
-            hall6.setShows(new ArrayList<>() {{
-                add(show6);
-                add(show20);
-            }});
-            hall7.setShows(new ArrayList<>() {{
-                add(show7);
-                add(show21);
-            }});
-            hall8.setShows(new ArrayList<>() {{
-                add(show8);
-                add(show22);
-            }});
-            hall9.setShows(new ArrayList<>() {{
-                add(show9);
-                add(show23);
-            }});
-            hall10.setShows(new ArrayList<>() {{
-                add(show10);
-                add(show24);
-                add(show25);
-            }});
-
             Location location1 = Location.builder().id(1L).country("Austria").city("Vienna").postalcode("1090").street("Tendlergasse 12").build();
             Location location2 = Location.builder().id(2L).country("Austria").city("Vienna").postalcode("1220").street("Josef Baumann Gasse 8").build();
             Location location3 = Location.builder().id(3L).country("Austria").city("Vienna").postalcode("1010").street("Maria-Theresien-Platz").build();
@@ -336,31 +290,6 @@ public class SimpleDataGenerator {
             hall8.setLocation(location8);
             hall9.setLocation(location9);
             hall10.setLocation(location2);
-
-            location1.setHalls(new ArrayList<>(){{
-                add(hall1);
-                add(hall4);
-            }});
-            location2.setHalls(new ArrayList<>(){{
-                add(hall2);
-                add(hall10);
-            }});
-            location3.setHalls(new ArrayList<>(){{
-                add(hall3);
-            }});
-            location6.setHalls(new ArrayList<>(){{
-                add(hall6);
-            }});
-            location7.setHalls(new ArrayList<>(){{
-                add(hall5);
-                add(hall7);
-            }});
-            location8.setHalls(new ArrayList<>(){{
-                add(hall8);
-            }});
-            location9.setHalls(new ArrayList<>(){{
-                add(hall9);
-            }});
 
             artistRepository.saveAll(Arrays.asList(artist1, artist2, artist3, artist4, artist5, artist6, artist7));
             eventRepository.saveAll(Arrays.asList(event1, event2, event3, event4, event5, event6, event7, event8, event9, event10, event11, event12, event13, event13, event14, event15, event16, event17, event18, event19, event20));

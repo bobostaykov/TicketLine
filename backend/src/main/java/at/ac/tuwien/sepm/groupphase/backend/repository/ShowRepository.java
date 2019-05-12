@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+//TODO Class is unfinished
 @Repository
 public interface ShowRepository extends JpaRepository<Show, Long> {
 
@@ -27,11 +28,4 @@ public interface ShowRepository extends JpaRepository<Show, Long> {
      * @return a list of found shows matching the criteria
      */
     //List<Show> findAllByLocationID(Integer locationID);
-
-    /*
-     * Finds all shows
-     *
-     * @return a list of all shows
-     */
-    //List<Show> findAll();
 }

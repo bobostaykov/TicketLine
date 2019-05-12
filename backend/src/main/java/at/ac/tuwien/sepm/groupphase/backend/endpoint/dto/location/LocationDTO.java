@@ -28,9 +28,6 @@ public class LocationDTO {
     @ApiModelProperty(name = "Location's description")
     private String description;
 
-    @ApiModelProperty(name = "A list of halls at that location")
-    private List<HallDTO> halls;
-
     public Long getId() {
         return id;
     }
@@ -79,14 +76,6 @@ public class LocationDTO {
         this.description = description;
     }
 
-    public List<HallDTO> getHalls() {
-        return halls;
-    }
-
-    public void setHalls(List<HallDTO> halls) {
-        this.halls = halls;
-    }
-
     public static LocationDTOBuilder builder() { return new LocationDTOBuilder(); }
 
     @Override
@@ -99,13 +88,12 @@ public class LocationDTO {
             city.equals(that.city) &&
             postalcode.equals(that.postalcode) &&
             street.equals(that.street) &&
-            Objects.equals(description, that.description) &&
-            Objects.equals(halls, that.halls);
+            Objects.equals(description, that.description);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, country, city, postalcode, street, description, halls);
+        return Objects.hash(id, country, city, postalcode, street, description);
     }
 
     @Override
@@ -117,7 +105,6 @@ public class LocationDTO {
             ", postalcode='" + postalcode + '\'' +
             ", street='" + street + '\'' +
             ", description='" + description + '\'' +
-            ", halls=" + halls +
             '}';
     }
 
@@ -128,7 +115,6 @@ public class LocationDTO {
         private String postalcode;
         private String street;
         private String description;
-        private List<HallDTO> halls;
 
         private LocationDTOBuilder() {}
 
@@ -162,10 +148,6 @@ public class LocationDTO {
             return this;
         }
 
-        public LocationDTOBuilder halls(List<HallDTO> halls) {
-            this.halls = halls;
-            return this;
-        }
         public LocationDTO build() {
             LocationDTO locationDTO = new LocationDTO();
             locationDTO.setId(id);
@@ -174,7 +156,6 @@ public class LocationDTO {
             locationDTO.setPostalcode(postalcode);
             locationDTO.setStreet(street);
             locationDTO.setDescription(description);
-            locationDTO.setHalls(halls);
             return locationDTO;
         }
     }

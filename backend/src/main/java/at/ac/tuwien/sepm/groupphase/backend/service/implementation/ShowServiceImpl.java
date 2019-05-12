@@ -13,6 +13,7 @@ import javax.persistence.PersistenceException;
 import java.time.LocalDateTime;
 import java.util.List;
 
+//TODO Class is unfinished
 @Service
 public class ShowServiceImpl implements ShowService {
 

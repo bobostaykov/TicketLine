@@ -16,18 +16,11 @@ public class HallDTO {
     @ApiModelProperty(name = "The name of the hall")
     private String name;
 
-    @ApiModelProperty(name = "A list of shows that take place in that hall")
-    private List<ShowDTO> shows;
-
     @ApiModelProperty(name = "The location of the hall")
     private LocationDTO location;
 
     public String getName() {
         return name;
-    }
-
-    public void setShows(List<ShowDTO> shows) {
-        this.shows = shows;
     }
 
     public Long getId() {
@@ -36,10 +29,6 @@ public class HallDTO {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public List<ShowDTO> getShows() {
-        return shows;
     }
 
     public void setId(Long id) {
