@@ -12,6 +12,11 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 
+
+/**
+ * CLASS NO LONGER USED
+ * The classes manages the time and order of generating objects to fill the database
+ */
 @Profile("generateData")
 @Component
 public class DataGeneratorManager implements ApplicationContextAware {
@@ -26,8 +31,7 @@ public class DataGeneratorManager implements ApplicationContextAware {
     @PostConstruct
     private void generateData() {
         LOGGER.info("---------- START DATA GENERATION ----------");
-        context.getBean(MessageDataGenerator.class).generate();
-        //context.getBean(ShowDataGenerator.class).generate();
+        //context.getBean(<Object>DataGenerator.class).generate<Objects>();
         LOGGER.info("--------- DATA GENERATION COMPLETE --------");
     }
 

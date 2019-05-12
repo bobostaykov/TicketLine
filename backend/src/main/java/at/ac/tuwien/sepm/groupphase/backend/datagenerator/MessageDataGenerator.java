@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 
 @Profile("generateData")
 @Component
-public class MessageDataGenerator implements DataGenerator{
+public class MessageDataGenerator{
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MessageDataGenerator.class);
     private static final int NUMBER_OF_NEWS_TO_GENERATE = 25;
@@ -28,8 +28,8 @@ public class MessageDataGenerator implements DataGenerator{
         faker = new Faker();
     }
 
-    @Override
-    public void generate() {
+    @PostConstruct
+    public void generateMessages() {
         if (messageRepository.count() > 0) {
             LOGGER.info("Messages already generated");
         } else {

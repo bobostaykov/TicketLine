@@ -35,7 +35,7 @@ public class Event {
     @ManyToOne(fetch = FetchType.EAGER)
     private Artist artist;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "event", orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "event")
     private List<Show> shows;
 
     public Long getId() {

@@ -87,9 +87,6 @@ public class Show {
         this.durationInMinutes = durationInMinutes;
     }
 
-    public static ShowBuilder builder() {
-        return new ShowBuilder();
-    }
 
     public Long getTicketsSold() {
         return ticketsSold;
@@ -97,6 +94,10 @@ public class Show {
 
     public void setTicketsSold(Long ticketsSold) {
         this.ticketsSold = ticketsSold;
+    }
+
+    public static ShowBuilder builder() {
+        return new ShowBuilder();
     }
 
     @Override

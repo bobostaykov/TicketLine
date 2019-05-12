@@ -5,6 +5,7 @@ import javax.validation.constraints.Size;
 import java.util.List;
 import java.util.Objects;
 
+//TODO put nullable in some classes by the references
 @Entity
 public class Location {
 
@@ -33,7 +34,7 @@ public class Location {
     @Size(max = 128)
     private String description;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "location", orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "location")
     private List<Hall> halls;
 
     public Long getId() {

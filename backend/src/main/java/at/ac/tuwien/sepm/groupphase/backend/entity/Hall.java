@@ -20,6 +20,7 @@ public class Hall {
     private List<Show> shows;
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "location_id")
     private Location location;
 
     public Long getId() {
@@ -53,4 +54,46 @@ public class Hall {
     public void setLocation(Location location) {
         this.location = location;
     }
+
+    public static HallBuilder builder() {
+        return new HallBuilder();
+    }
+
+    public static final class HallBuilder{
+        private Long id;
+        private String name;
+        private List<Show> shows;
+        private Location location;
+
+        private HallBuilder(){}
+
+        public HallBuilder id(Long id){
+            this.id = id;
+            return this;
+        }
+
+        public HallBuilder name(String name){
+            this.name = name;
+            return this;
+        }
+        public HallBuilder shows(List<Show> shows){
+            this.shows = shows;
+            return this;
+        }
+        public HallBuilder location(Location location){
+            this.location = location;
+            return this;
+        }
+
+        public Hall build(){
+            Hall hall = new Hall();
+            hall.setId(id);
+            hall.setName(name);
+            hall.setShows(shows);
+            hall.setLocation(location);
+            return hall;
+        }
+
+    }
+
 }
