@@ -27,14 +27,29 @@ public class FileEndpoint {
         this.dbFileService = dbFileService;
     }
 
+    /*
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ApiOperation(value = "Get file by id", authorizations = {@Authorization(value = "apiKey")})
     public ResponseEntity<Resource> findById(@PathVariable Long id) {
         DBFile dbfile = dbFileService.getFile(id);
-        return ResponseEntity.ok()
+        ResponseEntity<Resource>  returnValue = ResponseEntity.ok()
             .contentType(MediaType.parseMediaType(dbfile.getFileType()))
             .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + dbfile.getFileName() + "\"")
             .body(new ByteArrayResource((dbfile.getData())));
+        return returnValue;
+    }
+
+     */
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @ApiOperation(value = "Get file by id", authorizations = {@Authorization(value = "apiKey")})
+    public ResponseEntity<Resource> findById(@PathVariable Long id) {
+        DBFile dbfile = dbFileService.getFile(id);
+        ResponseEntity<Resource>  returnValue = ResponseEntity.ok()
+            .contentType(MediaType.parseMediaType(dbfile.getFileType()))
+            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + dbfile.getFileName() + "\"")
+            .body(new ByteArrayResource((dbfile.getData())));
+        return returnValue;
     }
 
     @RequestMapping(method = RequestMethod.POST, produces = "text/plain")

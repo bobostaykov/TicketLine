@@ -2,6 +2,11 @@ package at.ac.tuwien.sepm.groupphase.backend.endpoint;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.DetailedNewsDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.SimpleNewsDTO;
+<<<<<<< HEAD
+=======
+import at.ac.tuwien.sepm.groupphase.backend.entity.News;
+import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.news.NewsMapper;
+>>>>>>> Implemented getFile and frontend file processing partially refs: #35076 and #35077
 import at.ac.tuwien.sepm.groupphase.backend.service.NewsService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

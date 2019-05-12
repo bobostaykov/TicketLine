@@ -61,6 +61,7 @@ export class NewsComponent implements OnInit {
         this.newsForm.controls.summary.value,
         this.newsForm.controls.text.value,
         null,
+        null,
         new Date().toISOString()
       );
       if (this.image != null) {
@@ -118,6 +119,16 @@ export class NewsComponent implements OnInit {
       (news: News) => {
         const result = this.news.find(x => x.id === id);
         result.text = news.text;
+        console.log("imageID: " + news.image);
+        console.log(JSON.stringify(news));
+        if(news.image != null) {
+          this.fileService.getFile(news.image).subscribe(
+            f => {
+              result.imageURL = window.URL.createObjectURL(f);
+              console.log(result.imageURL);
+            }
+          );
+        }
       },
       error => {
         this.defaultServiceErrorHandling(error);

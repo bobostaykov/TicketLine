@@ -109,6 +109,7 @@
               <div class="modal-body">
                 <p class="lead"><span class="font-italic">{{news.publishedAt | date}}</span> {{news.summary}}</p>
                 <p class="mt-2"> {{news.text}} </p>
+                <img [src]="news.imageURL">
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

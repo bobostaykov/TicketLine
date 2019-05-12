@@ -18,9 +18,14 @@ export class FileService {
    * Loads specific file from the backend
    * @param name of file to load
    */
-  getFile(name: string): Observable<File> {
-    console.log('Load file with name ' + name);
-    return this.httpClient.get<File>(this.fileBaseUri + '/' + name);
+  getFile(id: string): Observable<Blob> {
+    console.log('Load file with id ' + id);
+    return this.httpClient.get<Blob>(this.fileBaseUri + '/' + id);
+    /*this.httpClient.get(this.fileBaseUri + '/' + id, { observe: "body"}).subscribe(
+      res => {
+        return new File(res.)
+      }
+    );*/
   }
 
   /**
