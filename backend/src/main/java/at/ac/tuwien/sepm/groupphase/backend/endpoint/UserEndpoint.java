@@ -8,6 +8,7 @@ import at.ac.tuwien.sepm.groupphase.backend.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
+import org.apache.logging.log4j.spi.LoggerRegistry;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -57,8 +58,12 @@ public class UserEndpoint {
             loginAttemptService.initializeLoginAttempts(user);
         }
         return userMapper.userToUserDTO(user);
-
-
+    }
+    @RequestMapping(value= "blocked/{id}", method = RequestMethod.PUT)
+    @PreAuthorize("HasRole('Admin')")
+    @ApiOperation(value = "unblock a user by id", authorizations = {@Authorization(value = "apiKey")})
+    public void unblockUserById(@PathVariable Long id){
+        loginAttemptService.unblockUserById(id);
     }
 
 }

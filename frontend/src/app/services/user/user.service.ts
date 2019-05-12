@@ -10,6 +10,7 @@ import {User} from '../../dtos/user';
 export class UserService {
 
   private userBaseUri: string = this.globals.backendUri + '/users';
+  private blockedUserBaseUri: string = this.userBaseUri + '/blocked';
 
   constructor(private httpClient: HttpClient, private globals: Globals) {}
 
@@ -19,6 +20,18 @@ export class UserService {
   getAllUsers(): Observable<User[]> {
     return this.httpClient.get<User[]>(this.userBaseUri);
   }
+
+  /**
+   * Loads all blocked users from the backend
+   */
+  getAllBlockedUsers(): Observable<User[]> {
+    return this.httpClient.get<User[]>(this.blockedUserBaseUri);
+  }
+
+  unblockUser(user: User){
+    this.httpClient.put(this.blockedUserBaseUri + '/' + user.id, user);
+  }
+
 
   /**
    * Loads specific user from the backend

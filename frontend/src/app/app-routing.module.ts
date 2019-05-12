@@ -8,8 +8,11 @@ import {UserComponent} from './components/user/user.component';
 import {TopTenEventsComponent} from './components/events/top-ten-events/top-ten-events.component';
 import {CustomerAddComponent} from './components/customerAdd/customer-add.component';
 import {CustomerComponent} from './components/customer/customer.component';
+import {BlockedUsersComponent} from './components/blocked-users/blocked-users.component';
+import {componentFactoryName} from '@angular/compiler';
 
 const routes: Routes = [
+  {path: 'user/blocked', component: BlockedUsersComponent},
   {path: '', component: HomeComponent},
   {path: 'login', component: LoginComponent},
   {path: 'news', canActivate: [AuthGuard], component: NewsComponent},

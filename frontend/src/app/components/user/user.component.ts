@@ -3,6 +3,9 @@ import {AuthService} from '../../services/auth/auth.service';
 import {User} from '../../dtos/user';
 import {UserService} from '../../services/user/user.service';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {Router} from '@angular/router';
+import {forEach} from '@angular/router/src/utils/collection';
+import {Observable} from 'rxjs';
 
 @Component({
   selector: 'app-user',
@@ -10,7 +13,6 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
   styleUrls: ['./user.component.scss']
 })
 export class UserComponent implements OnInit {
-
   error: boolean = false;
   errorMessage: string = '';
   users: User[];
@@ -18,7 +20,9 @@ export class UserComponent implements OnInit {
   submitted: boolean = false;
   headElements = ['Id', 'Name', 'Type', 'User Since', 'Last Login'];
 
-  constructor(private authService: AuthService, private userService: UserService, private formBuilder: FormBuilder) {
+  constructor(private authService: AuthService, private userService: UserService, private formBuilder: FormBuilder,
+              private router: Router) {
+    this.router = router;
     this.userForm = this.formBuilder.group({
       name: ['', [Validators.required]],
       type: ['', [Validators.required]],
@@ -37,10 +41,9 @@ export class UserComponent implements OnInit {
    * Load all users from the backend
    */
   loadUsers() {
-    this.userService.getAllUsers().subscribe(
-      (users: User[]) => { this.users = users; },
-      error => { this.defaultServiceErrorHandling(error); }
-    );
+    this.userService.getAllUsers().subscribe
+    ((users: User[]) => { this.users = users; },
+      error => { this.defaultServiceErrorHandling(error); });
   }
 
   /**

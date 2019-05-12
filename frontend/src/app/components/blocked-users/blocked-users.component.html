@@ -1,0 +1,15 @@
+<table class="table">
+  <thead>
+  <tr>
+    <th *ngFor="let head of headElements" scope="col">{{head}}</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let user of getBlockedUsers()">
+    <th scope="row">{{user.id}}</th>
+    <td>{{user.name}}</td>
+    <td>{{user.type}}</td>
+    <td><button>type="button" (click) = "unblockUser({{user}})" unblock User</button></td>
+  </tr>
+  </tbody>
+</table>

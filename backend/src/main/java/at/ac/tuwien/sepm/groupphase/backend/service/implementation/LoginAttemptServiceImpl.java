@@ -5,6 +5,7 @@ import at.ac.tuwien.sepm.groupphase.backend.entity.User;
 import at.ac.tuwien.sepm.groupphase.backend.repository.LoginAttemptsRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.LoginAttemptService;
 import at.ac.tuwien.sepm.groupphase.backend.service.UserService;
+import org.apache.juli.logging.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -46,8 +47,14 @@ public class LoginAttemptServiceImpl implements LoginAttemptService {
 
     @Override
     public void unblockUser(User user) {
-        LOGGER.info("user: " + user.getName() + " was unblocked");
+        LOGGER.info("user: " + user.getName() +"with id: "+ user.getId() + " was unblocked");
         loginAttemptsRepository.unblockUser(user.getId());
+    }
+
+    @Override
+    public void unblockUserById(Long id) {
+        loginAttemptsRepository.unblockUser(id);
+        LOGGER.info("user with id: "+ id + "was unblocked");
     }
 
     @Override
