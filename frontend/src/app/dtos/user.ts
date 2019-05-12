@@ -1,14 +1,11 @@
+import {UserType} from '../datatype/user_type';
+
 export class User {
   constructor(
     public id: number,
     public name: string,
-    public type: userType,
+    public type: UserType,
     public userSince: string,
     public lastLogin: string
   ) {}
-}
-
-enum userType {
-  'ADMIN',
-  'SELLER'
 }

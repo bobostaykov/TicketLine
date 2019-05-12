@@ -19,6 +19,9 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MatButtonModule, MatCheckboxModule, MatInputModule, MatSelectModule} from '@angular/material';
 import {NgxChartsModule} from '@swimlane/ngx-charts';
 import { CustomerAddComponent } from './components/customerAdd/customer-add.component';
+import { SearchEventsComponent } from './components/events/search-events/search-events.component';
+import { ArtistResultsComponent } from './components/search-results/artist/artist-results.component';
+import { ShowComponent } from './components/show/show.component';
 
 @NgModule({
   declarations: [
@@ -31,6 +34,9 @@ import { CustomerAddComponent } from './components/customerAdd/customer-add.comp
     UserComponent,
     TopTenEventsComponent,
     CustomerAddComponent,
+    SearchEventsComponent,
+    ArtistResultsComponent,
+    ShowComponent,
   ],
   imports: [
     BrowserModule,
@@ -44,7 +50,7 @@ import { CustomerAddComponent } from './components/customerAdd/customer-add.comp
     MatCheckboxModule,
     MatInputModule,
     MatSelectModule,
-    NgxChartsModule
+    NgxChartsModule,
   ],
   providers: [httpInterceptorProviders, Globals],
   bootstrap: [AppComponent]

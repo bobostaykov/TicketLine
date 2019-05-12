@@ -1,6 +1,5 @@
 import {Component, OnInit} from '@angular/core';
 import {EventService} from '../../../services/event/event.service';
-import {eventType} from '../../../dtos/event';
 import {Router} from '@angular/router';
 import {EventTickets} from '../../../dtos/event_tickets';
 
@@ -16,9 +15,8 @@ export class TopTenEventsComponent implements OnInit {
   width: number;
   height: number;
   error: boolean = false;
-  dataReady: boolean = false;
   errorMessage: string = '';
-  var: eventType = eventType.CONCERT;
+  dataReady: boolean = false;
   categories: Map<string, boolean> = new Map([
     ['all', true],
     ['concert', false],
@@ -56,7 +54,6 @@ export class TopTenEventsComponent implements OnInit {
     const data = [];
     for (let i = 0; i < events.length; i++) {
       data.push({'name': events[i].eventName, 'value': events[i].ticketsSold});
-      console.log('\n' + data[i].name + '\n');
     }
     return data;
   }
@@ -141,10 +138,13 @@ export class TopTenEventsComponent implements OnInit {
 
 
   /**
-   * Navigate to the 'tickets' page
+   * Navigate to the shows page
    */
-  private goToTickets() {
-    this.router.navigate(['/tickets']);
+  private viewShows(event: any) {
+    this.router.navigate(['/shows'], {queryParams: {
+      results_for: 'EVENT',
+      name:        event.valueOf()['name']
+    }});
   }
 
 

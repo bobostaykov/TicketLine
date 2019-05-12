@@ -1,6 +1,5 @@
 package at.ac.tuwien.sepm.groupphase.backend.entity;
 
-
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.util.List;
@@ -15,17 +14,9 @@ public class Artist {
     @SequenceGenerator(name = "seq_artist_id", sequenceName = "seq_artist_id")
     private Long id;
 
-    @Column(nullable = false)
-    @Size(max = 64)
-    private String firstname;
-
-    @Column(nullable = false)
-    @Size(max = 64)
-    private String lastname;
-
     @Column(nullable = false, unique = true)
     @Size(max = 64)
-    private String artistname;
+    private String name;
 
     @ManyToMany
     @JoinTable(name = "participation",
@@ -41,28 +32,12 @@ public class Artist {
         this.id = id;
     }
 
-    public String getFirstname() {
-        return firstname;
+    public String getName() {
+        return name;
     }
 
-    public void setFirstname(String firstname) {
-        this.firstname = firstname;
-    }
-
-    public String getLastname() {
-        return lastname;
-    }
-
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
-    }
-
-    public String getArtistname() {
-        return artistname;
-    }
-
-    public void setArtistname(String artistname) {
-        this.artistname = artistname;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public List<Event> getEventParticipations() {
@@ -77,36 +52,38 @@ public class Artist {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+
         Artist artist = (Artist) o;
-        return id.equals(artist.id) &&
-            firstname.equals(artist.firstname) &&
-            lastname.equals(artist.lastname) &&
-            artistname.equals(artist.artistname) &&
-            Objects.equals(eventParticipations, artist.eventParticipations);
+
+        if (id != null ? !id.equals(artist.id) : artist.id != null) return false;
+        if (name != null ? !name.equals(artist.name) : artist.name != null) return false;
+        return eventParticipations != null ? eventParticipations.equals(artist.eventParticipations) : artist.eventParticipations == null;
+
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, firstname, lastname, artistname, eventParticipations);
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (eventParticipations != null ? eventParticipations.hashCode() : 0);
+        return result;
     }
 
     @Override
     public String toString() {
         return "Artist{" +
             "id=" + id +
-            ", firstname='" + firstname + '\'' +
-            ", lastname='" + lastname + '\'' +
-            ", artistname='" + artistname + '\'' +
+            ", name='" + name + '\'' +
             ", eventParticipations=" + eventParticipations +
             '}';
     }
 
+    public static ArtistBuilder builder() { return new ArtistBuilder(); }
+
     public static final class ArtistBuilder {
 
         private Long id;
-        private String firstname;
-        private String lastname;
-        private String artistname;
+        private String name;
         private List<Event> eventParticipations;
 
         private ArtistBuilder() {}
@@ -116,18 +93,8 @@ public class Artist {
             return this;
         }
 
-        public ArtistBuilder firstname(String firstname) {
-            this.firstname = firstname;
-            return this;
-        }
-
-        public ArtistBuilder lastname(String lastname) {
-            this.lastname = lastname;
-            return this;
-        }
-
-        public ArtistBuilder artistname(String artistname) {
-            this.artistname = artistname;
+        public ArtistBuilder name(String name) {
+            this.name = name;
             return this;
         }
 
@@ -139,9 +106,7 @@ public class Artist {
         public Artist build() {
             Artist artist = new Artist();
             artist.setId(id);
-            artist.setFirstname(firstname);
-            artist.setLastname(lastname);
-            artist.setArtistname(artistname);
+            artist.setName(name);
             artist.setEventParticipations(eventParticipations);
             return artist;
         }

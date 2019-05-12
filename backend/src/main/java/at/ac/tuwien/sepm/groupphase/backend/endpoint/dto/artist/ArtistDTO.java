@@ -1,10 +1,11 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.artist;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.event.EventDTO;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.message.DetailedMessageDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 
 
@@ -14,17 +15,11 @@ public class ArtistDTO {
     @ApiModelProperty(name = "The automatically generated database id")
     private Long id;
 
-    @ApiModelProperty(name = "The first birth name of name of artist")
-    private String firstname;
-
-    @ApiModelProperty(name = "The last birth name of name of artist")
-    private String lastname;
-
     @ApiModelProperty(name = "The artist name under which the person introduces himself or herself")
-    private String artistname;
+    private String name;
 
     @ApiModelProperty(name = "The events in which the artists has or will participate")
-    private HashSet<EventDTO> eventParticipations;
+    private List<EventDTO> eventParticipations;
 
     public Long getId() {
         return id;
@@ -34,35 +29,19 @@ public class ArtistDTO {
         this.id = id;
     }
 
-    public String getFirstname() {
-        return firstname;
+    public String getName() {
+        return name;
     }
 
-    public void setFirstname(String firstname) {
-        this.firstname = firstname;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getLastname() {
-        return lastname;
-    }
-
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
-    }
-
-    public String getArtistname() {
-        return artistname;
-    }
-
-    public void setArtistname(String artistname) {
-        this.artistname = artistname;
-    }
-
-    public HashSet<EventDTO> getEventParticipations() {
+    public List<EventDTO> getEventParticipations() {
         return eventParticipations;
     }
 
-    public void setEventParticipations(HashSet<EventDTO> eventParticipations) {
+    public void setEventParticipations(List<EventDTO> eventParticipations) {
         this.eventParticipations = eventParticipations;
     }
 
@@ -70,27 +49,31 @@ public class ArtistDTO {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+
         ArtistDTO artistDTO = (ArtistDTO) o;
-        return id.equals(artistDTO.id) &&
-            firstname.equals(artistDTO.firstname) &&
-            lastname.equals(artistDTO.lastname) &&
-            artistname.equals(artistDTO.artistname) &&
-            Objects.equals(eventParticipations, artistDTO.eventParticipations);
+
+        if (id != null ? !id.equals(artistDTO.id) : artistDTO.id != null) return false;
+        if (name != null ? !name.equals(artistDTO.name) : artistDTO.name != null) return false;
+        return eventParticipations != null ? eventParticipations.equals(artistDTO.eventParticipations) : artistDTO.eventParticipations == null;
+
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, firstname, lastname, artistname, eventParticipations);
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (eventParticipations != null ? eventParticipations.hashCode() : 0);
+        return result;
     }
+
+    public static ArtistDTOBuilder builder() { return new ArtistDTOBuilder(); }
 
 
     @Override
     public String toString() {
         return "ArtistDTO{" +
             "id=" + id +
-            ", firstname='" + firstname + '\'' +
-            ", lastname='" + lastname + '\'' +
-            ", artistname='" + artistname + '\'' +
+            ", name='" + name + '\'' +
             ", eventParticipations=" + eventParticipations +
             '}';
     }
@@ -98,10 +81,8 @@ public class ArtistDTO {
     public static final class ArtistDTOBuilder {
 
         private Long id;
-        private String firstname;
-        private String lastname;
-        private String artistname;
-        private HashSet<EventDTO> eventParticipations;
+        private String name;
+        private List<EventDTO> eventParticipations;
 
         private ArtistDTOBuilder() {}
 
@@ -110,22 +91,12 @@ public class ArtistDTO {
             return this;
         }
 
-        public ArtistDTOBuilder firstname(String firstname) {
-            this.firstname = firstname;
+        public ArtistDTOBuilder name(String name) {
+            this.name = name;
             return this;
         }
 
-        public ArtistDTOBuilder lastname(String lastname) {
-            this.lastname = lastname;
-            return this;
-        }
-
-        public ArtistDTOBuilder artistname(String artistname) {
-            this.artistname = artistname;
-            return this;
-        }
-
-        public ArtistDTOBuilder eventParticipations(HashSet<EventDTO> eventParticipations) {
+        public ArtistDTOBuilder eventParticipations(List<EventDTO> eventParticipations) {
             this.eventParticipations = eventParticipations;
             return this;
         }
@@ -133,9 +104,7 @@ public class ArtistDTO {
         public ArtistDTO build() {
             ArtistDTO artist = new ArtistDTO();
             artist.setId(id);
-            artist.setFirstname(firstname);
-            artist.setLastname(lastname);
-            artist.setArtistname(artistname);
+            artist.setName(name);
             artist.setEventParticipations(eventParticipations);
             return artist;
         }
