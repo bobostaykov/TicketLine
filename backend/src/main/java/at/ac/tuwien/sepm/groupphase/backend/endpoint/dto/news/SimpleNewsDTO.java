@@ -1,23 +1,23 @@
-package at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.message;
+package at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.time.LocalDateTime;
 
-@ApiModel(value = "DetailedMessageDTO", description = "A simple DTO for message entries via rest")
-public class SimpleMessageDTO {
+@ApiModel(value = "DetailedNewsDTO", description = "A simple DTO for news entries via rest")
+public class SimpleNewsDTO {
 
     @ApiModelProperty(readOnly = true, name = "The automatically generated database id")
     private Long id;
 
-    @ApiModelProperty(required = true, readOnly = true, name = "The date and time when the message was published")
+    @ApiModelProperty(required = true, readOnly = true, name = "The date and time when the news was published")
     private LocalDateTime publishedAt;
 
-    @ApiModelProperty(required = true, readOnly = true, name = "The title of the message")
+    @ApiModelProperty(required = true, readOnly = true, name = "The title of the news")
     private String title;
 
-    @ApiModelProperty(required = true, readOnly = true, name = "The summary of the message")
+    @ApiModelProperty(required = true, readOnly = true, name = "The summary of the news")
     private String summary;
 
     public Long getId() {
@@ -54,7 +54,7 @@ public class SimpleMessageDTO {
 
     @Override
     public String toString() {
-        return "SimpleMessageDTO{" +
+        return "SimpleNewsDTO{" +
             "id=" + id +
             ", publishedAt=" + publishedAt +
             ", title='" + title + '\'' +
@@ -67,7 +67,7 @@ public class SimpleMessageDTO {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        SimpleMessageDTO that = (SimpleMessageDTO) o;
+        at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.SimpleNewsDTO that = (at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.SimpleNewsDTO) o;
 
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (publishedAt != null ? !publishedAt.equals(that.publishedAt) : that.publishedAt != null) return false;
@@ -85,44 +85,44 @@ public class SimpleMessageDTO {
         return result;
     }
 
-    public static MessageDTOBuilder builder() {
-        return new MessageDTOBuilder();
+    public static NewsDTOBuilder builder() {
+        return new NewsDTOBuilder();
     }
 
-    public static final class MessageDTOBuilder {
+    public static final class NewsDTOBuilder {
 
         private Long id;
         private LocalDateTime publishedAt;
         private String title;
         private String summary;
 
-        public MessageDTOBuilder id(Long id) {
+        public NewsDTOBuilder id(Long id) {
             this.id = id;
             return this;
         }
 
-        public MessageDTOBuilder publishedAt(LocalDateTime publishedAt) {
+        public NewsDTOBuilder publishedAt(LocalDateTime publishedAt) {
             this.publishedAt = publishedAt;
             return this;
         }
 
-        public MessageDTOBuilder title(String title) {
+        public NewsDTOBuilder title(String title) {
             this.title = title;
             return this;
         }
 
-        public MessageDTOBuilder summary(String summary) {
+        public NewsDTOBuilder summary(String summary) {
             this.summary = summary;
             return this;
         }
 
-        public SimpleMessageDTO build() {
-            SimpleMessageDTO messageDTO = new SimpleMessageDTO();
-            messageDTO.setId(id);
-            messageDTO.setPublishedAt(publishedAt);
-            messageDTO.setTitle(title);
-            messageDTO.setSummary(summary);
-            return messageDTO;
+        public at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.SimpleNewsDTO build() {
+            at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.SimpleNewsDTO newsDTO = new at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.SimpleNewsDTO();
+            newsDTO.setId(id);
+            newsDTO.setPublishedAt(publishedAt);
+            newsDTO.setTitle(title);
+            newsDTO.setSummary(summary);
+            return newsDTO;
         }
     }
 }

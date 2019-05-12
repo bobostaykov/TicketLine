@@ -151,8 +151,8 @@ export class TopTenEventsComponent implements OnInit {
   private defaultServiceErrorHandling(error: any) {
     console.log(error);
     this.error = true;
-    if (error.error.message !== 'No message available') {
-      this.errorMessage = error.error.message;
+    if (error.error.news !== 'No message available') {
+      this.errorMessage = error.error.news;
     } else {
       this.errorMessage = error.error.error;
     }
