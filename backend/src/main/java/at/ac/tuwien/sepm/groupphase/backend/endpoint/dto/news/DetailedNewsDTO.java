@@ -1,8 +1,8 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 
@@ -10,19 +10,28 @@ import java.time.LocalDateTime;
 public class DetailedNewsDTO {
 
     @ApiModelProperty(readOnly = true, name = "The automatically generated database id")
+    @JsonProperty("id")
     private Long id;
 
     @ApiModelProperty(readOnly = true, name = "The date and time when the news was published")
+    @JsonProperty("publishedAt")
     private LocalDateTime publishedAt;
 
     @ApiModelProperty(required = true, name = "The title of the news")
+    @JsonProperty("title")
     private String title;
 
+    @ApiModelProperty(required = true, name = "The summary content of the news")
+    @JsonProperty("summary")
+    private String summary;
+
     @ApiModelProperty(required = true, name = "The text content of the news")
+    @JsonProperty("text")
     private String text;
 
-    @ApiModelProperty(required = false, name = "Optional image attached to the message")
-    private MultipartFile image;
+    @ApiModelProperty(required = true, name = "Optional image attached to the message")
+    @JsonProperty("image")
+    private String image;
 
     public Long getId() {
         return id;
@@ -48,6 +57,14 @@ public class DetailedNewsDTO {
         this.title = title;
     }
 
+    public String getSummary() {
+        return summary;
+    }
+
+    public void setSummary(String summary) {
+        this.summary = summary;
+    }
+
     public String getText() {
         return text;
     }
@@ -56,12 +73,12 @@ public class DetailedNewsDTO {
         this.text = text;
     }
 
-    public MultipartFile getImage() {
+    public String getImage() {
         return image;
     }
 
-    public void setImage(MultipartFile image) {
-        this.image = image;
+    public void setImage(String image) {
+        this.image = this.image;
     }
 
     @Override
@@ -70,7 +87,9 @@ public class DetailedNewsDTO {
             "id=" + id +
             ", publishedAt=" + publishedAt +
             ", title='" + title + '\'' +
+            ", summary='" + summary + '\'' +
             ", text='" + text + '\'' +
+            ", image='" + image + '\'' +
             '}';
     }
 
@@ -79,11 +98,13 @@ public class DetailedNewsDTO {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.DetailedNewsDTO that = (at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.DetailedNewsDTO) o;
+        DetailedNewsDTO that = (DetailedNewsDTO) o;
 
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (publishedAt != null ? !publishedAt.equals(that.publishedAt) : that.publishedAt != null) return false;
         if (title != null ? !title.equals(that.title) : that.title != null) return false;
+        if (summary != null ? !summary.equals(that.summary) : that.summary != null) return false;
+        if (image != null ? !image.equals(that.image) : that.image != null) return false;
         return text != null ? text.equals(that.text) : that.text == null;
 
     }
@@ -94,6 +115,8 @@ public class DetailedNewsDTO {
         result = 31 * result + (publishedAt != null ? publishedAt.hashCode() : 0);
         result = 31 * result + (title != null ? title.hashCode() : 0);
         result = 31 * result + (text != null ? text.hashCode() : 0);
+        result = 31 * result + (summary != null ? summary.hashCode() : 0);
+        result = 31 * result + (image != null ? image.hashCode() : 0);
         return result;
     }
 
@@ -106,8 +129,9 @@ public class DetailedNewsDTO {
         private Long id;
         private LocalDateTime publishedAt;
         private String title;
+        private String summary;
         private String text;
-        private MultipartFile image;
+        private String image;
 
         public NewsDTOBuilder id(Long id) {
             this.id = id;
@@ -124,8 +148,18 @@ public class DetailedNewsDTO {
             return this;
         }
 
+        public NewsDTOBuilder summary(String summary) {
+            this.summary = summary;
+            return this;
+        }
+
         public NewsDTOBuilder text(String text) {
             this.text = text;
+            return this;
+        }
+
+        public NewsDTOBuilder image(String image) {
+            this.image = image;
             return this;
         }
 
@@ -134,6 +168,7 @@ public class DetailedNewsDTO {
             newsDTO.setId(id);
             newsDTO.setPublishedAt(publishedAt);
             newsDTO.setTitle(title);
+            newsDTO.setSummary(summary);
             newsDTO.setText(text);
             newsDTO.setImage(image);
             return newsDTO;

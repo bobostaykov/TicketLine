@@ -45,7 +45,8 @@ public class DBFileServiceImpl implements DBFileService {
 
             DBFile dbFile = DBFile.builder().fileName(fileName).fileType(file.getContentType()).data(file.getBytes()).build();
 
-            return dbFileRepository.save(dbFile).getId();
+            Long id = dbFileRepository.save(dbFile).getId();
+            return id;
         } catch (IOException e) {
             throw new ServiceException("File '" + fileName + "' could not be stored: Please try again!", e);
         }

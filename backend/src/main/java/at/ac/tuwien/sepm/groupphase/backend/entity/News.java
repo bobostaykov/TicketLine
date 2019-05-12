@@ -22,8 +22,9 @@ public class News {
     @Column(nullable = false, length = 10_000)
     private String text;
 
-    @JoinColumn(nullable = true, name = "dbfile_id")
-    private DBFile dbfile;
+    @Column
+    @Size(max = 100)
+    private String imageId;
 
     public Long getId() {
         return id;
@@ -57,12 +58,12 @@ public class News {
         this.text = text;
     }
 
-    public DBFile getDbfile() {
-        return dbfile;
+    public String getImageId() {
+        return imageId;
     }
 
-    public void setDbfile(DBFile dbfile) {
-        this.dbfile = dbfile;
+    public void setImageId(String imageId) {
+        this.imageId = imageId;
     }
 
     public static NewsBuilder builder() {
@@ -107,7 +108,7 @@ public class News {
         private LocalDateTime publishedAt;
         private String title;
         private String text;
-        private DBFile dbfile;
+        private String imageId;
 
         private NewsBuilder() {
         }
@@ -132,13 +133,18 @@ public class News {
             return this;
         }
 
+        public NewsBuilder imageId(String imageId) {
+            this.imageId = imageId;
+            return this;
+        }
+
         public News build() {
             News news = new News();
             news.setId(id);
             news.setPublishedAt(publishedAt);
             news.setTitle(title);
             news.setText(text);
-            news.setDbfile(dbfile);
+            news.setImageId(imageId);
             return news;
         }
     }

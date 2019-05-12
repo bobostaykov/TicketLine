@@ -5,6 +5,7 @@ import {NgbPaginationConfig} from '@ng-bootstrap/ng-bootstrap';
 import * as _ from 'lodash';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {AuthService} from '../../services/auth/auth.service';
+import {FileService} from "../../services/file.service";
 
 @Component({
   selector: 'app-news',
@@ -15,17 +16,19 @@ export class NewsComponent implements OnInit {
 
   error: boolean = false;
   errorMessage: string = '';
+  image: File;
   newsForm: FormGroup;
   // After first submission attempt, form validation will start
   submitted: boolean = false;
   private news: News[];
 
-  constructor(private newsService: NewsService, private ngbPaginationConfig: NgbPaginationConfig, private formBuilder: FormBuilder,
+  constructor(private newsService: NewsService, private fileService: FileService, private ngbPaginationConfig: NgbPaginationConfig, private formBuilder: FormBuilder,
               private cd: ChangeDetectorRef, private authService: AuthService) {
     this.newsForm = this.formBuilder.group({
       title: ['', [Validators.required]],
       summary: ['', [Validators.required]],
       text: ['', [Validators.required]],
+      image: ['']
     });
   }
 
@@ -41,6 +44,13 @@ export class NewsComponent implements OnInit {
   }
 
   /**
+   * Rads the input file into
+   */
+  processFile(imageInput: any) {
+    this.image = imageInput.files[0];
+  }
+
+  /**
    * Starts form validation and builds a news dto for sending a creation request if the form is valid.
    * If the procedure was successful, the form will be cleared.
    */
@@ -51,9 +61,20 @@ export class NewsComponent implements OnInit {
         this.newsForm.controls.title.value,
         this.newsForm.controls.summary.value,
         this.newsForm.controls.text.value,
+        null,
         new Date().toISOString()
       );
-      this.createNews(news);
+      if(this.image != null) {
+        this.fileService.uploadFile(this.image).subscribe(id => {
+          news.image = id;
+          console.log('image: ' + news.image);
+          this.createNews(news);
+        });
+      }
+      else {
+        console.log('No image present');
+        this.createNews(news);
+      }
       this.clearForm();
     } else {
       console.log('Invalid input');
@@ -141,6 +162,7 @@ export class NewsComponent implements OnInit {
 
   private clearForm() {
     this.newsForm.reset();
+    this.image = null;
     this.submitted = false;
   }
 

@@ -1,11 +1,14 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint;
 
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.DetailedNewsDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.News;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.news.NewsMapper;
 import at.ac.tuwien.sepm.groupphase.backend.service.NewsService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
+import org.springframework.boot.configurationprocessor.json.JSONObject;
+import org.springframework.http.HttpEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,13 +48,26 @@ public class NewsEndpoint {
         return newsMapper.newsToDetailedNewsDTO(newsService.findOne(id));
     }
 
+    /*
     @RequestMapping(method = RequestMethod.POST)
     @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "Publish a new news entry", authorizations = {@Authorization(value = "apiKey")})
-    public at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.DetailedNewsDTO publishNews(@RequestBody at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.DetailedNewsDTO detailedNewsDTO) {
+    public DetailedNewsDTO publishNews(HttpEntity<String> httpEntity) {
+        String body = httpEntity.getBody();
+        return new DetailedNewsDTO();
+    }
+
+     */
+
+
+    @RequestMapping(method = RequestMethod.POST)
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "Publish a new news entry", authorizations = {@Authorization(value = "apiKey")})
+    public DetailedNewsDTO publishNews(@RequestBody DetailedNewsDTO detailedNewsDTO) {
         News news = newsMapper.detailedNewsDTOToNews(detailedNewsDTO);
         news = newsService.publishNews(news);
         return newsMapper.newsToDetailedNewsDTO(news);
     }
+
 
 }

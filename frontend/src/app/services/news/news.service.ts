@@ -45,6 +45,7 @@ export class NewsService {
    */
   createNews(news: News): Observable<News> {
     console.log('Create news with title ' + news.title);
+                        console.log(news);
     return this.httpClient.post<News>(this.newsBaseUri, news);
   }
 

@@ -27,12 +27,16 @@ export class FileService {
    * Persists file to the backend
    * @param file to persist
    */
-  uploadFile(file: File): string {
+  uploadFile(file: File): Observable<string> {
     console.log('Upload file with name ' + file.name);
     const formData = new FormData();
     formData.append('file', file);
-    let returnValue: string;
-    this.httpClient.post(this.fileBaseUri, formData, { responseType: 'text'}).subscribe(val => returnValue = val);
+    let returnValue: Observable<string>;
+    //this.httpClient.post(this.fileBaseUri, formData, { responseType: 'text'}).subscribe(val =>  {valString = val});
+    returnValue = this.httpClient.post(this.fileBaseUri, formData, { responseType : 'text'});
     return returnValue;
+    //console.log('image is: ' + returnValue);
+
+    //return returnValue;
   }
 }

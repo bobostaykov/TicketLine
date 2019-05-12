@@ -14,7 +14,6 @@ public interface DBFileService {
      */
     DBFile getFile(Long id);
 
-
     /**
      * Store a single file
      *

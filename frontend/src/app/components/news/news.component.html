@@ -59,9 +59,9 @@
 
               <div class="form-group">
                 <label for="inputImage">Upload Image</label>
-                <input name="image" type="file" accept="image/" formControlName="text" id="inputImage">
-                <div *ngIf="submitted && messageForm.controls.image.errors" class="error">
-                  <small class="form-text text-warning" *ngIf="messageForm.controls.image.errors.required">Your image is invalid!
+                <input #imageInput name="image" type="file" accept="image/" formControlName="image" id="inputImage" (change)="processFile(imageInput)">
+                <div *ngIf="submitted && newsForm.controls.image.errors" class="error">
+                  <small class="form-text text-warning" *ngIf="newsForm.controls.image.errors.required">Your image is invalid!
                   </small>
                 </div>
               </div>

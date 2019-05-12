@@ -37,12 +37,13 @@ public class FileEndpoint {
             .body(new ByteArrayResource((dbfile.getData())));
     }
 
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(method = RequestMethod.POST, produces = "text/plain")
     @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "Store file", authorizations = {@Authorization(value = "apiKey")})
-    public Long storeFile(@RequestParam("file") MultipartFile file) {
+    public String storeFile(@RequestParam("file") MultipartFile file) {
         try {
-            return dbFileService.storeFile(file);
+            Long returnValue = dbFileService.storeFile(file);
+            return returnValue.toString();
         }
         catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
