@@ -41,7 +41,8 @@ public class SimpleNewsService implements NewsService {
 
     @Override
     public News findOne(Long id) {
-        return newsRepository.findOneById(id).orElseThrow(NotFoundException::new);
+        News returnValue = newsRepository.findOneById(id).orElseThrow(NotFoundException::new);
+        return returnValue;
     }
 
     @Override

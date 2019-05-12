@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.DetailedNewsDTO;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.SimpleNewsDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.News;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.news.NewsMapper;
 import at.ac.tuwien.sepm.groupphase.backend.service.NewsService;
@@ -31,21 +32,22 @@ public class NewsEndpoint {
 
     @RequestMapping(method = RequestMethod.GET)
     @ApiOperation(value = "Get list of simple news entries", authorizations = {@Authorization(value = "apiKey")})
-    public List<at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.SimpleNewsDTO> findAll() {
+    public List<SimpleNewsDTO> findAll() {
         return newsMapper.newsToSimpleNewsDTO(newsService.findAll());
     }
 
 
     @RequestMapping(value = "/unread", method = RequestMethod.GET)
     @ApiOperation(value = "Get list of unread News articles", authorizations = {@Authorization(value = "apiKey")})
-    public List<at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.SimpleNewsDTO> findUnread(HttpServletRequest request) {
+    public List<SimpleNewsDTO> findUnread(HttpServletRequest request) {
         return newsMapper.newsToSimpleNewsDTO(newsService.findUnread(request.getUserPrincipal().getName()));
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ApiOperation(value = "Get detailed information about a specific news entry", authorizations = {@Authorization(value = "apiKey")})
-    public at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.DetailedNewsDTO find(@PathVariable Long id) {
-        return newsMapper.newsToDetailedNewsDTO(newsService.findOne(id));
+    public DetailedNewsDTO find(@PathVariable Long id) {
+        DetailedNewsDTO returnValue = newsMapper.newsToDetailedNewsDTO(newsService.findOne(id));
+        return returnValue;
     }
 
     /*

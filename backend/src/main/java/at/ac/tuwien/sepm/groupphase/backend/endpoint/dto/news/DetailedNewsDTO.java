@@ -78,7 +78,7 @@ public class DetailedNewsDTO {
     }
 
     public void setImage(String image) {
-        this.image = this.image;
+        this.image = image;
     }
 
     @Override
