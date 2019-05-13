@@ -292,10 +292,10 @@ public class SimpleDataGenerator {
             hall10.setLocation(location2);
 
             artistRepository.saveAll(Arrays.asList(artist1, artist2, artist3, artist4, artist5, artist6, artist7));
-            eventRepository.saveAll(Arrays.asList(event1, event2, event3, event4, event5, event6, event7, event8, event9, event10, event11, event12, event13, event13, event14, event15, event16, event17, event18, event19, event20));
+            eventRepository.saveAll(Arrays.asList(event1, event2, event3, event4, event5, event6, event7, event8, event9, event10, event11, event12, event13, event14, event15, event16, event17, event18, event19, event20));
             locationRepository.saveAll(Arrays.asList(location1, location2, location3, location4, location5, location6, location7, location8, location9, location10));
             hallRepository.saveAll(Arrays.asList(hall1, hall2, hall3, hall4, hall5, hall6, hall7, hall8, hall9, hall10));
-            showRepository.saveAll(Arrays.asList(show1, show2, show3, show4, show5, show6, show7, show7, show8, show9, show10, show11, show12, show13, show14, show15, show16, show17, show18, show19, show20, show21, show22, show23, show24, show25));
+            showRepository.saveAll(Arrays.asList(show1, show2, show3, show4, show5, show6, show7, show8, show9, show10, show11, show12, show13, show14, show15, show16, show17, show18, show19, show20, show21, show22, show23, show24, show25));
         }
     }
 
