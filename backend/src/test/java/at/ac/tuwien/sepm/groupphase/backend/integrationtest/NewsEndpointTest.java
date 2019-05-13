@@ -30,6 +30,7 @@ public class NewsEndpointTest extends BaseIntegrationTest {
 
     private static final String TEST_NEWS_TEXT = "TestNewsText";
     private static final String TEST_NEWS_TITLE = "title";
+    private static final String TEST_NEWS_IMAGEID = "1";
     private static final LocalDateTime TEST_NEWS_PUBLISHED_AT =
         LocalDateTime.of(2016, 11, 13, 12, 15, 0, 0);
     private static final long TEST_NEWS_ID = 1L;
@@ -57,6 +58,7 @@ public class NewsEndpointTest extends BaseIntegrationTest {
                     .id(TEST_NEWS_ID)
                     .title(TEST_NEWS_TITLE)
                     .text(TEST_NEWS_TEXT)
+                    .image(TEST_NEWS_IMAGEID)
                     .publishedAt(TEST_NEWS_PUBLISHED_AT)
                     .build()));
         Response response = RestAssured
@@ -93,6 +95,7 @@ public class NewsEndpointTest extends BaseIntegrationTest {
                 .id(TEST_NEWS_ID)
                 .title(TEST_NEWS_TITLE)
                 .text(TEST_NEWS_TEXT)
+                .image(TEST_NEWS_IMAGEID)
                 .publishedAt(TEST_NEWS_PUBLISHED_AT)
                 .build()));
         Response response = RestAssured
@@ -106,6 +109,7 @@ public class NewsEndpointTest extends BaseIntegrationTest {
             .id(TEST_NEWS_ID)
             .title(TEST_NEWS_TITLE)
             .text(TEST_NEWS_TEXT)
+            .image(TEST_NEWS_IMAGEID)
             .publishedAt(TEST_NEWS_PUBLISHED_AT)
             .build()));
     }
@@ -133,6 +137,7 @@ public class NewsEndpointTest extends BaseIntegrationTest {
                 .id(TEST_NEWS_ID)
                 .title(TEST_NEWS_TITLE)
                 .text(TEST_NEWS_TEXT)
+                .image(TEST_NEWS_IMAGEID)
                 .publishedAt(TEST_NEWS_PUBLISHED_AT)
                 .build())
             .when().post(NEWS_ENDPOINT)
@@ -150,6 +155,7 @@ public class NewsEndpointTest extends BaseIntegrationTest {
                 .id(TEST_NEWS_ID)
                 .title(TEST_NEWS_TITLE)
                 .text(TEST_NEWS_TEXT)
+                .image(TEST_NEWS_IMAGEID)
                 .publishedAt(TEST_NEWS_PUBLISHED_AT)
                 .build())
             .when().post(NEWS_ENDPOINT)
@@ -165,6 +171,7 @@ public class NewsEndpointTest extends BaseIntegrationTest {
                 .id(TEST_NEWS_ID)
                 .title(TEST_NEWS_TITLE)
                 .text(TEST_NEWS_TEXT)
+                .image(TEST_NEWS_IMAGEID)
                 .publishedAt(TEST_NEWS_PUBLISHED_AT)
                 .build());
         Response response = RestAssured
@@ -174,6 +181,7 @@ public class NewsEndpointTest extends BaseIntegrationTest {
             .body(at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.DetailedNewsDTO.builder()
                 .title(TEST_NEWS_TITLE)
                 .text(TEST_NEWS_TEXT)
+                .image(TEST_NEWS_IMAGEID)
                 .build())
             .when().post(NEWS_ENDPOINT)
             .then().extract().response();
@@ -182,6 +190,7 @@ public class NewsEndpointTest extends BaseIntegrationTest {
             .id(TEST_NEWS_ID)
             .title(TEST_NEWS_TITLE)
             .text(TEST_NEWS_TEXT)
+            .image(TEST_NEWS_IMAGEID)
             .publishedAt(TEST_NEWS_PUBLISHED_AT)
             .build()));
     }

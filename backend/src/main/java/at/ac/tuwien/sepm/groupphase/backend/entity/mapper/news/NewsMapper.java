@@ -11,10 +11,8 @@ import java.util.List;
 @Mapper(componentModel = "spring", uses = NewsSummaryMapper.class)
 public interface NewsMapper {
 
-    @Mapping(source = "image", target = "imageId")
     News detailedNewsDTOToNews(DetailedNewsDTO detailedNewsDTO);
 
-    @Mapping(source = "imageId", target = "image")
     DetailedNewsDTO newsToDetailedNewsDTO(News one);
 
     List<SimpleNewsDTO> newsToSimpleNewsDTO(List<News> all);
