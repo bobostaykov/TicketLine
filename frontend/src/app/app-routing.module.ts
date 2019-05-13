@@ -3,7 +3,7 @@ import {RouterModule, Routes} from '@angular/router';
 import {HomeComponent} from './components/home/home.component';
 import {LoginComponent} from './components/login/login.component';
 import {AuthGuard} from './guards/auth.guard';
-import {MessageComponent} from './components/message/message.component';
+import {NewsComponent} from './components/news/news.component';
 import {UserComponent} from './components/user/user.component';
 import {TopTenEventsComponent} from './components/events/top-ten-events/top-ten-events.component';
 import {CustomerAddComponent} from './components/customerAdd/customer-add.component';
@@ -14,7 +14,7 @@ import {ArtistResultsComponent} from './components/search-results/artist/artist-
 const routes: Routes = [
   {path: '', component: HomeComponent},
   {path: 'login', component: LoginComponent},
-  {path: 'message', canActivate: [AuthGuard], component: MessageComponent},
+  {path: 'news', canActivate: [AuthGuard], component: NewsComponent},
   {path: 'user', canActivate: [AuthGuard], component: UserComponent},
   {path: 'events/topten', canActivate: [AuthGuard], component: TopTenEventsComponent},
   {path: 'customer-add', canActivate: [AuthGuard], component: CustomerAddComponent},
