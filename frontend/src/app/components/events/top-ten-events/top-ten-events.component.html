@@ -28,12 +28,12 @@
   [showXAxisLabel]=false
   [showYAxisLabel]=false
   [showDataLabel]=true
-  (select)="goToTickets()"
+  (select)="viewShows($event)"
   [trimYAxisTicks]=false
   *ngIf="dataReady">
   <ng-template #tooltipTemplate>
     <div class="mytooltip">
-      <p class="mt-2 buy">Buy tickets</p>
+      <p class="mt-2 buy">View shows</p>
     </div>
   </ng-template>
 </ngx-charts-bar-horizontal>

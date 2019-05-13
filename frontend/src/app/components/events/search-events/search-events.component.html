@@ -1,0 +1,11 @@
+<h1 class="mt-5">Search Events</h1>
+<h3 class="mt-5">... for artist:</h3>
+
+<form [formGroup]="artistForm" (ngSubmit)="submitArtistForm()">
+  <mat-form-field class="mr-3">
+    <input matInput type="text" id="artist_name" formControlName="artist_name" placeholder="Artist Name" [(ngModel)]="artistName">
+    <mat-error *ngIf="hasError('artist_name', 'required')">Artist name is required</mat-error>
+    <mat-error *ngIf="hasError('artist_name', 'maxlength')">Artist name should be less than 60 characters</mat-error>
+  </mat-form-field>
+  <button mat-raised-button id="search_artist" color="primary">Search</button>
+</form>

@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
@@ -15,14 +16,18 @@ public class Show {
     private Long id;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(nullable = false, name = "event_id")
+    @JoinColumn(name = "event_id")
     private Event event;
 
     @Column(nullable = false, name = "date_time")
     private LocalDateTime dateTime;
 
+    @Column(nullable = false, name = "duration")
+    @Positive
+    private Integer durationInMinutes;
+
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(nullable = false, name = "hall_id")
+    @JoinColumn(name = "hall_id")
     private Hall hall;
 
     @Column(name = "description")
@@ -73,12 +78,25 @@ public class Show {
         this.description = description;
     }
 
+    public Integer getDurationInMinutes() {
+        return durationInMinutes;
+    }
+
+    public void setDurationInMinutes(Integer durationInMinutes) {
+        this.durationInMinutes = durationInMinutes;
+    }
+
+
     public Long getTicketsSold() {
         return ticketsSold;
     }
 
     public void setTicketsSold(Long ticketsSold) {
         this.ticketsSold = ticketsSold;
+    }
+
+    public static ShowBuilder builder() {
+        return new ShowBuilder();
     }
 
     @Override
@@ -89,6 +107,7 @@ public class Show {
         return id.equals(show.id) &&
             event.equals(show.event) &&
             dateTime.equals(show.dateTime) &&
+            durationInMinutes.equals(show.durationInMinutes) &&
             hall.equals(show.hall) &&
             Objects.equals(description, show.description) &&
             ticketsSold.equals(show.ticketsSold);
@@ -96,7 +115,7 @@ public class Show {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, event, dateTime, hall, description, ticketsSold);
+        return Objects.hash(id, event, dateTime, durationInMinutes, ticketsSold, hall, description);
     }
 
     @Override
@@ -105,9 +124,10 @@ public class Show {
             "id=" + id +
             ", event=" + event +
             ", dateTime=" + dateTime +
+            ", durationInMinutes=" + durationInMinutes +
+            ", ticketsSold=" + ticketsSold +
             ", hall=" + hall +
             ", description='" + description + '\'' +
-            ", ticketsSold=" + ticketsSold +
             '}';
     }
 
@@ -115,6 +135,7 @@ public class Show {
         private Long id;
         private Event event;
         private LocalDateTime dateTime;
+        private Integer durationInMinutes;
         private Hall hall;
         private String description;
         private Long ticketsSold;
@@ -128,6 +149,11 @@ public class Show {
 
         public ShowBuilder event(Event event) {
             this.event = event;
+            return this;
+        }
+
+        public ShowBuilder durationInMinutes(Integer durationInMinutes) {
+            this.durationInMinutes = durationInMinutes;
             return this;
         }
 
@@ -155,6 +181,7 @@ public class Show {
             Show show = new Show();
             show.setId(id);
             show.setEvent(event);
+            show.setDurationInMinutes(durationInMinutes);
             show.setDateTime(dateTime);
             show.setHall(hall);
             show.setDescription(description);

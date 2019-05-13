@@ -27,7 +27,7 @@ import java.util.List;
 public class CustomerEndpoint {
     private final CustomerService customerService;
     private final CustomerMapper customerMapper;
-    private static final Logger LOGGER = LoggerFactory.getLogger(SimpleHeaderTokenAuthenticationService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CustomerEndpoint.class);
 
     public CustomerEndpoint(CustomerService customerService, CustomerMapper customerMapper) {
         this.customerService = customerService;
@@ -48,6 +48,7 @@ public class CustomerEndpoint {
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ApiOperation(value = "Get detailed information about a specific customer entry", authorizations = {@Authorization(value = "apiKey")})
     public CustomerDTO find(@PathVariable Long id) {
+        LOGGER.info("Get customer with id " + id);
         return customerMapper.customerToCustomerDTO(customerService.findOne(id));
     }
 
