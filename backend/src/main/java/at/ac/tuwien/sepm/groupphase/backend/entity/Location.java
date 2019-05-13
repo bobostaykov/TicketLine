@@ -2,7 +2,6 @@ package at.ac.tuwien.sepm.groupphase.backend.entity;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
-import java.util.List;
 import java.util.Objects;
 
 //TODO put nullable in some classes by the references
@@ -22,9 +21,9 @@ public class Location {
     @Size(max = 64)
     private String city;
 
-    @Column(nullable = false, name = "postalcode")
+    @Column(nullable = false, name = "postal_code")
     @Size(max = 16)
-    private String postalcode;
+    private String postalCode;
 
     @Column(nullable = false, name = "street")
     @Size(max = 64)
@@ -58,12 +57,12 @@ public class Location {
         this.city = city;
     }
 
-    public String getPostalcode() {
-        return postalcode;
+    public String getPostalCode() {
+        return postalCode;
     }
 
-    public void setPostalcode(String postalcode) {
-        this.postalcode = postalcode;
+    public void setPostalCode(String postalCode) {
+        this.postalCode = postalCode;
     }
 
     public String getStreet() {
@@ -94,14 +93,14 @@ public class Location {
         return id.equals(location.id) &&
             country.equals(location.country) &&
             city.equals(location.city) &&
-            postalcode.equals(location.postalcode) &&
+            postalCode.equals(location.postalCode) &&
             street.equals(location.street) &&
             Objects.equals(description, location.description);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, country, city, postalcode, street, description);
+        return Objects.hash(id, country, city, postalCode, street, description);
     }
 
     @Override
@@ -110,7 +109,7 @@ public class Location {
             "id=" + id +
             ", country='" + country + '\'' +
             ", city='" + city + '\'' +
-            ", postalcode='" + postalcode + '\'' +
+            ", postalCode='" + postalCode + '\'' +
             ", street='" + street + '\'' +
             ", description='" + description + '\'' +
             '}';
@@ -161,7 +160,7 @@ public class Location {
             location.setId(id);
             location.setCountry(country);
             location.setCity(city);
-            location.setPostalcode(postalcode);
+            location.setPostalCode(postalcode);
             location.setStreet(street);
             location.setDescription(description);
             return location;

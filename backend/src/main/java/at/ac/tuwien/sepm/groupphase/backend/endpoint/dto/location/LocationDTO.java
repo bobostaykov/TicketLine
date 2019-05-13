@@ -1,10 +1,8 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.location;
 
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.hall.HallDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-import java.util.List;
 import java.util.Objects;
 
 @ApiModel(value = "LocationDTO")
@@ -20,7 +18,7 @@ public class LocationDTO {
     private String city;
 
     @ApiModelProperty(name = "Location's postal code")
-    private String postalcode;
+    private String postalCode;
 
     @ApiModelProperty(name = "Location's street")
     private String street;
@@ -52,12 +50,12 @@ public class LocationDTO {
         this.city = city;
     }
 
-    public String getPostalcode() {
-        return postalcode;
+    public String getPostalCode() {
+        return postalCode;
     }
 
-    public void setPostalcode(String postalcode) {
-        this.postalcode = postalcode;
+    public void setPostalCode(String postalCode) {
+        this.postalCode = postalCode;
     }
 
     public String getStreet() {
@@ -86,14 +84,14 @@ public class LocationDTO {
         return id.equals(that.id) &&
             country.equals(that.country) &&
             city.equals(that.city) &&
-            postalcode.equals(that.postalcode) &&
+            postalCode.equals(that.postalCode) &&
             street.equals(that.street) &&
             Objects.equals(description, that.description);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, country, city, postalcode, street, description);
+        return Objects.hash(id, country, city, postalCode, street, description);
     }
 
     @Override
@@ -102,7 +100,7 @@ public class LocationDTO {
             "id=" + id +
             ", country='" + country + '\'' +
             ", city='" + city + '\'' +
-            ", postalcode='" + postalcode + '\'' +
+            ", postalCode='" + postalCode + '\'' +
             ", street='" + street + '\'' +
             ", description='" + description + '\'' +
             '}';
@@ -153,7 +151,7 @@ public class LocationDTO {
             locationDTO.setId(id);
             locationDTO.setCountry(country);
             locationDTO.setCity(city);
-            locationDTO.setPostalcode(postalcode);
+            locationDTO.setPostalCode(postalcode);
             locationDTO.setStreet(street);
             locationDTO.setDescription(description);
             return locationDTO;

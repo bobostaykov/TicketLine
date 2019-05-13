@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {Show} from '../../dtos/show';
 import {ResultsFor} from '../../datatype/results_for';
+import {ShowService} from '../../services/show/show.service';
 
 @Component({
   selector: 'app-shows',
@@ -27,12 +28,13 @@ export class ShowComponent implements OnInit {
     'Buy'
   ];
 
-  constructor(private route: ActivatedRoute) { }
+  constructor(private route: ActivatedRoute, private showService: ShowService) { }
 
   ngOnInit() {
     const param = this.route.snapshot.queryParamMap.get('results_for');
     this.resultsFor = param !== null ? ResultsFor[param] : null;
     this.name = this.route.snapshot.queryParamMap.get('name');
+    this.loadShows();
   }
 
 
@@ -43,6 +45,17 @@ export class ShowComponent implements OnInit {
     let asString = ResultsFor[resultsFor];
     asString = asString[0] + asString.slice(1, asString.length).toLocaleLowerCase();
     return asString;
+  }
+
+
+  /**
+   * Load shows from backend
+   */
+  private loadShows() {
+    this.showService.findShows(this.resultsFor, this.name).subscribe(
+      (shows: Show[]) => { this.shows = shows; },
+      error => { this.defaultServiceErrorHandling(error); }
+    );
   }
 
 
