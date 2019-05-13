@@ -34,7 +34,28 @@ public class ShowEndpoint {
         this.showMapper = showMapper;
     }
 
-    @RequestMapping(method = RequestMethod.GET) //should the request mapping has a value
+    @RequestMapping(method = RequestMethod.GET)
+    @ApiOperation(value = "Get list of shows for a clicked event/location", authorizations = {@Authorization(value = "apiKey")})
+    public void manager(@RequestParam(value = "results_for") String results_for, @RequestParam(value = "name_or_id") String name_or_id){
+        LOGGER.info("Manager");
+        switch(results_for) {
+            case "Location":
+                // check parameter name_or_id if Integer
+                try {
+                    Integer locationID = Integer.parseInt(name_or_id);
+                  //  findAllShowsFilteredByLocationID(locationID);
+                } catch(NumberFormatException e){
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Location id is invalid");
+                }
+                break;
+            case "Event":
+                findAllShowsFilteredByEventName(name_or_id);
+                break;
+            default:
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No results for this type");
+        }
+    }
+
     @ApiOperation(value = "Get list of all shows filtered by eventName", authorizations = {@Authorization(value = "apiKey")})
     public List<ShowDTO> findAllShowsFilteredByEventName(@RequestParam(value = "eventName", required = false) String eventName){
         LOGGER.info("Get all shows which belong to event with id " + eventName);
@@ -50,7 +71,6 @@ public class ShowEndpoint {
     }
 /*
 //
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ApiOperation(value = "Get list of all shows filtered by location id", authorizations = {@Authorization(value = "apiKey")})
     public List<ShowDTO> findAllShowsFilteredByLocationID(@PathVariable("id") Integer locationID){
         LOGGER.info("Get all shows filtered by location id");

@@ -65,6 +65,30 @@ public class SimpleDataGenerator {
             Event event19 = Event.builder().id(19L).name("Quite a Quiet Quiz").eventType(EventType.OPERA).description("description").content("content").build();
             Event event20 = Event.builder().id(20L).name("Theatre Seven Dwarfs").eventType(EventType.THEATRE).description("description").content(null).build();
 
+            Event event21 = Event.builder().id(21L).name("Guns and Ships").eventType(EventType.OPERA).description("description").content("content").build();
+            Event event22 = Event.builder().id(22L).name("Bad Girls Play With Fire").eventType(EventType.OPERA).shows(null).artist(null).description("COMING SOON").content("content").build();
+            Event event23 = Event.builder().id(23L).name("How to Party").eventType(EventType.CONCERT).description("description").content("content").build();
+            Event event24 = Event.builder().id(24L).name("Magiciancon 2019").eventType(EventType.MUSICAL).description("description").content("content").build();
+            Event event25 = Event.builder().id(25L).name("Zombie Mashup").eventType(EventType.OPERA).description("description").content(null).build();
+
+            Event event26 = Event.builder().id(26L).name("Marathon For The Youngs").eventType(EventType.SPORT).description("description").content("content").build();
+            Event event27 = Event.builder().id(27L).name("HighSchool Reopening'").eventType(EventType.CONCERT).description("description").content(null).build();
+            Event event28 = Event.builder().id(28L).name("Dirty Diana").eventType(EventType.MUSICAL).shows(null).artist(null).description("COMING SOON").content(null).build();
+            Event event29 = Event.builder().id(29L).name("Coachella 2020").eventType(EventType.FESTIVAL).description("description").content("content").build();
+            Event event30 = Event.builder().id(30L).name("Some Old Time Roads").eventType(EventType.THEATRE).description("description").content(null).build();
+
+            Event event31 = Event.builder().id(31L).name("Yoga for 1000 people").eventType(EventType.SPORT).shows(null).artist(null).description("COMING SOON").content(null).build();
+            Event event32 = Event.builder().id(32L).name("Cringe Party 2020").eventType(EventType.FESTIVAL).shows(null).artist(null).description("COMING SOON").content("content").build();
+            Event event33 = Event.builder().id(33L).name("When God meets Groundmother").eventType(EventType.MOVIE).description("description").content(null).build();
+            Event event34 = Event.builder().id(34L).name("Doggy with no style").eventType(EventType.FESTIVAL).description("description").content(null).build();
+            Event event35 = Event.builder().id(35L).name("Uncle Benny").eventType(EventType.MOVIE).description("description").content(null).build();
+
+            Event event36 = Event.builder().id(36L).name("Habibis United").eventType(EventType.FESTIVAL).description("description").content("content").build();
+            Event event37 = Event.builder().id(37L).name("Tomato Sause").eventType(EventType.THEATRE).description("description").content(null).build();
+            Event event38 = Event.builder().id(38L).name("Bobby Hobby").eventType(EventType.THEATRE).description("description").content(null).build();
+            Event event39 = Event.builder().id(39L).name("Best Of Opera").eventType(EventType.OPERA).description("description").content("content").build();
+            Event event40 = Event.builder().id(40L).name("Mozart Regrets Himself").eventType(EventType.CONCERT).description("description").content(null).build();
+
             Artist artist1 = Artist.builder().id(1L).name("Zara Holland").build();
             Artist artist2 = Artist.builder().id(2L).name("Benny Loshoto").build();
             Artist artist3 = Artist.builder().id(3L).name("Reggy").build();
@@ -72,6 +96,12 @@ public class SimpleDataGenerator {
             Artist artist5 = Artist.builder().id(5L).name("Lady Galla").build();
             Artist artist6 = Artist.builder().id(6L).name("Pinna Colada").build();
             Artist artist7 = Artist.builder().id(7L).name("Steve Wonder").eventParticipations(null).build();
+            Artist artist8 = Artist.builder().id(8L).name("Johny Bravo").build();
+            Artist artist9 = Artist.builder().id(9L).name("Perry Dont Me Merry").build();
+            Artist artist10 = Artist.builder().id(10L).name("Real Thug").build();
+            Artist artist11 = Artist.builder().id(11L).name("3Beta").build();
+            Artist artist12 = Artist.builder().id(12L).name("Rice").build();
+            Artist artist13 = Artist.builder().id(13L).name("Koch").build();
 
             artist1.setEventParticipations(new ArrayList<>() {{
                 add(event1);
@@ -100,7 +130,34 @@ public class SimpleDataGenerator {
             artist6.setEventParticipations(new ArrayList<>() {{
                 add(event20);
             }});
-
+            artist8.setEventParticipations(new ArrayList<>() {{
+                add(event21);
+                add(event23);
+                add(event24);
+                add(event25);
+            }});
+            artist9.setEventParticipations(new ArrayList<>() {{
+                add(event26);
+            }});
+            artist10.setEventParticipations(new ArrayList<>() {{
+                add(event27);
+                add(event40);
+            }});
+            artist11.setEventParticipations(new ArrayList<>() {{
+                add(event33);
+                add(event39);
+            }});
+            artist12.setEventParticipations(new ArrayList<>() {{
+                add(event29);
+                add(event34);
+                add(event38);
+            }});
+            artist13.setEventParticipations(new ArrayList<>() {{
+                add(event30);
+                add(event35);
+                add(event36);
+                add(event37);
+            }});
             event1.setArtist(artist1);
             event3.setArtist(artist1);
             event4.setArtist(artist1);
@@ -116,6 +173,22 @@ public class SimpleDataGenerator {
             event17.setArtist(artist4);
             event19.setArtist(artist5);
             event20.setArtist(artist6);
+            event21.setArtist(artist8);
+            event23.setArtist(artist8);
+            event24.setArtist(artist8);
+            event25.setArtist(artist8);
+            event26.setArtist(artist9);
+            event27.setArtist(artist10);
+            event29.setArtist(artist12);
+            event30.setArtist(artist13);
+            event33.setArtist(artist11);
+            event34.setArtist(artist12);
+            event35.setArtist(artist13);
+            event36.setArtist(artist13);
+            event37.setArtist(artist13);
+            event38.setArtist(artist12);
+            event39.setArtist(artist11);
+            event40.setArtist(artist10);
 
             Show show1 = Show.builder().id(1L).durationInMinutes(180).ticketsSold(10000L).dateTime(LocalDateTime.parse("09-10-2019 10:30", formatter)).description("description").build();
             Show show2 = Show.builder().id(2L).durationInMinutes(200).ticketsSold(2000L).dateTime(LocalDateTime.parse("15-11-2019 20:30", formatter)).description("description").build();
@@ -141,37 +214,92 @@ public class SimpleDataGenerator {
             Show show19 = Show.builder().id(19L).durationInMinutes(80).ticketsSold(500L).dateTime(LocalDateTime.parse("11-05-2019 19:00", formatter)).description("description").build();
             Show show20 = Show.builder().id(20L).durationInMinutes(80).ticketsSold(500L).dateTime(LocalDateTime.parse("06-01-2019 21:30", formatter)).description("description").build();
 
-            Show show21 = Show.builder().id(21L).durationInMinutes(190).ticketsSold(12000L).dateTime(LocalDateTime.parse("05-02-2019 21:00", formatter)).description("description").build();
-            Show show22 = Show.builder().id(22L).durationInMinutes(200).ticketsSold(25000L).dateTime(LocalDateTime.parse("19-03-2019 23:30", formatter)).description("description").build();
-            Show show23 = Show.builder().id(23L).durationInMinutes(150).ticketsSold(1000L).dateTime(LocalDateTime.parse("24-04-2019 23:30", formatter)).description("description").build();
-            Show show24 = Show.builder().id(24L).durationInMinutes(160).ticketsSold(11000L).dateTime(LocalDateTime.parse("22-08-2019 23:00", formatter)).description("description").build();
-            Show show25 = Show.builder().id(25L).durationInMinutes(130).ticketsSold(1800L).dateTime(LocalDateTime.parse("23-11-2019 18:30", formatter)).description("description").build();
+            Show show21 = Show.builder().id(21L).durationInMinutes(190).ticketsSold(12000L).dateTime(LocalDateTime.parse("05-02-2020 21:00", formatter)).description("description").build();
+            Show show22 = Show.builder().id(22L).durationInMinutes(200).ticketsSold(25000L).dateTime(LocalDateTime.parse("19-03-2020 23:30", formatter)).description("description").build();
+            Show show23 = Show.builder().id(23L).durationInMinutes(150).ticketsSold(1000L).dateTime(LocalDateTime.parse("24-04-2020 23:30", formatter)).description("description").build();
+            Show show24 = Show.builder().id(24L).durationInMinutes(160).ticketsSold(11000L).dateTime(LocalDateTime.parse("22-08-2020 23:00", formatter)).description("description").build();
+            Show show25 = Show.builder().id(25L).durationInMinutes(130).ticketsSold(1800L).dateTime(LocalDateTime.parse("23-11-2020 18:30", formatter)).description("description").build();
+
+            Show show26 = Show.builder().id(26L).durationInMinutes(180).ticketsSold(1000L).dateTime(LocalDateTime.parse("09-10-2020 10:30", formatter)).description("description").build();
+            Show show27 = Show.builder().id(27L).durationInMinutes(200).ticketsSold(2500L).dateTime(LocalDateTime.parse("15-11-2020 20:30", formatter)).description("description").build();
+            Show show28 = Show.builder().id(28L).durationInMinutes(100).ticketsSold(1700L).dateTime(LocalDateTime.parse("14-08-2020 17:30", formatter)).description("description").build();
+            Show show29 = Show.builder().id(29L).durationInMinutes(50).ticketsSold(100L).dateTime(LocalDateTime.parse("07-07-2020 19:00", formatter)).description("description").build();
+            Show show30 = Show.builder().id(30L).durationInMinutes(60).ticketsSold(150L).dateTime(LocalDateTime.parse("01-01-2020 19:30", formatter)).description("description").build();
+
+            Show show31 = Show.builder().id(31L).durationInMinutes(110).ticketsSold(1700L).dateTime(LocalDateTime.parse("17-09-2020 21:00", formatter)).description("description").build();
+            Show show32 = Show.builder().id(32L).durationInMinutes(120).ticketsSold(550L).dateTime(LocalDateTime.parse("19-02-2020 23:00", formatter)).description("description").build();
+            Show show33 = Show.builder().id(33L).durationInMinutes(40).ticketsSold(450L).dateTime(LocalDateTime.parse("04-04-2020 23:30", formatter)).description("description").build();
+            Show show34 = Show.builder().id(34L).durationInMinutes(130).ticketsSold(550L).dateTime(LocalDateTime.parse("22-06-2020 14:30", formatter)).description("description").build();
+            Show show35 = Show.builder().id(35L).durationInMinutes(130).ticketsSold(50L).dateTime(LocalDateTime.parse("29-12-2020 15:30", formatter)).description("description").build();
+
+            Show show36 = Show.builder().id(36L).durationInMinutes(100).ticketsSold(200L).dateTime(LocalDateTime.parse("16-07-2020 10:30", formatter)).description("description").build();
+            Show show37 = Show.builder().id(37L).durationInMinutes(110).ticketsSold(180L).dateTime(LocalDateTime.parse("04-12-2020 12:00", formatter)).description("description").build();
+            Show show38 = Show.builder().id(38L).durationInMinutes(120).ticketsSold(120L).dateTime(LocalDateTime.parse("03-11-2020 12:30", formatter)).description("description").build();
+            Show show39 = Show.builder().id(39L).durationInMinutes(90).ticketsSold(140L).dateTime(LocalDateTime.parse("17-02-2020 13:00", formatter)).description("description").build();
+            Show show40 = Show.builder().id(40L).durationInMinutes(70).ticketsSold(190L).dateTime(LocalDateTime.parse("23-02-2020 15:00", formatter)).description("description").build();
+
+            Show show41 = Show.builder().id(41L).durationInMinutes(70).ticketsSold(210L).dateTime(LocalDateTime.parse("28-07-2020 17:30", formatter)).description("description").build();
+            Show show42 = Show.builder().id(42L).durationInMinutes(80).ticketsSold(440L).dateTime(LocalDateTime.parse("30-08-2020 15:00", formatter)).description("description").build();
+            Show show43 = Show.builder().id(43L).durationInMinutes(80).ticketsSold(150L).dateTime(LocalDateTime.parse("30-03-2020 11:00", formatter)).description("description").build();
+            Show show44 = Show.builder().id(44L).durationInMinutes(80).ticketsSold(590L).dateTime(LocalDateTime.parse("11-05-2020 19:00", formatter)).description("description").build();
+            Show show45 = Show.builder().id(45L).durationInMinutes(80).ticketsSold(520L).dateTime(LocalDateTime.parse("06-01-2020 21:30", formatter)).description("description").build();
+
+            Show show46 = Show.builder().id(46L).durationInMinutes(190).ticketsSold(1200L).dateTime(LocalDateTime.parse("05-02-2019 21:00", formatter)).description("description").build();
+            Show show47 = Show.builder().id(47L).durationInMinutes(200).ticketsSold(2500L).dateTime(LocalDateTime.parse("19-03-2019 23:30", formatter)).description("description").build();
+            Show show48 = Show.builder().id(48L).durationInMinutes(150).ticketsSold(1800L).dateTime(LocalDateTime.parse("24-04-2019 23:30", formatter)).description("description").build();
+            Show show49 = Show.builder().id(49L).durationInMinutes(160).ticketsSold(1100L).dateTime(LocalDateTime.parse("22-08-2019 23:00", formatter)).description("description").build();
+            Show show50 = Show.builder().id(50L).durationInMinutes(130).ticketsSold(1800L).dateTime(LocalDateTime.parse("23-11-2019 18:30", formatter)).description("description").build();
 
             show1.setEvent(event1);
             show2.setEvent(event3);
-            show24.setEvent(event3);
             show3.setEvent(event4);
-            show15.setEvent(event4);
             show4.setEvent(event5);
-            show16.setEvent(event5);
             show5.setEvent(event6);
             show6.setEvent(event7);
-            show17.setEvent(event7);
-            show25.setEvent(event7);
             show7.setEvent(event9);
             show8.setEvent(event10);
             show9.setEvent(event13);
             show10.setEvent(event14);
             show11.setEvent(event15);
-            show19.setEvent(event15);
             show12.setEvent(event16);
+            show13.setEvent(event19);
+            show14.setEvent(event20);
+            show15.setEvent(event4);
+            show16.setEvent(event5);
+            show17.setEvent(event7);
             show18.setEvent(event16);
+            show19.setEvent(event15);
             show20.setEvent(event16);
             show21.setEvent(event17);
-            show13.setEvent(event19);
             show22.setEvent(event19);
-            show14.setEvent(event20);
             show23.setEvent(event20);
+            show24.setEvent(event37);
+            show25.setEvent(event33);
+            show26.setEvent(event36);
+            show27.setEvent(event34);
+            show28.setEvent(event32);
+            show29.setEvent(event27);
+            show30.setEvent(event40);
+            show31.setEvent(event22);
+            show32.setEvent(event37);
+            show33.setEvent(event21);
+            show34.setEvent(event35);
+            show35.setEvent(event34);
+            show36.setEvent(event29);
+            show37.setEvent(event26);
+            show38.setEvent(event25);
+            show39.setEvent(event21);
+            show40.setEvent(event23);
+            show41.setEvent(event36);
+            show42.setEvent(event38);
+            show43.setEvent(event39);
+            show44.setEvent(event31);
+            show45.setEvent(event30);
+            show46.setEvent(event25);
+            show47.setEvent(event26);
+            show48.setEvent(event29);
+            show49.setEvent(event28);
+            show50.setEvent(event27);
 
             /* //Gives Nested exception is java.lang.StackOverflowError (Don't know why)
 
@@ -242,6 +370,11 @@ public class SimpleDataGenerator {
             Hall hall8 = Hall.builder().id(8L).name("Hall8").build();
             Hall hall9 = Hall.builder().id(9L).name("Hall9").build();
             Hall hall10 = Hall.builder().id(10L).name("Hall10").build();
+            Hall hall11 = Hall.builder().id(11L).name("Hall11").build();
+            Hall hall12 = Hall.builder().id(12L).name("Hall12").build();
+            Hall hall13 = Hall.builder().id(13L).name("Hall13").build();
+            Hall hall14 = Hall.builder().id(14L).name("Hall14").build();
+            Hall hall15 = Hall.builder().id(15L).name("Hall15").build();
 
             show1.setHall(hall1);
             show2.setHall(hall2);
@@ -268,17 +401,42 @@ public class SimpleDataGenerator {
             show23.setHall(hall9);
             show24.setHall(hall10);
             show25.setHall(hall10);
+            show26.setHall(hall11);
+            show27.setHall(hall13);
+            show28.setHall(hall14);
+            show29.setHall(hall9);
+            show30.setHall(hall10);
+            show31.setHall(hall12);
+            show32.setHall(hall15);
+            show33.setHall(hall15);
+            show34.setHall(hall14);
+            show35.setHall(hall2);
+            show36.setHall(hall3);
+            show37.setHall(hall5);
+            show38.setHall(hall5);
+            show39.setHall(hall5);
+            show40.setHall(hall7);
+            show41.setHall(hall1);
+            show42.setHall(hall8);
+            show43.setHall(hall8);
+            show44.setHall(hall8);
+            show45.setHall(hall3);
+            show46.setHall(hall14);
+            show47.setHall(hall15);
+            show48.setHall(hall9);
+            show49.setHall(hall10);
+            show50.setHall(hall10);
 
             Location location1 = Location.builder().id(1L).country("Austria").city("Vienna").postalcode("1090").street("Tendlergasse 12").build();
             Location location2 = Location.builder().id(2L).country("Austria").city("Vienna").postalcode("1220").street("Josef Baumann Gasse 8").build();
             Location location3 = Location.builder().id(3L).country("Austria").city("Vienna").postalcode("1010").street("Maria-Theresien-Platz").build();
-            Location location4 = Location.builder().id(4L).country("Austria").city("Vienna").postalcode("1211").street("Siemensstraße 90").description("No Halls").build();
-            Location location5 = Location.builder().id(5L).country("Austria").city("Vienna").postalcode("1010").street("Burgring 7").description("No Halls").build();
+            Location location4 = Location.builder().id(4L).country("Austria").city("Vienna").postalcode("1211").street("Siemensstraße 90").build();
+            Location location5 = Location.builder().id(5L).country("Austria").city("Vienna").postalcode("1010").street("Burgring 7").build();
             Location location6 = Location.builder().id(6L).country("Austria").city("Vienna").postalcode("1030").street("Prinz Eugen-Straße 27").build();
             Location location7 = Location.builder().id(7L).country("Austria").city("Vienna").postalcode("1020").street("Oswald-Thomas-Platz 1").build();
             Location location8 = Location.builder().id(8L).country("Austria").city("Vienna").postalcode("1130").street("Schönbrunner Schloßstraße").build();
             Location location9 = Location.builder().id(9L).country("Austria").city("Vienna").postalcode("1060").street("Gumpendorfer Straße 142").build();
-            Location location10 = Location.builder().id(10L).country("Austria").city("Vienna").postalcode("1050").street("Burggasse 121").description("No Halls").build();
+            Location location10 = Location.builder().id(10L).country("Austria").city("Vienna").postalcode("1050").street("Burggasse 121").build();
 
             hall1.setLocation(location1);
             hall2.setLocation(location2);
@@ -289,13 +447,18 @@ public class SimpleDataGenerator {
             hall7.setLocation(location7);
             hall8.setLocation(location8);
             hall9.setLocation(location9);
-            hall10.setLocation(location2);
+            hall10.setLocation(location4);
+            hall11.setLocation(location5);
+            hall12.setLocation(location9);
+            hall13.setLocation(location8);
+            hall14.setLocation(location9);
+            hall15.setLocation(location3);
 
-            artistRepository.saveAll(Arrays.asList(artist1, artist2, artist3, artist4, artist5, artist6, artist7));
-            eventRepository.saveAll(Arrays.asList(event1, event2, event3, event4, event5, event6, event7, event8, event9, event10, event11, event12, event13, event13, event14, event15, event16, event17, event18, event19, event20));
+            artistRepository.saveAll(Arrays.asList(artist1, artist2, artist3, artist4, artist5, artist6, artist7, artist8, artist9, artist10, artist11, artist12, artist13));
+            eventRepository.saveAll(Arrays.asList(event1, event2, event3, event4, event5, event6, event7, event8, event9, event10, event11, event12, event13, event14, event15, event16, event17, event18, event19, event20, event21, event22, event23, event24, event25, event26, event27, event28, event29, event30, event31, event32, event33, event34, event35, event35, event36, event37, event38, event39, event40));
             locationRepository.saveAll(Arrays.asList(location1, location2, location3, location4, location5, location6, location7, location8, location9, location10));
-            hallRepository.saveAll(Arrays.asList(hall1, hall2, hall3, hall4, hall5, hall6, hall7, hall8, hall9, hall10));
-            showRepository.saveAll(Arrays.asList(show1, show2, show3, show4, show5, show6, show7, show7, show8, show9, show10, show11, show12, show13, show14, show15, show16, show17, show18, show19, show20, show21, show22, show23, show24, show25));
+            hallRepository.saveAll(Arrays.asList(hall1, hall2, hall3, hall4, hall5, hall6, hall7, hall8, hall9, hall10, hall11, hall12, hall13, hall14, hall15));
+            showRepository.saveAll(Arrays.asList(show1, show2, show3, show4, show5, show6, show7, show8, show9, show10, show11, show12, show13, show14, show15, show16, show17, show18, show19, show20, show21, show22, show23, show24, show25, show26, show27, show28, show29, show30, show31, show32, show33, show34, show35, show36, show37, show38, show39, show40, show41, show42, show43, show44, show45, show46, show47, show48, show49, show50));
         }
     }
 
