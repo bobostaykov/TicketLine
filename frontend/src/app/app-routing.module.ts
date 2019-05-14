@@ -8,6 +8,8 @@ import {UserComponent} from './components/user/user.component';
 import {TopTenEventsComponent} from './components/events/top-ten-events/top-ten-events.component';
 import {CustomerAddComponent} from './components/customerAdd/customer-add.component';
 import {CustomerComponent} from './components/customer/customer.component';
+import {FloorplanComponent} from './components/floorplan/floorplan.component';
+import {FloorplanControlComponent} from './components/floorplan-control/floorplan-control.component';
 
 const routes: Routes = [
   {path: '', component: HomeComponent},
@@ -17,7 +19,8 @@ const routes: Routes = [
   {path: 'customer-add', canActivate: [AuthGuard], component: CustomerAddComponent},
   {path: 'customers', canActivate: [AuthGuard], component: CustomerComponent},
   {path: 'user', canActivate: [AuthGuard], component: UserComponent},
-  {path: 'events/topten', canActivate: [AuthGuard], component: TopTenEventsComponent}
+  {path: 'events/topten', canActivate: [AuthGuard], component: TopTenEventsComponent},
+  {path: 'floorplan', canActivate: [AuthGuard], component: FloorplanControlComponent}
 ];
 
 @NgModule({

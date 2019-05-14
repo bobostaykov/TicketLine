@@ -21,6 +21,8 @@ import {NgxChartsModule} from '@swimlane/ngx-charts';
 import { CustomerAddComponent } from './components/customerAdd/customer-add.component';
 import { CustomerComponent } from './components/customer/customer.component';
 import { CustomerDialogComponent } from './components/customer-dialog/customer-dialog.component';
+import { FloorplanComponent } from './components/floorplan/floorplan.component';
+import { FloorplanControlComponent } from './components/floorplan-control/floorplan-control.component';
 
 @NgModule({
   declarations: [
@@ -35,6 +37,8 @@ import { CustomerDialogComponent } from './components/customer-dialog/customer-d
     CustomerAddComponent,
     CustomerComponent,
     CustomerDialogComponent,
+    FloorplanComponent,
+    FloorplanControlComponent,
   ],
   imports: [
     BrowserModule,

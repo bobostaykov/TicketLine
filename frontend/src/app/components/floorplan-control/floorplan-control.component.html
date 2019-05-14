@@ -1,0 +1,56 @@
+<form #addSeatForm='ngForm' (ngSubmit)="addSeatForm.valid && addSeats()" class="col-sm-4">
+  <div class="input-group mb-2 mt-4">
+    <div class="input-group-prepend col-sm-5 p-0">
+      <span class="input-group-text col-sm-12">Seat Rows</span>
+    </div>
+    <label class="sr-only" for="seatRowStart">Seat Row Start</label>
+    <input id="seatRowStart" type="number" name="seatRowStart" class="form-control"
+           aria-labelledby="Seat Row Start"
+           [(ngModel)]="seatFormModel.seatRowStart"
+           [required]="seatFormModel.seatRowEnd === null"
+           min="1"
+           #seatRowStart='ngModel'/>
+    <span class="input-group-text">-</span>
+    <label class="sr-only" for="seatRowEnd">Seat Row End</label>
+    <input id="seatRowEnd" type="number" name="seatRowEnd" class="form-control"
+           aria-labelledby="Seat Row End"
+           [(ngModel)]="seatFormModel.seatRowEnd"
+           [required]="seatFormModel.seatRowStart === null"
+           min="1"
+           #seatRowEnd='ngModel'/>
+  </div>
+  <div [hidden]="seatRowStart.valid || seatRowEnd.valid || addSeatForm.pristine" class="form-text text-warning">
+    Please enter rows to add seats to!
+  </div>
+  <div class="input-group my-2">
+    <div class="input-group-prepend col-sm-5 p-0">
+      <span class="input-group-text col-sm-12">Seat Numbers</span>
+    </div>
+    <label class="sr-only" for="seatNumberStart">Seat Numbers Start</label>
+    <input id="seatNumberStart" type="number" name="seatNumberStart" class="form-control"
+           aria-labelledby="Seat Numbers Start"
+           [(ngModel)]="seatFormModel.seatNumberStart"
+           [required]="seatFormModel.seatNumberEnd === null"
+           min="1"
+           #seatNumberStart='ngModel'/>
+    <span class="input-group-text">-</span>
+    <label class="sr-only" for="seatNumberEnd">Seat Numbers End</label>
+    <input id="seatNumberEnd" type="number" name="seatNumberEnd" class="form-control"
+           aria-labelledby="Seat Numbers End"
+           [(ngModel)]="seatFormModel.seatNumberEnd"
+           [required]="seatFormModel.seatNumberStart === null"
+           min="1"
+           #seatNumberEnd='ngModel'/>
+  </div>
+  <div [hidden]="seatNumberStart.valid || seatNumberEnd.valid || addSeatForm.pristine" class="form-text text-warning">
+    Please enter seat numbers for added seats!
+  </div>
+  <div>
+    <button type="submit" class="btn btn-secondary  align-self-center" [disabled]="addSeatForm.invalid">Add Seats</button>
+  </div>
+</form>
+<hr/>
+<div>
+  <app-floorplan [seats]="seats"></app-floorplan>
+</div>
+
