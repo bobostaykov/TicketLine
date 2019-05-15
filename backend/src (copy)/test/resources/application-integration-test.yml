@@ -1,0 +1,17 @@
+logging:
+  file: ./log/backend-test.log
+  level.: INFO
+  level.at.ac.tuwien.sepm.groupphase.backend: ALL
+
+application:
+  authentication:
+    secret: jwtTestSecret
+
+spring:
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+  datasource:
+    url: jdbc:h2:mem:backend;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver

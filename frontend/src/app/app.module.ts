@@ -23,6 +23,7 @@ import { SearchEventsComponent } from './components/events/search-events/search-
 import { ArtistResultsComponent } from './components/search-results/artist/artist-results.component';
 import { ShowComponent } from './components/show/show.component';
 import { EventsComponent } from './components/events/start page/events.component';
+import {TicketComponent} from './components/ticket/ticket.component';
 
 @NgModule({
   declarations: [
@@ -39,6 +40,7 @@ import { EventsComponent } from './components/events/start page/events.component
     ArtistResultsComponent,
     ShowComponent,
     EventsComponent,
+    TicketComponent
   ],
   imports: [
     BrowserModule,
