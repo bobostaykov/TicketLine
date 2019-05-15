@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.mapper;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.DetailedNewsDTO;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.SimpleNewsDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.News;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.news.NewsMapper;
 import org.junit.Test;
@@ -44,7 +45,7 @@ public class NewsMapperTest {
             .title(NEWS_TITLE)
             .text(NEWS_TEXT)
             .build();
-        at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.SimpleNewsDTO simpleNewsDTO = newsMapper.newsToSimpleNewsDTO(news);
+        SimpleNewsDTO simpleNewsDTO = newsMapper.newsToSimpleNewsDTO(news);
         assertThat(simpleNewsDTO).isNotNull();
         assertThat(simpleNewsDTO.getId()).isEqualTo(1L);
         assertThat(simpleNewsDTO.getPublishedAt()).isEqualTo(NEWS_PUBLISHED_AT);
@@ -60,7 +61,7 @@ public class NewsMapperTest {
             .title(NEWS_TITLE)
             .text(NEWS_SUMMARY)
             .build();
-        at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.SimpleNewsDTO simpleNewsDTO = newsMapper.newsToSimpleNewsDTO(news);
+        SimpleNewsDTO simpleNewsDTO = newsMapper.newsToSimpleNewsDTO(news);
         assertThat(simpleNewsDTO).isNotNull();
         assertThat(simpleNewsDTO.getId()).isEqualTo(1L);
         assertThat(simpleNewsDTO.getPublishedAt()).isEqualTo(NEWS_PUBLISHED_AT);

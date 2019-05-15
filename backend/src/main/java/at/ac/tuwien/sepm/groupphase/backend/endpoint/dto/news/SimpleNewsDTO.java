@@ -116,8 +116,8 @@ public class SimpleNewsDTO {
             return this;
         }
 
-        public at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.SimpleNewsDTO build() {
-            at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.SimpleNewsDTO newsDTO = new at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.SimpleNewsDTO();
+        public SimpleNewsDTO build() {
+            SimpleNewsDTO newsDTO = new SimpleNewsDTO();
             newsDTO.setId(id);
             newsDTO.setPublishedAt(publishedAt);
             newsDTO.setTitle(title);
