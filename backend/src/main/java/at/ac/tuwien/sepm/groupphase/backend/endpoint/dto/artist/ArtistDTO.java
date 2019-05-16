@@ -64,7 +64,6 @@ public class ArtistDTO {
 
         private Long id;
         private String name;
-        private List<EventDTO> eventParticipations;
 
         private ArtistDTOBuilder() {}
 

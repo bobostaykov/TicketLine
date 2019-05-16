@@ -4,7 +4,6 @@ import at.ac.tuwien.sepm.groupphase.backend.datatype.EventType;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
-import java.util.List;
 import java.util.Objects;
 
 @Entity
