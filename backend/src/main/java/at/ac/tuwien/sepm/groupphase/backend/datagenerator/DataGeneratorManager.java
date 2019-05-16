@@ -14,14 +14,13 @@ import javax.annotation.PostConstruct;
 
 
 /**
- * CLASS NO LONGER USED
  * The classes manages the time and order of generating objects to fill the database
  */
 @Profile("generateData")
 @Component
 public class DataGeneratorManager implements ApplicationContextAware {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DataGeneratorManager.class);
+    private final Logger LOGGER = LoggerFactory.getLogger(getClass());
     private ApplicationContext context;
 
     DataGeneratorManager(){
@@ -31,7 +30,13 @@ public class DataGeneratorManager implements ApplicationContextAware {
     @PostConstruct
     private void generateData() {
         LOGGER.info("---------- START DATA GENERATION ----------");
-        //context.getBean(<Object>DataGenerator.class).generate<Objects>();
+        context.getBean(NewsDataGenerator.class).generate();
+        context.getBean(ArtistDataGenerator.class).generate();
+        context.getBean(EventDataGenerator.class).generate();
+        context.getBean(LocationDataGenerator.class).generate();
+        context.getBean(HallDataGenerator.class).generate();
+        context.getBean(EventDataGenerator.class).generate();
+        context.getBean(ShowDataGenerator.class).generate();
         LOGGER.info("--------- DATA GENERATION COMPLETE --------");
     }
 

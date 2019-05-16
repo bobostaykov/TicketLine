@@ -13,11 +13,14 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+/*
+    CLASS IS NO LONGER USED
+ */
 @Profile("generateData")
 @Component
 public class SimpleDataGenerator {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SimpleDataGenerator.class);
+    private final Logger LOGGER = LoggerFactory.getLogger(getClass());
     private final DateTimeFormatter formatter;
 
     private EventRepository eventRepository;
@@ -35,7 +38,7 @@ public class SimpleDataGenerator {
         formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
     }
 
-    @PostConstruct
+    //@PostConstruct
     public void generateData() {
         if (eventRepository.count() > 0 || showRepository.count() > 0 || artistRepository.count() > 0) {
             LOGGER.info("Data already generated");
