@@ -119,7 +119,7 @@ public class Location {
         private Long id;
         private String country;
         private String city;
-        private String postalcode;
+        private String postalCode;
         private String street;
         private String description;
 
@@ -140,8 +140,8 @@ public class Location {
             return this;
         }
 
-        public LocationBuilder postalcode(String postalcode) {
-            this.postalcode = postalcode;
+        public LocationBuilder postalCode(String postalCode) {
+            this.postalCode = postalCode;
             return this;
         }
 
@@ -160,7 +160,7 @@ public class Location {
             location.setId(id);
             location.setCountry(country);
             location.setCity(city);
-            location.setPostalCode(postalcode);
+            location.setPostalCode(postalCode);
             location.setStreet(street);
             location.setDescription(description);
             return location;

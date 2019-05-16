@@ -110,7 +110,7 @@ public class LocationDTO {
         private Long id;
         private String country;
         private String city;
-        private String postalcode;
+        private String postalCode;
         private String street;
         private String description;
 
@@ -131,8 +131,8 @@ public class LocationDTO {
             return this;
         }
 
-        public LocationDTOBuilder postalcode(String postalcode) {
-            this.postalcode = postalcode;
+        public LocationDTOBuilder postalCode(String postalCode) {
+            this.postalCode = postalCode;
             return this;
         }
 
@@ -151,7 +151,7 @@ public class LocationDTO {
             locationDTO.setId(id);
             locationDTO.setCountry(country);
             locationDTO.setCity(city);
-            locationDTO.setPostalCode(postalcode);
+            locationDTO.setPostalCode(postalCode);
             locationDTO.setStreet(street);
             locationDTO.setDescription(description);
             return locationDTO;
