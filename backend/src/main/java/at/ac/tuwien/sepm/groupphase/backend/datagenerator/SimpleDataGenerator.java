@@ -42,19 +42,19 @@ public class SimpleDataGenerator {
         } else {
             LOGGER.info("GENERATING DATA");
             Event event1 = Event.builder().id(1L).name("Balloons N Ribbons").eventType(EventType.FESTIVAL).description("description").content("content").build();
-            Event event2 = Event.builder().id(2L).name("MemoriesMade").eventType(EventType.MOVIE).shows(null).artist(null).description("COMING SOON").content("content").build();
+            Event event2 = Event.builder().id(2L).name("MemoriesMade").eventType(EventType.MOVIE).artist(null).description("COMING SOON").content("content").build();
             Event event3 = Event.builder().id(3L).name("Lucky Charms").eventType(EventType.CONCERT).description("description").content("content").build();
             Event event4 = Event.builder().id(4L).name("PartyPies").eventType(EventType.MUSICAL).description("description").content("content").build();
             Event event5 = Event.builder().id(5L).name("Dreams Come True").eventType(EventType.OPERA).description("description").content(null).build();
 
             Event event6 = Event.builder().id(6L).name("Superathon 2019").eventType(EventType.SPORT).description("description").content("content").build();
             Event event7 = Event.builder().id(7L).name("Back in time 20'").eventType(EventType.CONCERT).description("description").content(null).build();
-            Event event8 = Event.builder().id(8L).name("HouseParty").eventType(EventType.MUSICAL).shows(null).artist(null).description("COMING SOON").content(null).build();
+            Event event8 = Event.builder().id(8L).name("HouseParty").eventType(EventType.MUSICAL).artist(null).description("COMING SOON").content(null).build();
             Event event9 = Event.builder().id(9L).name("Music Festival 21'").eventType(EventType.FESTIVAL).description("description").content("content").build();
             Event event10 = Event.builder().id(10L).name("Fate & Fiesta").eventType(EventType.THEATRE).description("description").content(null).build();
 
-            Event event11 = Event.builder().id(11L).name("Galla Evening For Many").eventType(EventType.CONCERT).shows(null).artist(null).description("COMING SOON").content(null).build();
-            Event event12 = Event.builder().id(12L).name("Early Halloween").eventType(EventType.MUSICAL).shows(null).artist(null).description("COMING SOON").content("content").build();
+            Event event11 = Event.builder().id(11L).name("Galla Evening For Many").eventType(EventType.CONCERT).artist(null).description("COMING SOON").content(null).build();
+            Event event12 = Event.builder().id(12L).name("Early Halloween").eventType(EventType.MUSICAL).artist(null).description("COMING SOON").content("content").build();
             Event event13 = Event.builder().id(13L).name("Welcome to Valhalla").eventType(EventType.THEATRE).description("description").content(null).build();
             Event event14 = Event.builder().id(14L).name("Animecon").eventType(EventType.FESTIVAL).description("description").content(null).build();
             Event event15 = Event.builder().id(15L).name("Superbowl").eventType(EventType.SPORT).description("description").content(null).build();
@@ -66,19 +66,19 @@ public class SimpleDataGenerator {
             Event event20 = Event.builder().id(20L).name("Theatre Seven Dwarfs").eventType(EventType.THEATRE).description("description").content(null).build();
 
             Event event21 = Event.builder().id(21L).name("Guns and Ships").eventType(EventType.OPERA).description("description").content("content").build();
-            Event event22 = Event.builder().id(22L).name("Bad Girls Play With Fire").eventType(EventType.OPERA).shows(null).artist(null).description("COMING SOON").content("content").build();
+            Event event22 = Event.builder().id(22L).name("Bad Girls Play With Fire").eventType(EventType.OPERA).artist(null).description("COMING SOON").content("content").build();
             Event event23 = Event.builder().id(23L).name("How to Party").eventType(EventType.CONCERT).description("description").content("content").build();
             Event event24 = Event.builder().id(24L).name("Magiciancon 2019").eventType(EventType.MUSICAL).description("description").content("content").build();
             Event event25 = Event.builder().id(25L).name("Zombie Mashup").eventType(EventType.OPERA).description("description").content(null).build();
 
             Event event26 = Event.builder().id(26L).name("Marathon For The Youngs").eventType(EventType.SPORT).description("description").content("content").build();
             Event event27 = Event.builder().id(27L).name("HighSchool Reopening'").eventType(EventType.CONCERT).description("description").content(null).build();
-            Event event28 = Event.builder().id(28L).name("Dirty Diana").eventType(EventType.MUSICAL).shows(null).artist(null).description("COMING SOON").content(null).build();
+            Event event28 = Event.builder().id(28L).name("Dirty Diana").eventType(EventType.MUSICAL).artist(null).description("COMING SOON").content(null).build();
             Event event29 = Event.builder().id(29L).name("Coachella 2020").eventType(EventType.FESTIVAL).description("description").content("content").build();
             Event event30 = Event.builder().id(30L).name("Some Old Time Roads").eventType(EventType.THEATRE).description("description").content(null).build();
 
-            Event event31 = Event.builder().id(31L).name("Yoga for 1000 people").eventType(EventType.SPORT).shows(null).artist(null).description("COMING SOON").content(null).build();
-            Event event32 = Event.builder().id(32L).name("Cringe Party 2020").eventType(EventType.FESTIVAL).shows(null).artist(null).description("COMING SOON").content("content").build();
+            Event event31 = Event.builder().id(31L).name("Yoga for 1000 people").eventType(EventType.SPORT).artist(null).description("COMING SOON").content(null).build();
+            Event event32 = Event.builder().id(32L).name("Cringe Party 2020").eventType(EventType.FESTIVAL).artist(null).description("COMING SOON").content("content").build();
             Event event33 = Event.builder().id(33L).name("When God meets Groundmother").eventType(EventType.MOVIE).description("description").content(null).build();
             Event event34 = Event.builder().id(34L).name("Doggy with no style").eventType(EventType.FESTIVAL).description("description").content(null).build();
             Event event35 = Event.builder().id(35L).name("Uncle Benny").eventType(EventType.MOVIE).description("description").content(null).build();
@@ -95,7 +95,7 @@ public class SimpleDataGenerator {
             Artist artist4 = Artist.builder().id(4L).name("Tonio Bananas").build();
             Artist artist5 = Artist.builder().id(5L).name("Lady Galla").build();
             Artist artist6 = Artist.builder().id(6L).name("Pinna Colada").build();
-            Artist artist7 = Artist.builder().id(7L).name("Steve Wonder").eventParticipations(null).build();
+            Artist artist7 = Artist.builder().id(7L).name("Steve Wonder").build();
             Artist artist8 = Artist.builder().id(8L).name("Johny Bravo").build();
             Artist artist9 = Artist.builder().id(9L).name("Perry Dont Me Merry").build();
             Artist artist10 = Artist.builder().id(10L).name("Real Thug").build();
@@ -103,6 +103,7 @@ public class SimpleDataGenerator {
             Artist artist12 = Artist.builder().id(12L).name("Rice").build();
             Artist artist13 = Artist.builder().id(13L).name("Koch").build();
 
+            /*
             artist1.setEventParticipations(new ArrayList<>() {{
                 add(event1);
                 add(event3);
@@ -158,6 +159,7 @@ public class SimpleDataGenerator {
                 add(event36);
                 add(event37);
             }});
+            */
             event1.setArtist(artist1);
             event3.setArtist(artist1);
             event4.setArtist(artist1);
@@ -301,8 +303,8 @@ public class SimpleDataGenerator {
             show49.setEvent(event28);
             show50.setEvent(event27);
 
-            /* //Gives Nested exception is java.lang.StackOverflowError (Don't know why)
-
+            /*
+             //Was giving Nested exception is java.lang.StackOverflowError (Don't know why)
             event1.setShows(new ArrayList<>() {{
                 add(show1);
             }});

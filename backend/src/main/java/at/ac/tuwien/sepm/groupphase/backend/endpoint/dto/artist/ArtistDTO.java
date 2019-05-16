@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 
 
@@ -16,9 +17,6 @@ public class ArtistDTO {
 
     @ApiModelProperty(name = "The name of the artist")
     private String name;
-
-    @ApiModelProperty(name = "The events in which the artists has or will participate")
-    private HashSet<EventDTO> eventParticipations;
 
     public Long getId() {
         return id;
@@ -36,14 +34,6 @@ public class ArtistDTO {
         this.name = name;
     }
 
-    public HashSet<EventDTO> getEventParticipations() {
-        return eventParticipations;
-    }
-
-    public void setEventParticipations(HashSet<EventDTO> eventParticipations) {
-        this.eventParticipations = eventParticipations;
-    }
-
     public static ArtistDTOBuilder builder() {
         return new ArtistDTOBuilder();
     }
@@ -54,13 +44,12 @@ public class ArtistDTO {
         if (o == null || getClass() != o.getClass()) return false;
         ArtistDTO artistDTO = (ArtistDTO) o;
         return id.equals(artistDTO.id) &&
-            name.equals(artistDTO.name) &&
-            Objects.equals(eventParticipations, artistDTO.eventParticipations);
+            name.equals(artistDTO.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, eventParticipations);
+        return Objects.hash(id, name);
     }
 
     @Override
@@ -68,7 +57,6 @@ public class ArtistDTO {
         return "ArtistDTO{" +
             "id=" + id +
             ", name='" + name + '\'' +
-            ", eventParticipations=" + eventParticipations +
             '}';
     }
 
@@ -76,7 +64,7 @@ public class ArtistDTO {
 
         private Long id;
         private String name;
-        private HashSet<EventDTO> eventParticipations;
+        private List<EventDTO> eventParticipations;
 
         private ArtistDTOBuilder() {}
 
@@ -90,16 +78,10 @@ public class ArtistDTO {
             return this;
         }
 
-        public ArtistDTOBuilder eventParticipations(HashSet<EventDTO> eventParticipations) {
-            this.eventParticipations = eventParticipations;
-            return this;
-        }
-
         public ArtistDTO build() {
             ArtistDTO artist = new ArtistDTO();
             artist.setId(id);
             artist.setName(name);
-            artist.setEventParticipations(eventParticipations);
             return artist;
         }
     }

@@ -28,4 +28,5 @@ public interface ShowRepository extends JpaRepository<Show, Long> {
      * @return a list of found shows matching the criteria
      */
     //List<Show> findAllByLocationID(Integer locationID);
+
 }

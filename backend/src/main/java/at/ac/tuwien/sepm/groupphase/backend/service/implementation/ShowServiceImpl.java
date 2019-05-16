@@ -34,7 +34,7 @@ public class ShowServiceImpl implements ShowService {
         }
     }
 
-    /*
+/*
     @Override
     public List<Show> findAllShowsFilteredByLocationID(Integer locationID) {
         LOGGER.info("Find all shows filtered by location id");

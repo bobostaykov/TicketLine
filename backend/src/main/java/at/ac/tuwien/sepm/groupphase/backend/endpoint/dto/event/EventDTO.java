@@ -6,7 +6,7 @@ import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.show.ShowDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 
 @ApiModel(value = "EventDTO")
@@ -29,9 +29,6 @@ public class EventDTO {
 
     @ApiModelProperty(name = "The artist that participates in the event")
     private ArtistDTO artist;
-
-    @ApiModelProperty(name = "The shows from which the event consists")
-    private HashSet<ShowDTO> shows;
 
     public Long getId() {
         return id;
@@ -81,14 +78,6 @@ public class EventDTO {
         this.artist = artist;
     }
 
-    public HashSet<ShowDTO> getShows() {
-        return shows;
-    }
-
-    public void setShows(HashSet<ShowDTO> shows) {
-        this.shows = shows;
-    }
-
     public static EventDTOBuilder builder() {
         return new EventDTOBuilder();
     }
@@ -103,13 +92,12 @@ public class EventDTO {
             eventType == eventDTO.eventType &&
             Objects.equals(description, eventDTO.description) &&
             Objects.equals(content, eventDTO.content) &&
-            Objects.equals(artist, eventDTO.artist) &&
-            Objects.equals(shows, eventDTO.shows);
+            Objects.equals(artist, eventDTO.artist);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, eventType, description, content, artist, shows);
+        return Objects.hash(id, name, eventType, description, content, artist);
     }
 
     @Override
@@ -121,7 +109,6 @@ public class EventDTO {
             ", description='" + description + '\'' +
             ", content='" + content + '\'' +
             ", artist=" + artist +
-            ", shows=" + shows +
             '}';
     }
 
@@ -131,7 +118,6 @@ public class EventDTO {
         private EventType eventType;
         private String description;
         private String content;
-        private HashSet<ShowDTO> shows;
         private ArtistDTO artist;
 
         private EventDTOBuilder() {}
@@ -161,11 +147,6 @@ public class EventDTO {
             return this;
         }
 
-        public EventDTOBuilder shows(HashSet<ShowDTO> shows) {
-            this.shows = shows;
-            return this;
-        }
-
         public EventDTOBuilder artist(ArtistDTO artist) {
             this.artist = artist;
             return this;
@@ -179,7 +160,6 @@ public class EventDTO {
             eventDTO.setDescription(description);
             eventDTO.setContent(content);
             eventDTO.setArtist(artist);
-            eventDTO.setShows(shows);
             return eventDTO;
         }
     }

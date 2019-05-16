@@ -35,9 +35,6 @@ public class Event {
     @ManyToOne(fetch = FetchType.EAGER)
     private Artist artist;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "event")
-    private List<Show> shows;
-
     public Long getId() {
         return id;
     }
@@ -78,14 +75,6 @@ public class Event {
         this.content = content;
     }
 
-    public List<Show> getShows() {
-        return shows;
-    }
-
-    public void setShows(List<Show> shows) {
-        this.shows = shows;
-    }
-
     public Artist getArtist() {
         return artist;
     }
@@ -108,13 +97,12 @@ public class Event {
             eventType == event.eventType &&
             Objects.equals(description, event.description) &&
             Objects.equals(content, event.content) &&
-            Objects.equals(artist, event.artist) &&
-            Objects.equals(shows, event.shows);
+            Objects.equals(artist, event.artist);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, eventType, description, content, artist, shows);
+        return Objects.hash(id, name, eventType, description, content, artist);
     }
 
     @Override
@@ -126,7 +114,6 @@ public class Event {
             ", description='" + description + '\'' +
             ", content='" + content + '\'' +
             ", artist=" + artist +
-            ", shows=" + shows +
             '}';
     }
 
@@ -137,7 +124,6 @@ public class Event {
         private String description;
         private String content;
         private Artist artist;
-        private List<Show> shows;
 
         private EventBuilder() {}
 
@@ -171,11 +157,6 @@ public class Event {
             return this;
         }
 
-        public EventBuilder shows(List<Show> shows) {
-            this.shows = shows;
-            return this;
-        }
-
         public Event build() {
             Event event = new Event();
             event.setId(id);
@@ -184,7 +165,6 @@ public class Event {
             event.setDescription(description);
             event.setContent(content);
             event.setArtist(artist);
-            event.setShows(shows);
             return event;
         }
     }

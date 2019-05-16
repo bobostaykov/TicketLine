@@ -19,9 +19,6 @@ public class Artist {
     @Size(max = 64)
     private String name;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "artist")
-    private List<Event> eventParticipations;
-
     public Long getId() {
         return id;
     }
@@ -38,14 +35,6 @@ public class Artist {
         this.name = name;
     }
 
-    public List<Event> getEventParticipations() {
-        return eventParticipations;
-    }
-
-    public void setEventParticipations(List<Event> eventParticipations) {
-        this.eventParticipations = eventParticipations;
-    }
-
     public static ArtistBuilder builder() {
         return new ArtistBuilder();
     }
@@ -56,20 +45,18 @@ public class Artist {
         if (o == null || getClass() != o.getClass()) return false;
         Artist artist = (Artist) o;
         return id.equals(artist.id) &&
-            name.equals(artist.name) &&
-            Objects.equals(eventParticipations, artist.eventParticipations);
+            name.equals(artist.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, eventParticipations);
+        return Objects.hash(id, name);
     }
 
     public static final class ArtistBuilder {
 
         private Long id;
         private String name;
-        private List<Event> eventParticipations;
 
         private ArtistBuilder() {}
 
@@ -83,16 +70,10 @@ public class Artist {
             return this;
         }
 
-        public ArtistBuilder eventParticipations(List<Event> eventParticipations) {
-            this.eventParticipations = eventParticipations;
-            return this;
-        }
-
         public Artist build() {
             Artist artist = new Artist();
             artist.setId(id);
             artist.setName(name);
-            artist.setEventParticipations(eventParticipations);
             return artist;
         }
     }

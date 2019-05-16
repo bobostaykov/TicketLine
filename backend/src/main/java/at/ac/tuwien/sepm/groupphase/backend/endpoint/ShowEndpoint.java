@@ -70,7 +70,6 @@ public class ShowEndpoint {
         }
     }
 /*
-//
     @ApiOperation(value = "Get list of all shows filtered by location id", authorizations = {@Authorization(value = "apiKey")})
     public List<ShowDTO> findAllShowsFilteredByLocationID(@PathVariable("id") Integer locationID){
         LOGGER.info("Get all shows filtered by location id");
