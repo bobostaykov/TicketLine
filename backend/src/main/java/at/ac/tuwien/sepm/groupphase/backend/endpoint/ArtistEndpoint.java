@@ -7,6 +7,8 @@ import at.ac.tuwien.sepm.groupphase.backend.service.ArtistService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,6 +24,7 @@ public class ArtistEndpoint {
 
     private final ArtistService artistService;
     private final ArtistMapper artistMapper;
+    private final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
     public ArtistEndpoint(ArtistService artistService, ArtistMapper artistMapper) {
         this.artistService = artistService;

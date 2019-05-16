@@ -1,9 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.integrationtest;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.artist.ArtistDTO;
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.event.EventDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Artist;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Event;
 import at.ac.tuwien.sepm.groupphase.backend.integrationtest.base.BaseIntegrationTest;
 import at.ac.tuwien.sepm.groupphase.backend.repository.ArtistRepository;
 import io.restassured.RestAssured;
@@ -44,7 +42,7 @@ public class ArtistEndpointTest extends BaseIntegrationTest {
     @Test
     public void findArtistsByNameAsUser() {
         BDDMockito
-            .given(artistRepository.findArtistsByName(ARTIST_NAME))
+            .given(artistRepository.findByNameContainingIgnoreCase(ARTIST_NAME))
             .willReturn(Collections.singletonList(
                 Artist.builder()
                     .id(ARTIST_ID)
@@ -70,7 +68,7 @@ public class ArtistEndpointTest extends BaseIntegrationTest {
     @Test
     public void findArtistsByNameAsAdmin() {
         BDDMockito
-            .given(artistRepository.findArtistsByName(ARTIST_NAME))
+            .given(artistRepository.findByNameContainingIgnoreCase(ARTIST_NAME))
             .willReturn(Collections.singletonList(
                 Artist.builder()
                     .id(ARTIST_ID)

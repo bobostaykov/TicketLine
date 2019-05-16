@@ -1,6 +1,6 @@
-<h1 class="mt-5" *ngIf="artistName !== null && artists.length !== 0">Events - Search Results for Artist '{{artistName}}'</h1>
-<h1 class="mt-5" *ngIf="artistName !== null && artists.length === 0">Events - No Results for Artist '{{artistName}}'</h1>
-<h1 class="mt-5" *ngIf="artistName === null && artists.length === 0">Events - No Results</h1>
+<h1 class="mt-5" *ngIf="loaded && artistName !== null && artists.length !== 0">Events - Search Results for Artist '{{artistName}}'</h1>
+<h1 class="mt-5" *ngIf="loaded && artistName !== null && artists.length === 0">Events - No Results for Artist '{{artistName}}'</h1>
+<h1 class="mt-5" *ngIf="loaded && artistName === null && artists.length === 0">Events - No Results</h1>
 
 <table *ngIf="loaded && artists.length !== 0" class="table mt-4" style="width: 40%">
   <thead>
