@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.implementation;
 
-import at.ac.tuwien.sepm.groupphase.backend.entity.Artist;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.artist.ArtistDTO;
+import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.artist.ArtistMapper;
 import at.ac.tuwien.sepm.groupphase.backend.repository.ArtistRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.ArtistService;
 import org.slf4j.Logger;
@@ -13,18 +14,20 @@ import java.util.List;
 public class ArtistServiceImpl implements ArtistService {
 
     private final ArtistRepository artistRepository;
+    private final ArtistMapper artistMapper;
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
-    public ArtistServiceImpl(ArtistRepository artistRepository) {
+    public ArtistServiceImpl(ArtistRepository artistRepository, ArtistMapper artistMapper) {
         this.artistRepository = artistRepository;
+        this.artistMapper = artistMapper;
     }
 
     @Override
-    public List<Artist> findArtistsByName(String artistName) {
+    public List<ArtistDTO> findArtistsByName(String artistName) {
 //        List<Artist> list = artistRepository.findByNameContainingIgnoreCase(artistName);
 //        LOGGER.error("\n\n\n" + list.get(0).getName() + "\n\n\n");
 //        return list;
-        return artistRepository.findByNameContainingIgnoreCase(artistName);
+        return artistMapper.artistToArtistDTO(artistRepository.findByNameContainingIgnoreCase(artistName));
     }
 
 }

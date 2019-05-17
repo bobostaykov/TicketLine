@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.implementation;
 
-import at.ac.tuwien.sepm.groupphase.backend.entity.UserNews;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.userNews.UserNewsDTO;
+import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.userNews.UserNewsMapper;
 import at.ac.tuwien.sepm.groupphase.backend.repository.UserNewsRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.UserNewsService;
 import org.hibernate.service.spi.ServiceException;
@@ -12,16 +13,18 @@ import javax.persistence.PersistenceException;
 public class UserNewsServiceImpl implements UserNewsService {
 
     private final UserNewsRepository userNewsRepository;
+    private final UserNewsMapper userNewsMapper;
 
-    public UserNewsServiceImpl(UserNewsRepository userNewsRepository) {
+    public UserNewsServiceImpl(UserNewsRepository userNewsRepository, UserNewsMapper userNewsMapper) {
         this.userNewsRepository = userNewsRepository;
+        this.userNewsMapper = userNewsMapper;
     }
 
     @Override
-    public void addNewsFetch(UserNews userNews) {
+    public void addNewsFetch(UserNewsDTO userNewsDTO) {
         try {
-            if (userNewsRepository.findOneByUserIdAndNewsId(userNews.getUserId(), userNews.getNewsId()).isEmpty()) {
-                userNewsRepository.save(userNews);
+            if (userNewsRepository.findOneByUserIdAndNewsId(userNewsDTO.getUserId(), userNewsDTO.getNewsId()).isEmpty()) {
+                userNewsRepository.save(userNewsMapper.userNewsDTOToUserNews(userNewsDTO));
             }
         }
         catch (PersistenceException e) {

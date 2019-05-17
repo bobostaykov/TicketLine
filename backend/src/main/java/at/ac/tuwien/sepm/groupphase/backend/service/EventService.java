@@ -1,7 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.service;
 
 import at.ac.tuwien.sepm.groupphase.backend.datatype.EventType;
-import at.ac.tuwien.sepm.groupphase.backend.entity.EventTickets;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.event.EventTicketsDTO;
 
 import java.util.List;
 import java.util.Set;
@@ -15,6 +15,6 @@ public interface EventService {
      * @param categoriesSet a list with the categories by which to filter
      * @return top 10 events
      */
-    List<EventTickets> findTopTenEvents(Set<String> monthsSet, Set<EventType> categoriesSet);
+    List<EventTicketsDTO> findTopTenEvents(Set<String> monthsSet, Set<EventType> categoriesSet);
 
 }

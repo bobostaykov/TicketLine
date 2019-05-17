@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.implementation;
 
-import at.ac.tuwien.sepm.groupphase.backend.entity.Show;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.show.ShowDTO;
+import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.show.ShowMapper;
 import at.ac.tuwien.sepm.groupphase.backend.repository.ShowRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.ShowService;
 
@@ -10,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.PersistenceException;
-import java.time.LocalDateTime;
 import java.util.List;
 
 //TODO Class is unfinished
@@ -18,17 +18,19 @@ import java.util.List;
 public class ShowServiceImpl implements ShowService {
 
     private final ShowRepository showRepository;
+    private final ShowMapper showMapper;
     private static final Logger LOGGER = LoggerFactory.getLogger(ShowServiceImpl.class);
 
-    ShowServiceImpl(ShowRepository showRepository) {
+    ShowServiceImpl(ShowRepository showRepository, ShowMapper showMapper) {
         this.showRepository = showRepository;
+        this.showMapper = showMapper;
     }
 
     @Override
-    public List<Show> findAllShowsFilteredByEventName(String eventName) {
+    public List<ShowDTO> findAllShowsFilteredByEventName(String eventName) {
         LOGGER.info("Find all shows filtered by event id");
         try {
-            return showRepository.findAllShowsFilteredByEventName(eventName);
+            return showMapper.showToShowDTO(showRepository.findAllShowsFilteredByEventName(eventName));
         } catch (PersistenceException e) {
             throw new ServiceException(e.getMessage(), e);
         }

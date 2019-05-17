@@ -1,8 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.service;
 
-import at.ac.tuwien.sepm.groupphase.backend.entity.Show;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.show.ShowDTO;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 public interface ShowService {
@@ -13,7 +12,7 @@ public interface ShowService {
      * @param eventName name of event by which to filter the shows
      * @return a list of found shows matching the criteria
      */
-    List<Show> findAllShowsFilteredByEventName(String eventName);
+    List<ShowDTO> findAllShowsFilteredByEventName(String eventName);
 
     /*
      * Finds all shows filtered by location id

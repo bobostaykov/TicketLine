@@ -1,7 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.implementation;
 
 import at.ac.tuwien.sepm.groupphase.backend.datatype.EventType;
-import at.ac.tuwien.sepm.groupphase.backend.entity.EventTickets;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.event.EventTicketsDTO;
 import at.ac.tuwien.sepm.groupphase.backend.repository.EventRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.EventService;
 import org.springframework.stereotype.Service;
@@ -20,12 +20,12 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<EventTickets> findTopTenEvents(Set<String> monthsSet, Set<EventType> categoriesSet) {
-        ArrayList<EventTickets> toReturn = new ArrayList<>();
+    public List<EventTicketsDTO> findTopTenEvents(Set<String> monthsSet, Set<EventType> categoriesSet) {
+        ArrayList<EventTicketsDTO> eventTicketsDTOList = new ArrayList<>();
         for (Object[] o: eventRepository.findTopTenEvents(monthsSet, categoriesSet)) {
-            toReturn.add(new EventTickets((String)o[0], (Long)o[1]));
+            eventTicketsDTOList.add(new EventTicketsDTO((String)o[0], (Long)o[1]));
         }
-        return toReturn;
+        return eventTicketsDTOList;
     }
 
 }
