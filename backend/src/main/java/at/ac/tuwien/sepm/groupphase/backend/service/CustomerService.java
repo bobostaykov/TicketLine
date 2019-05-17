@@ -1,6 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.service;
 
-import at.ac.tuwien.sepm.groupphase.backend.entity.Customer;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.customer.CustomerDTO;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -9,23 +9,23 @@ public interface CustomerService {
 
     /**
      * Add customer.
-     * @param customer customer to be added
+     * @param customerDTO customer to be added
      */
-    Customer addCustomer(Customer customer);
+    CustomerDTO addCustomer(CustomerDTO customerDTO);
 
     /**
      * Change customer information.
      *
-     * @param customer customer to be changed
+     * @param customerDTO customer to be changed
      */
-    void adaptCustomer(Customer customer);
+    void adaptCustomer(CustomerDTO customerDTO);
 
     /**
      * Find all customers saved in the database.
      *
      * @return list of all customers
      */
-    List<Customer> findAll();
+    List<CustomerDTO> findAll();
 
     /**
      * Find a single customer entry by id.
@@ -33,7 +33,7 @@ public interface CustomerService {
      * @param id id of the customer entry
      * @return found customer entry
      */
-    Customer findOne(Long id);
+    CustomerDTO findOne(Long id);
 
     /**
      * Find all customers filtered by the following attributes:
@@ -50,5 +50,5 @@ public interface CustomerService {
      * @param birthday birthday of customer to search for
      * @return List of customers that met the requested filter methods
      */
-    List<Customer> findCustomersFiltered(Long id, String name, String firstname, String email, LocalDate birthday);
+    List<CustomerDTO> findCustomersFiltered(Long id, String name, String firstname, String email, LocalDate birthday);
 }

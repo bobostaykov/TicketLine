@@ -1,7 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.show.ShowDTO;
-import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.show.ShowMapper;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.service.ShowService;
 import io.swagger.annotations.Api;
@@ -10,12 +9,10 @@ import io.swagger.annotations.Authorization;
 import org.hibernate.service.spi.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 //TODO Class is unfinished
@@ -26,12 +23,10 @@ import java.util.List;
 public class ShowEndpoint {
 
     private final ShowService showService;
-    private final ShowMapper showMapper;
     private static final Logger LOGGER = LoggerFactory.getLogger(ShowEndpoint.class);
 
-    ShowEndpoint(ShowService showService, ShowMapper showMapper){
+    ShowEndpoint(ShowService showService){
         this.showService = showService;
-        this.showMapper = showMapper;
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -60,7 +55,7 @@ public class ShowEndpoint {
     public List<ShowDTO> findAllShowsFilteredByEventName(@RequestParam(value = "eventName", required = false) String eventName){
         LOGGER.info("Get all shows which belong to event with id " + eventName);
         try{
-            return showMapper.showToShowDTO(showService.findAllShowsFilteredByEventName(eventName));
+            return showService.findAllShowsFilteredByEventName(eventName);
         }catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error while looking for shows belonging to event with name " + eventName, e);
         }catch (ServiceException e) {

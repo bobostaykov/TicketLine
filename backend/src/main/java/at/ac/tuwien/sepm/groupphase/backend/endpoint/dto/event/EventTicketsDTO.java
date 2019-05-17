@@ -10,6 +10,13 @@ public class EventTicketsDTO {
     private String eventName;
     private Long ticketsSold;
 
+    public EventTicketsDTO(){}
+
+    public EventTicketsDTO(String eventName, Long ticketsSold) {
+        this.eventName = eventName;
+        this.ticketsSold = ticketsSold;
+    }
+
     public String getEventName() {
         return eventName;
     }

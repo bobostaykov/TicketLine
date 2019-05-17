@@ -23,22 +23,16 @@ import java.util.List;
 public class ArtistEndpoint {
 
     private final ArtistService artistService;
-    private final ArtistMapper artistMapper;
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
-    public ArtistEndpoint(ArtistService artistService, ArtistMapper artistMapper) {
+    public ArtistEndpoint(ArtistService artistService) {
         this.artistService = artistService;
-        this.artistMapper = artistMapper;
     }
 
     @RequestMapping(method = RequestMethod.GET)
     @ApiOperation(value = "Get artists with 'artistName' as part of their name", authorizations = {@Authorization(value = "apiKey")})
     public List<ArtistDTO> findArtistsByName(@RequestParam(value = "artist_name") String artistName) {
-        List<ArtistDTO> toReturn = new ArrayList<>();
-        for (Artist artist: artistService.findArtistsByName(artistName)) {
-            toReturn.add(artistMapper.artistToArtistDTO(artist));
-        }
-        return toReturn;
+        return artistService.findArtistsByName(artistName);
     }
 
 }
