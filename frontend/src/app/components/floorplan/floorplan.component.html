@@ -1,32 +1,52 @@
-<div class="row">
-  <div class="col-sm-3 shadow-sm p-2">
-    <form #updateSeatForm='ngForm'>
-      <h5>Selected Seat</h5>
-      <div class="form-inline mb-2">
-        <label for="seatRow" class="col-sm-6 pl-0 justify-content-start">Seat Row</label>
-        <input id="seatRow" type="number" name="seatRow" class="form-control col-sm-4"
-               aria-labelledby="Seat Row"
-               [(ngModel)]="updatedSeat.seatRow"
-               required min="1"/>
-      </div>
-      <div class="form-inline">
-        <label for="seatNumber" class="col-sm-6 pl-0 justify-content-start">Seat Number</label>
-        <input id="seatNumber" type="number" name="seatNumber" class="form-control col-sm-4"
-               aria-labelledby="seatNumber"
-               [(ngModel)]="updatedSeat.seatNumber"
-               required min="1"/>
-      </div>
-    </form>
-  </div>
-<div class="col-sm-4">
+<svg id="floorplan" [attr.viewBox]="this.viewbox" preserveAspectRatio="xMinYMin slice" (mousewheel)="zoom($event)"
+     (click)="disableUpdateForm($event)">
+  <path *ngFor="let seat of seats" [attr.d]="getPath(seat)" [attr.fill]="getColor(seat)"
+        (click)="displayUpdateForm(seat, $event)"></path>
+</svg>
 
-</div>
-</div>
-
-<div>
-  <svg id="floorplan" [attr.viewBox]="viewbox" (mousewheel)="zoom($event)" (click)="deselectSeat($event)">
-    <path *ngFor="let seat of seats" [attr.d]="getPath(seat)" [attr.fill]="getColor(seat)"
-          (mouseover)="hoverSeat(seat)"
-          (click)="selectSeat(seat)"></path>
-  </svg>
+<div id="updateForm">
+  <form #updateSeatForm='ngForm' (ngSubmit)="updateSeat()">
+    <div class="form-row-custom">
+      <div class="form-inline-custom">
+        <label for="seatNumber">Number</label>
+        <input id="seatNumber" type="number" name="seatNumber" aria-labelledby="seat number"
+               [(ngModel)]="updatedElement.seatNumber" #seatNumber='ngModel'
+               required min="1" max="100"/>
+      </div>
+      <div class="form-inline-custom">
+        <label for="priceCategory" class="sr-only">Price Category</label>
+        <select id="priceCategory" name="priceCategory" aria-labelledby="price category"
+                [(ngModel)]="updatedElement.price" #priceCategory='ngModel'
+                required>
+          <option *ngFor="let price of priceCategories">{{price}}</option>
+        </select>
+      </div>
+    </div>
+    <div class="error-row-custom" [hidden]="seatNumber.valid || seatNumber.pristine">
+      <small class="form-text text-danger text-left">
+        A valid seat number between 1 and 100 is required!
+      </small>
+    </div>
+    <div class="error-row-custom" [hidden]="priceCategory.valid || priceCategory.pristine">
+      <small class="form-text text-danger">
+        A price category must be chosen
+      </small>
+    </div>
+    <div class="form-row-custom">
+      <div class="form-inline-custom">
+        <label for="seatRow">Row</label>
+        <input id="seatRow" type="number" name="seatRow" aria-labelledby="seat row"
+               [(ngModel)]="updatedElement.seatRow" #seatRow='ngModel'
+               required min="1" max="100"/>
+      </div>
+      <div class="form-inline-custom">
+        <button type="submit" class="btn btn-success" [disabled]="updateSeatForm.invalid">Update Seat</button>
+      </div>
+    </div>
+    <div class="error-row-custom" [hidden]="seatRow.valid || seatRow.pristine">
+      <small class="form-text text-danger text-left">
+        A valid seeat row between 1 and 100 must be chosen!
+      </small>
+    </div>
+  </form>
 </div>

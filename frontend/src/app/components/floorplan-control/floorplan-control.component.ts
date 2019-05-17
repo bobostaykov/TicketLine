@@ -9,16 +9,16 @@ import {PriceCategory} from '../../dtos/priceCategory';
 })
 export class FloorplanControlComponent implements OnInit {
   seats: Seat[] = [
-    new Seat(1, 1, 1, PriceCategory.CHEAP),
-    new Seat(1, 2, 1, PriceCategory.CHEAP),
-    new Seat(1, 3, 1, PriceCategory.CHEAP),
-    new Seat(1, 4, 1, PriceCategory.CHEAP),
-    new Seat(1, 5, 1, PriceCategory.CHEAP),
-    new Seat(1, 6, 1, PriceCategory.CHEAP),
-    new Seat(1, 7, 1, PriceCategory.CHEAP),
-    new Seat(1, 8, 1, PriceCategory.CHEAP),
-    new Seat(1, 9, 1, PriceCategory.CHEAP),
-    new Seat(1, 10, 1, PriceCategory.CHEAP),
+    new Seat(1, 1, 1, PriceCategory.Cheap),
+    new Seat(1, 2, 1, PriceCategory.Cheap),
+    new Seat(1, 3, 1, PriceCategory.Cheap),
+    new Seat(1, 4, 1, PriceCategory.Cheap),
+    new Seat(1, 5, 1, PriceCategory.Cheap),
+    new Seat(1, 6, 1, PriceCategory.Cheap),
+    new Seat(1, 7, 1, PriceCategory.Cheap),
+    new Seat(1, 8, 1, PriceCategory.Cheap),
+    new Seat(1, 9, 1, PriceCategory.Cheap),
+    new Seat(1, 10, 1, PriceCategory.Cheap),
   ];
   private seatFormModel = {
     seatRowStart: null,
@@ -38,7 +38,7 @@ export class FloorplanControlComponent implements OnInit {
     for (let row = seatRowStart; row <= seatRowEnd; row++) {
       for (let number = seatNumberStart; number < seatNumberEnd; number++) {
         if (! this.seats.some(seat => seat.seatRow === row && seat.seatNumber === number)) {
-          this.seats.push(new Seat(null, number, row, PriceCategory.AVERAGE));
+          this.seats.push(new Seat(null, number, row, PriceCategory.Average));
         }
       }
     }
