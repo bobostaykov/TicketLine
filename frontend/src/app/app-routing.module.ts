@@ -10,6 +10,7 @@ import {CustomerAddComponent} from './components/customerAdd/customer-add.compon
 import {SearchEventsComponent} from './components/events/search-events/search-events.component';
 import {ShowComponent} from './components/show/show.component';
 import {ArtistResultsComponent} from './components/search-results/artist/artist-results.component';
+import {FloorplanControlComponent} from './components/floorplan-control/floorplan-control.component';
 
 const routes: Routes = [
   {path: '', component: HomeComponent},
@@ -20,7 +21,8 @@ const routes: Routes = [
   {path: 'customer-add', canActivate: [AuthGuard], component: CustomerAddComponent},
   {path: 'events/search', canActivate: [AuthGuard], component: SearchEventsComponent},
   {path: 'events/search/results/artist', canActivate: [AuthGuard], component: ArtistResultsComponent},
-  {path: 'shows', canActivate: [AuthGuard], component: ShowComponent}
+  {path: 'shows', canActivate: [AuthGuard], component: ShowComponent},
+  {path: 'floorplan', canActivate: [AuthGuard], component: FloorplanControlComponent}
 ];
 
 @NgModule({

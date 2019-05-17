@@ -22,6 +22,8 @@ import { CustomerAddComponent } from './components/customerAdd/customer-add.comp
 import { SearchEventsComponent } from './components/events/search-events/search-events.component';
 import { ArtistResultsComponent } from './components/search-results/artist/artist-results.component';
 import { ShowComponent } from './components/show/show.component';
+import {FloorplanControlComponent} from './components/floorplan-control/floorplan-control.component';
+import {FloorplanComponent} from './components/floorplan/floorplan.component';
 
 @NgModule({
   declarations: [
@@ -37,6 +39,8 @@ import { ShowComponent } from './components/show/show.component';
     SearchEventsComponent,
     ArtistResultsComponent,
     ShowComponent,
+    FloorplanControlComponent,
+    FloorplanComponent
   ],
   imports: [
     BrowserModule,
