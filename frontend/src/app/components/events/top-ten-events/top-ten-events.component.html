@@ -2,7 +2,7 @@
 
 <p class="mt-5">Category:</p>
 
-<div class="mr-5 chboxes" *ngFor="let item of categories | keyvalue">
+<div class="mr-5 left" *ngFor="let item of categories | keyvalue">
   <mat-checkbox [(ngModel)]="item.value" (ngModelChange)="categories.set(item.key, $event)" (change)="reload(item.key)">{{item.key}}</mat-checkbox>
 </div>
 

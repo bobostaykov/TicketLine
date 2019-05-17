@@ -14,11 +14,17 @@
       <li class="nav-item">
         <a class="nav-link" *ngIf="authService.isLoggedIn() && authService.getUserRole()==='ADMIN'" routerLink="/user" routerLinkActive="active">Users</a>
       </li>
+
       <li class="nav-item">
         <a class="nav-link" *ngIf="authService.isLoggedIn()" routerLink="/customer-add" routerLinkActive="active">Add Customer</a>
       </li>
+
       <li class="nav-item">
         <a class="nav-link" *ngIf="authService.isLoggedIn()" routerLink="/customers" routerLinkActive="active">Customers</a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" *ngIf="authService.isLoggedIn()" routerLink="/events" routerLinkActive="active">Events</a>
       </li>
     </ul>
     <ul class="navbar-nav mr-5">

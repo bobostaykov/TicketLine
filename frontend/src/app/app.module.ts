@@ -22,6 +22,7 @@ import { CustomerAddComponent } from './components/customerAdd/customer-add.comp
 import { SearchEventsComponent } from './components/events/search-events/search-events.component';
 import { ArtistResultsComponent } from './components/search-results/artist/artist-results.component';
 import { ShowComponent } from './components/show/show.component';
+import { EventsComponent } from './components/events/start page/events.component';
 
 @NgModule({
   declarations: [
@@ -37,6 +38,7 @@ import { ShowComponent } from './components/show/show.component';
     SearchEventsComponent,
     ArtistResultsComponent,
     ShowComponent,
+    EventsComponent,
   ],
   imports: [
     BrowserModule,
