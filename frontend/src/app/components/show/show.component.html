@@ -12,12 +12,12 @@
   <tbody>
   <tr *ngFor="let show of shows">
     <td class="align-middle">{{show.event.name}}</td>
-    <td class="align-middle">{{show.event.participatingArtists}}</td>
+    <td class="align-middle">{{show.event.artist}}</td>
     <td class="align-middle">{{show.hall.location}}</td>
     <td class="align-middle">{{show.hall.name}}</td>
     <td class="align-middle">{{show.hall.location.city}} - {{show.hall.location.country}}</td>
     <td class="align-middle">{{show.dateTime}}</td>
-    <td class="align-middle">{{show.event.type}}</td>
+    <td class="align-middle">{{show.event.eventType}}</td>
     <td class="align-middle">{{show.ticketsSold}}</td>
     <td class="align-middle"><img routerLink="/tickets" [queryParams]="{show_id: show.id}" src="../../../assets/ticket.png" width="80" height="80" alt="ticket"></td>
   </tr>

@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint;
 
 import at.ac.tuwien.sepm.groupphase.backend.datatype.EventType;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.event.EventDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.event.EventTicketsDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.event.EventTicketsMapper;
 import at.ac.tuwien.sepm.groupphase.backend.service.EventService;
@@ -42,6 +43,12 @@ public class EventEndpoint {
             topTen.add(eventTicketsDTO);
         }
         return topTen;
+    }
+
+    @RequestMapping(method = RequestMethod.GET)
+    @ApiOperation(value = "Get all events", authorizations = {@Authorization(value = "apiKey")})
+    public List<EventDTO> findAll() {
+        return eventService.findAll();
     }
 
 }
