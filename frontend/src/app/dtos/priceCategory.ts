@@ -1,5 +1,5 @@
 export enum PriceCategory {
-  CHEAP,
-  AVERAGE,
-  EXPENSIVE
+  Cheap = 'Cheap',
+  Average = 'Average',
+  Expensive = 'Expensive'
 }
