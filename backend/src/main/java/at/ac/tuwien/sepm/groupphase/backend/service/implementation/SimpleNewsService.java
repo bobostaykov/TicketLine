@@ -1,7 +1,9 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.implementation;
 
-import at.ac.tuwien.sepm.groupphase.backend.entity.News;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.DetailedNewsDTO;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.SimpleNewsDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.User;
+import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.news.NewsMapper;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.NewsRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.UserRepository;
@@ -17,37 +19,39 @@ public class SimpleNewsService implements NewsService {
 
     private final NewsRepository newsRepository;
     private final UserRepository userRepository;
+    private final NewsMapper newsMapper;
 
-    public SimpleNewsService(NewsRepository newsRepository, UserRepository userRepository) {
+    public SimpleNewsService(NewsRepository newsRepository, UserRepository userRepository, NewsMapper newsMapper) {
         this.newsRepository = newsRepository;
         this.userRepository = userRepository;
+        this.newsMapper = newsMapper;
     }
 
     @Override
-    public List<News> findAll() {
-        return newsRepository.findAllByOrderByPublishedAtDesc();
+    public List<SimpleNewsDTO> findAll() {
+        return newsMapper.newsToSimpleNewsDTO(newsRepository.findAllByOrderByPublishedAtDesc());
     }
 
     @Override
-    public List<News> findUnread(String userName) {
+    public List<SimpleNewsDTO> findUnread(String userName) {
         Optional<User> found = userRepository.findOneByName(userName);
         if (!found.isEmpty()) {
             Long userId = found.get().getId();
-            return newsRepository.findUnread(userId);
+            return newsMapper.newsToSimpleNewsDTO(newsRepository.findUnread(userId));
         } else {
-            return newsRepository.findAllByOrderByPublishedAtDesc();
+            return newsMapper.newsToSimpleNewsDTO(newsRepository.findAllByOrderByPublishedAtDesc());
         }
     }
 
     @Override
-    public News findOne(Long id) {
-        return newsRepository.findOneById(id).orElseThrow(NotFoundException::new);
+    public DetailedNewsDTO findOne(Long id) {
+        return newsMapper.newsToDetailedNewsDTO(newsRepository.findOneById(id).orElseThrow(NotFoundException::new));
     }
 
     @Override
-    public News publishNews(News news) {
-        news.setPublishedAt(LocalDateTime.now());
-        return newsRepository.save(news);
+    public DetailedNewsDTO publishNews(DetailedNewsDTO detailedNewsDTO) {
+        detailedNewsDTO.setPublishedAt(LocalDateTime.now());
+        return newsMapper.newsToDetailedNewsDTO(newsRepository.save(newsMapper.detailedNewsDTOToNews(detailedNewsDTO)));
     }
 
 }
