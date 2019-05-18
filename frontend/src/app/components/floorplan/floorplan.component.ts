@@ -37,11 +37,10 @@ export class FloorplanComponent implements OnInit {
    * @param sector for which to return path attribute
    */
   private getSectorPath(sector: Sector): string {
-    const sectorIndex: number = this.sectors.indexOf(sector);
     const width = this.viewboxWidth / 3.2;
     const gap = this.viewboxWidth / 32;
-    const xPos: number = (sectorIndex % 3) * (width + gap);
-    const yPos: number = Math.floor(sectorIndex / 3) * (50 + gap);
+    const xPos: number = ((sector.sectorNumber - 1) % 3) * (width + gap);
+    const yPos: number = Math.floor((sector.sectorNumber - 1) / 3) * (50 + gap);
     return 'M' + xPos + ' ' + yPos + 'h ' + width + ' v 50 h ' + (-width) + ' Z';
   }
 
