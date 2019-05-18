@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 
-
 /**
  * The classes manages the time and order of generating objects to fill the database
  */
