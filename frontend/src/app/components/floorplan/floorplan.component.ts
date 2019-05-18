@@ -24,21 +24,34 @@ export class FloorplanComponent implements OnInit {
 
   /**
    * gets string for d attribute of svg path element depicting a seat
-   * @param seat for which to return path
+   * @param seat for which to return path attribute
    */
-  private getPath(seat: Seat): string {
+  private getSeatPath(seat: Seat): string {
     const xPos: number = (seat.seatNumber - 1) * 1.2 * 10 + Math.floor(seat.seatNumber / 15) * 10;
     const yPos: number = seat.seatRow * 1.2 * 10 + Math.floor(seat.seatRow / 10) * 10;
     return 'M' + xPos + ' ' + yPos + 'h 10 v 10 h -10 Z';
   }
 
   /**
-   * get color of seat passed as parameter
-   * seat color depends on the price category of the seat
-   * @param seat for which to return color
+   * gets string for d attribut of svg path element depicting a sector
+   * @param sector for which to return path attribute
    */
-  private getColor(seat: Seat): string {
-    return seat.price === PriceCategory.Cheap ? '#2fb207' : (seat.price === PriceCategory.Average ? '#129ded' : '#db0611');
+  private getSectorPath(sector: Sector): string {
+    const sectorIndex: number = this.sectors.indexOf(sector);
+    const width = this.viewboxWidth / 3.2;
+    const gap = this.viewboxWidth / 32;
+    const xPos: number = (sectorIndex % 3) * (width + gap);
+    const yPos: number = Math.floor(sectorIndex / 3) * (50 + gap);
+    return 'M' + xPos + ' ' + yPos + 'h ' + width + ' v 50 h ' + (-width) + ' Z';
+  }
+
+  /**
+   * get color of seat or sector assed as parameter
+   * color depends on the price category of the seat
+   * @param elem for which to return color
+   */
+  private getColor(elem: Seat | Sector): string {
+    return elem.price === PriceCategory.Cheap ? '#2fb207' : (elem.price === PriceCategory.Average ? '#129ded' : '#db0611');
   }
 
   /**
@@ -59,10 +72,10 @@ export class FloorplanComponent implements OnInit {
 
   /**
    * displays form to update a seat
-   * @param seat to be updated
+   * @param elem to be updated
    * @param e mouse click event used to determine position of update form
    */
-  private displayUpdateForm(seat: Seat, e: Event) {
+  private displayUpdateForm(elem: Seat | Sector, e: Event) {
     const updateForm = document.getElementById('updateForm');
     updateForm.style.display = 'inline-block';
     const rectEvent = (e.target as Element).getBoundingClientRect();
@@ -70,8 +83,8 @@ export class FloorplanComponent implements OnInit {
     updateForm.style.left = rectEvent.left - rectUpdateForm.width / 2 + rectEvent.width / 2 + 'px';
     updateForm.style.top = rectEvent.top + rectEvent.height + 20 + 'px';
     // update form with seat parameters
-    this.selectedElement = seat;
-    Object.assign(this.updatedElement, seat);
+    this.selectedElement = elem;
+    Object.assign(this.updatedElement, elem);
   }
 
   /**
@@ -89,7 +102,7 @@ export class FloorplanComponent implements OnInit {
   /**
    * updates selected seat with parameters passed into form
    */
-  updateSeat() {
+  updateFloorplanElement() {
     Object.assign(this.selectedElement, this.updatedElement);
   }
 
@@ -101,5 +114,9 @@ export class FloorplanComponent implements OnInit {
     } else {
       this.updatedElement = null;
     }
+  }
+
+  private showSectors() {
+    return JSON.stringify(this.sectors);
   }
 }

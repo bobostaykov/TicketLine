@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {Seat} from '../../dtos/seat';
 import {PriceCategory} from '../../dtos/priceCategory';
+import {Sector} from '../../dtos/sector';
 
 @Component({
   selector: 'app-floorplan-control',
@@ -19,6 +20,17 @@ export class FloorplanControlComponent implements OnInit {
     new Seat(1, 8, 1, PriceCategory.Cheap),
     new Seat(1, 9, 1, PriceCategory.Cheap),
     new Seat(1, 10, 1, PriceCategory.Cheap),
+  ];
+  sectors: Sector[] = [
+    new Sector(1, 1, PriceCategory.Average),
+    new Sector(1, 2, PriceCategory.Cheap),
+    new Sector(1, 3, PriceCategory.Average),
+    new Sector(1, 4, PriceCategory.Average),
+    new Sector(1, 5, PriceCategory.Average),
+    new Sector(1, 6, PriceCategory.Average),
+    new Sector(1, 7, PriceCategory.Average),
+    new Sector(1, 8, PriceCategory.Average),
+    new Sector(1, 9, PriceCategory.Expensive),
   ];
   private seatFormModel = {
     seatRowStart: null,

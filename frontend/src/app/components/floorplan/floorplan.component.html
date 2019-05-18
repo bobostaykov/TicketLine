@@ -1,52 +1,113 @@
-<svg id="floorplan" [attr.viewBox]="this.viewbox" preserveAspectRatio="xMinYMin slice" (mousewheel)="zoom($event)"
-     (click)="disableUpdateForm($event)">
-  <path *ngFor="let seat of seats" [attr.d]="getPath(seat)" [attr.fill]="getColor(seat)"
-        (click)="displayUpdateForm(seat, $event)"></path>
-</svg>
-
-<div id="updateForm">
-  <form #updateSeatForm='ngForm' (ngSubmit)="updateSeat()">
-    <div class="form-row-custom">
-      <div class="form-inline-custom">
-        <label for="seatNumber">Number</label>
-        <input id="seatNumber" type="number" name="seatNumber" aria-labelledby="seat number"
-               [(ngModel)]="updatedElement.seatNumber" #seatNumber='ngModel'
-               required min="1" max="100"/>
+<!-- draws a floor plan with seats -->
+<div *ngIf="seats !== undefined">
+  <svg id="floorplan"
+       [attr.viewBox]="this.viewbox"
+       preserveAspectRatio="xMinYMin slice"
+       (mousewheel)="zoom($event)"
+       (click)="disableUpdateForm($event)">
+    <path *ngFor="let seat of seats"
+          [attr.d]="getSeatPath(seat)"
+          [attr.fill]="getColor(seat)"
+          (click)="displayUpdateForm(seat, $event)"></path>
+  </svg>
+  <!-- div containing form to update seats -->
+  <div *ngIf="seats !== undefined" id="updateForm">
+    <form #updateSeatForm='ngForm' (ngSubmit)="updateSeatForm.valid && updateFloorplanElement()">
+      <div class="form-row-custom">
+        <div class="form-inline-custom">
+          <label for="seatNumber">Number</label>
+          <input id="seatNumber" type="number" name="seatNumber" aria-labelledby="seat number"
+                 [(ngModel)]="updatedElement.seatNumber" #seatNumber='ngModel'
+                 required min="1" max="100"/>
+        </div>
+        <div class="form-inline-custom">
+          <label for="priceCategorySeat" class="sr-only">Price Category</label>
+          <select id="priceCategorySeat" name="priceCategory" aria-labelledby="price category"
+                  [(ngModel)]="updatedElement.price" #price='ngModel'
+                  required>
+            <option *ngFor="let price of priceCategories">{{price}}</option>
+          </select>
+        </div>
       </div>
-      <div class="form-inline-custom">
-        <label for="priceCategory" class="sr-only">Price Category</label>
-        <select id="priceCategory" name="priceCategory" aria-labelledby="price category"
-                [(ngModel)]="updatedElement.price" #priceCategory='ngModel'
-                required>
-          <option *ngFor="let price of priceCategories">{{price}}</option>
-        </select>
+      <div class="error-row-custom" [hidden]="seatNumber.valid || seatNumber.pristine">
+        <small class="form-text text-danger text-left">
+          A valid seat number between 1 and 100 is required!
+        </small>
       </div>
-    </div>
-    <div class="error-row-custom" [hidden]="seatNumber.valid || seatNumber.pristine">
-      <small class="form-text text-danger text-left">
-        A valid seat number between 1 and 100 is required!
-      </small>
-    </div>
-    <div class="error-row-custom" [hidden]="priceCategory.valid || priceCategory.pristine">
-      <small class="form-text text-danger">
-        A price category must be chosen
-      </small>
-    </div>
-    <div class="form-row-custom">
-      <div class="form-inline-custom">
-        <label for="seatRow">Row</label>
-        <input id="seatRow" type="number" name="seatRow" aria-labelledby="seat row"
-               [(ngModel)]="updatedElement.seatRow" #seatRow='ngModel'
-               required min="1" max="100"/>
+      <div class="error-row-custom" [hidden]="price.valid || price.pristine">
+        <small class="form-text text-danger">
+          A price category must be chosen
+        </small>
       </div>
-      <div class="form-inline-custom">
-        <button type="submit" class="btn btn-success" [disabled]="updateSeatForm.invalid">Update Seat</button>
+      <div class="form-row-custom">
+        <div class="form-inline-custom">
+          <label for="seatRow">Row</label>
+          <input id="seatRow" type="number" name="seatRow" aria-labelledby="seat row"
+                 [(ngModel)]="updatedElement.seatRow" #seatRow='ngModel'
+                 required min="1" max="100"/>
+        </div>
+        <div class="form-inline-custom">
+          <button type="submit" class="btn btn-success" [disabled]="updateSeatForm.invalid">Update Seat</button>
+        </div>
       </div>
-    </div>
-    <div class="error-row-custom" [hidden]="seatRow.valid || seatRow.pristine">
-      <small class="form-text text-danger text-left">
-        A valid seeat row between 1 and 100 must be chosen!
-      </small>
-    </div>
-  </form>
+      <div class="error-row-custom" [hidden]="seatRow.valid || seatRow.pristine">
+        <small class="form-text text-danger text-left">
+          A valid seeat row between 1 and 100 must be chosen!
+        </small>
+      </div>
+    </form>
+  </div>
 </div>
+
+<!-- draws a floor plan with sectors -->
+<div *ngIf="sectors !== undefined">
+  <svg id="floorplan"
+       [attr.viewBox]="this.viewbox"
+       preserveAspectRatio="xMinYMin slice"
+       (click)="disableUpdateForm($event)">
+    <path *ngFor="let sector of sectors"
+          [attr.d]="getSectorPath(sector)"
+          [attr.fill]="getColor(sector)"
+          (click)="displayUpdateForm(sector, $event)"></path>
+  </svg>
+  <!-- div containing form to update sectors -->
+  <div *ngIf="sectors !== undefined" id="updateForm">
+    <form #updateSectorForm='ngForm' (ngSubmit)="updateSectorForm.valid && updateFloorplanElement()">
+      <div class="form-row-custom">
+        <div class="form-inline-custom">
+          <label for="sectorNumber">Number</label>
+          <input id="sectorNumber" type="number" name="sectorNumber" aria-labelledby="sector number"
+                 [(ngModel)]="updatedElement.sectorNumber" #sectorNumber='ngModel'
+                 required min="1"/>
+        </div>
+        <div class="form-inline-custom">
+          <label for="priceCategorySector" class="sr-only">Price Category</label>
+          <select id="priceCategorySector" name="priceCategory" aria-labelledby="price category"
+                  [(ngModel)]="updatedElement.price" #price='ngModel'
+                  required>
+            <option *ngFor="let price of priceCategories">{{price}}</option>
+          </select>
+        </div>
+      </div>
+      <div class="error-row-custom" [hidden]="sectorNumber.valid || sectorNumber.pristine">
+        <small class="form-text text-danger text-left">
+          A valid sector number must be entered!
+        </small>
+      </div>
+      <div class="error-row-custom" [hidden]="price.valid || price.pristine">
+        <small class="form-text text-danger">
+          A price category must be chosen!
+        </small>
+      </div>
+      <div class="form-row-custom">
+        <div class="form-inline-custom">
+          <button type="submit" class="btn btn-success" [disabled]="updateSectorForm.invalid">Update Sector</button>
+        </div>
+      </div>
+    </form>
+  </div>
+{{showSectors()}}
+</div>
+
+
+
