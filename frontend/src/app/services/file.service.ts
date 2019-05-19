@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import {HttpClient} from "@angular/common/http";
-import {Globals} from "../global/globals";
-import {Observable} from "rxjs";
+import {HttpClient} from '@angular/common/http';
+import {Globals} from '../global/globals';
+import {Observable} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -32,11 +32,11 @@ export class FileService {
     const formData = new FormData();
     formData.append('file', file);
     let returnValue: Observable<string>;
-    //this.httpClient.post(this.fileBaseUri, formData, { responseType: 'text'}).subscribe(val =>  {valString = val});
+     // this.httpClient.post(this.fileBaseUri, formData, { responseType: 'text'}).subscribe(val =>  {valString = val});
     returnValue = this.httpClient.post(this.fileBaseUri, formData, { responseType : 'text'});
     return returnValue;
-    //console.log('image is: ' + returnValue);
+    // console.log('image is: ' + returnValue);
 
-    //return returnValue;
+    // return returnValue;
   }
 }
