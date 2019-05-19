@@ -12,12 +12,13 @@ export class FloorplanComponent implements OnInit {
   @Input() private seats?: Seat[];
   @Input() private sectors?: Sector[];
   private priceCategories: string[] = Object.keys(PriceCategory);
-  private viewboxPosX = 0;
-  private viewboxPosY = 0;
-  private viewboxWidth = 500;
+  private viewboxPosX: number = 0;
+  private viewboxPosY: number = 0;
+  private viewboxWidth: number = 500;
   private viewbox: string = this.viewboxPosX + ' ' + this.viewboxPosY + ' ' + this.viewboxWidth + ' ' + this.viewboxWidth;
   private selectedElement: Seat | Sector;
-  private updatedElement: Seat | Sector;
+  private elementModel: Seat | Sector = (this.seats === undefined) ? new Sector(null, null, null) :
+    new Seat(null, null, null, null);
 
   constructor() {
   }
@@ -83,7 +84,7 @@ export class FloorplanComponent implements OnInit {
     updateForm.style.top = rectEvent.top + rectEvent.height + 20 + 'px';
     // update form with seat parameters
     this.selectedElement = elem;
-    Object.assign(this.updatedElement, elem);
+    Object.assign(this.elementModel, elem);
   }
 
   /**
@@ -102,20 +103,9 @@ export class FloorplanComponent implements OnInit {
    * updates selected seat with parameters passed into form
    */
   updateFloorplanElement() {
-    Object.assign(this.selectedElement, this.updatedElement);
+    Object.assign(this.selectedElement, this.elementModel);
   }
 
   ngOnInit() {
-    if (this.seats !== undefined) {
-      this.updatedElement = new Seat(null, null, null, null);
-    } else if (this.sectors !== undefined) {
-      this.updatedElement = new Sector(null, null, null);
-    } else {
-      this.updatedElement = null;
-    }
-  }
-
-  private showSectors() {
-    return JSON.stringify(this.sectors);
   }
 }
