@@ -2,6 +2,7 @@ package at.ac.tuwien.sepm.groupphase.backend.service.implementation;
 
 import at.ac.tuwien.sepm.groupphase.backend.datatype.EventType;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.event.EventDTO;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.event.EventTicketsDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Event;
 import at.ac.tuwien.sepm.groupphase.backend.entity.EventTickets;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.event.EventMapper;
@@ -25,10 +26,10 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<EventTickets> findTopTenEvents(Set<String> monthsSet, Set<EventType> categoriesSet) {
-        ArrayList<EventTickets> toReturn = new ArrayList<>();
+    public List<EventTicketsDTO> findTopTenEvents(Set<String> monthsSet, Set<EventType> categoriesSet) {
+        ArrayList<EventTicketsDTO> toReturn = new ArrayList<>();
         for (Object[] o: eventRepository.findTopTenEvents(monthsSet, categoriesSet)) {
-            toReturn.add(new EventTickets((String)o[0], (Long)o[1]));
+            toReturn.add(new EventTicketsDTO((String)o[0], (Long)o[1]));
         }
         return toReturn;
     }
