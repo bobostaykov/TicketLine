@@ -12,18 +12,19 @@ import java.util.List;
 @Repository
 public interface LocationRepository extends JpaRepository<Location, Long> {
 
-    //List<Location> findLocationsByCountryAndCityAndPostalCodeAndStreetAndDescriptionContainingOrderByCountry(String country, String city, String street, String postalCode, String description) throws NotFoundException;
+    //List<Location> findLocationsByCountryAndCityAndPostalCodeAndStreetContainingAndDescriptionContainingOrderByCountry(String country, String city, String street, String postalCode, String description) throws NotFoundException;
 
-    @Query(value = "SELECT DISTINCT * " +
-        "FROM location l " +
+
+    @Query(value = "SELECT * " +
+        "FROM Location l " +
         "WHERE (l.country = :country OR :country IS NULL) " +
         "AND (l.city = :city OR :city IS NULL) " +
         "AND (l.street LIKE CONCAT('%',:street,'%') OR :street IS NULL) " +
         "AND (l.postalCode = :postalCode OR :postalCode IS NULL) " +
         "AND (l.description LIKE CONCAT('%',:description,'%') OR :description IS NULL)", nativeQuery = true)
     List<Location> findLocationsFiltered(@Param("country") String country, @Param("city") String city,
-                                         @Param("street") String street, @Param("postalCode") String postalCode,
-                                         @Param("description") String description) throws NotFoundException;
+                                             @Param("street") String street, @Param("postalCode") String postalCode,
+                                             @Param("description") String description);
 
 }
 
