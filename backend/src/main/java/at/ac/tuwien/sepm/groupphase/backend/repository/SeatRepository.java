@@ -17,10 +17,4 @@ public interface SeatRepository extends JpaRepository<Seat, Integer> {
      */
     Optional<Seat> findOneById(Integer id);
 
-    /**
-     * finds all seats belonging to the hall with the specified id
-     * @param id of hall containing the seats
-     * @return a list of seats belonging to the hall with the specified id
-     */
-    List<Seat> findAllByHallID(Long id);
 }
