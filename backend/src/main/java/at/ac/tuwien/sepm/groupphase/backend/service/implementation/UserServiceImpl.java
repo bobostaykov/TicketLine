@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.implementation;
 
-import at.ac.tuwien.sepm.groupphase.backend.entity.User;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.user.UserDTO;
+import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.user.UserMapper;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.UserRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.LoginAttemptService;
@@ -11,28 +12,33 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class UserServiceImpl implements UserService{
-    private final UserRepository userRepository;
+public class UserServiceImpl implements UserService {
 
-    public UserServiceImpl(UserRepository userRepository) { this.userRepository = userRepository;
+    private final UserRepository userRepository;
+    private final UserMapper userMapper;
+
+    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper) {
+        this.userRepository = userRepository;
+        this.userMapper = userMapper;
     }
 
     @Override
-    public List<User> findAll() {
-        return userRepository.findAll();
+    public List<UserDTO> findAll() {
+        return userMapper.userToUserDTO(userRepository.findAll());
     }
 
     @Override
     public Optional<User> findOneByName(String username) {
-        return userRepository.findOneByName(username);
+        return userMapper.userToUserDTOuserRepository.findOneByName(username);
     }
 
     @Override
-    public User findOne(Long id) {
-        return userRepository.findById(id).orElseThrow(NotFoundException::new);
+    public UserDTO findOne(Long id) {
+        return userMapper.userToUserDTO(userRepository.findById(id).orElseThrow(NotFoundException::new));
     }
 
     @Override
-    public User createUser(User user) {return userRepository.save(user);
+    public UserDTO createUser(UserDTO userDTO) {
+        return userMapper.userToUserDTO(userRepository.save(userMapper.userDTOToUser(userDTO)));
     }
 }

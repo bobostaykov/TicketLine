@@ -3,6 +3,8 @@ import {HttpClient} from '@angular/common/http';
 import {Globals} from '../../global/globals';
 import {Observable} from 'rxjs';
 import {EventTickets} from '../../dtos/event_tickets';
+import {ResultsFor} from '../../datatype/results_for';
+import {Event} from '../../dtos/event';
 
 @Injectable({
   providedIn: 'root'
@@ -17,8 +19,23 @@ export class EventService {
    * Get top ten events from backend
    */
   getTopTenEvents(monthsArray: string[], categoriesArray: string[]): Observable<EventTickets[]> {
-    return this.httpClient.get<EventTickets[]>(this.eventBaseUri + '/topten?months='
-                                              + monthsArray.join(',') + '&categories=' + categoriesArray.join(','));
+    return this.httpClient.get<EventTickets[]>(this.eventBaseUri + '/topten',
+      {params: { months: monthsArray.join(','), categories: categoriesArray.join(',') }});
+  }
+
+  /**
+   * Get all events that apply to a specific eventType of search term (resultsFor: ARTIST, EVENT, LOCATION) from backend
+   * If resultsFor === ResultsFor.LOCATION, name_or_id will be the location's id, otherwise it will be the name of the event/artist
+   */
+  public getEventsFiltered(resultsFor: ResultsFor, nameOrId: string): Observable<Event[]> {
+    return this.httpClient.get<Event[]>(this.eventBaseUri, {params: { results_for: ResultsFor[resultsFor], name_or_id: nameOrId }});
+  }
+
+  /**
+   * Get all events from backend
+   */
+  public getAllEvents(): Observable<Event[]> {
+    return this.httpClient.get<Event[]>(this.eventBaseUri);
   }
 
 }

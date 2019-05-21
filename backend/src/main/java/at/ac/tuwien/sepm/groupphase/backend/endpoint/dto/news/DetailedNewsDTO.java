@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -9,16 +10,24 @@ import java.time.LocalDateTime;
 public class DetailedNewsDTO {
 
     @ApiModelProperty(readOnly = true, name = "The automatically generated database id")
+    @JsonProperty("id")
     private Long id;
 
     @ApiModelProperty(readOnly = true, name = "The date and time when the news was published")
+    @JsonProperty("publishedAt")
     private LocalDateTime publishedAt;
 
     @ApiModelProperty(required = true, name = "The title of the news")
+    @JsonProperty("title")
     private String title;
 
     @ApiModelProperty(required = true, name = "The text content of the news")
+    @JsonProperty("text")
     private String text;
+
+    @ApiModelProperty(required = true, name = "Optional image attached to the message")
+    @JsonProperty("image")
+    private String image;
 
     public Long getId() {
         return id;
@@ -52,6 +61,14 @@ public class DetailedNewsDTO {
         this.text = text;
     }
 
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
     @Override
     public String toString() {
         return "DetailedNewsDTO{" +
@@ -59,6 +76,7 @@ public class DetailedNewsDTO {
             ", publishedAt=" + publishedAt +
             ", title='" + title + '\'' +
             ", text='" + text + '\'' +
+            ", image='" + image + '\'' +
             '}';
     }
 
@@ -67,11 +85,12 @@ public class DetailedNewsDTO {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.DetailedNewsDTO that = (at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.DetailedNewsDTO) o;
+        DetailedNewsDTO that = (DetailedNewsDTO) o;
 
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (publishedAt != null ? !publishedAt.equals(that.publishedAt) : that.publishedAt != null) return false;
         if (title != null ? !title.equals(that.title) : that.title != null) return false;
+        if (image != null ? !image.equals(that.image) : that.image != null) return false;
         return text != null ? text.equals(that.text) : that.text == null;
 
     }
@@ -82,6 +101,7 @@ public class DetailedNewsDTO {
         result = 31 * result + (publishedAt != null ? publishedAt.hashCode() : 0);
         result = 31 * result + (title != null ? title.hashCode() : 0);
         result = 31 * result + (text != null ? text.hashCode() : 0);
+        result = 31 * result + (image != null ? image.hashCode() : 0);
         return result;
     }
 
@@ -95,6 +115,7 @@ public class DetailedNewsDTO {
         private LocalDateTime publishedAt;
         private String title;
         private String text;
+        private String image;
 
         public NewsDTOBuilder id(Long id) {
             this.id = id;
@@ -116,12 +137,18 @@ public class DetailedNewsDTO {
             return this;
         }
 
-        public at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.DetailedNewsDTO build() {
-            at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.DetailedNewsDTO newsDTO = new at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.DetailedNewsDTO();
+        public NewsDTOBuilder image(String image) {
+            this.image = image;
+            return this;
+        }
+
+        public DetailedNewsDTO build() {
+            DetailedNewsDTO newsDTO = new DetailedNewsDTO();
             newsDTO.setId(id);
             newsDTO.setPublishedAt(publishedAt);
             newsDTO.setTitle(title);
             newsDTO.setText(text);
+            newsDTO.setImage(image);
             return newsDTO;
         }
     }

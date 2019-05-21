@@ -12,7 +12,6 @@ import org.apache.logging.log4j.spi.LoggerRegistry;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -22,10 +21,8 @@ public class UserEndpoint {
 
     private final LoginAttemptService loginAttemptService;
     private final UserService userService;
-    private final UserMapper userMapper;
 
-
-    public UserEndpoint(UserService userService, UserMapper userMapper, LoginAttemptService loginAttemptService) {
+    public UserEndpoint(UserService userService) {
         this.userService = userService;
         this.userMapper = userMapper;
         this.loginAttemptService = loginAttemptService;
@@ -35,24 +32,21 @@ public class UserEndpoint {
     @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "Get all users", authorizations = {@Authorization(value = "apiKey")})
     public List<UserDTO> findAll() {
-        List<UserDTO> users = new ArrayList<>();
-        for (User user : userService.findAll()) {
-            users.add(userMapper.userToUserDTO(user));
-        }
-        return users;
+        return userService.findAll();
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "Get a user by id", authorizations = {@Authorization(value = "apiKey")})
     public UserDTO find(@PathVariable Long id) {
-        return userMapper.userToUserDTO(userService.findOne(id));
+        return userService.findOne(id);
     }
 
     @RequestMapping(method = RequestMethod.POST)
     @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "Create a user", authorizations = {@Authorization(value = "apiKey")})
     public UserDTO create(@RequestBody UserDTO userDTO) {
+        return userService.createUser(userDTO);
         User user = userService.createUser(userMapper.userDTOToUser(userDTO));
         if(!user.getType().equals("ADMIN")){
             loginAttemptService.initializeLoginAttempts(user);

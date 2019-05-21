@@ -1,5 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.mapper;
 
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.DetailedNewsDTO;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.SimpleNewsDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.News;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.news.NewsMapper;
 import org.junit.Test;
@@ -31,6 +33,7 @@ public class NewsMapperTest {
     private static final String NEWS_TEXT = "This is a very long text containing all the contents of the news" +
         " and a lot of other more or less useful information.";
     private static final String NEWS_SUMMARY = "This is a very long text containing all the";
+    private static final String NEWS_IMAGEID = "1";
     private static final LocalDateTime NEWS_PUBLISHED_AT =
         LocalDateTime.of(2016, 1, 1, 12, 0, 0, 0);
 
@@ -42,7 +45,7 @@ public class NewsMapperTest {
             .title(NEWS_TITLE)
             .text(NEWS_TEXT)
             .build();
-        at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.SimpleNewsDTO simpleNewsDTO = newsMapper.newsToSimpleNewsDTO(news);
+        SimpleNewsDTO simpleNewsDTO = newsMapper.newsToSimpleNewsDTO(news);
         assertThat(simpleNewsDTO).isNotNull();
         assertThat(simpleNewsDTO.getId()).isEqualTo(1L);
         assertThat(simpleNewsDTO.getPublishedAt()).isEqualTo(NEWS_PUBLISHED_AT);
@@ -58,7 +61,7 @@ public class NewsMapperTest {
             .title(NEWS_TITLE)
             .text(NEWS_SUMMARY)
             .build();
-        at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.SimpleNewsDTO simpleNewsDTO = newsMapper.newsToSimpleNewsDTO(news);
+        SimpleNewsDTO simpleNewsDTO = newsMapper.newsToSimpleNewsDTO(news);
         assertThat(simpleNewsDTO).isNotNull();
         assertThat(simpleNewsDTO.getId()).isEqualTo(1L);
         assertThat(simpleNewsDTO.getPublishedAt()).isEqualTo(NEWS_PUBLISHED_AT);
@@ -73,8 +76,9 @@ public class NewsMapperTest {
             .publishedAt(NEWS_PUBLISHED_AT)
             .title(NEWS_TITLE)
             .text(NEWS_TEXT)
+            .image(NEWS_IMAGEID)
             .build();
-        at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.DetailedNewsDTO detailedNewsDTO = newsMapper.newsToDetailedNewsDTO(news);
+        DetailedNewsDTO detailedNewsDTO = newsMapper.newsToDetailedNewsDTO(news);
         assertThat(detailedNewsDTO).isNotNull();
         assertThat(detailedNewsDTO.getId()).isEqualTo(1L);
         assertThat(detailedNewsDTO.getPublishedAt()).isEqualTo(NEWS_PUBLISHED_AT);
@@ -84,11 +88,12 @@ public class NewsMapperTest {
 
     @Test
     public void shouldMapDetailedNewsDTOToNews() {
-        at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.DetailedNewsDTO detailedNewsDTO = at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.DetailedNewsDTO.builder()
+        DetailedNewsDTO detailedNewsDTO = DetailedNewsDTO.builder()
             .id(1L)
             .publishedAt(NEWS_PUBLISHED_AT)
             .title(NEWS_TITLE)
             .text(NEWS_TEXT)
+            .image(NEWS_IMAGEID)
             .build();
         News news = newsMapper.detailedNewsDTOToNews(detailedNewsDTO);
         assertThat(news).isNotNull();

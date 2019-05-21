@@ -17,21 +17,7 @@ public class Artist {
 
     @Column(nullable = false)
     @Size(max = 64)
-    private String firstname;
-
-    @Column(nullable = false)
-    @Size(max = 64)
-    private String lastname;
-
-    @Column(nullable = false, unique = true)
-    @Size(max = 64)
-    private String artistname;
-
-    @ManyToMany
-    @JoinTable(name = "participation",
-        joinColumns = {@JoinColumn(name = "artist_id", referencedColumnName = "id")},
-        inverseJoinColumns = {@JoinColumn(name = "event_id", referencedColumnName = "id")})
-    private List<Event> eventParticipations;
+    private String name;
 
     public Long getId() {
         return id;
@@ -41,36 +27,16 @@ public class Artist {
         this.id = id;
     }
 
-    public String getFirstname() {
-        return firstname;
+    public String getName() {
+        return name;
     }
 
-    public void setFirstname(String firstname) {
-        this.firstname = firstname;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getLastname() {
-        return lastname;
-    }
-
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
-    }
-
-    public String getArtistname() {
-        return artistname;
-    }
-
-    public void setArtistname(String artistname) {
-        this.artistname = artistname;
-    }
-
-    public List<Event> getEventParticipations() {
-        return eventParticipations;
-    }
-
-    public void setEventParticipations(List<Event> eventParticipations) {
-        this.eventParticipations = eventParticipations;
+    public static ArtistBuilder builder() {
+        return new ArtistBuilder();
     }
 
     @Override
@@ -79,35 +45,18 @@ public class Artist {
         if (o == null || getClass() != o.getClass()) return false;
         Artist artist = (Artist) o;
         return id.equals(artist.id) &&
-            firstname.equals(artist.firstname) &&
-            lastname.equals(artist.lastname) &&
-            artistname.equals(artist.artistname) &&
-            Objects.equals(eventParticipations, artist.eventParticipations);
+            name.equals(artist.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, firstname, lastname, artistname, eventParticipations);
-    }
-
-    @Override
-    public String toString() {
-        return "Artist{" +
-            "id=" + id +
-            ", firstname='" + firstname + '\'' +
-            ", lastname='" + lastname + '\'' +
-            ", artistname='" + artistname + '\'' +
-            ", eventParticipations=" + eventParticipations +
-            '}';
+        return Objects.hash(id, name);
     }
 
     public static final class ArtistBuilder {
 
         private Long id;
-        private String firstname;
-        private String lastname;
-        private String artistname;
-        private List<Event> eventParticipations;
+        private String name;
 
         private ArtistBuilder() {}
 
@@ -116,33 +65,15 @@ public class Artist {
             return this;
         }
 
-        public ArtistBuilder firstname(String firstname) {
-            this.firstname = firstname;
-            return this;
-        }
-
-        public ArtistBuilder lastname(String lastname) {
-            this.lastname = lastname;
-            return this;
-        }
-
-        public ArtistBuilder artistname(String artistname) {
-            this.artistname = artistname;
-            return this;
-        }
-
-        public ArtistBuilder eventParticipations(List<Event> eventParticipations) {
-            this.eventParticipations = eventParticipations;
+        public ArtistBuilder name(String name) {
+            this.name = name;
             return this;
         }
 
         public Artist build() {
             Artist artist = new Artist();
             artist.setId(id);
-            artist.setFirstname(firstname);
-            artist.setLastname(lastname);
-            artist.setArtistname(artistname);
-            artist.setEventParticipations(eventParticipations);
+            artist.setName(name);
             return artist;
         }
     }

@@ -33,10 +33,6 @@ export class UserComponent implements OnInit {
     this.loadUsers();
   }
 
-  getUsers(): User[] {
-    return this.users;
-  }
-
   /**
    * Load all users from the backend
    */

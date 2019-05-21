@@ -17,6 +17,12 @@ public class ShowDTO {
     @ApiModelProperty(name = "The event to which the show belongs")
     private EventDTO event;
 
+    @ApiModelProperty(name = "The duration in minutes")
+    private Integer durationInMinutes;
+
+    @ApiModelProperty(name = "The number of tickets sold for that show")
+    private Long ticketsSold;
+
     @ApiModelProperty(name = "The date and time of the show")
     private LocalDateTime dateTime;
 
@@ -66,6 +72,24 @@ public class ShowDTO {
         this.description = description;
     }
 
+    public Integer getDurationInMinutes() {
+        return durationInMinutes;
+    }
+
+    public void setDurationInMinutes(Integer durationInMinutes) {
+        this.durationInMinutes = durationInMinutes;
+    }
+
+    public Long getTicketsSold() {
+        return ticketsSold;
+    }
+
+    public void setTicketsSold(Long ticketsSold) {
+        this.ticketsSold = ticketsSold;
+    }
+
+    public static ShowDTOBuilder builder() { return new ShowDTOBuilder(); }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -73,6 +97,8 @@ public class ShowDTO {
         ShowDTO showDTO = (ShowDTO) o;
         return id.equals(showDTO.id) &&
             event.equals(showDTO.event) &&
+            durationInMinutes.equals(showDTO.durationInMinutes) &&
+            ticketsSold.equals(showDTO.ticketsSold) &&
             dateTime.equals(showDTO.dateTime) &&
             hall.equals(showDTO.hall) &&
             Objects.equals(description, showDTO.description);
@@ -80,7 +106,7 @@ public class ShowDTO {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, event, dateTime, hall, description);
+        return Objects.hash(id, event, durationInMinutes, ticketsSold, dateTime, hall, description);
     }
 
     @Override
@@ -88,6 +114,8 @@ public class ShowDTO {
         return "ShowDTO{" +
             "id=" + id +
             ", event=" + event +
+            ", durationInMinutes=" + durationInMinutes +
+            ", ticketsSold=" + ticketsSold +
             ", dateTime=" + dateTime +
             ", hall=" + hall +
             ", description='" + description + '\'' +
@@ -98,6 +126,8 @@ public class ShowDTO {
 
         private Long id;
         private EventDTO event;
+        private Integer durationInMinutes;
+        private Long ticketsSold;
         private LocalDateTime dateTime;
         private HallDTO hall;
         private String description;
@@ -111,6 +141,16 @@ public class ShowDTO {
 
         public ShowDTOBuilder event(EventDTO event) {
             this.event = event;
+            return this;
+        }
+
+        public ShowDTOBuilder durationInMinutes(Integer durationInMinutes) {
+            this.durationInMinutes = durationInMinutes;
+            return this;
+        }
+
+        public ShowDTOBuilder ticketsSold(Long ticketsSold) {
+            this.ticketsSold = ticketsSold;
             return this;
         }
 
@@ -133,6 +173,8 @@ public class ShowDTO {
             ShowDTO showDTO = new ShowDTO();
             showDTO.setId(id);
             showDTO.setEvent(event);
+            showDTO.setDurationInMinutes(durationInMinutes);
+            showDTO.setTicketsSold(ticketsSold);
             showDTO.setDateTime(dateTime);
             showDTO.setHall(hall);
             showDTO.setDescription(description);

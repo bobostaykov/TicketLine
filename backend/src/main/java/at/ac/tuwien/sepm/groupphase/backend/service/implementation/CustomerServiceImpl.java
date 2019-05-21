@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.implementation;
 
-import at.ac.tuwien.sepm.groupphase.backend.entity.Customer;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.customer.CustomerDTO;
+import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.customer.CustomerMapper;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.CustomerRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.CustomerService;
@@ -11,68 +12,71 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
-
 @Service
 public class CustomerServiceImpl implements CustomerService {
     private final CustomerRepository customerRepository;
-    private static final Logger LOGGER = LoggerFactory.getLogger(SimpleHeaderTokenAuthenticationService.class);
+    private final CustomerMapper customerMapper;
+    private static final Logger LOGGER = LoggerFactory.getLogger(CustomerServiceImpl.class);
 
-    public CustomerServiceImpl(CustomerRepository customerRepository) {
+    public CustomerServiceImpl(CustomerRepository customerRepository, CustomerMapper customerMapper) {
         this.customerRepository = customerRepository;
+        this.customerMapper = customerMapper;
     }
 
     @Override
-    public Customer addCustomer(Customer customer) {
-        if (customer != null) {
+    public CustomerDTO addCustomer(CustomerDTO customerDTO) {
+        LOGGER.info("Add a customer");
+        if (customerDTO != null) {
             // VALIDATION START
-            if (customer.getName() == null || customer.getName().isBlank())
-                throw new ServiceException("Customer " + customer.toString() + "could not be added: name must not be empty");
-            if (customer.getFirstname() == null || customer.getFirstname().isBlank())
-                throw new ServiceException("Customer " + customer.toString() + "could not be added: first name must not be empty");
-            if (customer.getEmail() == null || customer.getEmail().isBlank())
-                throw new ServiceException("Customer " + customer.toString() + "could not be added: email must not be empty");
-            if (customer.getBirthday() == null)
-                throw new ServiceException("Customer " + customer.toString() + "could not be added: birthday must not be empty");
+            if (customerDTO.getName() == null || customerDTO.getName().isBlank())
+                throw new ServiceException("Customer " + customerDTO.toString() + "could not be added: name must not be empty");
+            if (customerDTO.getFirstname() == null || customerDTO.getFirstname().isBlank())
+                throw new ServiceException("Customer " + customerDTO.toString() + "could not be added: first name must not be empty");
+            if (customerDTO.getEmail() == null || customerDTO.getEmail().isBlank())
+                throw new ServiceException("Customer " + customerDTO.toString() + "could not be added: email must not be empty");
+            if (customerDTO.getBirthday() == null)
+                throw new ServiceException("Customer " + customerDTO.toString() + "could not be added: birthday must not be empty");
             //VALIDATION END
-            return customerRepository.save(customer);
+            return customerMapper.customerToCustomerDTO(customerRepository.save(customerMapper.customerDTOToCustomer(customerDTO)));
         }
         else
-            throw new ServiceException("Customer could not be added " + customer.toString());
+            throw new ServiceException("Customer could not be added " + customerDTO.toString());
     }
 
     @Override
-    public Customer findOne(Long id) {
-        return customerRepository.findOneById(id).orElseThrow(NotFoundException::new);
+    public CustomerDTO findOne(Long id) {
+        LOGGER.info("Find one customer by ID");
+        return customerMapper.customerToCustomerDTO(customerRepository.findOneById(id).orElseThrow(NotFoundException::new));
     }
 
     @Override
-    public void adaptCustomer(Customer customer) {
-        LOGGER.info("Adapt customer: " + customer.toString());
-        Long id = customer.getId();
-        if (customer.getName() != null) {
-            customerRepository.updateName(customer.getName(), id);
+    public void adaptCustomer(CustomerDTO customerDTO) {
+        LOGGER.info("Adapt customer: " + customerDTO.toString());
+        Long id = customerDTO.getId();
+        if (customerDTO.getName() != null) {
+            customerRepository.updateName(customerDTO.getName(), id);
         }
 
-        if (customer.getFirstname() != null) {
-            customerRepository.updateFirstname(customer.getFirstname(), id);
+        if (customerDTO.getFirstname() != null) {
+            customerRepository.updateFirstname(customerDTO.getFirstname(), id);
         }
-        if (customer.getEmail() != null) {
-            customerRepository.updateEmail(customer.getEmail(), id);
+        if (customerDTO.getEmail() != null) {
+            customerRepository.updateEmail(customerDTO.getEmail(), id);
         }
-        if (customer.getBirthday() != null) {
-            customerRepository.updateBirthday(customer.getBirthday(), id);
+        if (customerDTO.getBirthday() != null) {
+            customerRepository.updateBirthday(customerDTO.getBirthday(), id);
         }
     }
 
     @Override
-    public List<Customer> findAll() {
+    public List<CustomerDTO> findAll() {
         LOGGER.info("Find all customers ordered by ID");
-        return customerRepository.findAllByOrderByIdAsc();
+        return customerMapper.customerToCustomerDTO(customerRepository.findAllByOrderByIdAsc());
     }
 
     @Override
-    public List<Customer> findCustomersFiltered(Long id, String name, String firstname, String email, LocalDate birthday) {
+    public List<CustomerDTO> findCustomersFiltered(Long id, String name, String firstname, String email, LocalDate birthday) {
         LOGGER.info("Find customers filtered");
-        return customerRepository.findCustomersFiltered(id, name, firstname, email, birthday);
+        return customerMapper.customerToCustomerDTO(customerRepository.findCustomersFiltered(id, name, firstname, email, birthday));
     }
  }

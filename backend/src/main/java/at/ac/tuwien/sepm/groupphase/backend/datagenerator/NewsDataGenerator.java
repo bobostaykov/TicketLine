@@ -15,9 +15,9 @@ import java.util.concurrent.TimeUnit;
 
 @Profile("generateData")
 @Component
-public class NewsDataGenerator {
+public class NewsDataGenerator implements DataGenerator{
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(NewsDataGenerator.class);
+    private final Logger LOGGER = LoggerFactory.getLogger(getClass());
     private static final int NUMBER_OF_NEWS_TO_GENERATE = 25;
 
     private final NewsRepository newsRepository;
@@ -28,12 +28,12 @@ public class NewsDataGenerator {
         faker = new Faker();
     }
 
-    @PostConstruct
-    private void generateNews() {
+    @Override
+    public void generate() {
         if (newsRepository.count() > 0) {
-            LOGGER.info("news already generated");
+            LOGGER.info("News already generated");
         } else {
-            LOGGER.info("generating {} news entries", NUMBER_OF_NEWS_TO_GENERATE);
+            LOGGER.info("Generating {} news entries", NUMBER_OF_NEWS_TO_GENERATE);
             for (int i = 0; i < NUMBER_OF_NEWS_TO_GENERATE; i++) {
                 News news = News.builder()
                     .title(faker.lorem().characters(30, 40))
@@ -46,7 +46,7 @@ public class NewsDataGenerator {
                             ZoneId.systemDefault()
                         ))
                     .build();
-                LOGGER.debug("saving news {}", news);
+                LOGGER.debug("Saving news {}", news);
                 newsRepository.save(news);
             }
         }

@@ -18,7 +18,7 @@ public class LocationDTO {
     private String city;
 
     @ApiModelProperty(name = "Location's postal code")
-    private String postalcode;
+    private String postalCode;
 
     @ApiModelProperty(name = "Location's street")
     private String street;
@@ -50,12 +50,12 @@ public class LocationDTO {
         this.city = city;
     }
 
-    public String getPostalcode() {
-        return postalcode;
+    public String getPostalCode() {
+        return postalCode;
     }
 
-    public void setPostalcode(String postalcode) {
-        this.postalcode = postalcode;
+    public void setPostalCode(String postalCode) {
+        this.postalCode = postalCode;
     }
 
     public String getStreet() {
@@ -74,6 +74,8 @@ public class LocationDTO {
         this.description = description;
     }
 
+    public static LocationDTOBuilder builder() { return new LocationDTOBuilder(); }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -82,14 +84,14 @@ public class LocationDTO {
         return id.equals(that.id) &&
             country.equals(that.country) &&
             city.equals(that.city) &&
-            postalcode.equals(that.postalcode) &&
+            postalCode.equals(that.postalCode) &&
             street.equals(that.street) &&
             Objects.equals(description, that.description);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, country, city, postalcode, street, description);
+        return Objects.hash(id, country, city, postalCode, street, description);
     }
 
     @Override
@@ -98,7 +100,7 @@ public class LocationDTO {
             "id=" + id +
             ", country='" + country + '\'' +
             ", city='" + city + '\'' +
-            ", postalcode='" + postalcode + '\'' +
+            ", postalCode='" + postalCode + '\'' +
             ", street='" + street + '\'' +
             ", description='" + description + '\'' +
             '}';
@@ -108,7 +110,7 @@ public class LocationDTO {
         private Long id;
         private String country;
         private String city;
-        private String postalcode;
+        private String postalCode;
         private String street;
         private String description;
 
@@ -129,8 +131,8 @@ public class LocationDTO {
             return this;
         }
 
-        public LocationDTOBuilder postalcode(String postalcode) {
-            this.postalcode = postalcode;
+        public LocationDTOBuilder postalCode(String postalCode) {
+            this.postalCode = postalCode;
             return this;
         }
 
@@ -145,14 +147,14 @@ public class LocationDTO {
         }
 
         public LocationDTO build() {
-            LocationDTO location = new LocationDTO();
-            location.setId(id);
-            location.setCountry(country);
-            location.setCity(city);
-            location.setPostalcode(postalcode);
-            location.setStreet(street);
-            location.setDescription(description);
-            return location;
+            LocationDTO locationDTO = new LocationDTO();
+            locationDTO.setId(id);
+            locationDTO.setCountry(country);
+            locationDTO.setCity(city);
+            locationDTO.setPostalCode(postalCode);
+            locationDTO.setStreet(street);
+            locationDTO.setDescription(description);
+            return locationDTO;
         }
     }
 }

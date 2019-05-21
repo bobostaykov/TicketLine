@@ -6,10 +6,10 @@ import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.show.ShowDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 
-@ApiModel(value = "EventDTO", description = "A DTO for event entries via rest")
+@ApiModel(value = "EventDTO")
 public class EventDTO {
 
     @ApiModelProperty(name = "The automatically generated database id")
@@ -18,11 +18,8 @@ public class EventDTO {
     @ApiModelProperty(name = "The unique name of the event")
     private String name;
 
-    @ApiModelProperty(name = "The type of the event (THEATRE | OPERA | FESTIVAL | CONCERT | MOVIE | MUSICAL)")
+    @ApiModelProperty(name = "The type of the event (THEATER | OPER | FESTIVAL | CONCERT | MOVIE | MUSICAL)")
     private EventType eventType;
-
-    @ApiModelProperty(name = "The duration of the event in minutes")
-    private Integer durationInMinutes;
 
     @ApiModelProperty(name = "A description of the event")
     private String description;
@@ -30,11 +27,8 @@ public class EventDTO {
     @ApiModelProperty(name = "A content of the event")
     private String content;
 
-    @ApiModelProperty(name = "The artists that participate in the event")
-    private HashSet<ArtistDTO> participatingArtists;
-
-    @ApiModelProperty(name = "The shows from which the event consists")
-    private HashSet<ShowDTO> shows;
+    @ApiModelProperty(name = "The artist that participates in the event")
+    private ArtistDTO artist;
 
     public Long getId() {
         return id;
@@ -60,14 +54,6 @@ public class EventDTO {
         this.eventType = eventType;
     }
 
-    public Integer getDurationInMinutes() {
-        return durationInMinutes;
-    }
-
-    public void setDurationInMinutes(Integer durationInMinutes) {
-        this.durationInMinutes = durationInMinutes;
-    }
-
     public String getDescription() {
         return description;
     }
@@ -84,20 +70,16 @@ public class EventDTO {
         this.content = content;
     }
 
-    public HashSet<ArtistDTO> getParticipatingArtists() {
-        return participatingArtists;
+    public ArtistDTO getArtist() {
+        return artist;
     }
 
-    public void setParticipatingArtists(HashSet<ArtistDTO> participatingArtists) {
-        this.participatingArtists = participatingArtists;
+    public void setArtist(ArtistDTO artist) {
+        this.artist = artist;
     }
 
-    public HashSet<ShowDTO> getShows() {
-        return shows;
-    }
-
-    public void setShows(HashSet<ShowDTO> shows) {
-        this.shows = shows;
+    public static EventDTOBuilder builder() {
+        return new EventDTOBuilder();
     }
 
     @Override
@@ -108,27 +90,35 @@ public class EventDTO {
         return id.equals(eventDTO.id) &&
             name.equals(eventDTO.name) &&
             eventType == eventDTO.eventType &&
-            durationInMinutes.equals(eventDTO.durationInMinutes) &&
-            description.equals(eventDTO.description) &&
+            Objects.equals(description, eventDTO.description) &&
             Objects.equals(content, eventDTO.content) &&
-            participatingArtists.equals(eventDTO.participatingArtists) &&
-            shows.equals(eventDTO.shows);
+            Objects.equals(artist, eventDTO.artist);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, eventType, durationInMinutes, description, content, participatingArtists, shows);
+        return Objects.hash(id, name, eventType, description, content, artist);
+    }
+
+    @Override
+    public String toString() {
+        return "EventDTO{" +
+            "id=" + id +
+            ", name='" + name + '\'' +
+            ", eventType=" + eventType +
+            ", description='" + description + '\'' +
+            ", content='" + content + '\'' +
+            ", artist=" + artist +
+            '}';
     }
 
     public static final class EventDTOBuilder {
         private Long id;
         private String name;
         private EventType eventType;
-        private Integer durationInMinutes;
         private String description;
         private String content;
-        private HashSet<ShowDTO> shows;
-        private HashSet<ArtistDTO> participatingArtists;
+        private ArtistDTO artist;
 
         private EventDTOBuilder() {}
 
@@ -147,11 +137,6 @@ public class EventDTO {
             return this;
         }
 
-        public EventDTOBuilder durationInMinutes(Integer durationInMinutes) {
-            this.durationInMinutes = durationInMinutes;
-            return this;
-        }
-
         public EventDTOBuilder description(String description) {
             this.description = description;
             return this;
@@ -162,13 +147,8 @@ public class EventDTO {
             return this;
         }
 
-        public EventDTOBuilder shows(HashSet<ShowDTO> shows) {
-            this.shows = shows;
-            return this;
-        }
-
-        public EventDTOBuilder participatingArtists(HashSet<ArtistDTO> participatingArtists) {
-            this.participatingArtists = participatingArtists;
+        public EventDTOBuilder artist(ArtistDTO artist) {
+            this.artist = artist;
             return this;
         }
 
@@ -177,11 +157,9 @@ public class EventDTO {
             eventDTO.setId(id);
             eventDTO.setName(name);
             eventDTO.setEventType(eventType);
-            eventDTO.setDurationInMinutes(durationInMinutes);
             eventDTO.setDescription(description);
             eventDTO.setContent(content);
-            eventDTO.setParticipatingArtists(participatingArtists);
-            eventDTO.setShows(shows);
+            eventDTO.setArtist(artist);
             return eventDTO;
         }
     }

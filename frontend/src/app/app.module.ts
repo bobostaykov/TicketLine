@@ -22,6 +22,10 @@ import { CustomerAddComponent } from './components/customerAdd/customer-add.comp
 import { CustomerComponent } from './components/customer/customer.component';
 import { CustomerDialogComponent } from './components/customer-dialog/customer-dialog.component';
 import { BlockedUsersComponent } from './components/blocked-users/blocked-users.component';
+import { SearchEventsComponent } from './components/events/search-events/search-events.component';
+import { ArtistResultsComponent } from './components/search-results/artist/artist-results.component';
+import { ShowComponent } from './components/show/show.component';
+import { EventsComponent } from './components/events/start page/events.component';
 
 @NgModule({
   declarations: [
@@ -34,6 +38,10 @@ import { BlockedUsersComponent } from './components/blocked-users/blocked-users.
     UserComponent,
     TopTenEventsComponent,
     CustomerAddComponent,
+    SearchEventsComponent,
+    ArtistResultsComponent,
+    ShowComponent,
+    EventsComponent,
     CustomerComponent,
     CustomerDialogComponent,
     BlockedUsersComponent,
@@ -50,7 +58,7 @@ import { BlockedUsersComponent } from './components/blocked-users/blocked-users.
     MatCheckboxModule,
     MatInputModule,
     MatSelectModule,
-    NgxChartsModule
+    NgxChartsModule,
   ],
   providers: [httpInterceptorProviders, Globals],
   bootstrap: [AppComponent]

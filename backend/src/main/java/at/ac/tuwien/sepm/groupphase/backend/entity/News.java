@@ -22,6 +22,10 @@ public class News {
     @Column(nullable = false, length = 10_000)
     private String text;
 
+    @Column(name ="image_id")
+    @Size(max = 100)
+    private String image;
+
     public Long getId() {
         return id;
     }
@@ -52,6 +56,14 @@ public class News {
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public static NewsBuilder builder() {
@@ -96,6 +108,7 @@ public class News {
         private LocalDateTime publishedAt;
         private String title;
         private String text;
+        private String image;
 
         private NewsBuilder() {
         }
@@ -120,12 +133,18 @@ public class News {
             return this;
         }
 
+        public NewsBuilder image(String image) {
+            this.image = image;
+            return this;
+        }
+
         public News build() {
             News news = new News();
             news.setId(id);
             news.setPublishedAt(publishedAt);
             news.setTitle(title);
             news.setText(text);
+            news.setImage(image);
             return news;
         }
     }

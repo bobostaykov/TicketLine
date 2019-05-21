@@ -1,5 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.integrationtest;
 
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.DetailedNewsDTO;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.SimpleNewsDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.News;
 import at.ac.tuwien.sepm.groupphase.backend.integrationtest.base.BaseIntegrationTest;
 import at.ac.tuwien.sepm.groupphase.backend.repository.NewsRepository;
@@ -30,6 +32,7 @@ public class NewsEndpointTest extends BaseIntegrationTest {
 
     private static final String TEST_NEWS_TEXT = "TestNewsText";
     private static final String TEST_NEWS_TITLE = "title";
+    private static final String TEST_NEWS_IMAGEID = "1";
     private static final LocalDateTime TEST_NEWS_PUBLISHED_AT =
         LocalDateTime.of(2016, 11, 13, 12, 15, 0, 0);
     private static final long TEST_NEWS_ID = 1L;
@@ -57,6 +60,7 @@ public class NewsEndpointTest extends BaseIntegrationTest {
                     .id(TEST_NEWS_ID)
                     .title(TEST_NEWS_TITLE)
                     .text(TEST_NEWS_TEXT)
+                    .image(TEST_NEWS_IMAGEID)
                     .publishedAt(TEST_NEWS_PUBLISHED_AT)
                     .build()));
         Response response = RestAssured
@@ -66,8 +70,8 @@ public class NewsEndpointTest extends BaseIntegrationTest {
             .when().get(NEWS_ENDPOINT)
             .then().extract().response();
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
-        Assert.assertThat(Arrays.asList(response.as(at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.SimpleNewsDTO[].class)), is(Collections.singletonList(
-            at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.SimpleNewsDTO.builder()
+        Assert.assertThat(Arrays.asList(response.as(SimpleNewsDTO[].class)), is(Collections.singletonList(
+            SimpleNewsDTO.builder()
                 .id(TEST_NEWS_ID)
                 .title(TEST_NEWS_TITLE)
                 .summary(TEST_NEWS_TEXT)
@@ -93,6 +97,7 @@ public class NewsEndpointTest extends BaseIntegrationTest {
                 .id(TEST_NEWS_ID)
                 .title(TEST_NEWS_TITLE)
                 .text(TEST_NEWS_TEXT)
+                .image(TEST_NEWS_IMAGEID)
                 .publishedAt(TEST_NEWS_PUBLISHED_AT)
                 .build()));
         Response response = RestAssured
@@ -102,10 +107,11 @@ public class NewsEndpointTest extends BaseIntegrationTest {
             .when().get(NEWS_ENDPOINT + SPECIFIC_NEWS_PATH, TEST_NEWS_ID)
             .then().extract().response();
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
-        Assert.assertThat(response.as(at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.DetailedNewsDTO.class), is(at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.DetailedNewsDTO.builder()
+        Assert.assertThat(response.as(DetailedNewsDTO.class), is(DetailedNewsDTO.builder()
             .id(TEST_NEWS_ID)
             .title(TEST_NEWS_TITLE)
             .text(TEST_NEWS_TEXT)
+            .image(TEST_NEWS_IMAGEID)
             .publishedAt(TEST_NEWS_PUBLISHED_AT)
             .build()));
     }
@@ -129,10 +135,11 @@ public class NewsEndpointTest extends BaseIntegrationTest {
         Response response = RestAssured
             .given()
             .contentType(ContentType.JSON)
-            .body(at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.DetailedNewsDTO.builder()
+            .body(DetailedNewsDTO.builder()
                 .id(TEST_NEWS_ID)
                 .title(TEST_NEWS_TITLE)
                 .text(TEST_NEWS_TEXT)
+                .image(TEST_NEWS_IMAGEID)
                 .publishedAt(TEST_NEWS_PUBLISHED_AT)
                 .build())
             .when().post(NEWS_ENDPOINT)
@@ -146,10 +153,11 @@ public class NewsEndpointTest extends BaseIntegrationTest {
             .given()
             .contentType(ContentType.JSON)
             .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
-            .body(at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.DetailedNewsDTO.builder()
+            .body(DetailedNewsDTO.builder()
                 .id(TEST_NEWS_ID)
                 .title(TEST_NEWS_TITLE)
                 .text(TEST_NEWS_TEXT)
+                .image(TEST_NEWS_IMAGEID)
                 .publishedAt(TEST_NEWS_PUBLISHED_AT)
                 .build())
             .when().post(NEWS_ENDPOINT)
@@ -165,23 +173,26 @@ public class NewsEndpointTest extends BaseIntegrationTest {
                 .id(TEST_NEWS_ID)
                 .title(TEST_NEWS_TITLE)
                 .text(TEST_NEWS_TEXT)
+                .image(TEST_NEWS_IMAGEID)
                 .publishedAt(TEST_NEWS_PUBLISHED_AT)
                 .build());
         Response response = RestAssured
             .given()
             .contentType(ContentType.JSON)
             .header(HttpHeaders.AUTHORIZATION, validAdminTokenWithPrefix)
-            .body(at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.DetailedNewsDTO.builder()
+            .body(DetailedNewsDTO.builder()
                 .title(TEST_NEWS_TITLE)
                 .text(TEST_NEWS_TEXT)
+                .image(TEST_NEWS_IMAGEID)
                 .build())
             .when().post(NEWS_ENDPOINT)
             .then().extract().response();
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
-        Assert.assertThat(response.as(at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.DetailedNewsDTO.class), is(at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.DetailedNewsDTO.builder()
+        Assert.assertThat(response.as(DetailedNewsDTO.class), is(DetailedNewsDTO.builder()
             .id(TEST_NEWS_ID)
             .title(TEST_NEWS_TITLE)
             .text(TEST_NEWS_TEXT)
+            .image(TEST_NEWS_IMAGEID)
             .publishedAt(TEST_NEWS_PUBLISHED_AT)
             .build()));
     }

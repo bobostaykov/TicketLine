@@ -1,8 +1,8 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint;
 
 import at.ac.tuwien.sepm.groupphase.backend.datatype.EventType;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.event.EventDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.event.EventTicketsDTO;
-import at.ac.tuwien.sepm.groupphase.backend.entity.EventTickets;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.event.EventTicketsMapper;
 import at.ac.tuwien.sepm.groupphase.backend.service.EventService;
 import io.swagger.annotations.Api;
@@ -39,10 +39,16 @@ public class EventEndpoint {
             categoriesSet.add(EventType.valueOf(s));
         }
 
-        for (EventTickets eventTickets : eventService.findTopTenEvents(monthsSet, categoriesSet)) {
-            topTen.add(eventTicketsMapper.eventTicketsToEventTicketsDTO(eventTickets));
+        for (EventTicketsDTO eventTicketsDTO : eventService.findTopTenEvents(monthsSet, categoriesSet)) {
+            topTen.add(eventTicketsDTO);
         }
         return topTen;
+    }
+
+    @RequestMapping(method = RequestMethod.GET)
+    @ApiOperation(value = "Get all events", authorizations = {@Authorization(value = "apiKey")})
+    public List<EventDTO> findAll() {
+        return eventService.findAll();
     }
 
 }

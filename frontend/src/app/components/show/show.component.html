@@ -1,0 +1,25 @@
+<h1 class="mt-5" *ngIf="resultsFor !== null && name !== null">Shows - Results for {{toWord(resultsFor)}} '{{name}}'</h1>
+<h1 class="mt-5" *ngIf="resultsFor === null && name !== null">Shows - Results for '{{name}}'</h1>
+<h1 class="mt-5" *ngIf="resultsFor !== null && name === null">Shows - Results for {{toWord(resultsFor)}}</h1>
+<h1 class="mt-5" *ngIf="resultsFor === null && name === null">Shows - Results</h1>
+
+<table class="table mt-4">
+  <thead>
+  <tr>
+    <th *ngFor="let head of headElements" scope="col">{{head}}</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let show of shows">
+    <td class="align-middle">{{show.event.name}}</td>
+    <td class="align-middle">{{show.event.artist}}</td>
+    <td class="align-middle">{{show.hall.location}}</td>
+    <td class="align-middle">{{show.hall.name}}</td>
+    <td class="align-middle">{{show.hall.location.city}} - {{show.hall.location.country}}</td>
+    <td class="align-middle">{{show.dateTime}}</td>
+    <td class="align-middle">{{show.event.eventType}}</td>
+    <td class="align-middle">{{show.ticketsSold}}</td>
+    <td class="align-middle"><img routerLink="/tickets" [queryParams]="{show_id: show.id}" src="../../../assets/ticket.png" width="80" height="80" alt="ticket"></td>
+  </tr>
+  </tbody>
+</table>

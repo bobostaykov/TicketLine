@@ -2,11 +2,8 @@ package at.ac.tuwien.sepm.groupphase.backend.endpoint;
 
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.customer.CustomerDTO;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Customer;
-import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.customer.CustomerMapper;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.service.CustomerService;
-import at.ac.tuwien.sepm.groupphase.backend.service.implementation.SimpleHeaderTokenAuthenticationService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
@@ -26,20 +23,17 @@ import java.util.List;
 @Api(value = "customers")
 public class CustomerEndpoint {
     private final CustomerService customerService;
-    private final CustomerMapper customerMapper;
-    private static final Logger LOGGER = LoggerFactory.getLogger(SimpleHeaderTokenAuthenticationService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CustomerEndpoint.class);
 
-    public CustomerEndpoint(CustomerService customerService, CustomerMapper customerMapper) {
+    public CustomerEndpoint(CustomerService customerService) {
         this.customerService = customerService;
-        this.customerMapper = customerMapper;
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public CustomerDTO postCustomer(@RequestBody CustomerDTO customerdto) {
-        LOGGER.info("Post customer " + customerdto.toString());
-        Customer customer = customerMapper.customerDTOToCustomer(customerdto);
+    public CustomerDTO postCustomer(@RequestBody CustomerDTO customerDTO) {
+        LOGGER.info("Post customer " + customerDTO.toString());
         try {
-            return customerMapper.customerToCustomerDTO(customerService.addCustomer(customer));
+            return customerService.addCustomer(customerDTO);
         } catch (ServiceException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error during adding of customer: " + e.getMessage(), e);
         }
@@ -48,16 +42,16 @@ public class CustomerEndpoint {
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ApiOperation(value = "Get detailed information about a specific customer entry", authorizations = {@Authorization(value = "apiKey")})
     public CustomerDTO find(@PathVariable Long id) {
-        return customerMapper.customerToCustomerDTO(customerService.findOne(id));
+        LOGGER.info("Get customer with id " + id);
+        return customerService.findOne(id);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-    public void adaptCustomer(@RequestBody CustomerDTO customerdto, @PathVariable("id") Long id) {
-        LOGGER.info("Adapt customer " + customerdto.toString());
-        Customer customer = customerMapper.customerDTOToCustomer(customerdto);
-        customer.setId(id);
+    public void adaptCustomer(@RequestBody CustomerDTO customerDTO, @PathVariable("id") Long id) {
+        LOGGER.info("Adapt customer " + customerDTO.toString());
+        customerDTO.setId(id);
         try {
-            customerService.adaptCustomer(customer);
+            customerService.adaptCustomer(customerDTO);
         } catch (ServiceException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error during updating customer: " + e.getMessage(), e);
         } catch (NotFoundException e) {
@@ -86,13 +80,13 @@ public class CustomerEndpoint {
             LOGGER.info("Get all customers");
         }
         try {
-            List<Customer> result;
+            List<CustomerDTO> customerDTOList;
             if (filterData) {
-                result = customerService.findCustomersFiltered(id, name, firstname, email, birthday);
+                customerDTOList = customerService.findCustomersFiltered(id, name, firstname, email, birthday);
             } else {
-                result = customerService.findAll();
+                customerDTOList = customerService.findAll();
             }
-            return customerMapper.customerToCustomerDTO(result);
+            return customerDTOList;
         } catch (ServiceException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error during reading filtered customers", e);
         }
