@@ -5,6 +5,7 @@ import at.ac.tuwien.sepm.groupphase.backend.entity.User;
 import org.mapstruct.Mapper;
 
 import java.util.List;
+import java.util.Optional;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
@@ -14,5 +15,4 @@ public interface UserMapper {
     List<UserDTO> userToUserDTO(List<User> all);
 
     User userDTOToUser(UserDTO userDTO);
-
 }

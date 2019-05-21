@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.service;
 
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.user.UserDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.User;
 
 public interface LoginAttemptService {
@@ -39,5 +40,5 @@ public interface LoginAttemptService {
      * creates a Loginattempts entry for new created user
      * @param user
      */
-    void initializeLoginAttempts(User user);
+    void initializeLoginAttempts(UserDTO user);
 }

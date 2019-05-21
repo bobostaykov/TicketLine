@@ -31,6 +31,6 @@ public interface UserService {
      */
     UserDTO createUser(UserDTO userDTO);
 
-    Optional<User> findOneByName(String username);
+    UserDTO findOneByName(String username);
 
 }

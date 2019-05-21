@@ -22,9 +22,8 @@ public class UserEndpoint {
     private final LoginAttemptService loginAttemptService;
     private final UserService userService;
 
-    public UserEndpoint(UserService userService) {
+    public UserEndpoint(UserService userService, LoginAttemptService loginAttemptService) {
         this.userService = userService;
-        this.userMapper = userMapper;
         this.loginAttemptService = loginAttemptService;
     }
 
@@ -46,12 +45,11 @@ public class UserEndpoint {
     @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "Create a user", authorizations = {@Authorization(value = "apiKey")})
     public UserDTO create(@RequestBody UserDTO userDTO) {
-        return userService.createUser(userDTO);
-        User user = userService.createUser(userMapper.userDTOToUser(userDTO));
+        UserDTO user = userService.createUser(userDTO);
         if(!user.getType().equals("ADMIN")){
-            loginAttemptService.initializeLoginAttempts(user);
+            loginAttemptService.initializeLoginAttempts(userDTO);
         }
-        return userMapper.userToUserDTO(user);
+        return user;
     }
     @RequestMapping(value= "blocked/{id}", method = RequestMethod.PUT)
     @PreAuthorize("HasRole('Admin')")
