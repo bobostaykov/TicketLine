@@ -13,8 +13,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 
 @RestController
-@RequestMapping(value = "/news/news-fetch")
-@Api(value = "news/news-fetch")
+@RequestMapping(value = "news-fetch")
+@Api(value = "news-fetch")
 public class UserNewsEndpoint {
 
     private final UserNewsService userNewsService;
