@@ -19,13 +19,12 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MatButtonModule, MatCheckboxModule, MatInputModule, MatSelectModule} from '@angular/material';
 import {NgxChartsModule} from '@swimlane/ngx-charts';
 import { CustomerAddComponent } from './components/customerAdd/customer-add.component';
-import { CustomerComponent } from './components/customer/customer.component';
-import { CustomerDialogComponent } from './components/customer-dialog/customer-dialog.component';
 import { BlockedUsersComponent } from './components/blocked-users/blocked-users.component';
 import { SearchEventsComponent } from './components/events/search-events/search-events.component';
 import { ArtistResultsComponent } from './components/search-results/artist/artist-results.component';
 import { ShowComponent } from './components/show/show.component';
 import { EventsComponent } from './components/events/start page/events.component';
+import { LocationsComponent } from './locations/locations.component';
 
 @NgModule({
   declarations: [
@@ -42,9 +41,8 @@ import { EventsComponent } from './components/events/start page/events.component
     ArtistResultsComponent,
     ShowComponent,
     EventsComponent,
-    CustomerComponent,
-    CustomerDialogComponent,
     BlockedUsersComponent,
+    LocationsComponent,
   ],
   imports: [
     BrowserModule,

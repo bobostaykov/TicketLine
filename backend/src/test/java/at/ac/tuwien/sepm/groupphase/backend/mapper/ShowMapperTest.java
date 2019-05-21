@@ -21,6 +21,7 @@ import java.time.LocalDateTime;
 import static at.ac.tuwien.sepm.groupphase.backend.datatype.EventType.MOVIE;
 import static org.assertj.core.api.Assertions.assertThat;
 
+//TODO List mapping?
 @RunWith(SpringJUnit4ClassRunner.class)
 public class ShowMapperTest {
 
@@ -33,6 +34,7 @@ public class ShowMapperTest {
     @SuppressWarnings("SpringJavaAutowiredMembersInspection")
     // Suppress warning cause inspection does not know that the cdi annotations are added in the code generation step
     private ShowMapper showMapper;
+
     private static final long ID = 1L;
     private static final Event EVENT = Event.builder()
         .id(2L)
