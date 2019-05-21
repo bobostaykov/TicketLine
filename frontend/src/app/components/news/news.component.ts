@@ -5,6 +5,9 @@ import {NgbPaginationConfig} from '@ng-bootstrap/ng-bootstrap';
 import * as _ from 'lodash';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {AuthService} from '../../services/auth/auth.service';
+import {Usernews} from '../../dtos/usernews';
+import {User} from '../../dtos/user';
+import {UserService} from '../../services/user/user.service';
 import {FileService} from '../../services/file.service';
 
 @Component({
@@ -22,7 +25,9 @@ export class NewsComponent implements OnInit {
   submitted: boolean = false;
   private news: News[];
 
-  constructor(private newsService: NewsService, private fileService: FileService, private ngbPaginationConfig: NgbPaginationConfig, private formBuilder: FormBuilder, private cd: ChangeDetectorRef, private authService: AuthService) {
+  constructor(private newsService: NewsService, private fileService: FileService, private userService: UserService,
+              private ngbPaginationConfig: NgbPaginationConfig, private formBuilder: FormBuilder,
+              private cd: ChangeDetectorRef, private authService: AuthService) {
     this.newsForm = this.formBuilder.group({
       title: ['', [Validators.required]],
       summary: ['', [Validators.required]],
@@ -105,7 +110,6 @@ export class NewsComponent implements OnInit {
   getNewsDetails(id: number) {
     if (_.isEmpty(this.news.find(x => x.id === id).text)) {
       this.loadNewsDetails(id);
-      this.newsService.updateNewsFetch();
     }
   }
 
@@ -138,6 +142,18 @@ export class NewsComponent implements OnInit {
   private loadUnreadNews() {
     // Backend pagination starts at page 0, therefore page must be reduced by 1
     this.newsService.getUnreadNews().subscribe(
+      (news: News[]) => {
+        this.news = news;
+      },
+      error => {
+        this.defaultServiceErrorHandling(error);
+      }
+    );
+  }
+
+  private loadAllNews() {
+    // Backend pagination starts at page 0, therefore page must be reduced by 1
+    this.newsService.getAllNews().subscribe(
       (news: News[]) => {
         this.news = news;
       },

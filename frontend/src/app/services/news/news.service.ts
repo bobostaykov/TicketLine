@@ -3,6 +3,7 @@ import {HttpClient} from '@angular/common/http';
 import {News} from '../../dtos/news';
 import {Observable} from 'rxjs';
 import {Globals} from '../../global/globals';
+import {Usernews} from '../../dtos/usernews';
 
 @Injectable({
   providedIn: 'root'
@@ -10,6 +11,7 @@ import {Globals} from '../../global/globals';
 export class NewsService {
 
   private newsBaseUri: string = this.globals.backendUri + '/news';
+  private newsUserBaseUri: string = this.globals.backendUri + '/news-fetch';
 
   constructor(private httpClient: HttpClient, private globals: Globals) {
   }
@@ -27,6 +29,14 @@ export class NewsService {
   getUnreadNews(): Observable<News[]> {
     console.log('Get unread news');
     return this.httpClient.get<News[]>(this.newsBaseUri + '/unread');
+  }
+
+  /**
+   * Loads all news from the backend
+   */
+  getAllNews(): Observable<News[]> {
+    console.log('Get all news');
+    return this.httpClient.get<News[]>(this.newsBaseUri);
   }
 
 
@@ -52,8 +62,9 @@ export class NewsService {
   /**
    * Confirms news fetch to the backend
    */
-  updateNewsFetch(): void {
-    console.log('Update news fetch and mark article as read');
-    this.httpClient.put(this.newsBaseUri + '/news-fetch',  {});
+  updateNewsFetch(usernews: Usernews): Observable<Usernews> {
+    console.log('Post news fetch of current user');
+    console.log(usernews);
+    return this.httpClient.post<Usernews>(this.newsUserBaseUri, usernews);
   }
 }
