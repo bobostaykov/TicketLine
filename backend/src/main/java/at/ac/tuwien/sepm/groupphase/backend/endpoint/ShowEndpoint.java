@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint;
 
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.searchParameters.ShowSearchParametersDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.show.ShowDTO;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.service.ShowService;
@@ -9,10 +10,13 @@ import io.swagger.annotations.Authorization;
 import org.hibernate.service.spi.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 //TODO Class is unfinished
@@ -78,14 +82,14 @@ public class ShowEndpoint {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No shows for that location were found:" + e.getMessage(), e);
         }
     }
-
+*/
     @RequestMapping(value = "/filter", method = RequestMethod.GET)
     @ApiOperation(value = "Get all shows filtered by specified attributes", authorizations = {@Authorization(value = "apiKey")})
     public List<ShowDTO> findAllShowsFiltered(
-        @RequestParam(value="dateFrom", required = false) @DateTimeFormat(iso= DateTimeFormat.ISO.DATE) LocalDateTime dateFrom,
-        @RequestParam(value="dateTo", required = false) @DateTimeFormat(iso= DateTimeFormat.ISO.DATE) LocalDateTime dateTo,
-        @RequestParam(value="timeFrom", required = false) @DateTimeFormat(pattern="HHmm") LocalDateTime timeFrom,
-        @RequestParam(value="timeTo", required = false) @DateTimeFormat(pattern="HHmm") LocalDateTime timeTo,
+        @RequestParam(value="dateFrom", required = false) @DateTimeFormat(iso= DateTimeFormat.ISO.DATE) LocalDate dateFrom,
+        @RequestParam(value="dateTo", required = false) @DateTimeFormat(iso= DateTimeFormat.ISO.DATE) LocalDate dateTo,
+        @RequestParam(value="timeFrom", required = false) @DateTimeFormat(pattern="HHmm") LocalTime timeFrom,
+        @RequestParam(value="timeTo", required = false) @DateTimeFormat(pattern="HHmm") LocalTime timeTo,
         @RequestParam(value="priceInEuroFrom", required = false) Integer priceInEuroFrom,
         @RequestParam(value="priceInEuroTo", required = false) Integer priceInEuroTo,
         @RequestParam(value = "eventName", required = false) String eventName,
@@ -97,13 +101,15 @@ public class ShowEndpoint {
             priceInEuroFrom == null && priceInEuroTo == null &&
             eventName == null && hallName == null);
         try{
-        if (filterData) {
+        /*if (filterData) {
             LOGGER.info("Get all shows");
-            return showMapper.showToShowDTO(showService.findAll());
-        } else {
+            return showService.findAllShowsFiltered(parameters);
+        } else {*/
             LOGGER.info("Get all shows filtered by specified attributes");
-            return showMapper.showToShowDTO(showService.findAllShowsFiltered(dateFrom, dateTo, timeFrom, timeTo, priceInEuroFrom, priceInEuroTo, eventName, hallName));
-        }
+            ShowSearchParametersDTO parameters = new ShowSearchParametersDTO(
+                dateFrom, dateTo, timeFrom, timeTo, priceInEuroFrom, priceInEuroTo, eventName, hallName);
+            return showService.findAllShowsFiltered(parameters);
+        //}
         }catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error while looking for shows with those parameters: " + e.getMessage(), e);
         }catch (ServiceException e) {
@@ -112,7 +118,7 @@ public class ShowEndpoint {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No shows are found for the given parameters:" + e.getMessage(), e);
         }
     }
-
+/*
     @RequestMapping(value = "/location", method = RequestMethod.GET)
     @ApiOperation(value = "Get all shows filtered by location parameters", authorizations = {@Authorization(value = "apiKey")})
     public List<ShowDTO> findAllShowsFilteredByLocation(

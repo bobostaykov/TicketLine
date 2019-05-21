@@ -21,6 +21,12 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public List<EventTicketsDTO> findTopTenEvents(Set<String> monthsSet, Set<EventType> categoriesSet) {
+        return null;
+    }
+}
+/*
+    @Override
+    public List<EventTicketsDTO> findTopTenEvents(Set<String> monthsSet, Set<EventType> categoriesSet) {
         ArrayList<EventTicketsDTO> eventTicketsDTOList = new ArrayList<>();
         for (Object[] o: eventRepository.findTopTenEvents(monthsSet, categoriesSet)) {
             eventTicketsDTOList.add(new EventTicketsDTO((String)o[0], (Long)o[1]));
@@ -29,3 +35,5 @@ public class EventServiceImpl implements EventService {
     }
 
 }
+
+ */
