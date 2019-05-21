@@ -22,6 +22,14 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     List<Customer> findAllByOrderByIdAsc();
 
     /**
+     * Find all customer by name.
+     *
+     * @param name name of customers to search for
+     * @return found customers
+     */
+    List<Customer> findAllByName(String name);
+
+    /**
      * Find a single customer entry by id.
      *
      * @param id id of the customer entry

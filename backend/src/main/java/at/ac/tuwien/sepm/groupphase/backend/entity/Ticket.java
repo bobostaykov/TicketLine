@@ -10,11 +10,11 @@ public class Ticket {
     @SequenceGenerator(name = "seq_ticket_id", sequenceName = "seq_ticket_id")
     private Long reservationNumber;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false, name = "show_id")
     private Show show;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false, name = "customer_id")
     private Customer customer;
 

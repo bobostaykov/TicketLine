@@ -1,5 +1,8 @@
 package at.ac.tuwien.sepm.groupphase.backend.repository;
 
+import at.ac.tuwien.sepm.groupphase.backend.entity.Customer;
+import at.ac.tuwien.sepm.groupphase.backend.entity.Event;
+import at.ac.tuwien.sepm.groupphase.backend.entity.Show;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Ticket;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -22,17 +25,18 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
     /**
      * Find tickets that are issued for the given customer name and show name.
      *
-     * @param customerName name of customer to search for
-     * @param showName name of show to search for
+     * @param customers list of customers to search for
+     * @param shows list of shows to search for
      * @return List of found tickets
      */
     @Query("SELECT t from Ticket t " +
+        "WHERE (customer_id in :customers)" +
         "JOIN Customer c ON t.customer = c " +
         "JOIN Show s ON t.show = s " +
         "JOIN Event e ON e = s.event " +
         "WHERE (c.name LIKE CONCAT('%',:customerName,'%') OR :customerName IS NULL) " +
         "AND (e.name LIKE CONCAT('%',:showName,'%') OR :showName IS NULL)")
-    List<Ticket> findAllFilteredByCustomerAndEvent(@Param("customerName") String customerName, @Param("showName") String showName);
+    List<Ticket> findAllFilteredByCustomerAndEvent(@Param("customers") List<Customer> customers, @Param("shows") List<Show> shows);
 
     /**
      * Find ticket by given reservation number
