@@ -22,11 +22,11 @@ export class UserService {
 
   /**
    * Loads specific user from the backend
-   * @param id of user to load
+   * @param userId of user to load
    */
-  getUserById(id: number): Observable<User> {
-    console.log('Load user details for ' + id);
-    return this.httpClient.get<User>(this.userBaseUri + '/' + id);
+  getUserById(userId: number): Observable<User> {
+    console.log('Load user details for ' + userId);
+    return this.httpClient.get<User>(this.userBaseUri + '/' + userId);
   }
 
   /**
@@ -34,8 +34,17 @@ export class UserService {
    * @param user to persist
    */
   createUser(user: User): Observable<User> {
-    console.log('Create user with name ' + user.name);
+    console.log('Create user with username ' + user.username);
     return this.httpClient.post<User>(this.userBaseUri, user);
+  }
+
+  /**
+   * Deletes the user with the specified id
+   * @param userId id of user to delete
+   */
+  deleteUser(userId: number): Observable<{}> {
+    console.log('Delete user with id ' + userId);
+    return this.httpClient.delete(this.userBaseUri + '/' + userId);
   }
 
 }

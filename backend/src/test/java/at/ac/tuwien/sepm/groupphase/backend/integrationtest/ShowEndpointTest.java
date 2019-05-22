@@ -46,7 +46,7 @@ public class ShowEndpointTest extends BaseIntegrationTest {
             willReturn(Collections.singletonList(
                 Show.builder()
                     .id(CUSTOMER_ID)
-                    .name(CUSTOMER_NAME)
+                    .username(CUSTOMER_NAME)
                     .firstname(CUSTOMER_FIRSTNAME)
                     .email(CUSTOMER_EMAIL)
                     .birthday(CUSTOMER_BIRTHDAY)
@@ -62,7 +62,7 @@ public class ShowEndpointTest extends BaseIntegrationTest {
         Assert.assertThat(Arrays.asList(response.as(ShowDTO[].class)), is(Collections.singletonList(
             ShowDTO.builder()
                 .id(CUSTOMER_ID)
-                .name(CUSTOMER_NAME)
+                .username(CUSTOMER_NAME)
                 .firstname(CUSTOMER_FIRSTNAME)
                 .email(CUSTOMER_EMAIL)
                 .birthday(CUSTOMER_BIRTHDAY)

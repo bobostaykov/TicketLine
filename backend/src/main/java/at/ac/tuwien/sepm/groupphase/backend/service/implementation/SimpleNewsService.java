@@ -34,7 +34,7 @@ public class SimpleNewsService implements NewsService {
 
     @Override
     public List<SimpleNewsDTO> findUnread(String userName) {
-        Optional<User> found = userRepository.findOneByName(userName);
+        Optional<User> found = userRepository.findOneByUsername(userName);
         if (!found.isEmpty()) {
             Long userId = found.get().getId();
             return newsMapper.newsToSimpleNewsDTO(newsRepository.findUnread(userId));

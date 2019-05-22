@@ -15,7 +15,7 @@ public class ArtistDTO {
     @ApiModelProperty(name = "The automatically generated database id")
     private Long id;
 
-    @ApiModelProperty(name = "The name of the artist")
+    @ApiModelProperty(name = "The username of the artist")
     private String name;
 
     public Long getId() {
@@ -56,7 +56,7 @@ public class ArtistDTO {
     public String toString() {
         return "ArtistDTO{" +
             "id=" + id +
-            ", name='" + name + '\'' +
+            ", username='" + name + '\'' +
             '}';
     }
 

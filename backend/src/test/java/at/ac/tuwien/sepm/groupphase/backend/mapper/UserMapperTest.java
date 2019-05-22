@@ -38,7 +38,7 @@ public class UserMapperTest {
     public void shouldMapUserToUserDTO() {
         User user = User.builder()
             .id(USER_ID)
-            .name(USER_NAME)
+            .username(USER_NAME)
             .type(USER_TYPE)
             .userSince(USER_SINCE)
             .lastLogin(USER_LAST_LOGIN)
@@ -46,7 +46,7 @@ public class UserMapperTest {
         UserDTO userDTO = userMapper.userToUserDTO(user);
         assertThat(userDTO).isNotNull();
         assertThat(userDTO.getId()).isEqualTo(1L);
-        assertThat(userDTO.getName()).isEqualTo(USER_NAME);
+        assertThat(userDTO.getUsername()).isEqualTo(USER_NAME);
         assertThat(userDTO.getType()).isEqualTo(USER_TYPE);
         assertThat(userDTO.getUserSince()).isEqualTo(USER_SINCE);
         assertThat(userDTO.getLastLogin()).isEqualTo(USER_LAST_LOGIN);
@@ -56,7 +56,7 @@ public class UserMapperTest {
     public void shouldMapUserDTOToUser() {
         UserDTO userDTO = UserDTO.builder()
             .id(1L)
-            .name(USER_NAME)
+            .username(USER_NAME)
             .type(USER_TYPE)
             .userSince(USER_SINCE)
             .lastLogin(USER_LAST_LOGIN)
@@ -64,7 +64,7 @@ public class UserMapperTest {
         User user = userMapper.userDTOToUser(userDTO);
         assertThat(user).isNotNull();
         assertThat(user.getId()).isEqualTo(1L);
-        assertThat(user.getName()).isEqualTo(USER_NAME);
+        assertThat(user.getUsername()).isEqualTo(USER_NAME);
         assertThat(user.getType()).isEqualTo(USER_TYPE);
         assertThat(user.getUserSince()).isEqualTo(USER_SINCE);
         assertThat(user.getLastLogin()).isEqualTo(USER_LAST_LOGIN);

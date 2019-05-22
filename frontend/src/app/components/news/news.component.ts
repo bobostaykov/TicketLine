@@ -5,7 +5,7 @@ import {NgbPaginationConfig} from '@ng-bootstrap/ng-bootstrap';
 import * as _ from 'lodash';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {AuthService} from '../../services/auth/auth.service';
-import {FileService} from "../../services/file.service";
+import {FileService} from '../../services/file.service';
 
 @Component({
   selector: 'app-news',
@@ -64,14 +64,13 @@ export class NewsComponent implements OnInit {
         null,
         new Date().toISOString()
       );
-      if(this.image != null) {
+      if (this.image != null) {
         this.fileService.uploadFile(this.image).subscribe(id => {
           news.image = id;
           console.log('image: ' + news.image);
           this.createNews(news);
         });
-      }
-      else {
+      } else {
         console.log('No image present');
         this.createNews(news);
       }

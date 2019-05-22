@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.service;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.user.UserDTO;
+import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 
 import java.util.List;
 
@@ -28,6 +29,14 @@ public interface UserService {
      * @param userDTO to add
      * @return created userDTO
      */
-    UserDTO createUser(UserDTO userDTO);
+    UserDTO createUser(UserDTO userDTO) throws ServiceException;
+
+
+    /**
+     * Delete a user by id
+     *
+     * @param userId id of user to delete
+     */
+    void deleteUser(Long userId);
 
 }

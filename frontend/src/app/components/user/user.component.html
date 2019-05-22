@@ -9,7 +9,7 @@
 <div class="mt-4 container">
 
   <div class="row p-2 mb-4">
-    <button *ngIf="isAdmin()" type="button" class="btn btn-secondary btn-sm mr-4" data-toggle="modal" data-target=".create-user-modal">Add user</button>
+    <button *ngIf="isAdmin()" (click)="clearForm()" type="button" class="btn btn-secondary btn-sm mr-4" data-toggle="modal" data-target=".create-user-modal">Add user</button>
   </div>
 
   <div class="modal fade create-user-modal" tabindex="-1" role="dialog" aria-labelledby="Create user modal" aria-hidden="true">
@@ -25,12 +25,49 @@
           <form class="form" [formGroup]="userForm" (ngSubmit)="addUser()">
 
             <div class="form-group">
-              <label for="inputName">Name</label>
-              <input type="text" name="name" formControlName="name" class="form-control" id="inputName"
-                     aria-describedby="nameHelp" placeholder="Enter name">
-              <div *ngIf="submitted && userForm.controls.name.errors" class="error">
-                <small class="form-text text-warning" *ngIf="userForm.controls.name.errors.required">Name is
+              <label for="inputUsername">Username</label>
+              <input type="text" name="username" formControlName="username" class="form-control" id="inputUsername"
+                     aria-describedby="usernameHelp" placeholder="Enter username">
+              <div *ngIf="submitted && userForm.controls.username.errors" class="error">
+                <small class="form-text text-warning" *ngIf="userForm.controls.username.errors.required">Username is
                   required!
+                </small>
+              </div>
+              <div *ngIf="submitted && usernameError" class="error">
+                <small class="form-text text-warning">User with the same
+                  username already exists!
+                </small>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="inputPassword">Password</label>
+              <input type="password" name="password" formControlName="password" class="form-control" id="inputPassword"
+                     aria-describedby="passwordHelp" placeholder="Enter password">
+              <div *ngIf="submitted && userForm.controls.password.errors" class="error">
+                <small class="form-text text-warning" *ngIf="userForm.controls.password.errors.required">Password is
+                  required!
+                </small>
+              </div>
+              <div *ngIf="submitted && userForm.controls.password.value.length < 8 && userForm.controls.password.value.length > 0" class="error">
+                <small class="form-text text-warning">Password must
+                  be at least 8 characters long!
+                </small>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="inputRePassword">Confirm Password</label>
+              <input type="password" name="rePassword" formControlName="rePassword" class="form-control" id="inputRePassword"
+                     aria-describedby="rePasswordHelp" placeholder="Re-enter password">
+              <div *ngIf="submitted && userForm.controls.rePassword.value === userForm.controls.password.value && userForm.controls.rePassword.value === ''" class="error">
+                <small class="form-text text-warning">Password is
+                  required!
+                </small>
+              </div>
+              <div *ngIf="submitted && userForm.controls.rePassword.value !== userForm.controls.password.value" class="error">
+                <small class="form-text text-warning">Passwords don't
+                  match!
                 </small>
               </div>
             </div>
@@ -72,11 +109,12 @@
   </thead>
   <tbody>
     <tr *ngFor="let user of users">
-      <th scope="row">{{user.id}}</th>
-      <td>{{user.name}}</td>
-      <td>{{user.type}}</td>
-      <td>{{user.userSince}}</td>
-      <td>{{user.lastLogin}}</td>
+      <th scope="row" class="align-middle">{{user.id}}</th>
+      <td class="align-middle">{{user.username}}</td>
+      <td class="align-middle">{{user.type}}</td>
+      <td class="align-middle">{{user.userSince}}</td>
+      <td class="align-middle">{{user.lastLogin}}</td>
+      <td class="align-middle"><img (click)="deleteUser(user.id)" src="../../../assets/trash.png" width="25" height="25" alt="delete"></td>
     </tr>
   </tbody>
 </table>

@@ -15,7 +15,7 @@ public class Event {
     @SequenceGenerator(name = "seq_event_id", sequenceName = "seq_event_id")
     private Long id;
 
-    @Column(nullable = false, name = "name")
+    @Column(nullable = false, name = "username")
     @Size(max = 64)
     private String name;
 
@@ -108,7 +108,7 @@ public class Event {
     public String toString() {
         return "Event{" +
             "id=" + id +
-            ", name='" + name + '\'' +
+            ", username='" + name + '\'' +
             ", eventType=" + eventType +
             ", description='" + description + '\'' +
             ", content='" + content + '\'' +
