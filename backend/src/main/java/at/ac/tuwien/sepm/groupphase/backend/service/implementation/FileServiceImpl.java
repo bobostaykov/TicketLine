@@ -1,10 +1,10 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.implementation;
 
-import at.ac.tuwien.sepm.groupphase.backend.entity.DBFile;
+import at.ac.tuwien.sepm.groupphase.backend.entity.File;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.DBFileRepository;
-import at.ac.tuwien.sepm.groupphase.backend.service.DBFileService;
+import at.ac.tuwien.sepm.groupphase.backend.service.FileService;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -12,16 +12,16 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 
 @Service
-public class DBFileServiceImpl implements DBFileService {
+public class FileServiceImpl implements FileService {
 
     private final DBFileRepository dbFileRepository;
 
-    public DBFileServiceImpl(DBFileRepository dbFileRepository) {
+    public FileServiceImpl(DBFileRepository dbFileRepository) {
         this.dbFileRepository = dbFileRepository;
     }
 
     @Override
-    public DBFile getFile(Long id) {
+    public File getFile(Long id) {
         return dbFileRepository.findOneById(id).orElseThrow(NotFoundException::new);
     }
 
@@ -36,7 +36,7 @@ public class DBFileServiceImpl implements DBFileService {
                 throw new ServiceException("File '" + fileName + "' could not be stored: Filename contains invalid path sequence ");
             }
 
-            DBFile dbFile = DBFile.builder().fileName(fileName).fileType(file.getContentType()).data(file.getBytes()).build();
+            File dbFile = File.builder().fileName(fileName).fileType(file.getContentType()).data(file.getBytes()).build();
 
             Long id = dbFileRepository.save(dbFile).getId();
             return id;

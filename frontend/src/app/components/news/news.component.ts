@@ -67,7 +67,6 @@ export class NewsComponent implements OnInit {
       if (this.image != null) {
         this.fileService.uploadFile(this.image).subscribe(id => {
           news.image = id;
-          console.log('image: ' + news.image);
           this.createNews(news);
         });
       } else {
@@ -119,14 +118,20 @@ export class NewsComponent implements OnInit {
       (news: News) => {
         const result = this.news.find(x => x.id === id);
         result.text = news.text;
-        console.log("imageID: " + news.image);
-        console.log(JSON.stringify(news));
         if(news.image != null) {
           this.fileService.getFile(news.image).subscribe(
-            f => {
-              result.imageURL = window.URL.createObjectURL(f);
-              console.log(result.imageURL);
+
+            val => {
+              console.log('Loaded file with id ' + id);
+              let reader = new FileReader();
+              reader.addEventListener("load", () => {
+                result.imageURL = <string>reader.result;}, false);
+              if(val) {
+                reader.readAsDataURL(val);
+                console.log('imageURL: ' + result.imageURL);
+              }
             }
+
           );
         }
       },

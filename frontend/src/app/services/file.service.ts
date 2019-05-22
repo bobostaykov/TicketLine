@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {Globals} from '../global/globals';
-import {Observable} from 'rxjs';
+import {HttpClient, HttpHeaders} from "@angular/common/http";
+import {Globals} from "../global/globals";
+import {Observable} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
 })
 export class FileService {
 
-  private fileBaseUri: string = this.globals.backendUri + '/files';
+  private fileBaseUri: string = this.globals.backendUri + '/news/file';
 
 
   constructor(private httpClient: HttpClient, private globals: Globals) {
@@ -20,12 +20,11 @@ export class FileService {
    */
   getFile(id: string): Observable<Blob> {
     console.log('Load file with id ' + id);
-    return this.httpClient.get<Blob>(this.fileBaseUri + '/' + id);
-    /*this.httpClient.get(this.fileBaseUri + '/' + id, { observe: "body"}).subscribe(
-      res => {
-        return new File(res.)
-      }
-    );*/
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    });
+    return this.httpClient.get<Blob>(this.fileBaseUri + '/' + id, {headers: headers, responseType: 'blob' as 'json'});
   }
 
   /**
@@ -37,11 +36,8 @@ export class FileService {
     const formData = new FormData();
     formData.append('file', file);
     let returnValue: Observable<string>;
-     // this.httpClient.post(this.fileBaseUri, formData, { responseType: 'text'}).subscribe(val =>  {valString = val});
+
     returnValue = this.httpClient.post(this.fileBaseUri, formData, { responseType : 'text'});
     return returnValue;
-    // console.log('image is: ' + returnValue);
-
-    // return returnValue;
   }
 }

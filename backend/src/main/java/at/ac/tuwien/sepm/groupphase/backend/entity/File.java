@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-public class DBFile {
+public class File {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "seq_dbfile_id")
@@ -59,7 +59,7 @@ public class DBFile {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        DBFile dbfile = (DBFile) o;
+        File dbfile = (File) o;
         return id.equals(dbfile.id) &&
             fileName.equals(dbfile.fileName) &&
             fileType.equals(dbfile.fileType);
@@ -72,7 +72,7 @@ public class DBFile {
 
     @Override
     public String toString() {
-        return "DBFile{" +
+        return "File{" +
             "id=" + id +
             ", fileName=" + fileName +
             ", fileType=" + fileType +
@@ -107,8 +107,8 @@ public class DBFile {
             return this;
         }
 
-        public DBFile build() {
-            DBFile dbfile = new DBFile();
+        public File build() {
+            File dbfile = new File();
             dbfile.setId(id);
             dbfile.setFileName(fileName);
             dbfile.setFileType(fileType);
