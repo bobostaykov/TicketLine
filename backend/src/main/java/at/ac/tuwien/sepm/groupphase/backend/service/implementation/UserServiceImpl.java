@@ -16,6 +16,7 @@ import javax.persistence.PersistenceException;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -53,5 +54,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUser(Long userId) {
         userRepository.deleteById(userId);
+    }
+
+    @Override
+    public User findOneByName(String username) {
+        return userRepository.findOneByName(username).orElseThrow(NotFoundException::new);
     }
 }

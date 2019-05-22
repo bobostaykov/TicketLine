@@ -34,7 +34,9 @@ public interface NewsRepository extends JpaRepository<News, Long> {
      * @param givenId ID of user
      * @return ordered list of news entries
      * */
+    /**
     @Query("SELECT m FROM News m LEFT JOIN UserNews u ON m.id = u.newsId WHERE NOT u.userId = :givenId ORDER BY m.publishedAt desc")
     List<News> findUnread(@Param("givenId") Long givenId);
+    */
 
 }

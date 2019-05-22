@@ -11,6 +11,7 @@ import at.ac.tuwien.sepm.groupphase.backend.service.NewsService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,11 +37,33 @@ public class SimpleNewsService implements NewsService {
     public List<SimpleNewsDTO> findUnread(String userName) {
         Optional<User> found = userRepository.findOneByUsername(userName);
         if (!found.isEmpty()) {
-            Long userId = found.get().getId();
-            return newsMapper.newsToSimpleNewsDTO(newsRepository.findUnread(userId));
+            User user = found.get();
+            List<News> readNews = user.getReadNews();
+            List<News> allNews = newsRepository.findAll();
+            return newsMapper.newsToSimpleNewsDTO(difference(allNews, readNews));
         } else {
             return newsMapper.newsToSimpleNewsDTO(newsRepository.findAllByOrderByPublishedAtDesc());
         }
+    }
+
+    private List<News> difference(List<News> all, List<News> drop) {
+        List<News> result = new ArrayList<News>();
+        for (News news : all) {
+            if(!drop.contains(news)) {
+                result.add(news);
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public void addNewsFetch(String username, Long news_id) {
+        User user = userRepository.findOneByName(username).get();
+        News news = newsRepository.getOne(news_id);
+        List<News> newsRead = user.getReadNews();
+        newsRead.add(news);
+        user.setReadNews(newsRead);
+        userRepository.save(user);
     }
 
     @Override

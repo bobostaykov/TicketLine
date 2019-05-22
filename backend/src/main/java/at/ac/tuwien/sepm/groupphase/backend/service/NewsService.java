@@ -39,4 +39,12 @@ public interface NewsService {
      */
     DetailedNewsDTO publishNews(DetailedNewsDTO detailedNewsDTO);
 
+    /**
+     * Add news fetch to news list of user.
+     *
+     * @param username name of user
+     * @param news_id ID of news that was fetched by user
+     */
+    void addNewsFetch(String username, Long news_id);
+
 }

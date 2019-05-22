@@ -6,7 +6,10 @@ import at.ac.tuwien.sepm.groupphase.backend.service.NewsService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,6 +21,8 @@ import java.util.List;
 public class NewsEndpoint {
 
     private final NewsService newsService;
+    private final NewsMapper newsMapper;
+    private static final Logger LOGGER = LoggerFactory.getLogger(NewsEndpoint.class);
 
     public NewsEndpoint(NewsService newsService) {
         this.newsService = newsService;
@@ -40,6 +45,9 @@ public class NewsEndpoint {
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ApiOperation(value = "Get detailed information about a specific news entry", authorizations = {@Authorization(value = "apiKey")})
     public DetailedNewsDTO find(@PathVariable Long id) {
+        LOGGER.info("Get detailed news for " + id);
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        newsService.addNewsFetch(username, id);
         return newsService.findOne(id);
     }
 
