@@ -13,6 +13,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 //TODO Class is unfinished
@@ -24,7 +27,7 @@ public class ShowEndpoint {
 
     private final ShowService showService;
     private static final Logger LOGGER = LoggerFactory.getLogger(ShowEndpoint.class);
-
+    private LocalDateTime a = LocalDateTime.parse("09-10-2019 10:30", DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm"));
     ShowEndpoint(ShowService showService){
         this.showService = showService;
     }
@@ -104,31 +107,6 @@ public class ShowEndpoint {
             LOGGER.info("Get all shows filtered by specified attributes");
             return showMapper.showToShowDTO(showService.findAllShowsFiltered(dateFrom, dateTo, timeFrom, timeTo, priceInEuroFrom, priceInEuroTo, eventName, hallName));
         }
-        }catch (IllegalArgumentException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error while looking for shows with those parameters: " + e.getMessage(), e);
-        }catch (ServiceException e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error while looking for shows with those parameters", e);
-        }catch(NotFoundException e){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No shows are found for the given parameters:" + e.getMessage(), e);
-        }
-    }
-
-    @RequestMapping(value = "/location", method = RequestMethod.GET)
-    @ApiOperation(value = "Get all shows filtered by location parameters", authorizations = {@Authorization(value = "apiKey")})
-    public List<ShowDTO> findAllShowsFilteredByLocation(
-        @RequestParam(value="country", required = false) String country,
-        @RequestParam(value="city", required = false)  String city,
-        @RequestParam(value="postalcode", required = false)  String postalcode,
-        @RequestParam(value="street", required = false)  String street
-    ){
-        boolean filterData = country == null && city == null && postalcode == null && street == null;
-        try{
-            if (filterData) {
-                throw new IllegalArgumentException("No parameters are specified.");
-            } else {
-                LOGGER.info("Get all shows filtered by specified attributes");
-                return showMapper.showToShowDTO(showService.findAllShowsFilteredByLocation(country, city, postalcode, street));
-            }
         }catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error while looking for shows with those parameters: " + e.getMessage(), e);
         }catch (ServiceException e) {

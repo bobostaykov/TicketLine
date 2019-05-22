@@ -22,8 +22,7 @@ export class NewsComponent implements OnInit {
   submitted: boolean = false;
   private news: News[];
 
-  constructor(private newsService: NewsService, private fileService: FileService, private ngbPaginationConfig: NgbPaginationConfig, private formBuilder: FormBuilder,
-              private cd: ChangeDetectorRef, private authService: AuthService) {
+  constructor(private newsService: NewsService, private fileService: FileService, private ngbPaginationConfig: NgbPaginationConfig, private formBuilder: FormBuilder, private cd: ChangeDetectorRef, private authService: AuthService) {
     this.newsForm = this.formBuilder.group({
       title: ['', [Validators.required]],
       summary: ['', [Validators.required]],

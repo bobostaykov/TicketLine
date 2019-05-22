@@ -22,4 +22,23 @@ export class ShowService {
     return this.httpClient.get<Show[]>(this.showBaseUri, {params: { results_for: ResultsFor[resultsFor], name_or_id: nameOrId }});
   }
 
+  public findShowsFilteredByEventName(eventName: string): Observable<Show[]> {
+    console.log('ShowService: findShowsFilteredByEventName');
+    return this.httpClient.get<Show[]>(this.showBaseUri + '/event',{params: {eventName: eventName}});
+  }
+
+  public findShowsFilteredByLocationID(id: number): Observable<Show[]> {
+    console.log('ShowService: findShowsFilteredByLocationID');
+    console.log('test: ' + '/location/${id}');
+    return this.httpClient.get<Show[]>(this.showBaseUri + '/location/${id}');
+  }
+
+  public findShowsFilteredByLocation(country: string, city: string, street: string, postalCode: string, description: string) {
+    console.log('ShowService: findShowsFilteredByLocation');
+    return this.httpClient.get<Show[]>(this.showBaseUri + '/location', {params: {country: country, city: city, postalCode: postalCode, description: description}});
+  }
+
+  public findShowsFilteredByShowAttributes() {
+    console.log('ShowService: findShowsFilteredByShowAttributes');
+  }
 }
