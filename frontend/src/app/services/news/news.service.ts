@@ -3,6 +3,7 @@ import {HttpClient} from '@angular/common/http';
 import {News} from '../../dtos/news';
 import {Observable} from 'rxjs';
 import {Globals} from '../../global/globals';
+import {Usernews} from '../../dtos/usernews';
 
 @Injectable({
   providedIn: 'root'
@@ -56,5 +57,14 @@ export class NewsService {
     console.log('Create news with title ' + news.title);
                         console.log(news);
     return this.httpClient.post<News>(this.newsBaseUri, news);
+  }
+
+  /**
+   * Confirms news fetch to the backend
+   */
+  updateNewsFetch(usernews: Usernews): Observable<Usernews> {
+    console.log('Post news fetch of current user');
+    console.log(usernews);
+    return this.httpClient.post<Usernews>(this.newsUserBaseUri, usernews);
   }
 }
