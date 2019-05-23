@@ -18,7 +18,7 @@ public class Sector {
     @Column(nullable = false)
     private PriceCategory priceCategory;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "hall_id", nullable = false)
     private Hall hall;
 

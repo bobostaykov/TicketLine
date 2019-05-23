@@ -8,7 +8,7 @@ import java.util.List;
 public class Hall {
 
     @Id
-    @Column(name="id")
+    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "seq_hall_id")
     @SequenceGenerator(name = "seq_hall_id", sequenceName = "seq_hall_id")
     private Long id;
@@ -20,10 +20,14 @@ public class Hall {
     @JoinColumn(name = "location_id")
     private Location location;
 
-    @OneToMany(mappedBy = "hall")
+    @OneToMany(cascade = CascadeType.ALL,
+        fetch = FetchType.LAZY,
+        mappedBy = "hall")
     private List<Seat> seats;
 
-    @OneToMany(mappedBy = "hall")
+    @OneToMany(cascade = CascadeType.ALL,
+        fetch = FetchType.LAZY,
+        mappedBy = "hall")
     private List<Sector> sectors;
 
     public Long getId() {
@@ -70,26 +74,27 @@ public class Hall {
         return new HallBuilder();
     }
 
-    public static final class HallBuilder{
+    public static final class HallBuilder {
         private Long id;
         private String name;
         private Location location;
         private List<Seat> seats;
         private List<Sector> sectors;
 
-        private HallBuilder(){}
+        private HallBuilder() {
+        }
 
-        public HallBuilder id(Long id){
+        public HallBuilder id(Long id) {
             this.id = id;
             return this;
         }
 
-        public HallBuilder name(String name){
+        public HallBuilder name(String name) {
             this.name = name;
             return this;
         }
 
-        public HallBuilder location(Location location){
+        public HallBuilder location(Location location) {
             this.location = location;
             return this;
         }
@@ -104,7 +109,7 @@ public class Hall {
             return this;
         }
 
-        public Hall build(){
+        public Hall build() {
             Hall hall = new Hall();
             hall.setId(id);
             hall.setName(name);
