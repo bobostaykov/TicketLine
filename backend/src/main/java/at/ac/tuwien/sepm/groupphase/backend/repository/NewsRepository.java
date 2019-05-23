@@ -26,17 +26,4 @@ public interface NewsRepository extends JpaRepository<News, Long> {
      * @return ordered list of all news entries
      */
     List<News> findAllByOrderByPublishedAtDesc();
-
-    /**
-     * Find all news entries ordered by published at date (descending) which
-     * are unread by user.
-     *
-     * @param givenId ID of user
-     * @return ordered list of news entries
-     * */
-    /**
-    @Query("SELECT m FROM News m LEFT JOIN UserNews u ON m.id = u.newsId WHERE NOT u.userId = :givenId ORDER BY m.publishedAt desc")
-    List<News> findUnread(@Param("givenId") Long givenId);
-    */
-
 }
