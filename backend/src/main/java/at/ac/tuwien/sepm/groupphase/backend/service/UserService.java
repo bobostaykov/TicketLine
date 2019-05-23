@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.service;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.user.UserDTO;
+import at.ac.tuwien.sepm.groupphase.backend.entity.User;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 
 import java.util.List;
@@ -46,6 +47,6 @@ public interface UserService {
      * @param username name of user
      * @return found user
      */
-    User findOneByName(String username);
+    UserDTO findOneByUsername(String username);
 
 }

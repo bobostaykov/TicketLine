@@ -34,13 +34,13 @@ public class CustomerEndpointTest extends BaseIntegrationTest {
     private static final long TEST_CUSTOMER_ID = 1L;
 
     private static final String CUSTOMER_FILTERED_ID = "/customers?id=1";
-    private static final String CUSTOMER_FILTERED_NAME = "/customers?username=ller";
+    private static final String CUSTOMER_FILTERED_NAME = "/customers?name=ller";
     private static final String CUSTOMER_FILTERED_FIRSTNAME = "/customers?firstname=etr";
     private static final String CUSTOMER_FILTERED_EMAIL = "/customers?email=ller@gmail.co";
     private static final String CUSTOMER_FILTERED_BIRTHDAY = "/customers?birthday=22.07.1982";
-    private static final String CUSTOMER_FILTERED_BIRTHDAY_AND_NAME = "/customers?birthday=22.07.1982&username=Müller";
-    private static final String CUSTOMER_FILTERED_FIRSTNAME_AND_NAME = "/customers?firstname=Pe&username=Müller";
-    private static final String CUSTOMER_FILTERED_FIRSTNAME_AND_NAME_AND_EMAIL = "/customers?firstname=Pe&username=Müller&email=@gmail.com";
+    private static final String CUSTOMER_FILTERED_BIRTHDAY_AND_NAME = "/customers?birthday=22.07.1982&name=Müller";
+    private static final String CUSTOMER_FILTERED_FIRSTNAME_AND_NAME = "/customers?firstname=Pe&name=Müller";
+    private static final String CUSTOMER_FILTERED_FIRSTNAME_AND_NAME_AND_EMAIL = "/customers?firstname=Pe&name=Müller&email=@gmail.com";
     private static final String SPECIFIC_CUSTOMER_PATH = "/{customerID}";
 
     private static final Long CUSTOMER_ID = 1L;

@@ -21,7 +21,6 @@ import java.util.List;
 public class NewsEndpoint {
 
     private final NewsService newsService;
-    private final NewsMapper newsMapper;
     private static final Logger LOGGER = LoggerFactory.getLogger(NewsEndpoint.class);
 
     public NewsEndpoint(NewsService newsService) {
@@ -45,9 +44,6 @@ public class NewsEndpoint {
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ApiOperation(value = "Get detailed information about a specific news entry", authorizations = {@Authorization(value = "apiKey")})
     public DetailedNewsDTO find(@PathVariable Long id) {
-        LOGGER.info("Get detailed news for " + id);
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        newsService.addNewsFetch(username, id);
         return newsService.findOne(id);
     }
 
