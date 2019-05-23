@@ -106,8 +106,7 @@ public class ShowEndpoint {
             return showService.findAllShowsFiltered(parameters);
         } else {*/
             LOGGER.info("Get all shows filtered by specified attributes");
-            ShowSearchParametersDTO parameters = new ShowSearchParametersDTO(
-                dateFrom, dateTo, timeFrom, timeTo, priceInEuroFrom, priceInEuroTo, eventName, hallName);
+            ShowSearchParametersDTO parameters = new ShowSearchParametersDTO.ShowSearchParametersDTOBuilder().setDateFrom(dateFrom).setDateTo(dateTo).setTimeFrom(timeFrom).setTimeTo(timeTo).setPriceInEuroFrom(priceInEuroFrom).setPriceInEuroTo(priceInEuroTo).setEventName(eventName).setHallName(hallName).build();
             return showService.findAllShowsFiltered(parameters);
         //}
         }catch (IllegalArgumentException e) {
