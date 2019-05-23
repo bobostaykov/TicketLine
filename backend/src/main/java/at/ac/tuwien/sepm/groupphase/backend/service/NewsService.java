@@ -17,10 +17,9 @@ public interface NewsService {
     /**
      * Find latest news entries ordered by published at date (descending).
      *
-     * @param username the username to get the latest news for
      * @return ordered list of latest news entries
      */
-    List<SimpleNewsDTO> findUnread(String username);
+    List<SimpleNewsDTO> findUnread();
 
     /**
      * Find a single news entry by id.

@@ -3,6 +3,7 @@ package at.ac.tuwien.sepm.groupphase.backend.service.implementation;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.DetailedNewsDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.SimpleNewsDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.user.UserDTO;
+import at.ac.tuwien.sepm.groupphase.backend.entity.News;
 import at.ac.tuwien.sepm.groupphase.backend.entity.User;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.news.NewsMapper;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.user.UserMapper;
@@ -40,22 +41,23 @@ public class SimpleNewsService implements NewsService {
     }
 
     @Override
-    public List<SimpleNewsDTO> findUnread(String userName) {
-        Optional<User> found = userRepository.findOneByUsername(userName);
+    public List<SimpleNewsDTO> findUnread() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Optional<User> found = userRepository.findOneByUsername(username);
         if (!found.isEmpty()) {
-            UserDTO userDTO = userMapper.userToUserDTO(found.get());
-            List<SimpleNewsDTO> readNews = userDTO.getReadNews();
-            List<SimpleNewsDTO> allNews = newsMapper.newsToSimpleNewsDTO(newsRepository.findAll());
-            return difference(allNews, readNews);
+            User user = found.get();
+            List<News> readNews = user.getReadNews();
+            List<News> allNews = newsRepository.findAll();
+            return newsMapper.newsToSimpleNewsDTO(difference(allNews, readNews));
         } else {
             return newsMapper.newsToSimpleNewsDTO(newsRepository.findAllByOrderByPublishedAtDesc());
         }
     }
 
 
-    private List<SimpleNewsDTO> difference(List<SimpleNewsDTO> all, List<SimpleNewsDTO> drop) {
-        List<SimpleNewsDTO> result = new ArrayList<SimpleNewsDTO>();
-        for (SimpleNewsDTO news : all) {
+    private List<News> difference(List<News> all, List<News> drop) {
+        List<News> result = new ArrayList<News>();
+        for (News news : all) {
             if(!drop.contains(news)) {
                 result.add(news);
             }
@@ -67,12 +69,14 @@ public class SimpleNewsService implements NewsService {
     public void addNewsFetch(String username, Long news_id) {
         Optional<User> found = userRepository.findOneByUsername(username);
         if (!found.isEmpty()) {
-            UserDTO user = userMapper.userToUserDTO(found.get());
-            SimpleNewsDTO news = newsMapper.newsToSimpleNewsDTO(newsRepository.getOne(news_id));
-            List<SimpleNewsDTO> newsRead = user.getReadNews();
-            newsRead.add(news);
-            user.setReadNews(newsRead);
-            userRepository.save(userMapper.userDTOToUser(user));
+            User user = found.get();
+            News news = newsRepository.getOne(news_id);
+            List<News> newsRead = user.getReadNews();
+            if (!newsRead.contains(news)) {
+                newsRead.add(news);
+                user.setReadNews(newsRead);
+                userRepository.save(user);
+            }
         }
     }
 

@@ -38,7 +38,7 @@ public class NewsEndpoint {
     @RequestMapping(value = "/unread", method = RequestMethod.GET)
     @ApiOperation(value = "Get list of unread News articles", authorizations = {@Authorization(value = "apiKey")})
     public List<SimpleNewsDTO> findUnread(HttpServletRequest request) {
-        return newsService.findUnread(request.getUserPrincipal().getName());
+        return newsService.findUnread();
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
