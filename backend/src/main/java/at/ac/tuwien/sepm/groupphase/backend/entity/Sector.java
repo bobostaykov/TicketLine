@@ -10,7 +10,7 @@ public class Sector {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "seq_sector_id")
     @SequenceGenerator(name = "seq_sector_id", sequenceName = "seq_sector_id")
-    private Integer id;
+    private Long id;
 
     @Column(nullable = false)
     private Integer sectorNumber;
@@ -18,11 +18,15 @@ public class Sector {
     @Column(nullable = false)
     private PriceCategory priceCategory;
 
-    public Integer getId() {
+    @ManyToOne
+    @JoinColumn(name = "hall_id", nullable = false)
+    private Hall hall;
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -44,6 +48,14 @@ public class Sector {
 
     public static SectorBuilder builder(){
         return new SectorBuilder();
+    }
+
+    public Hall getHall() {
+        return hall;
+    }
+
+    public void setHall(Hall hall) {
+        this.hall = hall;
     }
 
     @Override
@@ -74,14 +86,14 @@ public class Sector {
     }
 
     public static final class SectorBuilder{
-        private Integer id;
+        private Long id;
         private Integer sectorNumber;
         private PriceCategory priceCategory;
-        private Long hallId;
+        private Hall hall;
 
         private SectorBuilder(){}
 
-        public SectorBuilder id(Integer id){
+        public SectorBuilder id(Long id){
             this.id = id;
             return this;
         }
@@ -96,8 +108,8 @@ public class Sector {
             return this;
         }
 
-        public SectorBuilder hallId(Long hallId){
-            this.hallId = hallId;
+        public SectorBuilder hall(Hall hall){
+            this.hall = hall;
             return this;
         }
 
@@ -106,7 +118,10 @@ public class Sector {
             sector.setId(id);
             sector.setSectorNumber(sectorNumber);
             sector.setPriceCategory(priceCategory);
+            sector.setHall(hall);
             return sector;
         }
     }
+
+    //TODO: incorporate hall id into equals, hashcode and tostring methods
 }

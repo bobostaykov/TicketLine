@@ -10,7 +10,7 @@ public class Seat {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "seq_seat_id")
     @SequenceGenerator(name = "seq_seat_id", sequenceName = "seq_seat_id")
-    private Integer id;
+    private Long id;
 
     @Column(nullable = false)
     private Integer seatNumber;
@@ -21,11 +21,15 @@ public class Seat {
     @Column(nullable = false)
     private PriceCategory priceCategory;
 
-    public Integer getId() {
+    @ManyToOne
+    @JoinColumn(name="hall_id", nullable = false)
+    private Hall hall;
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -55,6 +59,14 @@ public class Seat {
 
     public static SeatBuilder builder(){
         return new SeatBuilder();
+    }
+
+    public Hall getHall() {
+        return hall;
+    }
+
+    public void setHall(Hall hall) {
+        this.hall = hall;
     }
 
     @Override
@@ -88,15 +100,15 @@ public class Seat {
     }
 
     public static final class SeatBuilder{
-        private Integer id;
+        private Long id;
         private Integer seatNumber;
         private Integer seatRow;
         private PriceCategory priceCategory;
-        private Long hallId;
+        private Hall hall;
 
         private SeatBuilder(){}
 
-        public SeatBuilder id(Integer id){
+        public SeatBuilder id(Long id){
             this.id = id;
             return this;
         }
@@ -116,8 +128,8 @@ public class Seat {
             return this;
         }
 
-        public SeatBuilder hallId(Long hallId){
-            this.hallId = hallId;
+        public SeatBuilder hall(Hall hall){
+            this.hall = hall;
             return this;
         }
 
@@ -127,7 +139,10 @@ public class Seat {
             seat.setSeatNumber(seatNumber);
             seat.setSeatRow(seatRow);
             seat.setPriceCategory(priceCategory);
+            seat.setHall(hall);
             return seat;
         }
     }
+
+    //TODO: incorporate hall id into equals, hashcode and tostring methods
 }

@@ -20,6 +20,12 @@ public class Hall {
     @JoinColumn(name = "location_id")
     private Location location;
 
+    @OneToMany(mappedBy = "hall")
+    private List<Seat> seats;
+
+    @OneToMany(mappedBy = "hall")
+    private List<Sector> sectors;
+
     public Long getId() {
         return id;
     }
@@ -44,6 +50,22 @@ public class Hall {
         this.location = location;
     }
 
+    public List<Seat> getSeats() {
+        return seats;
+    }
+
+    public void setSeats(List<Seat> seats) {
+        this.seats = seats;
+    }
+
+    public List<Sector> getSectors() {
+        return sectors;
+    }
+
+    public void setSectors(List<Sector> sectors) {
+        this.sectors = sectors;
+    }
+
     public static HallBuilder builder() {
         return new HallBuilder();
     }
@@ -52,6 +74,8 @@ public class Hall {
         private Long id;
         private String name;
         private Location location;
+        private List<Seat> seats;
+        private List<Sector> sectors;
 
         private HallBuilder(){}
 
@@ -70,13 +94,28 @@ public class Hall {
             return this;
         }
 
+        public HallBuilder seats(List<Seat> seats) {
+            this.seats = seats;
+            return this;
+        }
+
+        public HallBuilder sectors(List<Sector> sectors) {
+            this.sectors = sectors;
+            return this;
+        }
+
         public Hall build(){
             Hall hall = new Hall();
             hall.setId(id);
             hall.setName(name);
             hall.setLocation(location);
+            hall.setSeats(seats);
+            hall.setSectors(sectors);
             return hall;
         }
+
+        //TODO: add properties determining price
+        //TODO: add equals and hash and toString methods
 
     }
 

@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.seat;
 
 import at.ac.tuwien.sepm.groupphase.backend.datatype.PriceCategory;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.hall.HallDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -8,7 +9,7 @@ import io.swagger.annotations.ApiModelProperty;
 public class SeatDTO {
 
     @ApiModelProperty(name = "The automatically generated database id of the seat")
-    private Integer id;
+    private Long id;
 
     @ApiModelProperty(name = "The seat number")
     private Integer seatNumber;
@@ -19,11 +20,14 @@ public class SeatDTO {
     @ApiModelProperty(name = "The seat's price category. Either cheap, average or expensive.")
     private PriceCategory priceCategory;
 
-    public Integer getId() {
+    @ApiModelProperty(name = "Hall entity the seat belongs to")
+    private HallDTO hallDTO;
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -49,6 +53,14 @@ public class SeatDTO {
 
     public void setPriceCategory(PriceCategory priceCategory) {
         this.priceCategory = priceCategory;
+    }
+
+    public HallDTO getHallDTO() {
+        return hallDTO;
+    }
+
+    public void setHallDTO(HallDTO hallDTO) {
+        this.hallDTO = hallDTO;
     }
 
     public static SeatDTOBuilder builder(){
@@ -86,14 +98,15 @@ public class SeatDTO {
     }
 
     public static class SeatDTOBuilder {
-        private Integer id;
+        private Long id;
         private Integer seatNumber;
         private Integer seatRow;
         private PriceCategory priceCategory;
+        private HallDTO hallDTO;
 
         private SeatDTOBuilder(){}
 
-        public SeatDTOBuilder id(Integer id){
+        public SeatDTOBuilder id(Long id){
             this.id = id;
             return this;
         }
@@ -113,13 +126,21 @@ public class SeatDTO {
             return this;
         }
 
+        public SeatDTOBuilder hallDTO(HallDTO hallDTO){
+            this.hallDTO = hallDTO;
+            return this;
+        }
+
         public SeatDTO build(){
             SeatDTO seatDTO = new SeatDTO();
             seatDTO.setId(id);
             seatDTO.setSeatNumber(seatNumber);
             seatDTO.setSeatRow(seatRow);
             seatDTO.setPriceCategory(priceCategory);
+            seatDTO.setHallDTO(hallDTO);
             return seatDTO;
         }
     }
+
+    //TODO: incorporate halldto into equals hashcode and toString methods
 }
