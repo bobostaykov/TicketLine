@@ -28,7 +28,7 @@ public class SeatMapperTest {
     // Suppress warning cause inspection does not know that the cdi annotations are added in the code generation step
     private SeatMapper seatMapper;
 
-    private static final Integer SEAT_ID = 1;
+    private static final Long SEAT_ID = 1L;
     private static final Integer SEAT_NUMBER = 10;
     private static final Integer SEAT_ROW = 2;
     private static final PriceCategory PRICE_CATEGORY = PriceCategory.AVERAGE;

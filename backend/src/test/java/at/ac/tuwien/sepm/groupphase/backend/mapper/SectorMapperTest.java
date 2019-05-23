@@ -26,8 +26,7 @@ public class SectorMapperTest {
     @SuppressWarnings("SpringJavaAutowiredMembersInspection")
     // Suppress warning cause inspection does not know that the cdi annotations are added in the code generation step
     private SectorMapper sectorMapper;
-
-    private static final Integer SECTOR_ID = 1;
+    private static final Long SECTOR_ID = 1L;
     private static final Integer SECTOR_NUMBER = 10;
     private static final PriceCategory PRICE_CATEGORY = PriceCategory.CHEAP;
 
