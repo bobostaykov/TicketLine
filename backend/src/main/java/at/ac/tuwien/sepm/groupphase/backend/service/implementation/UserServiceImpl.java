@@ -1,7 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.implementation;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.user.UserDTO;
-import at.ac.tuwien.sepm.groupphase.backend.entity.User;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.user.UserMapper;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.UserRepository;
@@ -9,7 +8,6 @@ import at.ac.tuwien.sepm.groupphase.backend.service.UserService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -26,18 +24,6 @@ public class UserServiceImpl implements UserService {
     public List<UserDTO> findAll() {
         return userMapper.userToUserDTO(userRepository.findAll());
     }
-
-    @Override
-    public UserDTO findOneByName(String username) {
-        Optional<User> found = userRepository.findUserByName(username);
-        if(found.isPresent()){
-            return userMapper.userToUserDTO(found.get());
-        }
-        else{
-            return null;
-        }
-    }
-
 
     @Override
     public UserDTO findOne(Long id) {

@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.implementation;
 
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.searchParameters.ShowSearchParametersDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.show.ShowDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.show.ShowMapper;
 import at.ac.tuwien.sepm.groupphase.backend.repository.ShowRepository;
@@ -11,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.PersistenceException;
+import javax.persistence.criteria.CriteriaBuilder;
 import java.util.List;
 
 //TODO Class is unfinished
@@ -57,13 +59,13 @@ public class ShowServiceImpl implements ShowService {
             throw new ServiceException(e.getMessage(), e);
         }
     }
-
+*/
     @Override
-    public List<Show> findAllShowsFiltered(LocalDateTime dateFrom, LocalDateTime dateTo, LocalDateTime timeFrom, LocalDateTime timeTo, Integer priceInEuroFrom, Integer priceInEuroTo, String eventName, String hallName) {
+    public List<ShowDTO> findAllShowsFiltered(ShowSearchParametersDTO searchparameters) {
         LOGGER.info("Find all shows filtered by date, time, price, event or hall");
-        return null;
+        return showMapper.showToShowDTO(showRepository.findAllShowsFiltered(searchparameters));
     }
-
+/*
     @Override
     public List<Show> findAllShowsFilteredByLocation(String country, String city, String postalcode, String street) {
         LOGGER.info("Find all shows filtered by location");

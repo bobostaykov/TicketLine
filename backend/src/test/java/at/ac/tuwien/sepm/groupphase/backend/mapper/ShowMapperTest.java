@@ -21,7 +21,6 @@ import java.time.LocalDateTime;
 import static at.ac.tuwien.sepm.groupphase.backend.datatype.EventType.MOVIE;
 import static org.assertj.core.api.Assertions.assertThat;
 
-//TODO List mapping?
 @RunWith(SpringJUnit4ClassRunner.class)
 public class ShowMapperTest {
 
@@ -34,7 +33,6 @@ public class ShowMapperTest {
     @SuppressWarnings("SpringJavaAutowiredMembersInspection")
     // Suppress warning cause inspection does not know that the cdi annotations are added in the code generation step
     private ShowMapper showMapper;
-
     private static final long ID = 1L;
     private static final Event EVENT = Event.builder()
         .id(2L)
@@ -67,7 +65,8 @@ public class ShowMapperTest {
             .id(ID)
             .event(EVENT)
             .hall(HALL)
-            .dateTime(DATE_TIME)
+            .date(DATE_TIME.toLocalDate())
+            .time(DATE_TIME.toLocalTime())
             .durationInMinutes(DURATION_IN_MINUTES)
             .ticketsSold(TICKETSSOLD)
             .description(DESCRIPTION)
@@ -138,7 +137,8 @@ public class ShowMapperTest {
         assertThat(show.getId()).isEqualTo(ID);
         assertThat(show.getTicketsSold()).isEqualTo(TICKETSSOLD);
         assertThat(show.getDurationInMinutes()).isEqualTo(DURATION_IN_MINUTES);
-        assertThat(show.getDateTime()).isEqualTo(DATE_TIME);
+        assertThat(show.getDate()).isEqualTo(DATE_TIME.toLocalDate());
+        assertThat(show.getTime()).isEqualTo(DATE_TIME.toLocalTime());
         assertThat(show.getDescription()).isEqualTo(DESCRIPTION);
 
         assertThat(show.getEvent().getId()).isEqualTo(2L);

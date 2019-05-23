@@ -3,7 +3,6 @@ package at.ac.tuwien.sepm.groupphase.backend.service;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.user.UserDTO;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface UserService {
 
@@ -30,7 +29,5 @@ public interface UserService {
      * @return created userDTO
      */
     UserDTO createUser(UserDTO userDTO);
-
-    UserDTO findOneByName(String username);
 
 }

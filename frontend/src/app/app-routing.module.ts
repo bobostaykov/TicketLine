@@ -11,12 +11,8 @@ import {SearchEventsComponent} from './components/events/search-events/search-ev
 import {ShowComponent} from './components/show/show.component';
 import {ArtistResultsComponent} from './components/search-results/artist/artist-results.component';
 import {EventsComponent} from './components/events/start page/events.component';
-import {CustomerComponent} from './components/customer/customer.component';
-import {BlockedUsersComponent} from './components/blocked-users/blocked-users.component';
-import {componentFactoryName} from '@angular/compiler';
 
 const routes: Routes = [
-  {path: 'user/blocked', component: BlockedUsersComponent},
   {path: '', component: HomeComponent},
   {path: 'login', component: LoginComponent},
   {path: 'news', canActivate: [AuthGuard], component: NewsComponent},
