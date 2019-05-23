@@ -3,11 +3,15 @@ package at.ac.tuwien.sepm.groupphase.backend.endpoint;
 import at.ac.tuwien.sepm.groupphase.backend.datatype.EventType;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.event.EventDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.event.EventTicketsDTO;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.searchParameters.EventSearchParametersDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.event.EventTicketsMapper;
 import at.ac.tuwien.sepm.groupphase.backend.service.EventService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
+import org.apache.logging.log4j.spi.LoggerRegistry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,6 +26,7 @@ public class EventEndpoint {
 
     private final EventService eventService;
     private final EventTicketsMapper eventTicketsMapper;
+    private final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
     public EventEndpoint(EventService eventService, EventTicketsMapper eventTicketsMapper) {
         this.eventService = eventService;
@@ -43,6 +48,18 @@ public class EventEndpoint {
             topTen.add(eventTicketsDTO);
         }
         return topTen;
+    }
+
+    @RequestMapping(value = "/filter", method = RequestMethod.GET)
+    @ApiOperation(value = "Get all events filtered by specified attributes", authorizations = {@Authorization(value = "apiKey")})
+    public List<EventDTO> findAllShowsFiltered(
+        @RequestParam(value="name", required = false) String name,
+        @RequestParam(value="duration", required = false) Integer durationInMinutes,
+        @RequestParam(value = "content", required = false) String content,
+        @RequestParam(value = "artistName", required = false) String artistName) {
+        EventSearchParametersDTO parameters = EventSearchParametersDTO.builder().setName(name).setContent(content).setDurationInMinutes(durationInMinutes).setArtistName(artistName).build();
+        LOGGER.info("getting all events filtered by parameters: "+ parameters.toString());
+        return (eventService.findAllFiltered(parameters));
     }
 }
 /*

@@ -12,8 +12,11 @@ public class UserDTO {
     @ApiModelProperty(name = "The automatically generated database id")
     private Long id;
 
-    @ApiModelProperty(name = "The unique name of the user")
-    private String name;
+    @ApiModelProperty(name = "The unique username of the user")
+    private String username;
+
+    @ApiModelProperty(name = "The password of the user")
+    private String password;
 
     @ApiModelProperty(name = "The type of the user (admin/seller)")
     private UserType type;
@@ -32,12 +35,20 @@ public class UserDTO {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getUsername() {
+        return username;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public UserType getType() {
@@ -72,7 +83,7 @@ public class UserDTO {
     public String toString() {
         return "UserDTO{" +
             "id=" + id +
-            ", name='" + name + '\'' +
+            ", username='" + username + '\'' +
             ", type=" + type +
             ", userSince=" + userSince +
             ", lastLogin=" + lastLogin +
@@ -89,7 +100,8 @@ public class UserDTO {
         if (id != null ? !id.equals(userDTO.id) : userDTO.id != null) return false;
         if (userSince != null ? !userSince.equals(userDTO.userSince) : userDTO.userSince != null) return false;
         if (lastLogin != null ? !lastLogin.equals(userDTO.lastLogin) : userDTO.lastLogin != null) return false;
-        if (name != null ? !name.equals(userDTO.name) : userDTO.name != null) return false;
+        if (username != null ? !username.equals(userDTO.username) : userDTO.username != null) return false;
+        if (password != null ? !password.equals(userDTO.password) : userDTO.password != null) return false;
         return type != null ? type.equals(userDTO.type) : userDTO.type == null;
     }
 
@@ -98,7 +110,8 @@ public class UserDTO {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (lastLogin != null ? lastLogin.hashCode() : 0);
         result = 31 * result + (userSince != null ? userSince.hashCode() : 0);
-        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (username != null ? username.hashCode() : 0);
+        result = 31 * result + (password != null ? password.hashCode() : 0);
         result = 31 * result + (type != null ? type.hashCode() : 0);
         return result;
     }
@@ -106,7 +119,8 @@ public class UserDTO {
     public static final class UserDTOBuilder {
 
         private Long id;
-        private String name;
+        private String username;
+        private String password;
         private UserType type;
         private LocalDateTime userSince;
         private LocalDateTime lastLogin;
@@ -116,8 +130,13 @@ public class UserDTO {
             return this;
         }
 
-        public UserDTOBuilder name(String name) {
-            this.name = name;
+        public UserDTOBuilder username(String username) {
+            this.username = username;
+            return this;
+        }
+
+        public UserDTOBuilder password(String password) {
+            this.password = password;
             return this;
         }
 
@@ -139,7 +158,8 @@ public class UserDTO {
         public UserDTO build() {
             UserDTO userDTO = new UserDTO();
             userDTO.setId(id);
-            userDTO.setName(name);
+            userDTO.setUsername(username);
+            userDTO.setPassword(password);
             userDTO.setType(type);
             userDTO.setUserSince(userSince);
             userDTO.setLastLogin(lastLogin);

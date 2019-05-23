@@ -61,11 +61,26 @@ public class ShowServiceImpl implements ShowService {
     }
 */
     @Override
-    public List<ShowDTO> findAllShowsFiltered(ShowSearchParametersDTO searchparameters) {
-        LOGGER.info("Find all shows filtered by date, time, price, event or hall");
-        return showMapper.showToShowDTO(showRepository.findAllShowsFiltered(searchparameters));
+    public List<ShowDTO> findAllShowsFiltered(ShowSearchParametersDTO parameters) throws ServiceException {
+        try{
+            LOGGER.info("Find all shows filtered by :" + parameters.toString());
+            return showMapper.showToShowDTO(showRepository.findAllShowsFiltered(parameters));
+        }catch (PersistenceException e){
+            throw new ServiceException(e.getMessage(), e);
+        }
+
     }
-/*
+
+    @Override
+    public List<ShowDTO> findAllShows() throws ServiceException {
+        try{
+            LOGGER.info("Find all shows");
+            return showMapper.showToShowDTO(showRepository.findAll());
+        }catch (PersistenceException e){
+            throw new ServiceException(e.getMessage(), e);
+        }
+    }
+    /*
     @Override
     public List<Show> findAllShowsFilteredByLocation(String country, String city, String postalcode, String street) {
         LOGGER.info("Find all shows filtered by location");

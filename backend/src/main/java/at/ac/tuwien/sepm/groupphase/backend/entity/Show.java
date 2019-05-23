@@ -26,9 +26,6 @@ public class Show {
     @Column(nullable = false, name = "date")
     private LocalDate date;
 
-    @Column(nullable = false, name = "duration")
-    @Positive
-    private Integer durationInMinutes;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "hall_id")
@@ -84,15 +81,6 @@ public class Show {
         this.description = description;
     }
 
-    public Integer getDurationInMinutes() {
-        return durationInMinutes;
-    }
-
-    public void setDurationInMinutes(Integer durationInMinutes) {
-        this.durationInMinutes = durationInMinutes;
-    }
-
-
     public Long getTicketsSold() {
         return ticketsSold;
     }
@@ -115,7 +103,6 @@ public class Show {
             Objects.equals(event, show.event) &&
             Objects.equals(time, show.time) &&
             Objects.equals(date, show.date) &&
-            Objects.equals(durationInMinutes, show.durationInMinutes) &&
             Objects.equals(hall, show.hall) &&
             Objects.equals(description, show.description) &&
             Objects.equals(ticketsSold, show.ticketsSold);
@@ -123,7 +110,7 @@ public class Show {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, event, time, date, durationInMinutes, hall, description, ticketsSold);
+        return Objects.hash(id, event, time, date, hall, description, ticketsSold);
     }
 
     public static final class ShowBuilder {
@@ -131,7 +118,6 @@ public class Show {
         private Event event;
         private LocalDate date;
         private LocalTime time;
-        private Integer durationInMinutes;
         private Hall hall;
         private String description;
         private Long ticketsSold;
@@ -148,10 +134,6 @@ public class Show {
             return this;
         }
 
-        public ShowBuilder durationInMinutes(Integer durationInMinutes) {
-            this.durationInMinutes = durationInMinutes;
-            return this;
-        }
 
         public ShowBuilder date(LocalDate date) {
             this.date = date;
@@ -182,7 +164,6 @@ public class Show {
             Show show = new Show();
             show.setId(id);
             show.setEvent(event);
-            show.setDurationInMinutes(durationInMinutes);
             show.setDate(date);
             show.setTime(time);
             show.setHall(hall);

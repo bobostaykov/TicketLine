@@ -29,6 +29,7 @@ public class UserEndpointTest extends BaseIntegrationTest {
 
     private static final long TEST_USER_ID = 1L;
     private static final String TEST_USER_NAME = "Messi";
+    private static final String TEST_USER_PASS = "Messi123";
     private static final UserType TEST_USER_TYPE = UserType.ADMIN;
     private static final LocalDateTime TEST_USER_SINCE = LocalDateTime.of(1011, 11, 11, 11, 11, 11, 11);
     private static final LocalDateTime TEST_USER_LAST_LOGIN = LocalDateTime.of(2012, 12, 12, 12, 12, 12, 12);
@@ -53,7 +54,7 @@ public class UserEndpointTest extends BaseIntegrationTest {
             willReturn(Collections.singletonList(
                 User.builder()
                     .id(TEST_USER_ID)
-                    .name(TEST_USER_NAME)
+                    .username(TEST_USER_NAME)
                     .type(TEST_USER_TYPE)
                     .userSince(TEST_USER_SINCE)
                     .lastLogin(TEST_USER_LAST_LOGIN)
@@ -83,7 +84,7 @@ public class UserEndpointTest extends BaseIntegrationTest {
             given(userRepository.findById(TEST_USER_ID)).
             willReturn(Optional.of(User.builder()
                 .id(TEST_USER_ID)
-                .name(TEST_USER_NAME)
+                .username(TEST_USER_NAME)
                 .type(TEST_USER_TYPE)
                 .userSince(TEST_USER_SINCE)
                 .lastLogin(TEST_USER_LAST_LOGIN)
@@ -118,7 +119,7 @@ public class UserEndpointTest extends BaseIntegrationTest {
             .contentType(ContentType.JSON)
             .body(UserDTO.builder()
                 .id(TEST_USER_ID)
-                .name(TEST_USER_NAME)
+                .username(TEST_USER_NAME)
                 .type(TEST_USER_TYPE)
                 .userSince(TEST_USER_SINCE)
                 .lastLogin(TEST_USER_LAST_LOGIN)
@@ -136,7 +137,7 @@ public class UserEndpointTest extends BaseIntegrationTest {
             .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
             .body(UserDTO.builder()
                 .id(TEST_USER_ID)
-                .name(TEST_USER_NAME)
+                .username(TEST_USER_NAME)
                 .type(TEST_USER_TYPE)
                 .userSince(TEST_USER_SINCE)
                 .lastLogin(TEST_USER_LAST_LOGIN)
@@ -152,7 +153,8 @@ public class UserEndpointTest extends BaseIntegrationTest {
             given(userRepository.save(any(User.class))).
             willReturn(User.builder()
                 .id(TEST_USER_ID)
-                .name(TEST_USER_NAME)
+                .username(TEST_USER_NAME)
+                .password(TEST_USER_PASS)
                 .type(TEST_USER_TYPE)
                 .userSince(TEST_USER_SINCE)
                 .lastLogin(TEST_USER_LAST_LOGIN)
@@ -162,7 +164,8 @@ public class UserEndpointTest extends BaseIntegrationTest {
             .contentType(ContentType.JSON)
             .header(HttpHeaders.AUTHORIZATION, validAdminTokenWithPrefix)
             .body(UserDTO.builder()
-                .name(TEST_USER_NAME)
+                .username(TEST_USER_NAME)
+                .password(TEST_USER_PASS)
                 .type(TEST_USER_TYPE)
                 .build())
             .when().post(USER_ENDPOINT)
@@ -170,7 +173,8 @@ public class UserEndpointTest extends BaseIntegrationTest {
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
         Assert.assertThat(response.as(UserDTO.class), is(UserDTO.builder()
             .id(TEST_USER_ID)
-            .name(TEST_USER_NAME)
+            .username(TEST_USER_NAME)
+            .password(TEST_USER_PASS)
             .type(TEST_USER_TYPE)
             .userSince(TEST_USER_SINCE)
             .lastLogin(TEST_USER_LAST_LOGIN)

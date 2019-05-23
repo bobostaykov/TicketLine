@@ -34,8 +34,10 @@ public class ShowDataGenerator implements DataGenerator {
         timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
     }
 
+
     @Override
     public void generate(){
+        /*
         if(showRepository.count() > 0){
             LOGGER.info("Shows already generated");
         }else {
@@ -105,6 +107,6 @@ public class ShowDataGenerator implements DataGenerator {
                 show24, show25, show26, show27, show28, show29, show30, show31, show32, show33, show34, show35, show36,
                 show37, show38, show39, show40, show41, show42, show43, show44, show45, show46, show47, show48, show49, show50));
 
-        }
+        }*/
     }
 }

@@ -14,7 +14,7 @@ public class ShowSearchParametersDTO {
     private String hallName;
     private Integer durationInMinutes;
 
-    public ShowSearchParametersDTO(LocalDate dateFrom, LocalDate dateTo, LocalTime timeFrom, LocalTime timeTo, Integer priceInEuroFrom, Integer priceInEuroTo, String eventName, String hallName, Integer durationInMinutes) {
+    public ShowSearchParametersDTO(LocalDate dateFrom, LocalDate dateTo, LocalTime timeFrom, LocalTime timeTo, Integer priceInEuroFrom, Integer priceInEuroTo, String eventName, String hallName,Integer durationInMinutes) {
         this.dateFrom = dateFrom;
         this.dateTo = dateTo;
         this.timeFrom = timeFrom;
@@ -26,13 +26,6 @@ public class ShowSearchParametersDTO {
         this.durationInMinutes = durationInMinutes;
     }
 
-    public Integer getDurationInMinutes() {
-        return durationInMinutes;
-    }
-
-    public void setDurationInMinutes(Integer durationInMinutes) {
-        this.durationInMinutes = durationInMinutes;
-    }
 
     public LocalDate getDateFrom() {
         return dateFrom;
@@ -98,9 +91,17 @@ public class ShowSearchParametersDTO {
         this.hallName = hallName;
     }
 
-    public ShowSearchParametersDTOBuilder builder(){return new ShowSearchParametersDTOBuilder();}
+    public builder builder(){return new builder();}
 
-    public static class ShowSearchParametersDTOBuilder {
+    public Integer getDurationInMinutes() {
+        return durationInMinutes;
+    }
+
+    public void setDurationInMinutes(Integer durationInMinutes) {
+        this.durationInMinutes = durationInMinutes;
+    }
+
+    public static class builder {
         private LocalDate dateFrom;
         private LocalDate dateTo;
         private LocalTime timeFrom;
@@ -111,48 +112,48 @@ public class ShowSearchParametersDTO {
         private String hallName;
         private Integer durationInMinutes;
 
-        public ShowSearchParametersDTOBuilder(){};
+        public builder(){}
 
-        public ShowSearchParametersDTOBuilder setDateFrom(LocalDate dateFrom) {
+        public builder setDateFrom(LocalDate dateFrom) {
             this.dateFrom = dateFrom;
             return this;
         }
 
-        public ShowSearchParametersDTOBuilder setDateTo(LocalDate dateTo) {
+        public builder setDateTo(LocalDate dateTo) {
             this.dateTo = dateTo;
             return this;
         }
 
-        public ShowSearchParametersDTOBuilder setTimeFrom(LocalTime timeFrom) {
+        public builder setTimeFrom(LocalTime timeFrom) {
             this.timeFrom = timeFrom;
             return this;
         }
 
-        public ShowSearchParametersDTOBuilder setTimeTo(LocalTime timeTo) {
+        public builder setTimeTo(LocalTime timeTo) {
             this.timeTo = timeTo;
             return this;
         }
 
-        public ShowSearchParametersDTOBuilder setPriceInEuroFrom(Integer priceInEuroFrom) {
+        public builder setPriceInEuroFrom(Integer priceInEuroFrom) {
             this.priceInEuroFrom = priceInEuroFrom;
             return this;
         }
 
-        public ShowSearchParametersDTOBuilder setPriceInEuroTo(Integer priceInEuroTo) {
+        public builder setPriceInEuroTo(Integer priceInEuroTo) {
             this.priceInEuroTo = priceInEuroTo;
             return this;
         }
 
-        public ShowSearchParametersDTOBuilder setEventName(String eventName) {
+        public builder setEventName(String eventName) {
             this.eventName = eventName;
             return this;
         }
 
-        public ShowSearchParametersDTOBuilder setHallName(String hallName) {
+        public builder setHallName(String hallName) {
             this.hallName = hallName;
             return this;
         }
-        public ShowSearchParametersDTOBuilder setDurationInMinutes (Integer durationInMinutes){
+        public builder setDurationInMinutes(Integer durationInMinutes){
             this.durationInMinutes = durationInMinutes;
             return this;
         }
@@ -160,6 +161,22 @@ public class ShowSearchParametersDTO {
         public ShowSearchParametersDTO build() {
             return new ShowSearchParametersDTO(dateFrom, dateTo, timeFrom, timeTo, priceInEuroFrom, priceInEuroTo, eventName, hallName, durationInMinutes);
         }
+
+    }
+
+    @Override
+    public String toString() {
+        return "ShowSearchParametersDTO{" +
+            (dateFrom != null ? "dateFrom=" + dateFrom : "") +
+            (dateTo != null ? " dateTo=" + dateTo : "") +
+            (timeFrom != null ? " timeFrom=" + timeFrom : "") +
+            (timeTo != null ? " timeTo=" + timeTo : "") +
+            (priceInEuroFrom != null ? " priceInEuroFrom=" + priceInEuroFrom : "") +
+            (priceInEuroTo != null ? " priceInEuroTo=" + priceInEuroTo : "") +
+            (eventName != null ? " eventName='" + eventName + '\'': "") +
+            (hallName != null ? " hallName='" + hallName + '\'' : "")  +
+            (durationInMinutes != null ? " durationInMinutes=" + durationInMinutes : "") +
+            '}';
     }
 }
 

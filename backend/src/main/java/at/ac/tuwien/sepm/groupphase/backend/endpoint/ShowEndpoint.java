@@ -27,7 +27,7 @@ import java.util.List;
 public class ShowEndpoint {
 
     private final ShowService showService;
-    private static final Logger LOGGER = LoggerFactory.getLogger(ShowEndpoint.class);
+    private final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
     ShowEndpoint(ShowService showService){
         this.showService = showService;
@@ -94,26 +94,37 @@ public class ShowEndpoint {
         @RequestParam(value="priceInEuroTo", required = false) Integer priceInEuroTo,
         @RequestParam(value = "eventName", required = false) String eventName,
         @RequestParam(value = "hallName", required = false) String hallName
-    ){
+    ) {
         boolean filterData = (
             dateFrom == null && dateTo == null &&
-            timeFrom == null && timeTo == null &&
-            priceInEuroFrom == null && priceInEuroTo == null &&
-            eventName == null && hallName == null);
-        try{
-        /*if (filterData) {
-            LOGGER.info("Get all shows");
-            return showService.findAllShowsFiltered(parameters);
-        } else {*/
-            LOGGER.info("Get all shows filtered by specified attributes");
-            ShowSearchParametersDTO parameters = new ShowSearchParametersDTO.ShowSearchParametersDTOBuilder().setDateFrom(dateFrom).setDateTo(dateTo).setTimeFrom(timeFrom).setTimeTo(timeTo).setPriceInEuroFrom(priceInEuroFrom).setPriceInEuroTo(priceInEuroTo).setEventName(eventName).setHallName(hallName).build();
-            return showService.findAllShowsFiltered(parameters);
-        //}
+                timeFrom == null && timeTo == null &&
+                priceInEuroFrom == null && priceInEuroTo == null &&
+                eventName == null && hallName == null);
+        try {
+            if (filterData) {
+                LOGGER.info("Get all shows");
+                return showService.findAllShows();
+            } else {
+                ShowSearchParametersDTO parameters = new ShowSearchParametersDTO.builder()
+                    .setDateFrom(dateFrom)
+                    .setDateTo(dateTo)
+                    .setTimeFrom(timeFrom)
+                    .setTimeTo(timeTo)
+                    .setPriceInEuroFrom(priceInEuroFrom)
+                    .setPriceInEuroTo(priceInEuroTo)
+                    .setEventName(eventName)
+                    .setHallName(hallName)
+                    .build();
+                LOGGER.info("Get all shows filtered by specified attributes: " + parameters.toString());
+
+                return showService.findAllShowsFiltered(parameters);
+                //}
+            }
         }catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error while looking for shows with those parameters: " + e.getMessage(), e);
-        }catch (ServiceException e) {
+        }catch (at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error while looking for shows with those parameters", e);
-        }catch(NotFoundException e){
+        } catch (NotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No shows are found for the given parameters:" + e.getMessage(), e);
         }
     }

@@ -3,6 +3,8 @@ package at.ac.tuwien.sepm.groupphase.backend.repository.implementation;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.searchParameters.ShowSearchParametersDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.*;
 import at.ac.tuwien.sepm.groupphase.backend.repository.ShowRepositoryCustom;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -15,20 +17,24 @@ import java.util.List;
 @Repository
 public class ShowRepositoryImpl implements ShowRepositoryCustom {
     EntityManager em;
+    private final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
     @Autowired
     public ShowRepositoryImpl(EntityManager em) {
         this.em = em;
     }
 
+
+
     @Override
     public List<Show> findAllShowsFiltered(ShowSearchParametersDTO parameters) {
+        LOGGER.info("find shows filtered by " + parameters.toString());
         CriteriaBuilder cBuilder = em.getCriteriaBuilder();
         //Sammlung der Bedingungen
         List<Predicate> predicates = new ArrayList<>();
         CriteriaQuery<Show> criteriaQuery = cBuilder.createQuery(Show.class);
         Root<Show> show = criteriaQuery.from(Show.class);
-            //cq.from(em.getMetamodel().entity(Show.class));
+             //cq.from(em.getMetamodel().entity(Show.class));
 
         if(parameters.getDateFrom() != null){
             predicates.add(cBuilder.greaterThanOrEqualTo(show.get(Show_.date), parameters.getDateFrom()));
@@ -58,8 +64,10 @@ public class ShowRepositoryImpl implements ShowRepositoryCustom {
             Join<Show, Event> event = show.join(Show_.event);
             predicates.add(cBuilder.equal(event.get(Event_.name), parameters.getEventName()));
         }
+
         if(parameters.getDurationInMinutes() != null){
-            predicates.add(cBuilder.between(show.get(Show_.durationInMinutes), parameters.getDurationInMinutes() -30 , parameters.getDurationInMinutes() + 30));
+            Join<Show,Event> eventJoin = show.join(Show_.event);
+            predicates.add(cBuilder.between(eventJoin.get(Event_.durationInMinutes), parameters.getDurationInMinutes() -30 , parameters.getDurationInMinutes() + 30));
         }
 
         /*

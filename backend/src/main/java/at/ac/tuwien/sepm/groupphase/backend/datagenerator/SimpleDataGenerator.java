@@ -43,6 +43,7 @@ public class SimpleDataGenerator {
 
     //@PostConstruct
     public void generateData() {
+        /*
         if (eventRepository.count() > 0 || showRepository.count() > 0 || artistRepository.count() > 0) {
             LOGGER.info("Data already generated");
         } else {
@@ -166,6 +167,7 @@ public class SimpleDataGenerator {
                 add(event37);
             }});
             */
+        /*
             event1.setArtist(artist1);
             event3.setArtist(artist1);
             event4.setArtist(artist1);
@@ -367,6 +369,7 @@ public class SimpleDataGenerator {
                 add(show23);
             }});
             */
+            /*
 
             Hall hall1 = Hall.builder().id(1L).name("Hall1").build();
             Hall hall2 = Hall.builder().id(2L).name("Hall2").build();
@@ -467,7 +470,8 @@ public class SimpleDataGenerator {
             locationRepository.saveAll(Arrays.asList(location1, location2, location3, location4, location5, location6, location7, location8, location9, location10));
             hallRepository.saveAll(Arrays.asList(hall1, hall2, hall3, hall4, hall5, hall6, hall7, hall8, hall9, hall10, hall11, hall12, hall13, hall14, hall15));
             showRepository.saveAll(Arrays.asList(show1, show2, show3, show4, show5, show6, show7, show8, show9, show10, show11, show12, show13, show14, show15, show16, show17, show18, show19, show20, show21, show22, show23, show24, show25, show26, show27, show28, show29, show30, show31, show32, show33, show34, show35, show36, show37, show38, show39, show40, show41, show42, show43, show44, show45, show46, show47, show48, show49, show50));
-        }
+
+        }*/
     }
 
 }

@@ -3,6 +3,7 @@ package at.ac.tuwien.sepm.groupphase.backend.entity;
 import at.ac.tuwien.sepm.groupphase.backend.datatype.EventType;
 
 import javax.persistence.*;
+import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.util.Objects;
 
@@ -15,7 +16,7 @@ public class Event {
     @SequenceGenerator(name = "seq_event_id", sequenceName = "seq_event_id")
     private Long id;
 
-    @Column(nullable = false, name = "name")
+    @Column(nullable = false, name = "username")
     @Size(max = 64)
     private String name;
 
@@ -30,6 +31,10 @@ public class Event {
     @Column(name = "content")
     @Size(max = 512)
     private String content;
+
+    @Column(nullable = false, name = "duration")
+    @Positive
+    private Integer durationInMinutes;
 
     @ManyToOne(fetch = FetchType.EAGER)
     private Artist artist;
@@ -74,6 +79,14 @@ public class Event {
         this.content = content;
     }
 
+    public Integer getDurationInMinutes() {
+        return durationInMinutes;
+    }
+
+    public void setDurationInMinutes(Integer durationInMinutes) {
+        this.durationInMinutes = durationInMinutes;
+    }
+
     public Artist getArtist() {
         return artist;
     }
@@ -94,6 +107,7 @@ public class Event {
         return id.equals(event.id) &&
             name.equals(event.name) &&
             eventType == event.eventType &&
+            durationInMinutes.equals(event.durationInMinutes) &&
             Objects.equals(description, event.description) &&
             Objects.equals(content, event.content) &&
             Objects.equals(artist, event.artist);
@@ -108,11 +122,12 @@ public class Event {
     public String toString() {
         return "Event{" +
             "id=" + id +
-            ", name='" + name + '\'' +
+            ", username='" + name + '\'' +
             ", eventType=" + eventType +
             ", description='" + description + '\'' +
             ", content='" + content + '\'' +
             ", artist=" + artist +
+            ", duration in minutes=" + durationInMinutes +
             '}';
     }
 
@@ -123,6 +138,7 @@ public class Event {
         private String description;
         private String content;
         private Artist artist;
+        private Integer durationInMinutes;
 
         private EventBuilder() {}
 
@@ -155,6 +171,10 @@ public class Event {
             this.artist = artist;
             return this;
         }
+        public EventBuilder durationInMinutes(Integer durationInMinutes){
+            this.durationInMinutes = durationInMinutes;
+            return this;
+        }
 
         public Event build() {
             Event event = new Event();
@@ -164,6 +184,7 @@ public class Event {
             event.setDescription(description);
             event.setContent(content);
             event.setArtist(artist);
+            event.setDurationInMinutes(durationInMinutes);
             return event;
         }
     }
