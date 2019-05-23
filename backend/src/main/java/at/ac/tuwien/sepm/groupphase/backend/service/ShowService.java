@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.service;
 
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.searchParameters.ShowSearchParametersDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.show.ShowDTO;
 
 import java.util.List;
@@ -42,7 +43,7 @@ public interface ShowService {
      * @param hallName name of the hall
      * @return a list of found shows matching the criteria
      */
-    //List<Show> findAllShowsFiltered(LocalDateTime dateFrom, LocalDateTime dateTo, LocalDateTime timeFrom, LocalDateTime timeTo, Integer priceInEuroFrom, Integer priceInEuroTo, String eventName, String hallName);
+    List<ShowDTO> findAllShowsFiltered(ShowSearchParametersDTO searchParameters);
 
     /*
      * Finds all shows filtered by country, city , postal code and street

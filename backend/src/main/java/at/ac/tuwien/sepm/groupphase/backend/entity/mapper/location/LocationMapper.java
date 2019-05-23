@@ -13,5 +13,5 @@ public interface LocationMapper {
 
     LocationDTO locationToLocationDTO(Location location);
 
-    List<LocationDTO> locationToLocationDTO(List<Location> locations);
+    List<LocationDTO> locationToLocationDTO(List<Location> locationsFiltered);
 }

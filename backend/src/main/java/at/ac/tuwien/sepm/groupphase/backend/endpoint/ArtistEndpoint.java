@@ -32,7 +32,6 @@ public class ArtistEndpoint {
     @RequestMapping(method = RequestMethod.GET)
     @ApiOperation(value = "Get artists with 'artistName' as part of their name", authorizations = {@Authorization(value = "apiKey")})
     public List<ArtistDTO> findArtistsByName(@RequestParam(value = "artist_name") String artistName) {
-        LOGGER.info("findArtistsByName() called");
         return artistService.findArtistsByName(artistName);
     }
 
