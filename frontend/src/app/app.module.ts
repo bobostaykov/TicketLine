@@ -23,7 +23,6 @@ import { SearchEventsComponent } from './components/events/search-events/search-
 import { ArtistResultsComponent } from './components/search-results/artist/artist-results.component';
 import { ShowComponent } from './components/show/show.component';
 import { EventsComponent } from './components/events/start page/events.component';
-import { LocationsComponent } from './locations/locations.component';
 
 @NgModule({
   declarations: [
@@ -40,7 +39,6 @@ import { LocationsComponent } from './locations/locations.component';
     ArtistResultsComponent,
     ShowComponent,
     EventsComponent,
-    LocationsComponent,
   ],
   imports: [
     BrowserModule,
