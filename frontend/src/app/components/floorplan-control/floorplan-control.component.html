@@ -1,114 +1,162 @@
+{{selectedHall === newSeatPlan}}
 <div class="col-12 row">
-  <form class="col-7" [hidden]="seats === undefined" [formGroup]="addSeatsForm" (ngSubmit)="addSeats()">
-    <div class="row col-12 mt-3">
-      <div class="row text-nowrap col-8 p-0">
-        <div class="input-group">
-          <div class="input-group-prepend col-5 p-0">
-            <span class="input-group-text col-12">Seat Rows</span>
+  <div class="col-7">
+    <form [hidden]="selectedHall !== newSeatPlan" [formGroup]="addSeatsForm" (ngSubmit)="addSeats()">
+      <div class="row col-12 mt-3">
+        <div class="row text-nowrap col-8 p-0">
+          <div class="input-group">
+            <div class="input-group-prepend col-5 p-0">
+              <span class="input-group-text col-12">Seat Rows</span>
+            </div>
+            <label class="sr-only" for="seatRowStart">Seat Row Start</label>
+            <input id="seatRowStart" type="number" formControlName="seatRowStart" class="form-control"
+                   aria-labelledby="seat row start"/>
+            <span class="input-group-text">-</span>
+            <label class="sr-only" for="seatRowEnd">Seat Row End</label>
+            <input id="seatRowEnd" type="number" formControlName="seatRowEnd" class="form-control"
+                   aria-labelledby="seat row end"/>
           </div>
-          <label class="sr-only" for="seatRowStart">Seat Row Start</label>
-          <input id="seatRowStart" type="number" formControlName="seatRowStart" class="form-control"
-                 aria-labelledby="seat row start"/>
-          <span class="input-group-text">-</span>
-          <label class="sr-only" for="seatRowEnd">Seat Row End</label>
-          <input id="seatRowEnd" type="number" formControlName="seatRowEnd" class="form-control"
-                 aria-labelledby="seat row end"/>
+        </div>
+        <div class="col-4 px-4">
+          <label for="seatPrice" class="sr-only">Seat Price</label>
+          <select id="seatPrice" formControlName="seatPrice" class="form-control col-12">
+            <option *ngFor="let price of priceCategories">{{price}}</option>
+          </select>
         </div>
       </div>
-      <div class="col-4 px-4">
-        <label for="seatPrice" class="sr-only">Seat Price</label>
-        <select id="seatPrice" formControlName="seatPrice" class="form-control col-12">
-          <option *ngFor="let price of priceCategories">{{price}}</option>
-        </select>
+      <div *ngIf="seatRowErrors()" class="row col-12">
+        <small class="form-text text-warning text-left">
+          A valid seat row number greater than or equal to 1 must be entered!
+        </small>
       </div>
-    </div>
-    <div *ngIf="seatRowErrors()" class="row col-12">
-      <small class="form-text text-warning text-left">
-        A valid seat row number greater than or equal to 1 must be entered!
-      </small>
-    </div>
-    <div *ngIf="addSeatsForm.get('seatPrice').errors" class="row col-12">
-      <small class="form-text text-warning text-left">
-        A price category must be chosen!
-      </small>
-    </div>
-    <div class="row col-12 mt-3">
-      <div class="row text-nowrap col-8 p-0">
-        <div class="input-group">
-          <div class="input-group-prepend col-5 p-0">
-            <span class="input-group-text col-12">Seat Number</span>
+      <div *ngIf="addSeatsForm.get('seatPrice').errors" class="row col-12">
+        <small class="form-text text-warning text-left">
+          A price category must be chosen!
+        </small>
+      </div>
+      <div class="row col-12 mt-3">
+        <div class="row text-nowrap col-8 p-0">
+          <div class="input-group">
+            <div class="input-group-prepend col-5 p-0">
+              <span class="input-group-text col-12">Seat Number</span>
+            </div>
+            <label class="sr-only" for="seatNumberStart">Seat Number Start</label>
+            <input id="seatNumberStart" type="number" formControlName="seatNumberStart" class="form-control"
+                   aria-labelledby="seat number start"/>
+            <span class="input-group-text">-</span>
+            <label class="sr-only" for="seatNumberEnd">Seat Number End</label>
+            <input id="seatNumberEnd" type="number" formControlName="seatNumberEnd" class="form-control"
+                   aria-labelledby="seat number end"/>
           </div>
-          <label class="sr-only" for="seatNumberStart">Seat Number Start</label>
-          <input id="seatNumberStart" type="number" formControlName="seatNumberStart" class="form-control"
-                 aria-labelledby="seat number start"/>
-          <span class="input-group-text">-</span>
-          <label class="sr-only" for="seatNumberEnd">Seat Number End</label>
-          <input id="seatNumberEnd" type="number" formControlName="seatNumberEnd" class="form-control"
-                 aria-labelledby="seat number end"/>
+        </div>
+        <div class="col-4 px-4">
+          <button type="submit" class="btn btn-success col-12" [disabled]="addSeatsForm.invalid">Add Seats</button>
         </div>
       </div>
-      <div class="col-4 px-4">
-        <button type="submit" class="btn btn-success col-12" [disabled]="addSeatsForm.invalid">Add Seats</button>
+      <div *ngIf="seatNumberErrors()" class="row col-12">
+        <small class="form-text text-warning text-left">
+          A valid seat number greater than or equal to 1 must be entered!
+        </small>
       </div>
-    </div>
-    <div *ngIf="seatNumberErrors()" class="row col-12">
-      <small class="form-text text-warning text-left">
-        A valid seat number greater than or equal to 1 must be entered!
-      </small>
-    </div>
-  </form>
-  <!-- form to add sectors to floorplan, only shown when sectors array but not seat array is initialized -->
-  <form class="col-7" [hidden]="seats !== undefined || sectors === undefined" [formGroup]="addSectorsForm"
-        (ngSubmit)="addSectors()">
-    <div class="row col-12 mt-3">
-      <div class="row text-nowrap col-8 p-0">
-        <div class="input-group">
-          <div class="input-group-prepend col-5 p-0">
-            <span class="input-group-text col-12">Sector Number</span>
+    </form>
+    <!-- form to add sectors to floorplan, only shown when sectors array but not seat array is initialized -->
+    <form [hidden]="selectedHall !== newSectorPlan" [formGroup]="addSectorsForm"
+          (ngSubmit)="addSectors()">
+      <div class="row col-12 mt-3">
+        <div class="row text-nowrap col-8 p-0">
+          <div class="input-group">
+            <div class="input-group-prepend col-5 p-0">
+              <span class="input-group-text col-12">Sector Number</span>
+            </div>
+            <label class="sr-only" for="sectorNumberStart">Sector Number Start</label>
+            <input id="sectorNumberStart" type="number" formControlName="sectorNumberStart" class="form-control"
+                   aria-labelledby="sector number start"/>
+            <span class="input-group-text">-</span>
+            <label class="sr-only" for="sectorNumberEnd">Sector Number End</label>
+            <input id="sectorNumberEnd" type="number" formControlName="sectorNumberEnd" class="form-control"
+                   aria-labelledby="sector number end"/>
           </div>
-          <label class="sr-only" for="sectorNumberStart">Sector Number Start</label>
-          <input id="sectorNumberStart" type="number" formControlName="sectorNumberStart" class="form-control"
-                 aria-labelledby="sector number start"/>
-          <span class="input-group-text">-</span>
-          <label class="sr-only" for="sectorNumberEnd">Sector Number End</label>
-          <input id="sectorNumberEnd" type="number" formControlName="sectorNumberEnd" class="form-control"
-                 aria-labelledby="sector number end"/>
+        </div>
+        <div class="col-4 px-4 mr-0">
+          <label for="sectorPrice" class="sr-only">Sector Price</label>
+          <select id="sectorPrice" formControlName="sectorPrice" class="form-control col-12">
+            <option *ngFor="let price of priceCategories">{{price}}</option>
+          </select>
         </div>
       </div>
-      <div class="col-4 px-4 mr-0">
-        <label for="sectorPrice" class="sr-only">Sector Price</label>
-        <select id="sectorPrice" formControlName="sectorPrice" class="form-control col-12">
-          <option *ngFor="let price of priceCategories">{{price}}</option>
-        </select>
+      <div *ngIf="sectorNumberErrors()" class="row col-12">
+        <small class="form-text text-warning text-left">
+          A valid sector number greater than or equal to 1 must be entered!
+        </small>
       </div>
-    </div>
-    <div *ngIf="sectorNumberErrors()" class="row col-12">
-      <small class="form-text text-warning text-left">
-        A valid sector number greater than or equal to 1 must be entered!
-      </small>
-    </div>
-    <div *ngIf="addSectorsForm.get('sectorPrice').errors" class="row col-12">
-      <small class="form-text text-warning text-left">
-        A valid price category must be chosen!
-      </small>
-    </div>
-    <div class="row col-12 mt-3">
-      <div class="row text-nowrap col-8 p-0">
-        <button type="submit" class="col-5 btn btn-success" [disabled]="addSectorsForm.invalid">Add Sectors</button>
+      <div *ngIf="addSectorsForm.get('sectorPrice').errors" class="row col-12">
+        <small class="form-text text-warning text-left">
+          A valid price category must be chosen!
+        </small>
       </div>
-    </div>
-  </form>
-  <div class="col-5">
-    <div>
-      <select class="form-control" [(ngModel)]="selectedHall">
-        <option *ngFor="let hall of halls">{{hall.name}}</option>
-      </select>
-
-    </div>
+      <div class="row col-12 mt-3">
+        <div class="row text-nowrap col-8 p-0">
+          <button type="submit" class="col-5 btn btn-success" [disabled]="addSectorsForm.invalid">Add Sectors</button>
+        </div>
+      </div>
+    </form>
   </div>
+  <form class="col-5" #addHallForm='ngForm'>
+    <div class="form-inline col-12 mt-3">
+      <label for="locationSelection" class="col-3 input-group-text justify-content-start">Location</label>
+      <select id="locationSelection" class="form-control col-9"
+              name="location"
+              aria-labelledby="Hall location"
+              [(ngModel)]="selectedLocation"
+              (change)="selectLocation()">
+        <option *ngFor="let location of locations"
+                [ngValue]="location">{{location.street + ', ' + location.city + ' ' + location.postalCode}}</option>
+      </select>
+    </div>
+    <div class="form-inline col-12 mt-3">
+      <label for="hallSelection" class="col-3 input-group-text justify-content-start">Hall</label>
+      <select id="hallSelection" class="form-control col-9"
+              name="hall"
+              aria-labelledby="Hall"
+              [(ngModel)]="selectedHall"
+              (change)="selectHall()">
+        <option *ngFor="let hall of halls" [ngValue]="hall">{{hall.name}}</option>
+      </select>
+    </div>
+    <button *ngIf="selectedHall === newSeatPlan" type="button" class="btn btn-success" data-toggle="modal"
+            data-target="#enterName">
+      Add Seat Plan
+    </button>
+    <button *ngIf="selectedHall === newSectorPlan" type="button" class="btn btn-success" data-toggle="modal"
+            data-target="#enterName">
+      Add Sector Plan
+    </button>
+  </form>
 </div>
-{{selectedHall}}
 <hr/>
 <!-- draw floor plan -->
 <app-floorplan *ngIf="seats !== undefined" [seats]="seats"></app-floorplan>
 <app-floorplan *ngIf="sectors !== undefined && seats === undefined" [sectors]="sectors"></app-floorplan>
+<!-- Bootstrap modal to post new floor plan -->
+<div class="modal fade" id="enterName" tabindex="-1" role="dialog" aria-labelledby="Enter name for new floor plan"
+     aria-hidden="true">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Please enter a name for the new floorplan!</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">x</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-inline">
+          <label for="floorplanName">Name</label>
+          <input id="floorplanName" type="text" [(ngModel)]="selectedHall.name" />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

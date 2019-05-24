@@ -4,7 +4,9 @@ import {Sector} from '../../dtos/sector';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {PriceCategory} from '../../dtos/priceCategory';
 import {Hall} from '../../dtos/hall';
+import {Location} from '../../dtos/location';
 import {HallService} from '../../services/hall/hall.service';
+import {LocationService} from '../../services/location/location.service';
 
 @Component({
   selector: 'app-floorplan-control',
@@ -13,15 +15,21 @@ import {HallService} from '../../services/hall/hall.service';
 })
 export class FloorplanControlComponent implements OnInit {
 
-  private halls: Hall[];
-  private selectedHall: Hall = null;
+  // TODO: this is a very large component, split up?
+  private newSeatPlan: Hall = new Hall(null, 'New SeatPlan', null, [], null);
+  private newSectorPlan: Hall = new Hall(null, 'New SectorPlan', null, null, []);
+  private allHalls: Hall[] = [this.newSeatPlan, this.newSectorPlan];
+  private halls: Hall[] = [this.newSeatPlan, this.newSectorPlan];
+  private selectedHall: Hall = this.newSeatPlan;
+  private locations: Location[];
+  private selectedLocation: Location = null;
   private seats: Seat[] = [];
   private sectors: Sector[];
   private priceCategories: string[] = Object.keys(PriceCategory);
   private addSeatsForm: FormGroup;
   private addSectorsForm: FormGroup;
 
-  constructor(private hallService: HallService) {
+  constructor(private hallService: HallService, private locationService: LocationService) {
   }
 
   /**
@@ -30,7 +38,11 @@ export class FloorplanControlComponent implements OnInit {
    * initializes form groups for addSeat and addSector
    */
   ngOnInit(): void {
+    // loading locations saved in backend and adding them to the locations array
+    this.getAllLocations();
+    // loading halls saved in backend and adding them to the halls array
     this.getAllHalls();
+    // initializing forms that allow users to add seats and sectors to new Halls
     this.buildSeatForm();
     this.buildSectorForm();
   }
@@ -81,7 +93,7 @@ export class FloorplanControlComponent implements OnInit {
       value.sectorNumberStart = Math.min(value.sectorNumberStart, value.sectorNumberEnd);
       value.sectorNumberEnd = Math.max(value.sectorNumberStart, value.sectorNumberEnd);
       for (let number = value.sectorNumberStart; number <= value.sectorNumberEnd; number++) {
-        if (! this.sectors.some(sector => sector.sectorNumber === number)) {
+        if (!this.sectors.some(sector => sector.sectorNumber === number)) {
           this.sectors.push(new Sector(null, number, value.sectorPrice));
         }
       }
@@ -211,13 +223,38 @@ export class FloorplanControlComponent implements OnInit {
    * load all halls from backend via hallService
    */
   private getAllHalls(): void {
+    console.log('Loading all halls from backend');
     this.hallService.getAllHalls().subscribe(
-      halls => this.halls = halls,
+      halls => {
+        this.halls.push.apply(this.halls, halls);
+        this.allHalls.push.apply(this.allHalls, halls);
+      },
+      error => console.log(error)
+    );
+    this.halls = this.allHalls.map(hall => ({...hall}));
+  }
+
+  private getAllLocations(): void {
+    console.log('Loading all locations from backend');
+    this.locationService.getAllLocations().subscribe(
+      locations => this.locations = locations,
       error => console.log(error)
     );
   }
 
-  selectHall(value: any) {
-    console.log(<Hall> value.value.name);
+  private selectHall() {
+    // unfortunately just assigning selectedHall.location to selectedLocation does not work because it is not technically
+    // equal to any of the locations defined in the options of the <select> tag
+    this.selectedLocation = this.locations.find(location => location.id === this.selectedHall.location.id);
+    this.seats = this.selectedHall.seats;
+    this.sectors = this.selectedHall.sectors;
+  }
+
+  private selectLocation() {
+    if (this.selectedHall !== this.newSeatPlan && this.selectedHall !== this.newSectorPlan) {
+      this.halls = this.allHalls.filter(hall => hall.location.id === this.selectedLocation.id ||
+        hall === this.newSeatPlan || hall === this.newSectorPlan);
+      this.selectedHall = this.selectedHall.location !== this.selectedLocation ? this.newSeatPlan : this.selectedHall;
+    }
   }
 }
