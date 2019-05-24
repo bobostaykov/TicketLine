@@ -1,8 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {Show} from '../../dtos/show';
-import {ResultsFor} from '../../datatype/results_for';
-import {ShowService} from '../../services/show/show.service';
+import {Show} from '../../../dtos/show';
+import {ResultsFor} from '../../../datatype/results_for';
+import {ShowService} from '../../../services/search-results/shows/show.service';
 
 @Component({
   selector: 'app-shows',
@@ -11,25 +11,16 @@ import {ShowService} from '../../services/show/show.service';
 })
 export class ShowComponent implements OnInit {
 
-  private resultsFor: string;
-  private name: string;
-  private id: string;
-  private country: string;
-  private city: string;
-  private street: string;
-  private postalCode: string;
-  private description: string;
-
   private error: boolean = false;
   private errorMessage: string = '';
+  private resultsFor: string;
   private shows: Show[];
   private headElements: string[] = [
     'Event',
     'Artist',
     'Location',
     'Hall',
-    'City',
-    'Country',
+    'Country - City',
     'Date',
     'Category',
     'Sold Tickets',
@@ -41,51 +32,43 @@ export class ShowComponent implements OnInit {
   ngOnInit() {
     this.resultsFor = this.route.snapshot.queryParamMap.get('resultsFor');
     console.log(this.resultsFor);
-    if (this.resultsFor === 'EVENT') {
-      this.loadShowsFilteredByEventName(this.route.snapshot.queryParamMap.get('name'));
-    } else if (this.resultsFor === 'LOCATION') {
-      this.id = this.route.snapshot.queryParamMap.get('id');
-        if (this.id === null) {
-          this.country = this.route.snapshot.queryParamMap.get('country');
-          this.city = this.route.snapshot.queryParamMap.get('city');
-          this.street = this.route.snapshot.queryParamMap.get('street');
-          this.postalCode = this.route.snapshot.queryParamMap.get('postalCode');
-          this.description = this.route.snapshot.queryParamMap.get('description');
-          this.loadShowsFilteredByLocation(this.country, this.city, this.street, this.postalCode, this.description);
-        } else {
-          this.loadShowsFilteredByLocationID(this.id);
-        }
-    } else if (this.resultsFor === 'ATTRIBUTES') {
-      this.loadShowsFilteredByShowAttributes();
-    } else {
-      this.defaultServiceErrorHandling('No results for this type');
+    switch (this.resultsFor) {
+      case 'EVENT':
+        this.loadShowsFilteredByEventName(this.route.snapshot.queryParamMap.get('name'));
+        break;
+      case 'LOCATION':
+        this.loadShowsFilteredByLocationID(this.route.snapshot.queryParamMap.get('id'));
+        break;
+      case 'ATTRIBUTES':
+        this.loadShowsFilteredByShowAttributes(
+          this.route.snapshot.queryParamMap.get('eventName'),
+          this.route.snapshot.queryParamMap.get('hallName'),
+          this.route.snapshot.queryParamMap.get('dateFrom'),
+          this.route.snapshot.queryParamMap.get('dateTo'),
+          this.route.snapshot.queryParamMap.get('timeFrom'),
+          this.route.snapshot.queryParamMap.get('timeTo'),
+          this.route.snapshot.queryParamMap.get('minPrice'),
+          this.route.snapshot.queryParamMap.get('maxPrice'),
+          this.route.snapshot.queryParamMap.get('duration')
+        );
+        break;
+      default:
+        this.defaultServiceErrorHandling('No results for this type');
     }
   }
-
-
 
   /**
    * Convert the resultsFor variable to a string with only first letter capital
    */
+  /*
   private toWord(resultsFor: ResultsFor): string {
     let asString = ResultsFor[resultsFor];
     asString = asString[0] + asString.slice(1, asString.length).toLocaleLowerCase();
     return asString;
   }
-
-
-  /**
-   * Load shows from backend
-   */
-  /*
-  private loadShows() {
-    this.showService.findShows(this.resultsFor, this.name).subscribe(
-      (shows: Show[]) => { this.shows = shows; },
-      error => { this.defaultServiceErrorHandling(error); }
-    );
-  }
   */
 
+  // TODO I know that name is unique, but why dont't we send the id?
   private loadShowsFilteredByEventName(eventName) {
     console.log('Component: loadShowsFilteredByEventName');
     this.showService.findShowsFilteredByEventName(eventName).subscribe(
@@ -102,15 +85,13 @@ export class ShowComponent implements OnInit {
     );
   }
 
-  private loadShowsFilteredByLocation(country, city, street, postalCode, description) {
-    console.log('Component: loadShowsFilteredByLocation');
-    this.showService.findShowsFilteredByLocation(country, city, street, postalCode, description).subscribe(
+  private loadShowsFilteredByShowAttributes(eventName, hallName, dateFrom, dateTo, timeFrom, timeTo, minPrice, maxPrice, duration) {
+    console.log('Component: loadShowsFilteredByShowAttributes');
+    this.showService.findShowsFilteredByShowAttributes(eventName, hallName, dateFrom, dateTo, timeFrom, timeTo, minPrice, maxPrice, duration).subscribe(
       (shows: Show[]) => {this.shows = shows; },
       error => {this.defaultServiceErrorHandling(error); }
     );
   }
-
-  private loadShowsFilteredByShowAttributes() {}
 
   private defaultServiceErrorHandling(error: any) {
     console.log(error);

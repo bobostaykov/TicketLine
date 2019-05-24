@@ -1,9 +1,9 @@
 export enum EventType {
-  THEATRE,
-  OPERA,
-  FESTIVAL,
-  CONCERT,
-  MOVIE,
-  MUSICAL,
-  SPORT
+  Theatre = 'THEATRE',
+  Opera = 'OPERA',
+  Festival = 'FESTIVAL',
+  Concert = 'CONCERT',
+  Movie = 'MOVIE',
+  Musical = 'MUSICAL',
+  Sport = 'SPORT'
 }

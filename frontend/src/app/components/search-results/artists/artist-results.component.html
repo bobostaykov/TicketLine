@@ -10,7 +10,7 @@
   </thead>
   <tbody>
     <tr *ngFor="let artist of artists">
-      <td ngbTooltip="Show events" routerLink="/events/artist" [queryParams]="{artist_name: artist.name}">{{artist.name}}</td>
+      <td ngbTooltip="Show events" routerLink="/events/search/results/artists" [queryParams]="{artist_name: artist.name}">{{artist.name}}</td>
     </tr>
   </tbody>
 </table>

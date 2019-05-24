@@ -16,14 +16,16 @@ import {httpInterceptorProviders} from './interceptors';
 import {Globals} from './global/globals';
 import { TopTenEventsComponent } from './components/events/top-ten-events/top-ten-events.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {MatButtonModule, MatCheckboxModule, MatInputModule, MatSelectModule} from '@angular/material';
+import {MatButtonModule, MatCheckboxModule, MatInputModule, MatSelectModule, MatSnackBarModule} from '@angular/material';
 import {NgxChartsModule} from '@swimlane/ngx-charts';
 import { CustomerAddComponent } from './components/customerAdd/customer-add.component';
 import { SearchEventsComponent } from './components/events/search-events/search-events.component';
-import { ArtistResultsComponent } from './components/search-results/artist/artist-results.component';
-import { ShowComponent } from './components/show/show.component';
+import { ArtistResultsComponent } from './components/search-results/artists/artist-results.component';
+import { ShowComponent } from './components/search-results/shows/show.component';
 import { EventsComponent } from './components/events/start page/events.component';
-import { LocationsComponent } from './locations/locations.component';
+import { LocationsComponent } from './components/search-results/locations/locations.component';
+import { Ng5SliderModule } from 'ng5-slider';
+import { EventResultsComponent } from './components/search-results/events/event-results.component';
 
 @NgModule({
   declarations: [
@@ -41,6 +43,7 @@ import { LocationsComponent } from './locations/locations.component';
     ShowComponent,
     EventsComponent,
     LocationsComponent,
+    EventResultsComponent,
   ],
   imports: [
     BrowserModule,
@@ -54,7 +57,9 @@ import { LocationsComponent } from './locations/locations.component';
     MatCheckboxModule,
     MatInputModule,
     MatSelectModule,
+    MatSnackBarModule,
     NgxChartsModule,
+    Ng5SliderModule,
   ],
   providers: [httpInterceptorProviders, Globals],
   bootstrap: [AppComponent]

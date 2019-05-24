@@ -35,17 +35,17 @@ public class LocationEndpoint {
     public List<LocationDTO> findLocationsFiltered(
         @RequestParam(value = "country", required = false) String country,
         @RequestParam(value = "city", required = false) String city,
-        @RequestParam(value = "postalCode", required = false) String postalCode,
         @RequestParam(value = "street", required = false) String street,
+        @RequestParam(value = "postalCode", required = false) String postalCode,
         @RequestParam(value = "description", required = false) String description
     ) {
-        boolean filterData = country == null && city == null && postalCode == null && street == null;
+        boolean filterData = country == null && city == null && postalCode == null && street == null && description == null;
         try {
             if (filterData) {
                 throw new IllegalArgumentException("No parameters are specified.");
             } else {
-                LOGGER.info("Get all locations filtered by location");
-                return locationService.findLocationsFiltered(country, city, postalCode, street, description);
+                LOGGER.info("Location Endpoint: Get all locations filtered by location");
+                return locationService.findLocationsFiltered(country, city, street, postalCode, description);
             }
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error while looking for locations with those parameters: " + e.getMessage(), e);

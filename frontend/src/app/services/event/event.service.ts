@@ -6,6 +6,8 @@ import {EventTickets} from '../../dtos/event_tickets';
 import {ResultsFor} from '../../datatype/results_for';
 import {Event} from '../../dtos/event';
 
+// TODO public or default methods
+
 @Injectable({
   providedIn: 'root'
 })

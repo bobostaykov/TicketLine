@@ -1,0 +1,20 @@
+<h1 class="mt-5" *ngIf="resultsFor === 'ATTRIBUTES'">Events - Results for the chosen parameters</h1>
+<h1 class="mt-5" *ngIf="resultsFor === null">Events - No Results</h1>
+
+<table class="table mt-4">
+  <thead>
+  <tr>
+    <th *ngFor="let head of headers" scope="col">{{head}}</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let event of events" routerLink="/events/search/results/shows" [queryParams]="{resultsFor: 'EVENT', name: event.name}">
+    <td class="align-middle">{{event.name}}</td>
+    <td class="align-middle">{{event.eventType}}</td>
+    <td class="align-middle">{{event.artist}}</td>
+    <td class="align-middle">{{event.content}}</td>
+    <td class="align-middle">{{event.description}}</td>
+    <td class="align-middle">{{event.name}}</td>
+  </tr>
+  </tbody>
+</table>

@@ -28,8 +28,14 @@ public class LocationServiceImpl implements LocationService {
 
     @Override
     public List<LocationDTO> findLocationsFiltered(String country, String city, String street, String postalCode, String description) throws ServiceException{
-        LOGGER.info("Service: findLocationsFiltered()");
+        LOGGER.info("Location Service: findLocationsFiltered()");
         try{
+            if(country == "") country = null;
+            if(city == "") city = null;
+            if(street == "") street = null;
+            if(postalCode == "") postalCode = null;
+            if(description == "") description = null;
+
             return locationMapper.locationToLocationDTO(locationRepository.findLocationsFiltered(country, city, street, postalCode, description));
         }catch (PersistenceException e){
             throw new ServiceException(e.getMessage(), e);
