@@ -1,7 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.entity;
 
 import javax.persistence.*;
-import java.util.List;
 
 //TODO add missing attributes
 @Entity

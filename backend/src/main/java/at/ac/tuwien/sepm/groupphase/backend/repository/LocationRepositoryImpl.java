@@ -56,7 +56,7 @@ public class LocationRepositoryImpl implements LocationRepositoryCustom{
         TypedQuery<Location> typedQuery = entityManager.createQuery(criteriaQuery);
 
         LOGGER.debug(typedQuery.unwrap(org.hibernate.Query.class).getQueryString());
-        List results = typedQuery.getResultList();
+        List<Location> results = typedQuery.getResultList();
         if(results.isEmpty()) {
             throw new NotFoundException("No locations are found with those parameters");
         }
