@@ -1,7 +1,8 @@
-package at.ac.tuwien.sepm.groupphase.backend.repository;
+package at.ac.tuwien.sepm.groupphase.backend.repository.implementation;
 
 import at.ac.tuwien.sepm.groupphase.backend.entity.Location;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
+import at.ac.tuwien.sepm.groupphase.backend.repository.LocationRepositoryCustom;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-public class LocationRepositoryImpl implements LocationRepositoryCustom{
+public class LocationRepositoryImpl implements LocationRepositoryCustom {
 
     private EntityManager entityManager;
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
