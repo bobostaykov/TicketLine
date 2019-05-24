@@ -3,6 +3,8 @@ import {Seat} from '../../dtos/seat';
 import {Sector} from '../../dtos/sector';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {PriceCategory} from '../../dtos/priceCategory';
+import {Hall} from '../../dtos/hall';
+import {HallService} from '../../services/hall/hall.service';
 
 @Component({
   selector: 'app-floorplan-control',
@@ -11,20 +13,24 @@ import {PriceCategory} from '../../dtos/priceCategory';
 })
 export class FloorplanControlComponent implements OnInit {
 
+  private halls: Hall[];
+  private selectedHall: Hall = null;
   private seats: Seat[] = [];
   private sectors: Sector[];
   private priceCategories: string[] = Object.keys(PriceCategory);
   private addSeatsForm: FormGroup;
   private addSectorsForm: FormGroup;
 
-  constructor() {
+  constructor(private hallService: HallService) {
   }
 
   /**
    * run on initialization of component
+   * starts loading halls from backend
    * initializes form groups for addSeat and addSector
    */
   ngOnInit(): void {
+    this.getAllHalls();
     this.buildSeatForm();
     this.buildSectorForm();
   }
@@ -145,7 +151,6 @@ export class FloorplanControlComponent implements OnInit {
   private seatRowErrors(): boolean {
     const seatRowStart = this.addSeatsForm.get('seatRowStart');
     const seatRowEnd = this.addSeatsForm.get('seatRowEnd');
-    console.log((seatRowStart.dirty || seatRowEnd.dirty));
     return (seatRowStart.dirty || seatRowEnd.dirty) && (seatRowStart.invalid || seatRowEnd.invalid);
   }
 
@@ -200,5 +205,19 @@ export class FloorplanControlComponent implements OnInit {
     const sectorNumberStart = this.addSectorsForm.get('sectorNumberStart');
     const sectorNumberEnd = this.addSectorsForm.get('sectorNumberEnd');
     return (sectorNumberStart.dirty || sectorNumberEnd.dirty) && (sectorNumberStart.invalid || sectorNumberEnd.invalid);
+  }
+
+  /**
+   * load all halls from backend via hallService
+   */
+  private getAllHalls(): void {
+    this.hallService.getAllHalls().subscribe(
+      halls => this.halls = halls,
+      error => console.log(error)
+    );
+  }
+
+  selectHall(value: any) {
+    console.log(<Hall> value.value.name);
   }
 }

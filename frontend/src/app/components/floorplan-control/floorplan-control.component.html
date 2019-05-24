@@ -1,169 +1,114 @@
-<form class="col-7" [hidden]="seats === undefined" [formGroup]="addSeatsForm" (ngSubmit)="addSeats()">
-  <div class="row col-12 mt-3">
-    <div class="row text-nowrap col-6 p-0">
-      <div class="input-group">
-        <div class="input-group-prepend col-6 p-0">
-          <span class="input-group-text col-12">Seat Rows</span>
+<div class="col-12 row">
+  <form class="col-7" [hidden]="seats === undefined" [formGroup]="addSeatsForm" (ngSubmit)="addSeats()">
+    <div class="row col-12 mt-3">
+      <div class="row text-nowrap col-8 p-0">
+        <div class="input-group">
+          <div class="input-group-prepend col-5 p-0">
+            <span class="input-group-text col-12">Seat Rows</span>
+          </div>
+          <label class="sr-only" for="seatRowStart">Seat Row Start</label>
+          <input id="seatRowStart" type="number" formControlName="seatRowStart" class="form-control"
+                 aria-labelledby="seat row start"/>
+          <span class="input-group-text">-</span>
+          <label class="sr-only" for="seatRowEnd">Seat Row End</label>
+          <input id="seatRowEnd" type="number" formControlName="seatRowEnd" class="form-control"
+                 aria-labelledby="seat row end"/>
         </div>
-        <label class="sr-only" for="seatRowStart">Seat Row Start</label>
-        <input id="seatRowStart" type="number" formControlName="seatRowStart" class="form-control"
-               aria-labelledby="seat row start"/>
-        <span class="input-group-text">-</span>
-        <label class="sr-only" for="seatRowEnd">Seat Row End</label>
-        <input id="seatRowEnd" type="number" formControlName="seatRowEnd" class="form-control"
-               aria-labelledby="seat row end"/>
+      </div>
+      <div class="col-4 px-4">
+        <label for="seatPrice" class="sr-only">Seat Price</label>
+        <select id="seatPrice" formControlName="seatPrice" class="form-control col-12">
+          <option *ngFor="let price of priceCategories">{{price}}</option>
+        </select>
       </div>
     </div>
-    <div class="col-6 px-4">
-      <label for="seatPrice" class="sr-only">Seat Price</label>
-      <select id="seatPrice" formControlName="seatPrice" class="form-control col-6">
-        <option *ngFor="let price of priceCategories">{{price}}</option>
+    <div *ngIf="seatRowErrors()" class="row col-12">
+      <small class="form-text text-warning text-left">
+        A valid seat row number greater than or equal to 1 must be entered!
+      </small>
+    </div>
+    <div *ngIf="addSeatsForm.get('seatPrice').errors" class="row col-12">
+      <small class="form-text text-warning text-left">
+        A price category must be chosen!
+      </small>
+    </div>
+    <div class="row col-12 mt-3">
+      <div class="row text-nowrap col-8 p-0">
+        <div class="input-group">
+          <div class="input-group-prepend col-5 p-0">
+            <span class="input-group-text col-12">Seat Number</span>
+          </div>
+          <label class="sr-only" for="seatNumberStart">Seat Number Start</label>
+          <input id="seatNumberStart" type="number" formControlName="seatNumberStart" class="form-control"
+                 aria-labelledby="seat number start"/>
+          <span class="input-group-text">-</span>
+          <label class="sr-only" for="seatNumberEnd">Seat Number End</label>
+          <input id="seatNumberEnd" type="number" formControlName="seatNumberEnd" class="form-control"
+                 aria-labelledby="seat number end"/>
+        </div>
+      </div>
+      <div class="col-4 px-4">
+        <button type="submit" class="btn btn-success col-12" [disabled]="addSeatsForm.invalid">Add Seats</button>
+      </div>
+    </div>
+    <div *ngIf="seatNumberErrors()" class="row col-12">
+      <small class="form-text text-warning text-left">
+        A valid seat number greater than or equal to 1 must be entered!
+      </small>
+    </div>
+  </form>
+  <!-- form to add sectors to floorplan, only shown when sectors array but not seat array is initialized -->
+  <form class="col-7" [hidden]="seats !== undefined || sectors === undefined" [formGroup]="addSectorsForm"
+        (ngSubmit)="addSectors()">
+    <div class="row col-12 mt-3">
+      <div class="row text-nowrap col-8 p-0">
+        <div class="input-group">
+          <div class="input-group-prepend col-5 p-0">
+            <span class="input-group-text col-12">Sector Number</span>
+          </div>
+          <label class="sr-only" for="sectorNumberStart">Sector Number Start</label>
+          <input id="sectorNumberStart" type="number" formControlName="sectorNumberStart" class="form-control"
+                 aria-labelledby="sector number start"/>
+          <span class="input-group-text">-</span>
+          <label class="sr-only" for="sectorNumberEnd">Sector Number End</label>
+          <input id="sectorNumberEnd" type="number" formControlName="sectorNumberEnd" class="form-control"
+                 aria-labelledby="sector number end"/>
+        </div>
+      </div>
+      <div class="col-4 px-4 mr-0">
+        <label for="sectorPrice" class="sr-only">Sector Price</label>
+        <select id="sectorPrice" formControlName="sectorPrice" class="form-control col-12">
+          <option *ngFor="let price of priceCategories">{{price}}</option>
+        </select>
+      </div>
+    </div>
+    <div *ngIf="sectorNumberErrors()" class="row col-12">
+      <small class="form-text text-warning text-left">
+        A valid sector number greater than or equal to 1 must be entered!
+      </small>
+    </div>
+    <div *ngIf="addSectorsForm.get('sectorPrice').errors" class="row col-12">
+      <small class="form-text text-warning text-left">
+        A valid price category must be chosen!
+      </small>
+    </div>
+    <div class="row col-12 mt-3">
+      <div class="row text-nowrap col-8 p-0">
+        <button type="submit" class="col-5 btn btn-success" [disabled]="addSectorsForm.invalid">Add Sectors</button>
+      </div>
+    </div>
+  </form>
+  <div class="col-5">
+    <div>
+      <select class="form-control" [(ngModel)]="selectedHall">
+        <option *ngFor="let hall of halls">{{hall.name}}</option>
       </select>
+
     </div>
   </div>
-  <div *ngIf="seatRowErrors()" class="row col-12">
-    <small class="form-text text-warning text-left">
-      A valid seat row number greater than or equal to 1 must be entered!
-    </small>
-  </div>
-  <div *ngIf="addSeatsForm.get('seatPrice').errors" class="row col-12">
-    <small class="form-text text-warning text-left">
-      A price category must be chosen!
-    </small>
-  </div>
-  <div class="row col-12 mt-3">
-    <div class="row text-nowrap col-6 p-0">
-      <div class="input-group">
-        <div class="input-group-prepend col-6 p-0">
-          <span class="input-group-text col-12">Seat Number</span>
-        </div>
-        <label class="sr-only" for="seatNumberStart">Seat Number Start</label>
-        <input id="seatNumberStart" type="number" formControlName="seatNumberStart" class="form-control"
-               aria-labelledby="seat number start"/>
-        <span class="input-group-text">-</span>
-        <label class="sr-only" for="seatNumberEnd">Seat Number End</label>
-        <input id="seatNumberEnd" type="number" formControlName="seatNumberEnd" class="form-control"
-               aria-labelledby="seat number end"/>
-      </div>
-    </div>
-    <div class="col-6 px-4">
-      <button type="submit" class="btn btn-success col-6" [disabled]="addSeatsForm.invalid">Add Seats</button>
-    </div>
-  </div>
-  <div *ngIf="seatNumberErrors()" class="row col-12">
-    <small class="form-text text-warning text-left">
-      A valid seat number greater than or equal to 1 must be entered!
-    </small>
-  </div>
-</form>
-<!-- form to add sectors to floorplan, only shown when sectors array but not seat array is initialized -->
-<form class="col-7" [hidden]="seats !== undefined || sectors === undefined" [formGroup]="addSectorsForm" (ngSubmit)="addSectors()">
-  <div class="row col-12 mt-3">
-    <div class="row text-nowrap col-6 p-0">
-      <div class="input-group">
-        <div class="input-group-prepend col-6 p-0">
-          <span class="input-group-text col-12">Sector Number</span>
-        </div>
-        <label class="sr-only" for="sectorNumberStart">Sector Number Start</label>
-        <input id="sectorNumberStart" type="number" formControlName="sectorNumberStart" class="form-control"
-               aria-labelledby="sector number start"/>
-        <span class="input-group-text">-</span>
-        <label class="sr-only" for="sectorNumberEnd">Sector Number End</label>
-        <input id="sectorNumberEnd" type="number" formControlName="sectorNumberEnd" class="form-control"
-               aria-labelledby="sector number end"/>
-      </div>
-    </div>
-    <div class="col-6 px-4">
-      <label for="sectorPrice" class="sr-only">Sector Price</label>
-      <select id="sectorPrice" formControlName="sectorPrice" class="form-control col-6">
-        <option *ngFor="let price of priceCategories">{{price}}</option>
-      </select>
-    </div>
-  </div>
-  <div *ngIf="sectorNumberErrors()" class="row col-12">
-    <small class="form-text text-warning text-left">
-      A valid sector number greater than or equal to 1 must be entered!
-    </small>
-  </div>
-  <div *ngIf="addSectorsForm.get('sectorPrice').errors" class="row col-12">
-    <small class="form-text text-warning text-left">
-      A valid price category must be chosen!
-    </small>
-  </div>
-  <div class="row col-12 mt-3">
-    <div class="row text-nowrap col-6 p-0">
-      <button type="submit" class="btn btn-success" [disabled]="addSectorsForm.invalid">Add Sectors</button>
-    </div>
-  </div>
-</form>
-<hr />
+</div>
+{{selectedHall}}
+<hr/>
 <!-- draw floor plan -->
 <app-floorplan *ngIf="seats !== undefined" [seats]="seats"></app-floorplan>
 <app-floorplan *ngIf="sectors !== undefined && seats === undefined" [sectors]="sectors"></app-floorplan>
-<!--
-<form #addSeatForm='ngForm' (ngSubmit)="addSeatForm.valid && addSeats()" class="col-sm-4">
-  <div class="row">
-    <div class="input-group mb-2 mt-4">
-      <div class="input-group-prepend col-sm-5 p-0">
-        <span class="input-group-text col-sm-12">Seat Rows</span>
-      </div>
-      <label class="sr-only" for="seatRowStart">Seat Row Start</label>
-      <input id="seatRowStart" type="number" formControlName="seatRowStart" class="form-control"
-             aria-labelledby="Seat Row Start"
-             [(ngModel)]="seatFormModel.seatRowStart"
-             [required]="seatFormModel.seatRowEnd === null"
-             min="1"
-             #seatRowStart='ngModel'/>
-      <span class="input-group-text">-</span>
-      <label class="sr-only" for="seatRowEnd">Seat Row End</label>
-      <input id="seatRowEnd" type="number" formControlName="seatRowEnd" class="form-control"
-             aria-labelledby="Seat Row End"
-             [(ngModel)]="seatFormModel.seatRowEnd"
-             [required]="seatFormModel.seatRowStart === null"
-             min="1"
-             #seatRowEnd='ngModel'/>
-    </div>
-    <div class="form-inline">
-      <label class="sr-only">Price Category</label>
-      <select id="seatPrice" formControlName="seatPrice" class="form-control" aria-labelledby="seat price"
-              [(ngModel)]="seatFormModel.price" required>
-
-      </select>
-    </div>
-  </div>
-  <div [hidden]="seatRowStart.valid || seatRowEnd.valid || addSeatForm.pristine" class="form-text text-warning">
-    Please enter rows to add seats to!
-  </div>
-  <div class="input-group my-2">
-    <div class="input-group-prepend col-sm-5 p-0">
-      <span class="input-group-text col-sm-12">Seat Numbers</span>
-    </div>
-    <label class="sr-only" for="seatNumberStart">Seat Numbers Start</label>
-    <input id="seatNumberStart" type="number" formControlName="seatNumberStart" class="form-control"
-           aria-labelledby="Seat Numbers Start"
-           [(ngModel)]="seatFormModel.seatNumberStart"
-           [required]="seatFormModel.seatNumberEnd === null"
-           min="1"
-           #seatNumberStart='ngModel'/>
-    <span class="input-group-text">-</span>
-    <label class="sr-only" for="seatNumberEnd">Seat Numbers End</label>
-    <input id="seatNumberEnd" type="number" formControlName="seatNumberEnd" class="form-control"
-           aria-labelledby="Seat Numbers End"
-           [(ngModel)]="seatFormModel.seatNumberEnd"
-           [required]="seatFormModel.seatNumberStart === null"
-           min="1"
-           #seatNumberEnd='ngModel'/>
-  </div>
-  <div [hidden]="seatNumberStart.valid || seatNumberEnd.valid || addSeatForm.pristine" class="form-text text-warning">
-    Please enter seat numbers for added seats!
-  </div>
-  <div>
-    <button type="submit" class="btn btn-secondary  align-self-center" [disabled]="addSeatForm.invalid">Add Seats
-    </button>
-  </div>
-</form>
-<hr/>
-<div>
-  <app-floorplan [sectors]="sectors"></app-floorplan>
-</div>
--->
