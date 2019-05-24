@@ -16,15 +16,14 @@ import {LocationService} from '../../services/location/location.service';
 export class FloorplanControlComponent implements OnInit {
 
   // TODO: this is a very large component, split up?
-  private newSeatPlan: Hall = new Hall(null, 'New SeatPlan', null, [], null);
-  private newSectorPlan: Hall = new Hall(null, 'New SectorPlan', null, null, []);
-  private allHalls: Hall[] = [this.newSeatPlan, this.newSectorPlan];
-  private halls: Hall[] = [this.newSeatPlan, this.newSectorPlan];
-  private selectedHall: Hall = this.newSeatPlan;
+  private allHalls: Hall[] = [
+    new Hall(null, 'New SeatPlan', null, [], null),
+    new Hall(null, 'New SectorPlan', null, null, [])
+  ];
+  private halls: Hall[] = this.allHalls.concat();
+  private selectedHall: Hall;
   private locations: Location[];
-  private selectedLocation: Location = null;
-  private seats: Seat[] = [];
-  private sectors: Sector[];
+  private selectedLocation: Location;
   private priceCategories: string[] = Object.keys(PriceCategory);
   private addSeatsForm: FormGroup;
   private addSectorsForm: FormGroup;
@@ -38,10 +37,19 @@ export class FloorplanControlComponent implements OnInit {
    * initializes form groups for addSeat and addSector
    */
   ngOnInit(): void {
+    // initialize allHalls with new SeatPlan and new SectorPlan
+    this.allHalls = [
+      new Hall(null, 'New SeatPlan', null, [], null),
+      new Hall(null, 'New SectorPlan', null, null, [])
+    ];
+    // initialize selectedHall with new SeatPlan previously added to allHalls array
+    this.selectedHall = this.allHalls[0];
+    // loading halls saved in backend and adding them to the halls  and allHalls array
+    this.getAllHalls();
+    // initialize locations array with empty location. If selected all halls will be displayed
+    this.locations = [null];
     // loading locations saved in backend and adding them to the locations array
     this.getAllLocations();
-    // loading halls saved in backend and adding them to the halls array
-    this.getAllHalls();
     // initializing forms that allow users to add seats and sectors to new Halls
     this.buildSeatForm();
     this.buildSectorForm();
@@ -67,8 +75,8 @@ export class FloorplanControlComponent implements OnInit {
       value.seatNumberEnd = Math.max(value.seatNumberStart, value.seatNumberEnd);
       for (let row = value.seatRowStart; row <= value.seatRowEnd; row++) {
         for (let number = value.seatNumberStart; number <= value.seatNumberEnd; number++) {
-          if (!this.seats.some(seat => seat.seatRow === row && seat.seatNumber === number)) {
-            this.seats.push(new Seat(null, number, row, value.seatPrice));
+          if (!this.selectedHall.seats.some(seat => seat.seatRow === row && seat.seatNumber === number)) {
+            this.selectedHall.seats.push(new Seat(null, number, row, value.seatPrice));
           }
         }
       }
@@ -93,8 +101,8 @@ export class FloorplanControlComponent implements OnInit {
       value.sectorNumberStart = Math.min(value.sectorNumberStart, value.sectorNumberEnd);
       value.sectorNumberEnd = Math.max(value.sectorNumberStart, value.sectorNumberEnd);
       for (let number = value.sectorNumberStart; number <= value.sectorNumberEnd; number++) {
-        if (!this.sectors.some(sector => sector.sectorNumber === number)) {
-          this.sectors.push(new Sector(null, number, value.sectorPrice));
+        if (!this.selectedHall.sectors.some(sector => sector.sectorNumber === number)) {
+          this.selectedHall.sectors.push(new Sector(null, number, value.sectorPrice));
         }
       }
       this.addSectorsForm.reset({
@@ -226,35 +234,45 @@ export class FloorplanControlComponent implements OnInit {
     console.log('Loading all halls from backend');
     this.hallService.getAllHalls().subscribe(
       halls => {
-        this.halls.push.apply(this.halls, halls);
         this.allHalls.push.apply(this.allHalls, halls);
+        this.halls = this.allHalls.concat();
       },
       error => console.log(error)
     );
-    this.halls = this.allHalls.map(hall => ({...hall}));
+    // this.halls = this.allHalls.map(hall => ({...hall}));
   }
 
   private getAllLocations(): void {
     console.log('Loading all locations from backend');
     this.locationService.getAllLocations().subscribe(
-      locations => this.locations = locations,
+      locations => this.locations.push.apply(this.locations, locations),
       error => console.log(error)
     );
   }
 
   private selectHall() {
-    // unfortunately just assigning selectedHall.location to selectedLocation does not work because it is not technically
+    // unfortunately just assigning selectedHall.location to selectedLocation or to ngModel does not work because it is not technically
     // equal to any of the locations defined in the options of the <select> tag
-    this.selectedLocation = this.locations.find(location => location.id === this.selectedHall.location.id);
-    this.seats = this.selectedHall.seats;
-    this.sectors = this.selectedHall.sectors;
+    if (this.selectedHall.location !== null) {
+      this.selectedLocation = this.locations.find(location => location !== null && location.id === this.selectedHall.location.id);
+    }
   }
 
   private selectLocation() {
-    if (this.selectedHall !== this.newSeatPlan && this.selectedHall !== this.newSectorPlan) {
-      this.halls = this.allHalls.filter(hall => hall.location.id === this.selectedLocation.id ||
-        hall === this.newSeatPlan || hall === this.newSectorPlan);
-      this.selectedHall = this.selectedHall.location !== this.selectedLocation ? this.newSeatPlan : this.selectedHall;
+    if (this.selectedLocation !== null) {
+      this.halls = this.allHalls.filter(hall => hall.location === null || hall.location.id === this.selectedLocation.id);
+      this.selectedHall = this.selectedHall.location !== null ? this.allHalls[0] : this.selectedHall;
+    } else {
+      this.halls = this.allHalls.concat();
     }
+  }
+
+  private helperMethod(object) {
+    return JSON.stringify(object);
+  }
+
+  displayLocation(location: Location) {
+    return location !== null ? location.street + ', ' +
+      location.city + location.postalCode : '';
   }
 }
