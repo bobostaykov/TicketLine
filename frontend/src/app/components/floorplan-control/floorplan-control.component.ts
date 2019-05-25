@@ -24,7 +24,14 @@ export class FloorplanControlComponent implements OnInit {
   private priceCategories: string[] = Object.keys(PriceCategory);
   private addSeatsForm: FormGroup;
   private addSectorsForm: FormGroup;
+  private updateSeatForm: FormGroup;
+  private updateSectorForm: FormGroup;
   private createHallForm: FormGroup;
+  private selectedSeat: Seat;
+  private selectedSector: Sector;
+  private sectorAlreadyExists: boolean = false;
+  private seatAlreadyExists: boolean = false;
+
 
   constructor(private hallService: HallService, private locationService: LocationService) {
   }
@@ -44,6 +51,7 @@ export class FloorplanControlComponent implements OnInit {
     this.buildSeatForm();
     this.buildSectorForm();
     this.buildHallForm();
+    this.buildUpdateForms();
   }
 
   /**
@@ -51,6 +59,8 @@ export class FloorplanControlComponent implements OnInit {
    * adds seats according to parameters entered by user
    * afterwards resets form
    */
+  // tslint:disable-next-line:max-line-length
+  // TODO: there is a small potential for error here if user enters seatRowStart and seatRowEnd the wrong way. Same for Sectors. Fix this soon
   private addSeats(): void {
     if (this.addSeatsForm.valid) {
       const value = this.addSeatsForm.value;
@@ -168,6 +178,7 @@ export class FloorplanControlComponent implements OnInit {
         locationSelection.setValue(this.locations.find(location => location.id === hall.location.id), {emitEvent: false});
         console.log(hall);
       }
+      this.disableUpdateForms();
     });
     locationSelection.valueChanges.subscribe(location => {
       if (location !== null) {
@@ -175,6 +186,19 @@ export class FloorplanControlComponent implements OnInit {
       } else {
         this.halls = this.allHalls;
       }
+      this.disableUpdateForms();
+    });
+  }
+
+  private buildUpdateForms() {
+    this.updateSeatForm = new FormGroup({
+      'seatNumber': new FormControl(null, [Validators.required, Validators.min(1)]),
+      'seatRow': new FormControl(null, [Validators.required, Validators.min(1)]),
+      'seatPrice': new FormControl(PriceCategory.Cheap, [Validators.required])
+    });
+    this.updateSectorForm = new FormGroup({
+      'sectorNumber': new FormControl(null, [Validators.required, Validators.min(1)]),
+      'sectorPrice': new FormControl(PriceCategory.Cheap, [Validators.required])
     });
   }
 
@@ -282,11 +306,91 @@ export class FloorplanControlComponent implements OnInit {
       values.hallSelection.seats,
       values.hallSelection.sectors
     );
-    console.log(hall);
     this.hallService.createHall(hall).subscribe();
     this.createHallForm.reset({
       'hallSelection': (values.hallSelection === this.newSeatPlan ? this.newSeatPlan = new Hall(null, 'New SeatPlan', null, [], null) :
         this.newSectorPlan = new Hall(null, 'New SectorPlan', null, null, []))
+    });
+  }
+
+  private onSvgClick(event: Event) {
+    if ((<HTMLElement>event.target).tagName !== 'path') {
+      this.disableUpdateForms();
+    }
+  }
+
+  private disableUpdateForms() {
+    document.getElementById('updateSeatForm').style.display = 'none';
+    document.getElementById('updateSectorForm').style.display = 'none';
+  }
+
+  private updateSeat() {
+    const values = this.updateSeatForm.value;
+    if (! this.getSelectedHall().seats.some(seat => seat !== this.selectedSeat && seat.seatNumber === this.selectedSeat.seatNumber &&
+      seat.seatRow === values.seatRow)) {
+      this.selectedSeat.seatNumber = values.seatNumber;
+      this.selectedSeat.seatRow = values.seatRow;
+      this.selectedSeat.priceCategory = values.seatPrice;
+      this.seatAlreadyExists = false;
+      this.disableUpdateForms();
+    } else {
+      this.seatAlreadyExists = true;
+    }
+  }
+
+  private deleteSeat() {
+    const seats: Seat[] = this.createHallForm.get('hallSelection').value.seats;
+    seats.splice(seats.indexOf(this.selectedSeat), 1);
+    this.disableUpdateForms();
+  }
+
+  private deleteSector() {
+    const sectors: Sector[] = this.createHallForm.get('hallSelection').value.sectors;
+    sectors.splice(sectors.indexOf(this.selectedSector), 1);
+    this.disableUpdateForms();
+  }
+
+  private updateSector() {
+    const values = this.updateSectorForm.value;
+    if (! this.getSelectedHall().sectors.some(sector => sector !== this.selectedSector &&
+      sector.sectorNumber === values.sectorNumber)) {
+      this.selectedSector.sectorNumber = values.sectorNumber;
+      this.selectedSector.priceCategory = values.sectorPrice;
+      this.sectorAlreadyExists = false;
+      this.disableUpdateForms();
+    } else {
+      this.sectorAlreadyExists = true;
+    }
+  }
+
+  displaySeatForm(element: { eventTarget: HTMLElement; seat: Seat }) {
+    const updateForm = document.getElementById('updateSeatForm');
+    updateForm.style.display = 'inline-block';
+    const rectEvent = element.eventTarget.getBoundingClientRect();
+    const rectUpdateForm = updateForm.getBoundingClientRect();
+    updateForm.style.left = rectEvent.left - rectUpdateForm.width / 2 + rectEvent.width / 2 + 'px';
+    updateForm.style.top = rectEvent.top + window.scrollY + rectEvent.height + 20 + 'px';
+    // update form with seat parameters
+    this.selectedSeat = element.seat;
+    this.updateSeatForm.setValue({
+      'seatNumber': element.seat.seatNumber,
+      'seatRow': element.seat.seatRow,
+      'seatPrice': element.seat.priceCategory
+    });
+  }
+
+  displaySectorForm(element: { eventTarget: HTMLElement; sector: Sector }) {
+    const updateForm = document.getElementById('updateSectorForm');
+    updateForm.style.display = 'inline-block';
+    const rectEvent = element.eventTarget.getBoundingClientRect();
+    const rectUpdateForm = updateForm.getBoundingClientRect();
+    updateForm.style.left = rectEvent.left - rectUpdateForm.width / 2 + rectEvent.width / 2 + 'px';
+    updateForm.style.top = rectEvent.top + window.scrollY + rectEvent.height + 20 + 'px';
+    // update form with seat parameters
+    this.selectedSector = element.sector;
+    this.updateSectorForm.setValue({
+      'sectorNumber': element.sector.sectorNumber,
+      'sectorPrice': element.sector.priceCategory
     });
   }
 }

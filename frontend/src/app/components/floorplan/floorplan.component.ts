@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Seat} from '../../dtos/seat';
 import {Sector} from '../../dtos/sector';
 import {PriceCategory} from '../../dtos/priceCategory';
@@ -11,17 +11,28 @@ import {PriceCategory} from '../../dtos/priceCategory';
 export class FloorplanComponent implements OnInit {
   @Input() private seats?: Seat[];
   @Input() private sectors?: Sector[];
-  private priceCategories: string[] = Object.keys(PriceCategory);
+  @Output() private selectedSeat: EventEmitter<{eventTarget: HTMLElement, seat: Seat}> = new EventEmitter();
+  @Output() private selectedSector: EventEmitter<{eventTarget: HTMLElement, sector: Sector}> = new EventEmitter();
+  // private priceCategories: string[] = Object.keys(PriceCategory);
   private viewboxPosX: number = 0;
   private viewboxPosY: number = 0;
   private viewboxWidth: number = 500;
   private viewbox: string = this.viewboxPosX + ' ' + this.viewboxPosY + ' ' + this.viewboxWidth + ' ' + this.viewboxWidth;
-  private selectedElement: Seat | Sector;
-  private elementModel: Seat | Sector = (this.seats === undefined) ? new Sector(null, null, null) :
-    new Seat(null, null, null, null);
+  // private selectedElement: Seat | Sector;
+  // private elementModel: Seat | Sector = (this.seats === undefined) ? new Sector(null, null, null) :
+  // new Seat(null, null, null, null);
 
   constructor() {
   }
+
+  private selectSeat(event: Event, seat: Seat): void {
+    this.selectedSeat.emit({eventTarget: <HTMLElement> event.target, seat: seat});
+  }
+
+  private selectSector(event: Event, sector: Sector): void {
+    this.selectedSector.emit({eventTarget: <HTMLElement> event.target, sector: sector});
+  }
+
 
   /**
    * gets string for d attribute of svg path element depicting a seat
@@ -75,6 +86,7 @@ export class FloorplanComponent implements OnInit {
    * @param elem to be updated
    * @param e mouse click event used to determine position of update form
    */
+  /*
   private displayUpdateForm(elem: Seat | Sector, e: Event) {
     const updateForm = document.getElementById('updateForm');
     updateForm.style.display = 'inline-block';
@@ -85,26 +97,28 @@ export class FloorplanComponent implements OnInit {
     // update form with seat parameters
     this.selectedElement = elem;
     Object.assign(this.elementModel, elem);
-  }
+  }*/
 
   /**
    * disables update form
    * called when clicking inside the svg but not on a path element or the form itself
    * @param e click event
    */
+  /*
   private disableUpdateForm(e: Event) {
     if (e.target['tagName'] !== 'path') {
       const updateForm = document.getElementById('updateForm');
       updateForm.style.display = 'none';
     }
-  }
+  }*/
 
   /**
    * updates selected seat with parameters passed into form
    */
+  /*
   updateFloorplanElement() {
     Object.assign(this.selectedElement, this.elementModel);
-  }
+  }*/
 
   ngOnInit() {
   }

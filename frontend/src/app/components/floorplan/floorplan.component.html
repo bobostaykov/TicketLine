@@ -3,29 +3,26 @@
   <svg id="floorplan"
        [attr.viewBox]="this.viewbox"
        preserveAspectRatio="xMinYMin slice"
-       (mousewheel)="zoom($event)"
-       (click)="disableUpdateForm($event)">
+       (mousewheel)="zoom($event)">
     <path *ngFor="let seat of seats"
           [attr.d]="getSeatPath(seat)"
           [attr.fill]="getColor(seat)"
-          (click)="displayUpdateForm(seat, $event)"></path>
+          (click)="selectSeat($event, seat)"></path>
   </svg>
 </div>
 <!-- draws a floor plan with sectors -->
 <div *ngIf="sectors !== undefined">
   <svg id="floorplan"
        [attr.viewBox]="this.viewbox"
-       preserveAspectRatio="xMinYMin slice"
-       (click)="disableUpdateForm($event)">
+       preserveAspectRatio="xMinYMin slice">
     <path *ngFor="let sector of sectors"
           [attr.d]="getSectorPath(sector)"
           [attr.fill]="getColor(sector)"
-          (click)="displayUpdateForm(sector, $event)"></path>
+          (click)="selectSector($event, sector)"></path>
   </svg>
 </div>
-
+<!--
 <div id="updateForm">
-  <!-- update form if floorplan is drawn with seats instead of sectors -->
   <form *ngIf="seats !== undefined" #updateSeatForm='ngForm' (ngSubmit)="updateSeatForm.valid && updateFloorplanElement()">
     <div class="form-row-custom">
       <div class="form-inline-custom">
@@ -70,7 +67,6 @@
       </small>
     </div>
   </form>
-  <!-- update form if floorplan is drawn with sectors instead of seats -->
   <form *ngIf="sectors !== undefined" #updateSectorForm='ngForm' (ngSubmit)="updateSectorForm.valid && updateFloorplanElement()">
     <div class="form-row-custom">
       <div class="form-inline-custom">
@@ -105,5 +101,5 @@
     </div>
   </form>
 </div>
-
+-->
 
