@@ -22,7 +22,7 @@ public class CustomerServiceImpl implements CustomerService {
         this.customerRepository = customerRepository;
         this.customerMapper = customerMapper;
     }
-
+    // TODO throw new ServiceException("Customer could not be added " + customerDTO.toString()); will throw NullPointerExc because customerDTO is == null
     @Override
     public CustomerDTO addCustomer(CustomerDTO customerDTO) {
         LOGGER.info("Add a customer");

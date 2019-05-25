@@ -1,11 +1,9 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.hall;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.location.LocationDTO;
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.show.ShowDTO;
 
 import io.swagger.annotations.ApiModelProperty;
 
-import java.util.List;
 import java.util.Objects;
 
 //TODO add missing attributes

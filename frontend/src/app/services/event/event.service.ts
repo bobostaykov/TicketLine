@@ -6,6 +6,8 @@ import {EventTickets} from '../../dtos/event_tickets';
 import {ResultsFor} from '../../datatype/results_for';
 import {Event} from '../../dtos/event';
 
+// TODO public or default methods
+
 @Injectable({
   providedIn: 'root'
 })
@@ -27,9 +29,11 @@ export class EventService {
    * Get all events that apply to a specific eventType of search term (resultsFor: ARTIST, EVENT, LOCATION) from backend
    * If resultsFor === ResultsFor.LOCATION, name_or_id will be the location's id, otherwise it will be the name of the event/artist
    */
+  /*
   public getEventsFiltered(resultsFor: ResultsFor, nameOrId: string): Observable<Event[]> {
     return this.httpClient.get<Event[]>(this.eventBaseUri, {params: { results_for: ResultsFor[resultsFor], name_or_id: nameOrId }});
   }
+  */
 
   /**
    * Get all events from backend

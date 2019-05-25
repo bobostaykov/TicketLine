@@ -1,9 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.implementation;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.location.LocationDTO;
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.show.ShowDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.location.LocationMapper;
-import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.LocationRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.LocationService;
@@ -28,8 +26,14 @@ public class LocationServiceImpl implements LocationService {
 
     @Override
     public List<LocationDTO> findLocationsFiltered(String country, String city, String street, String postalCode, String description) throws ServiceException{
-        LOGGER.info("Service: findLocationsFiltered()");
+        LOGGER.info("Location Service: findLocationsFiltered()");
         try{
+            if(country.equals("")) country = null;
+            if(city.equals("")) city = null;
+            if(street .equals("")) street = null;
+            if(postalCode.equals("")) postalCode = null;
+            if(description.equals("")) description = null;
+
             return locationMapper.locationToLocationDTO(locationRepository.findLocationsFiltered(country, city, street, postalCode, description));
         }catch (PersistenceException e){
             throw new ServiceException(e.getMessage(), e);

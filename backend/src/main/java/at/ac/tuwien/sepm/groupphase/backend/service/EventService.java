@@ -3,7 +3,6 @@ package at.ac.tuwien.sepm.groupphase.backend.service;
 import at.ac.tuwien.sepm.groupphase.backend.datatype.EventType;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.event.EventDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.event.EventTicketsDTO;
-import at.ac.tuwien.sepm.groupphase.backend.entity.EventTickets;
 
 import java.util.List;
 import java.util.Set;
@@ -25,4 +24,9 @@ public interface EventService {
      */
     List<EventDTO> findAll();
 
+    /**
+     * @param id of the artist
+     * @return a list of all events in which the artist performs
+     */
+    List<EventDTO> findEventsFilteredByArtistID(Long id);
 }
