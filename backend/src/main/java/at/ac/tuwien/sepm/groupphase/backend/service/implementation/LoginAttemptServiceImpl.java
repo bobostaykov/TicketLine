@@ -52,12 +52,16 @@ public class LoginAttemptServiceImpl implements LoginAttemptService {
 
     @Override
     public void successfulLogin(String username) {
-        UserDTO user = userMapper.userToUserDTO(userRepository.findOneByUsername(username).get());
-        if (!user.getType().equals("ADMIN")){
-            LoginAttempts attempts = loginAttemptsRepository.getByUser(userMapper.userDTOToUser(user));
-            attempts.setNumberOfAttempts(0);
-            loginAttemptsRepository.save(attempts);
+        Optional<User> opt = userRepository.findOneByUsername(username);
+        if (opt.isPresent()) {
+            UserDTO user = userMapper.userToUserDTO(opt.get());
+            if (!user.getType().equals("ADMIN")){
+                LoginAttempts attempts = loginAttemptsRepository.getByUser(userMapper.userDTOToUser(user));
+                attempts.setNumberOfAttempts(0);
+                loginAttemptsRepository.save(attempts);
+            }
         }
+
     }
 
 

@@ -3,6 +3,7 @@ package at.ac.tuwien.sepm.groupphase.backend.configuration;
 import at.ac.tuwien.sepm.groupphase.backend.configuration.properties.H2ConsoleConfigurationProperties;
 import at.ac.tuwien.sepm.groupphase.backend.entity.User_;
 import at.ac.tuwien.sepm.groupphase.backend.security.HeaderTokenAuthenticationFilter;
+import at.ac.tuwien.sepm.groupphase.backend.service.implementation.AppUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
@@ -20,6 +21,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -42,10 +44,15 @@ public class SecurityConfiguration {
     @Autowired
     private DataSource dataSource;
 
+    @Autowired
     private final PasswordEncoder passwordEncoder;
 
     public SecurityConfiguration(PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
+    }
+
+    @Bean
+    public UserDetailsService userDetailsService(){ return new AppUserDetailsService();
     }
 
     @Bean
@@ -67,7 +74,17 @@ public class SecurityConfiguration {
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth, List<AuthenticationProvider> providerList) throws Exception {
 
+        /*
         auth.jdbcAuthentication().dataSource(dataSource).passwordEncoder(passwordEncoder).getUserDetailsService();
+        */
+
+        new InMemoryUserDetailsManagerConfigurer<AuthenticationManagerBuilder>()
+            .withUser("user").password(passwordEncoder.encode("password")).authorities("USER").and()
+            .withUser("admin").password(passwordEncoder.encode("password")).authorities("ADMIN", "USER").and()
+            .passwordEncoder(passwordEncoder)
+            .configure(auth);
+
+        providerList.forEach(auth::authenticationProvider);
 
 
         providerList.forEach(auth::authenticationProvider);

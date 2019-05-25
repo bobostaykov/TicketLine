@@ -34,7 +34,7 @@ public class DemoData {
         //userService.createUser(UserDTO.builder().type(UserType.ADMIN).password("password").username("admin").build());
 
 
-        userService.createUser(UserDTO.builder().type(UserType.SELLER).id(1L).password("password").username("user").lastLogin(LocalDateTime.now()).userSince(LocalDateTime.now()).build());
+        //userService.createUser(UserDTO.builder().type(UserType.SELLER).id(1L).password("password").username("user").lastLogin(LocalDateTime.now()).userSince(LocalDateTime.now()).build());
         LOGGER.info("User created");
 
     }

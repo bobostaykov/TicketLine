@@ -8,11 +8,12 @@ public class LoginAttempts {
 
     public LoginAttempts() { }
 
+    @Id
     @Column
-    @EmbeddedId
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "seq_loginAttempts_id")
     private Long id;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.REFRESH})
     @MapsId(value = "id")
     @JoinColumn(name = "id")
     private User user;

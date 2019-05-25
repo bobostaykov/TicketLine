@@ -29,7 +29,12 @@ public class AppUserDetailsService implements org.springframework.security.core.
             User user = optionalUser.get();
             builder = org.springframework.security.core.userdetails.User.withUsername(username);
             builder.password(user.getPassword());
-            builder.roles(user.getType().toString());
+            if(user.getType().equals(UserType.ADMIN)){
+                builder.authorities("ADMIN", "USER");
+            }else{
+                builder.authorities("USER");
+            }
+
         }else{
             throw new UsernameNotFoundException("The username"+ username + "doesn't exist");
         }

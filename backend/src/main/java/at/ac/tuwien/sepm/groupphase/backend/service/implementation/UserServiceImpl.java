@@ -17,6 +17,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
@@ -52,11 +53,23 @@ public class UserServiceImpl implements UserService {
         LOGGER.info("creating user with name: " + userDTO.getUsername());
         try {
             userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-            return userMapper.userToUserDTO(userRepository.save(userMapper.userDTOToUser(userDTO)));
+            LOGGER.info("Setting password");
+            LOGGER.info("User = " +userDTO.toString());
+            userDTO = userMapper.userToUserDTO(userRepository.save(userMapper.userDTOToUser(userDTO)));
+            initAttemptsTable(userDTO);
+            return userDTO;
         } catch (DataIntegrityViolationException e) {
             LOGGER.error("Problems while creating user" + userDTO.toString());
             throw new ServiceException(e.getMessage(), e);
         }
+    }
+
+    private void initAttemptsTable (UserDTO userDTO){
+        loginAttemptsRepository.save(LoginAttempts.builder()
+            .setUser(userMapper.userDTOToUser(userDTO))
+            .setBlocked(false)
+            .setAttempts(0)
+            .build());
     }
 
     public UserDTO findUserByName(String userName) throws NotFoundException{

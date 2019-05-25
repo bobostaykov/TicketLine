@@ -15,9 +15,15 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 
+
 @Profile("generateData")
 @Component
 public class ShowDataGenerator implements DataGenerator {
+    @Override
+    public void generate() {
+
+    }
+    /*
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
     private final DateTimeFormatter dateFormatter;
     private final DateTimeFormatter timeFormatter;
@@ -107,4 +113,6 @@ public class ShowDataGenerator implements DataGenerator {
 
         }
     }
+
+     */
 }

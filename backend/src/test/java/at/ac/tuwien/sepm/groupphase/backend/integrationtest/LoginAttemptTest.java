@@ -4,9 +4,11 @@ import at.ac.tuwien.sepm.groupphase.backend.datatype.UserType;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.authentication.AuthenticationToken;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.user.UserDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.LoginAttempts;
+import at.ac.tuwien.sepm.groupphase.backend.entity.User;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.user.UserMapper;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.LoginAttemptsRepository;
+import at.ac.tuwien.sepm.groupphase.backend.repository.UserRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.HeaderTokenAuthenticationService;
 import at.ac.tuwien.sepm.groupphase.backend.service.LoginAttemptService;
 import at.ac.tuwien.sepm.groupphase.backend.service.UserService;
@@ -17,15 +19,17 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.time.LocalDateTime;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@DataJpaTest
+@RunWith(SpringRunner.class)
+@SpringBootTest
 public class LoginAttemptTest {
 
 
@@ -39,12 +43,13 @@ public class LoginAttemptTest {
     private AuthenticationManager authenticationManager;
     @Autowired
     private UserService userService;
+    @Autowired
+    private UserRepository userRepository;
 
+    private Integer MAX_NUMBER_OF_ATTEMPTS = 5;
 
-
-    private final Integer MAX_NUMBER_OF_ATTEMPTS = 5;
-    UserDTO testUserDTO1 = UserDTO.builder().type(UserType.SELLER).username("testUser1").password("password").build();
-    UserDTO testUserDTO2 = UserDTO.builder().type(UserType.SELLER).username("testUser2").password("password").build();
+    UserDTO testUserDTO1 = UserDTO.builder().type(UserType.SELLER).username("testUser1").password("password").userSince(LocalDateTime.now()).lastLogin(LocalDateTime.now()).build();
+    UserDTO testUserDTO2 = UserDTO.builder().type(UserType.SELLER).username("testUser2").password("password").userSince(LocalDateTime.now()).lastLogin(LocalDateTime.now()).build();
     LoginAttempts loginAttempts1;
     LoginAttempts loginAttempts2;
     boolean init = false;
@@ -52,17 +57,29 @@ public class LoginAttemptTest {
     @Before
     public void before() throws ServiceException {
         if(!init) {
+            /*
             testUserDTO1 = userService.createUser(testUserDTO1);
+
             testUserDTO2 = userService.createUser(testUserDTO2);
+
             loginAttempts1 = loginAttemptsRepository.getByUser(userMapper.userDTOToUser(testUserDTO1));
             loginAttempts2 = loginAttemptsRepository.getByUser(userMapper.userDTOToUser(testUserDTO2));
             loginAttempts2.setBlocked(true);
             loginAttempts2.setNumberOfAttempts(MAX_NUMBER_OF_ATTEMPTS + 1);
             loginAttempts2 = loginAttemptsRepository.save(loginAttempts2);
             init = true;
+             */
+            userRepository.save(userMapper.userDTOToUser(testUserDTO1));
         }
 
     }
+    @Test
+    public void emptyTest(){
+        if(userMapper == null){
+            System.out.println("Fuck");
+        }
+    }
+
     @Test
     public void blockedUserIsDenied(){
         Authentication auth = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(testUserDTO2.getUsername(), testUserDTO2.getPassword()));
@@ -106,6 +123,7 @@ public class LoginAttemptTest {
         Assert.assertFalse(loginAttempts2.isBlocked());
         Assert.assertEquals(0 ,loginAttempts2.getNumberOfAttempts());
     }
+
 
 
 }

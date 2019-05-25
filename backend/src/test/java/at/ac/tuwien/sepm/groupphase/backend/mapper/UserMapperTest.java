@@ -33,12 +33,14 @@ public class UserMapperTest {
     private static final UserType USER_TYPE = UserType.SELLER;
     private static final LocalDateTime USER_SINCE = LocalDateTime.of(2019, 1, 1, 12, 0, 0, 0);
     private static final LocalDateTime USER_LAST_LOGIN = LocalDateTime.of(2030, 6, 15, 3, 0, 0, 0);
+    private static final String PASSWORD = "Barbie <3";
 
     @Test
     public void shouldMapUserToUserDTO() {
         User user = User.builder()
             .id(USER_ID)
             .username(USER_NAME)
+            .password(PASSWORD)
             .type(USER_TYPE)
             .userSince(USER_SINCE)
             .lastLogin(USER_LAST_LOGIN)
@@ -50,6 +52,7 @@ public class UserMapperTest {
         assertThat(userDTO.getType()).isEqualTo(USER_TYPE);
         assertThat(userDTO.getUserSince()).isEqualTo(USER_SINCE);
         assertThat(userDTO.getLastLogin()).isEqualTo(USER_LAST_LOGIN);
+        assertThat(userDTO.getPassword()).isEqualTo(PASSWORD);
     }
 
     @Test
@@ -60,6 +63,7 @@ public class UserMapperTest {
             .type(USER_TYPE)
             .userSince(USER_SINCE)
             .lastLogin(USER_LAST_LOGIN)
+            .password(PASSWORD)
             .build();
         User user = userMapper.userDTOToUser(userDTO);
         assertThat(user).isNotNull();
@@ -68,6 +72,7 @@ public class UserMapperTest {
         assertThat(user.getType()).isEqualTo(USER_TYPE);
         assertThat(user.getUserSince()).isEqualTo(USER_SINCE);
         assertThat(user.getLastLogin()).isEqualTo(USER_LAST_LOGIN);
+        assertThat(user.getPassword()).isEqualTo(PASSWORD);
     }
 
 }
