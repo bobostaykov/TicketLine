@@ -2,7 +2,7 @@
   <div class="col-7">
 
     <!-- form to add seats to floorplan. Only shown when 'New SeatPlan' is sellected -->
-    <form [hidden]="selectedHall !== allHalls[0]" [formGroup]="addSeatsForm" (ngSubmit)="addSeats()">
+    <form [hidden]="getSelectedHall() !== newSeatPlan" [formGroup]="addSeatsForm" (ngSubmit)="addSeats()">
       <div class="row col-12 mt-3">
         <div class="row text-nowrap col-8 p-0">
           <div class="input-group">
@@ -62,7 +62,7 @@
     </form>
 
     <!-- form to add sectors to floorplan, only shown when 'new SectorPlan' is selected  -->
-    <form [hidden]="selectedHall !== allHalls[1]" [formGroup]="addSectorsForm"
+    <form [hidden]="getSelectedHall() !== newSectorPlan" [formGroup]="addSectorsForm"
           (ngSubmit)="addSectors()">
       <div class="row col-12 mt-3">
         <div class="row text-nowrap col-8 p-0">
@@ -104,35 +104,39 @@
     </form>
   </div>
   <!-- selection hall by hall name and location / add new halls form -->
-  <form class="col-5" #addHallForm='ngForm'>
+  <form [formGroup]="createHallForm" class="col-5">
     <div class="form-inline col-12 mt-3">
       <label for="locationSelection" class="col-3 input-group-text justify-content-start">Location</label>
       <select id="locationSelection" class="form-control col-9"
-              name="location"
-              aria-labelledby="Hall location"
-              [(ngModel)]="selectedLocation"
-              (change)="selectLocation()">
+              formControlName="locationSelection"
+              aria-labelledby="Hall location">
+        <option [ngValue]="null"></option>
         <option *ngFor="let location of locations"
                 [ngValue]="location">{{displayLocation(location)}}</option>
       </select>
     </div>
+    <div [hidden]="createHallForm.controls.locationSelection.valid || createHallForm.pristine" class="form-inline col-12">
+      <small class="form-text text-danger">
+        Please select a location for your newly created hall!
+      </small>
+    </div>
     <div class="form-inline col-12 mt-3">
       <label for="hallSelection" class="col-3 input-group-text justify-content-start">Hall</label>
       <select id="hallSelection" class="form-control col-9"
-              name="hall"
-              aria-labelledby="Hall"
-              [(ngModel)]="selectedHall"
-              (change)="selectHall()">
+              formControlName="hallSelection"
+              aria-labelledby="Hall">
+        <option [ngValue]="newSeatPlan">{{newSeatPlan.name}}</option>
+        <option [ngValue]="newSectorPlan">{{newSectorPlan.name}}</option>
         <option *ngFor="let hall of halls" [ngValue]="hall">{{hall.name}}</option>
       </select>
     </div>
     <div class="form-inline col-12 mt-3">
-      <button *ngIf="selectedHall === halls[0]" type="button" class="btn btn-success" data-toggle="modal"
-              data-target="#enterName">
+      <button *ngIf="getSelectedHall() === newSeatPlan" type="button" class="btn btn-success"
+              data-toggle="modal" data-target="#enterName" [disabled]="createHallForm.get('locationSelection').invalid">
         Add Seat Plan
       </button>
-      <button *ngIf="selectedHall === halls[1]" type="button" class="btn btn-success" data-toggle="modal"
-              data-target="#enterName">
+      <button *ngIf="getSelectedHall() === newSectorPlan" type="button"  class="btn btn-success"
+              data-toggle="modal" data-target="#enterName" [disabled]="createHallForm.get('locationSelection').invalid">
         Add Sector Plan
       </button>
     </div>
@@ -140,24 +144,37 @@
 </div>
 <hr/>
 <!-- draw floor plan -->
-<app-floorplan *ngIf="selectedHall.seats !== null && selectedHall.seats.length > 0" [seats]="selectedHall.seats"></app-floorplan>
-<app-floorplan *ngIf="selectedHall.sectors !== null && selectedHall.sectors.length > 0" [sectors]="selectedHall.sectors"></app-floorplan>
+<app-floorplan *ngIf="getSelectedHall().seats !== null && getSelectedHall().seats.length > 0"
+               [seats]="getSelectedHall().seats"></app-floorplan>
+<app-floorplan *ngIf="getSelectedHall().sectors !== null && getSelectedHall().sectors.length > 0"
+               [sectors]="getSelectedHall().sectors"></app-floorplan>
 <!-- Bootstrap modal to post new floor plan -->
 <div class="modal fade" id="enterName" tabindex="-1" role="dialog" aria-labelledby="Enter name for new floor plan"
      aria-hidden="true">
   <div class="modal-dialog modal-sm">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Please enter a name for the new floorplan!</h5>
+        <h5 class="modal-title">Please enter a plan name!</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">x</span>
         </button>
       </div>
       <div class="modal-body">
-        <div class="form-inline">
-          <label for="floorplanName">Name</label>
-          <input id="floorplanName" type="text" [(ngModel)]="selectedHall.name"/>
-        </div>
+        <form [formGroup]="createHallForm" (ngSubmit)="createFloorplan()">
+          <div class="form-group">
+            <label for="floorplanName">Name</label>
+            <input id="floorplanName" class="form-control" type="text" [formGroup]="createHallForm"
+                   formControlName="floorplanName"/>
+          </div>
+          <div [hidden]="createHallForm.valid || createHallForm.get('floorplanName').pristine" class="form-inline col-12 mb-2">
+            <small class="form-text text-danger">
+              name is required to create floorplan!
+            </small>
+          </div>
+          <div>
+            <button type="submit" class="btn btn-success float-right" [disabled]="createHallForm.invalid" (click)="createFloorplan()" data-dismiss="modal">Create Floor Plan</button>
+          </div>
+        </form>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
