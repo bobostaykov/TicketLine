@@ -1,10 +1,13 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.user;
 
 import at.ac.tuwien.sepm.groupphase.backend.datatype.UserType;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.SimpleNewsDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @ApiModel(value = "UserDTO", description = "A DTO for user entries via rest")
 public class UserDTO {
@@ -26,6 +29,13 @@ public class UserDTO {
 
     @ApiModelProperty(name = "The timestamp of the last login of the user")
     private LocalDateTime lastLogin;
+
+    @ApiModelProperty(name = "List of read news by user")
+    private List<SimpleNewsDTO> readNews;
+
+    public UserDTO() {
+        this.readNews = new ArrayList<SimpleNewsDTO>();
+    }
 
     public Long getId() {
         return id;
@@ -50,6 +60,15 @@ public class UserDTO {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    public void setReadNews(List<SimpleNewsDTO> readNews) {
+        this.readNews = readNews;
+    }
+
+    public List<SimpleNewsDTO> getReadNews() {
+        return readNews;
+    }
+
 
     public UserType getType() {
         return type;
@@ -87,6 +106,7 @@ public class UserDTO {
             ", type=" + type +
             ", userSince=" + userSince +
             ", lastLogin=" + lastLogin +
+            ", readNews=" + readNews.toString() +
             '}';
     }
 
@@ -102,6 +122,7 @@ public class UserDTO {
         if (lastLogin != null ? !lastLogin.equals(userDTO.lastLogin) : userDTO.lastLogin != null) return false;
         if (username != null ? !username.equals(userDTO.username) : userDTO.username != null) return false;
         if (password != null ? !password.equals(userDTO.password) : userDTO.password != null) return false;
+        if (readNews != null ? !readNews.equals(userDTO.readNews) : userDTO.readNews != null) return false;
         return type != null ? type.equals(userDTO.type) : userDTO.type == null;
     }
 
@@ -113,6 +134,7 @@ public class UserDTO {
         result = 31 * result + (username != null ? username.hashCode() : 0);
         result = 31 * result + (password != null ? password.hashCode() : 0);
         result = 31 * result + (type != null ? type.hashCode() : 0);
+        result = 31 * result + (readNews != null ? readNews.hashCode() : 0);
         return result;
     }
 
@@ -124,6 +146,7 @@ public class UserDTO {
         private UserType type;
         private LocalDateTime userSince;
         private LocalDateTime lastLogin;
+        private List<SimpleNewsDTO> readNews;
 
         public UserDTOBuilder id(Long id) {
             this.id = id;
@@ -155,6 +178,11 @@ public class UserDTO {
             return this;
         }
 
+        public UserDTOBuilder readNews(List<SimpleNewsDTO> readNews) {
+            this.readNews = readNews;
+            return this;
+        }
+
         public UserDTO build() {
             UserDTO userDTO = new UserDTO();
             userDTO.setId(id);
@@ -163,6 +191,7 @@ public class UserDTO {
             userDTO.setType(type);
             userDTO.setUserSince(userSince);
             userDTO.setLastLogin(lastLogin);
+            userDTO.setReadNews(readNews);
             return userDTO;
         }
     }

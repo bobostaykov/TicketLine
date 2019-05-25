@@ -10,6 +10,7 @@ import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
 import org.springframework.boot.web.servlet.error.ErrorAttributes;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -35,6 +36,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 import java.util.List;
 import java.util.Map;
+
 
 @Configuration
 @EnableWebSecurity
@@ -111,6 +113,7 @@ public class SecurityConfiguration {
 
         @Override
         protected void configure(HttpSecurity http) throws Exception {
+
             http
                 .csrf().disable()
                 .headers().frameOptions().sameOrigin().and()
@@ -136,6 +139,9 @@ public class SecurityConfiguration {
                 .anyRequest().fullyAuthenticated()
                 .and()
                 .addFilterBefore(new HeaderTokenAuthenticationFilter(authenticationManager), UsernamePasswordAuthenticationFilter.class);
+
+
+            //http.authorizeRequests().antMatchers("/").permitAll();   // Enable this to disable authentication
         }
 
             @Bean

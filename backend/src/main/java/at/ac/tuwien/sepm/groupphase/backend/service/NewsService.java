@@ -17,7 +17,6 @@ public interface NewsService {
     /**
      * Find latest news entries ordered by published at date (descending).
      *
-     * @param username the username to get the latest news for
      * @return ordered list of latest news entries
      */
     List<SimpleNewsDTO> findUnread(String username);
@@ -28,7 +27,7 @@ public interface NewsService {
      * @param id the id of the news entry
      * @return the news entry
      */
-    DetailedNewsDTO findOne(Long id);
+    DetailedNewsDTO findOne(Long id, String username);
 
 
     /**
@@ -38,5 +37,13 @@ public interface NewsService {
      * @return published news entry
      */
     DetailedNewsDTO publishNews(DetailedNewsDTO detailedNewsDTO);
+
+    /**
+     * Add news fetch to news list of user.
+     *
+     * @param username name of user
+     * @param news_id ID of news that was fetched by user
+     */
+    void addNewsFetch(String username, Long news_id);
 
 }

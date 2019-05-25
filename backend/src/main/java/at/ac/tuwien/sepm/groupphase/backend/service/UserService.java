@@ -1,12 +1,13 @@
 package at.ac.tuwien.sepm.groupphase.backend.service;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.user.UserDTO;
+import at.ac.tuwien.sepm.groupphase.backend.entity.User;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
-@Service
 public interface UserService {
 
     /**
@@ -41,6 +42,14 @@ public interface UserService {
      * @param userId id of user to delete
      */
     void deleteUser(Long userId);
+
+    /**
+     * Find user by username.
+     *
+     * @param username name of user
+     * @return found user
+     */
+    UserDTO findOneByUsername(String username);
 
     /**
      *

@@ -1,6 +1,5 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint;
 
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.searchParameters.ShowSearchParametersDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.show.ShowDTO;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.service.ShowService;
@@ -16,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -28,6 +29,7 @@ public class ShowEndpoint {
 
     private final ShowService showService;
     private static final Logger LOGGER = LoggerFactory.getLogger(ShowEndpoint.class);
+    private LocalDateTime a = LocalDateTime.parse("09-10-2019 10:30", DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm"));
 
     ShowEndpoint(ShowService showService){
         this.showService = showService;
@@ -82,7 +84,7 @@ public class ShowEndpoint {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No shows for that location were found:" + e.getMessage(), e);
         }
     }
-*/
+
     @RequestMapping(value = "/filter", method = RequestMethod.GET)
     @ApiOperation(value = "Get all shows filtered by specified attributes", authorizations = {@Authorization(value = "apiKey")})
     public List<ShowDTO> findAllShowsFiltered(

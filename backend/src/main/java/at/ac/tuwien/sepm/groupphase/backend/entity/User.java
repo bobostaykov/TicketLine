@@ -6,6 +6,8 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class User {
@@ -33,6 +35,13 @@ public class User {
     @Column(name = "last_login")
     private LocalDateTime lastLogin;
 
+    @OneToMany(fetch = FetchType.LAZY)
+    private List<News> readNews;
+
+    public User() {
+        this.readNews = new ArrayList<News>();
+    }
+
     public Long getId() {
         return id;
     }
@@ -55,6 +64,14 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public List<News> getReadNews() {
+        return readNews;
+    }
+
+    public void setReadNews(List<News> readNews) {
+        this.readNews = readNews;
     }
 
     public UserType getType() {
@@ -89,6 +106,7 @@ public class User {
             ", type=" + type +
             ", userSince=" + userSince +
             ", lastLogin=" + lastLogin +
+            ", readNews=" + readNews.toString() +
             '}';
     }
 
@@ -104,6 +122,7 @@ public class User {
         if (lastLogin != null ? !lastLogin.equals(user.lastLogin) : user.lastLogin != null) return false;
         if (username != null ? !username.equals(user.username) : user.username != null) return false;
         if (password != null ? !password.equals(user.password) : user.password != null) return false;
+        if (readNews != null ? !readNews.equals(user.readNews) : user.readNews != null) return false;
         return type != null ? type.equals(user.type) : user.type == null;
     }
 
@@ -115,6 +134,7 @@ public class User {
         result = 31 * result + (username != null ? username.hashCode() : 0);
         result = 31 * result + (password != null ? password.hashCode() : 0);
         result = 31 * result + (type != null ? type.hashCode() : 0);
+        result = 31 * result + (readNews != null ? readNews.hashCode() : 0);
         return result;
     }
 
@@ -131,8 +151,10 @@ public class User {
         private UserType type;
         private LocalDateTime userSince;
         private LocalDateTime lastLogin;
+        private List<News> readNews;
 
         private UserBuilder() {
+            this.readNews = new ArrayList<News>();
         }
 
         public UserBuilder id(Long id) {
@@ -165,6 +187,11 @@ public class User {
             return this;
         }
 
+        public UserBuilder readNews(List<News> readNews) {
+            this.readNews = readNews;
+            return this;
+        }
+
         public User build() {
             User user = new User();
             user.setId(id);
@@ -173,6 +200,7 @@ public class User {
             user.setType(type);
             user.setUserSince(userSince);
             user.setLastLogin(lastLogin);
+            user.setReadNews(readNews);
             return user;
         }
     }

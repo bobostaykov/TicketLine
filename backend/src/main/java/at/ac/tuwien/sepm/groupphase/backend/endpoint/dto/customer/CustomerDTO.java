@@ -10,7 +10,7 @@ public class CustomerDTO {
     @ApiModelProperty(name = "The automatically generated database id")
     private Long id;
 
-    @ApiModelProperty(name = "The username of the customer")
+    @ApiModelProperty(name = "The name of the customer")
     private String name;
 
     @ApiModelProperty(name = "The firstname of the customer")
@@ -68,7 +68,7 @@ public class CustomerDTO {
     public String toString() {
         String customer  = "CustomerDTO{" +
             "id=" + id +
-            ", username='" + name + '\'' +
+            ", name='" + name + '\'' +
             ", firstname=" + firstname +
             ", e-mail=" + email;
         if (birthday != null)
