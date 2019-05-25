@@ -28,16 +28,14 @@ public class NewsEndpoint {
 
     private final NewsService newsService;
 
-    private final NewsMapper newsMapper;
     private final FileService fileService;
 
     private static final String FILE_URI = "/file";
     private static final String FORBIDDEN_FILE_TYPE_MESSAGE = "Could not post file: forbidden file type ";
     private static final String ALLOWED_FILE_TYPES = "jpg, jpeg, png";
 
-    public NewsEndpoint(NewsService newsService, NewsMapper newsMapper, FileService fileService) {
+    public NewsEndpoint(NewsService newsService, FileService fileService) {
         this.newsService = newsService;
-        this.newsMapper = newsMapper;
         this.fileService = fileService;
     }
 
@@ -79,7 +77,7 @@ public class NewsEndpoint {
         return returnValue;
     }
 
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(value = FILE_URI, method = RequestMethod.POST)
     @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "Store file", authorizations = {@Authorization(value = "apiKey")})
     public String storeFile(@RequestParam("file") MultipartFile file) {
