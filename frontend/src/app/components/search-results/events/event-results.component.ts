@@ -10,7 +10,9 @@ import {Event} from '../../../dtos/event';
 })
 export class EventResultsComponent implements OnInit {
 
-  // TODO for some reason coping the pagination method from event component doesnt work
+  private page: number = 1;
+  private pageSize: number = 10;
+  private dataReady: boolean = false;
   private error: boolean = false;
   private errorMessage: string = '';
   private resultsFor: string;
@@ -50,7 +52,8 @@ export class EventResultsComponent implements OnInit {
     console.log('Component Event-Results: loadEventsFilteredByArtist');
     this.eventResultsService.findEventsFilteredByArtistID(id).subscribe(
       (events: Event[]) => {this.events = events; },
-      error => {this.defaultServiceErrorHandling(error); }
+      error => {this.defaultServiceErrorHandling(error); },
+      () => { this.dataReady = true; }
     );
   }
 
@@ -59,7 +62,8 @@ export class EventResultsComponent implements OnInit {
     console.log('Component Event-Results: loadEventsFilteredByAttributes');
     this.eventResultsService.findEventsFilteredByAttributes(eventName, eventType, content, description).subscribe(
       (events: Event[]) => {this.events = events; },
-      error => {this.defaultServiceErrorHandling(error); }
+      error => {this.defaultServiceErrorHandling(error); },
+      () => { this.dataReady = true; }
     );
 
   }

@@ -8,7 +8,7 @@
   </tr>
   </thead>
   <tbody>
-  <tr *ngFor="let location of locations" routerLink="/events/search/results/shows" [queryParams]="{resultsFor: 'LOCATION', id: location.id}">
+  <tr *ngFor="let location of locations | slice: (page - 1) * pageSize : page * pageSize" routerLink="/events/search/results/shows" [queryParams]="{resultsFor: 'LOCATION', id: location.id}">
     <td class="align-middle">{{location.country}}</td>
     <td class="align-middle">{{location.city}}</td>
     <td class="align-middle">{{location.postalCode}}</td>
@@ -17,3 +17,11 @@
   </tr>
   </tbody>
 </table>
+<div class="justify-content-center">
+  <ngb-pagination
+    [(page)]="page"
+    [pageSize]="pageSize"
+    [collectionSize]="locations.length"
+    *ngIf="dataReady">
+  </ngb-pagination>
+</div>

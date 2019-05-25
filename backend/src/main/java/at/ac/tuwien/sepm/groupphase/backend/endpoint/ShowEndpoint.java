@@ -33,7 +33,7 @@ public class ShowEndpoint {
     @RequestMapping(value = "/event", method = RequestMethod.GET)
     @ApiOperation(value = "Get list of all shows filtered by eventName", authorizations = {@Authorization(value = "apiKey")})
     public List<ShowDTO> findAllShowsFilteredByEventName(@RequestParam(value = "eventName") String eventName){
-        LOGGER.info("Show Endpoint: Get all shows which belong to event with id " + eventName);
+        LOGGER.info("Show Endpoint: Get all shows which belong to event \"" + eventName + " \"");
         try{
             // TODO
             //return showService.findAllShowsFilteredByEventName(eventName);

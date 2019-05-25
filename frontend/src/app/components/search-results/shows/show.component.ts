@@ -13,7 +13,9 @@ import {Hall} from '../../../dtos/hall';
 })
 export class ShowComponent implements OnInit {
 
-  // TODO pagination
+  private page: number = 1;
+  private pageSize: number = 10;
+  private dataReady: boolean = false;
   private error: boolean = false;
   private errorMessage: string = '';
   private resultsFor: string;
@@ -35,6 +37,7 @@ export class ShowComponent implements OnInit {
 
   ngOnInit() {
     this.resultsFor = this.route.snapshot.queryParamMap.get('resultsFor');
+    console.log(this.resultsFor);
     switch (this.resultsFor) {
       case 'EVENT':
         this.loadShowsFilteredByEventName(this.route.snapshot.queryParamMap.get('name'));
@@ -76,7 +79,8 @@ export class ShowComponent implements OnInit {
     console.log('ShowResultsComponent: loadShowsFilteredByEventName');
     this.showService.findShowsFilteredByEventName(eventName).subscribe(
       (shows: Show[]) => {this.shows = shows; },
-      error => {this.defaultServiceErrorHandling(error); }
+      error => {this.defaultServiceErrorHandling(error); },
+      () => { this.dataReady = true; }
     );
   }
 
@@ -85,7 +89,8 @@ export class ShowComponent implements OnInit {
     console.log('ShowResultsComponent: loadShowsFilteredByLocationID');
     this.showService.findShowsFilteredByLocationID(id).subscribe(
       (shows: Show[]) => {this.shows = shows; },
-      error => {this.defaultServiceErrorHandling(error); }
+      error => {this.defaultServiceErrorHandling(error); },
+      () => { this.dataReady = true; }
     );
   }
 
@@ -93,7 +98,8 @@ export class ShowComponent implements OnInit {
     console.log('ShowResultsComponent: loadShowsFilteredByShowAttributes');
     this.showService.findShowsFilteredByShowAttributes(eventName, hallName, dateFrom, dateTo, timeFrom, timeTo, minPrice, maxPrice, duration).subscribe(
       (shows: Show[]) => {this.shows = shows; },
-      error => {this.defaultServiceErrorHandling(error); }
+      error => {this.defaultServiceErrorHandling(error); },
+      () => { this.dataReady = true; }
     );
   }
 

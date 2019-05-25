@@ -12,6 +12,9 @@ import {Location} from '../../../dtos/location';
 })
 export class LocationsComponent implements OnInit {
 
+  private page: number = 1;
+  private pageSize: number = 10;
+  private dataReady: boolean = false;
   private error: boolean = false;
   private errorMessage: string = '';
   private resultsFor: string;
@@ -46,7 +49,8 @@ export class LocationsComponent implements OnInit {
     console.log('Location Component: loadLocationsFiltered');
     this.locationsService.findLocationsFiltered(country, city, street, postalCode, description).subscribe(
       (locations: Location[]) => { this.locations = locations; },
-      error => {this.defaultServiceErrorHandling(error); }
+      error => {this.defaultServiceErrorHandling(error); },
+          () => { this.dataReady = true; }
     );
   }
 

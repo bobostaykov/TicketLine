@@ -11,9 +11,9 @@ export class EventsComponent implements OnInit {
 
   private page: number = 1;
   private pageSize: number = 10;
+  private dataReady: boolean = false;
   private error: boolean = false;
   private errorMessage: string = '';
-  private dataReady: boolean = false;
   private events: Event[];
   private headers: string[] = [
     'Name',
@@ -31,8 +31,7 @@ export class EventsComponent implements OnInit {
     this.eventService.getAllEvents().subscribe(
       (events: Event[]) => { this.events = events; },
       error => { this.defaultServiceErrorHandling(error); },
-      () => { this.dataReady = true;
-        console.log(this.events); }
+      () => { this.dataReady = true; }
     );
   }
 
