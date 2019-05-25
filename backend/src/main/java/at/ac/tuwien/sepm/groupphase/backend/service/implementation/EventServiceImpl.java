@@ -24,7 +24,7 @@ public class EventServiceImpl implements EventService {
         this.eventRepository = eventRepository;
         this.eventMapper = eventMapper;
     }
-
+/*
     @Override
     public List<EventTicketsDTO> findTopTenEvents(Set<String> monthsSet, Set<EventType> categoriesSet) {
         ArrayList<EventTicketsDTO> toReturn = new ArrayList<>();
@@ -33,7 +33,10 @@ public class EventServiceImpl implements EventService {
         }
         return toReturn;
     }
-/*
+
+
+ */
+
     @Override
     public List<EventDTO> findAll() {
         List<EventDTO> toReturn = new ArrayList<>();
@@ -42,5 +45,4 @@ public class EventServiceImpl implements EventService {
         }
         return toReturn;
     }
-*/
 }

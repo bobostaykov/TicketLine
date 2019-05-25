@@ -27,7 +27,7 @@ import static org.hamcrest.core.Is.is;
 public class EventEndpointTest extends BaseIntegrationTest {
 
     private static final String EVENT_ENDPOINT = "/events";
-    private static final String TOP_TEN_EVENTS_PATH= "/topten";
+    private static final String TOP_TEN_EVENTS_PATH = "/topten";
     private static final String MONTHS = "January";
     private static final String CATEGORIES = "OPERA,FESTIVAL,THEATRE";
     private static final Long TEST_EVENT_ID = 1L;
@@ -49,7 +49,8 @@ public class EventEndpointTest extends BaseIntegrationTest {
             .then().extract().response();
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.UNAUTHORIZED.value()));
     }
-
+}
+/*
     @Test
     public void findTopTenEventsAsUser() {
         BDDMockito
@@ -147,5 +148,4 @@ public class EventEndpointTest extends BaseIntegrationTest {
                 .eventType(TEST_EVENT_TYPE)
                 .build())));
     }
-
-}
+*/

@@ -107,7 +107,7 @@ public class ShowEndpoint {
             LOGGER.info("Get all shows");
             return showService.findAllShowsFiltered(parameters);
         } else {*/
-            LOGGER.info("Get all shows filtered by specified attributes");
+            /*LOGGER.info("Get all shows filtered by specified attributes");
             ShowSearchParametersDTO parameters = new ShowSearchParametersDTO(
                 dateFrom, dateTo, timeFrom, timeTo, priceInEuroFrom, priceInEuroTo, eventName, hallName);
             return showService.findAllShowsFiltered(parameters);
@@ -119,7 +119,7 @@ public class ShowEndpoint {
         }catch(NotFoundException e){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No shows are found for the given parameters:" + e.getMessage(), e);
         }
-        }
+        }*/
 /*
     @RequestMapping(value = "/location", method = RequestMethod.GET)
     @ApiOperation(value = "Get all shows filtered by location parameters", authorizations = {@Authorization(value = "apiKey")})

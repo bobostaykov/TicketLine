@@ -28,6 +28,7 @@ public class EventEndpoint {
         this.eventTicketsMapper = eventTicketsMapper;
     }
 
+    /*
     @RequestMapping(method = RequestMethod.GET, value = "/topten")
     @ApiOperation(value = "Get top 10 events", authorizations = {@Authorization(value = "apiKey")})
     public List<EventTicketsDTO> findTopTenEvents(@RequestParam(value = "months") String months, @RequestParam(value = "categories") String categories) {
@@ -44,6 +45,8 @@ public class EventEndpoint {
         }
         return topTen;
     }
+
+     */
 
     @RequestMapping(method = RequestMethod.GET)
     @ApiOperation(value = "Get all events", authorizations = {@Authorization(value = "apiKey")})
