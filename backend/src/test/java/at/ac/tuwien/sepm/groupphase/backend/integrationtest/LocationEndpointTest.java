@@ -42,7 +42,7 @@ public class LocationEndpointTest extends BaseIntegrationTest {
     private LocationRepository locationRepository;
 
     @Test
-    public void findAllNewsUnauthorizedAsAnonymous() {
+    public void findAllLocationsUnauthorizedAsAnonymous() {
         Response response = RestAssured
             .given()
             .contentType(ContentType.JSON)
@@ -70,6 +70,7 @@ public class LocationEndpointTest extends BaseIntegrationTest {
             .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
             .when().get(LOCATION_FILTERED_COUNTRY)
             .then().extract().response();
+        Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
         Assert.assertThat(Arrays.asList(response.as(LocationDTO[].class)), is(Collections.singletonList(
             LocationDTO.builder()
                 .id(ID)
@@ -100,6 +101,7 @@ public class LocationEndpointTest extends BaseIntegrationTest {
             .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
             .when().get(LOCATION_FILTERED_POSTAL_CODE)
             .then().extract().response();
+        Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
         Assert.assertThat(Arrays.asList(response.as(LocationDTO[].class)), is(Collections.singletonList(
             LocationDTO.builder()
                 .id(ID)
@@ -130,6 +132,7 @@ public class LocationEndpointTest extends BaseIntegrationTest {
                 .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
                 .when().get(LOCATION_FILTERED_DESCRIPTION)
                 .then().extract().response();
+            Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
             Assert.assertThat(Arrays.asList(response.as(LocationDTO[].class)), is(Collections.singletonList(
                 LocationDTO.builder()
                     .id(ID)
@@ -160,6 +163,7 @@ public class LocationEndpointTest extends BaseIntegrationTest {
                 .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
                 .when().get(LOCATION_FILTERED_STREET)
                 .then().extract().response();
+            Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
             Assert.assertThat(Arrays.asList(response.as(LocationDTO[].class)), is(Collections.singletonList(
                 LocationDTO.builder()
                     .id(ID)
@@ -190,6 +194,7 @@ public class LocationEndpointTest extends BaseIntegrationTest {
             .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
             .when().get(LOCATION_FILTERED_COUNTRY_AND_CITY)
             .then().extract().response();
+        Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
         Assert.assertThat(Arrays.asList(response.as(LocationDTO[].class)), is(Collections.singletonList(
             LocationDTO.builder()
                 .id(ID)

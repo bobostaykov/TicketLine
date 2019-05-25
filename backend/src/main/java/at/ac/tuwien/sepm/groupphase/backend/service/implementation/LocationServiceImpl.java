@@ -28,11 +28,11 @@ public class LocationServiceImpl implements LocationService {
     public List<LocationDTO> findLocationsFiltered(String country, String city, String street, String postalCode, String description) throws ServiceException{
         LOGGER.info("Location Service: findLocationsFiltered()");
         try{
-            if(country.equals("")) country = null;
-            if(city.equals("")) city = null;
-            if(street .equals("")) street = null;
-            if(postalCode.equals("")) postalCode = null;
-            if(description.equals("")) description = null;
+            if(country != null && country.equals("")) country = null;
+            if(city != null && city.equals("")) city = null;
+            if(street != null && street .equals("")) street = null;
+            if(postalCode != null && postalCode.equals("")) postalCode = null;
+            if(description != null && description.equals("")) description = null;
 
             return locationMapper.locationToLocationDTO(locationRepository.findLocationsFiltered(country, city, street, postalCode, description));
         }catch (PersistenceException e){

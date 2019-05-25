@@ -23,7 +23,7 @@ public class Event {
     @Enumerated(EnumType.STRING)
     private EventType eventType;
 
-    @Column(nullable = false, name = "description")
+    @Column(name = "description")
     @Size(max = 256)
     private String description;
 
