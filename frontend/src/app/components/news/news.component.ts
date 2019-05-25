@@ -6,6 +6,7 @@ import * as _ from 'lodash';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {AuthService} from '../../services/auth/auth.service';
 import {FileService} from '../../services/file.service';
+import {UserService} from '../../services/user/user.service';
 
 @Component({
   selector: 'app-news',
@@ -21,8 +22,11 @@ export class NewsComponent implements OnInit {
   // After first submission attempt, form validation will start
   submitted: boolean = false;
   private news: News[];
+  showReadNews = false;
 
-  constructor(private newsService: NewsService, private fileService: FileService, private ngbPaginationConfig: NgbPaginationConfig, private formBuilder: FormBuilder, private cd: ChangeDetectorRef, private authService: AuthService) {
+  constructor(private newsService: NewsService, private fileService: FileService, private userService: UserService,
+              private ngbPaginationConfig: NgbPaginationConfig, private formBuilder: FormBuilder,
+              private cd: ChangeDetectorRef, private authService: AuthService) {
     this.newsForm = this.formBuilder.group({
       title: ['', [Validators.required]],
       summary: ['', [Validators.required]],
@@ -32,7 +36,7 @@ export class NewsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.loadUnreadNews();
+    this.loadNews();
   }
 
   /**
@@ -90,7 +94,7 @@ export class NewsComponent implements OnInit {
   createNews(news: News) {
     this.newsService.createNews(news).subscribe(
       () => {
-        this.loadUnreadNews();
+        this.loadNews();
       },
       error => {
         this.defaultServiceErrorHandling(error);
@@ -109,7 +113,6 @@ export class NewsComponent implements OnInit {
   getNewsDetails(id: number) {
     if (_.isEmpty(this.news.find(x => x.id === id).text)) {
       this.loadNewsDetails(id);
-      this.newsService.updateNewsFetch();
     }
   }
 
@@ -153,19 +156,37 @@ export class NewsComponent implements OnInit {
     this.error = false;
   }
 
-  /**
-   * Loads all unread news from the backend for this user
-   */
-  private loadUnreadNews() {
-    // Backend pagination starts at page 0, therefore page must be reduced by 1
-    this.newsService.getUnreadNews().subscribe(
-      (news: News[]) => {
-        this.news = news;
-      },
-      error => {
-        this.defaultServiceErrorHandling(error);
-      }
-    );
+  changeChecked() {
+    this.showReadNews = !this.showReadNews;
+    this.loadNews();
+  }
+
+  private loadNews() {
+    if (this.showReadNews === true) {
+      console.log('True');
+    } else {
+      console.log('False');
+    }
+
+    if (this.showReadNews === true) {
+      this.newsService.getAllNews().subscribe(
+        (news: News[]) => {
+          this.news = news;
+        },
+        error => {
+          this.defaultServiceErrorHandling(error);
+        }
+      );
+    } else {
+      this.newsService.getUnreadNews().subscribe(
+        (news: News[]) => {
+          this.news = news;
+        },
+        error => {
+          this.defaultServiceErrorHandling(error);
+        }
+      );
+    }
   }
 
 

@@ -13,7 +13,10 @@ import org.apache.commons.io.FilenameUtils;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
@@ -27,6 +30,7 @@ import java.util.List;
 public class NewsEndpoint {
 
     private final NewsService newsService;
+    private static final Logger LOGGER = LoggerFactory.getLogger(NewsEndpoint.class);
 
     private final FileService fileService;
 
@@ -50,13 +54,15 @@ public class NewsEndpoint {
     @RequestMapping(value = "/unread", method = RequestMethod.GET)
     @ApiOperation(value = "Get list of unread News articles", authorizations = {@Authorization(value = "apiKey")})
     public List<SimpleNewsDTO> findUnread(HttpServletRequest request) {
-        return newsService.findUnread(request.getUserPrincipal().getName());
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        return newsService.findUnread(username);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ApiOperation(value = "Get detailed information about a specific news entry", authorizations = {@Authorization(value = "apiKey")})
     public DetailedNewsDTO find(@PathVariable Long id) {
-        return newsService.findOne(id);
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        return newsService.findOne(id, username);
     }
 
     @RequestMapping(method = RequestMethod.POST)
