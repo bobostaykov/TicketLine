@@ -37,7 +37,7 @@
       <div class="form-inline-custom">
         <label for="priceCategorySeat" class="sr-only">Price Category</label>
         <select id="priceCategorySeat" name="priceCategory" aria-labelledby="price category"
-                [(ngModel)]="elementModel.price" #price='ngModel'
+                [(ngModel)]="elementModel.priceCategory" #price='ngModel'
                 required>
           <option *ngFor="let price of priceCategories">{{price}}</option>
         </select>
@@ -82,7 +82,7 @@
       <div class="form-inline-custom">
         <label for="priceCategorySector" class="sr-only">Price Category</label>
         <select id="priceCategorySector" name="priceCategory" aria-labelledby="price category"
-                [(ngModel)]="elementModel.price" #price='ngModel'
+                [(ngModel)]="elementModel.priceCategory" #price='ngModel'
                 required>
           <option *ngFor="let price of priceCategories">{{price}}</option>
         </select>

@@ -47,11 +47,11 @@ export class FloorplanComponent implements OnInit {
 
   /**
    * get color of seat or sector assed as parameter
-   * color depends on the price category of the seat
+   * color depends on the priceCategory of the seat
    * @param elem for which to return color
    */
   private getColor(elem: Seat | Sector): string {
-    return elem.price === PriceCategory.Cheap ? '#2fb207' : (elem.price === PriceCategory.Average ? '#129ded' : '#db0611');
+    return elem.priceCategory === PriceCategory.Cheap ? '#2fb207' : (elem.priceCategory === PriceCategory.Average ? '#129ded' : '#db0611');
   }
 
   /**

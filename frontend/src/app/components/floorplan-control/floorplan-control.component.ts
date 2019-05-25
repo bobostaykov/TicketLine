@@ -166,6 +166,7 @@ export class FloorplanControlComponent implements OnInit {
     hallSelection.valueChanges.subscribe(hall => {
       if (hall.location !== null) {
         locationSelection.setValue(this.locations.find(location => location.id === hall.location.id), {emitEvent: false});
+        console.log(hall);
       }
     });
     locationSelection.valueChanges.subscribe(location => {
@@ -281,11 +282,11 @@ export class FloorplanControlComponent implements OnInit {
       values.hallSelection.seats,
       values.hallSelection.sectors
     );
+    console.log(hall);
     this.hallService.createHall(hall).subscribe();
-    this.newSeatPlan = new Hall(null, 'New SeatPlan', null, [], null);
-    this.newSectorPlan = new Hall(null, 'New SectorPlan', null, null, []);
     this.createHallForm.reset({
-      'hallSelection': this.newSeatPlan
+      'hallSelection': (values.hallSelection === this.newSeatPlan ? this.newSeatPlan = new Hall(null, 'New SeatPlan', null, [], null) :
+        this.newSectorPlan = new Hall(null, 'New SectorPlan', null, null, []))
     });
   }
 }
