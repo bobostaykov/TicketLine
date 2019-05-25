@@ -11,17 +11,25 @@ import {ShowService} from '../../services/show/show.service';
 })
 export class ShowComponent implements OnInit {
 
+  private resultsFor: string;
+  private name: string;
+  private id: string;
+  private country: string;
+  private city: string;
+  private street: string;
+  private postalCode: string;
+  private description: string;
+
   private error: boolean = false;
   private errorMessage: string = '';
-  private resultsFor: ResultsFor;
-  private name: string;
   private shows: Show[];
   private headElements: string[] = [
     'Event',
     'Artist',
     'Location',
     'Hall',
-    'City - Country',
+    'City',
+    'Country',
     'Date',
     'Category',
     'Sold Tickets',
@@ -31,11 +39,29 @@ export class ShowComponent implements OnInit {
   constructor(private route: ActivatedRoute, private showService: ShowService) { }
 
   ngOnInit() {
-    const param = this.route.snapshot.queryParamMap.get('results_for');
-    this.resultsFor = param !== null ? ResultsFor[param] : null;
-    this.name = this.route.snapshot.queryParamMap.get('name');
-    this.loadShows();
+    this.resultsFor = this.route.snapshot.queryParamMap.get('resultsFor');
+    console.log(this.resultsFor);
+    if (this.resultsFor === 'EVENT') {
+      this.loadShowsFilteredByEventName(this.route.snapshot.queryParamMap.get('name'));
+    } else if (this.resultsFor === 'LOCATION') {
+      this.id = this.route.snapshot.queryParamMap.get('id');
+        if (this.id === null) {
+          this.country = this.route.snapshot.queryParamMap.get('country');
+          this.city = this.route.snapshot.queryParamMap.get('city');
+          this.street = this.route.snapshot.queryParamMap.get('street');
+          this.postalCode = this.route.snapshot.queryParamMap.get('postalCode');
+          this.description = this.route.snapshot.queryParamMap.get('description');
+          this.loadShowsFilteredByLocation(this.country, this.city, this.street, this.postalCode, this.description);
+        } else {
+          this.loadShowsFilteredByLocationID(this.id);
+        }
+    } else if (this.resultsFor === 'ATTRIBUTES') {
+      this.loadShowsFilteredByShowAttributes();
+    } else {
+      this.defaultServiceErrorHandling('No results for this type');
+    }
   }
+
 
 
   /**
@@ -51,13 +77,40 @@ export class ShowComponent implements OnInit {
   /**
    * Load shows from backend
    */
+  /*
   private loadShows() {
     this.showService.findShows(this.resultsFor, this.name).subscribe(
       (shows: Show[]) => { this.shows = shows; },
       error => { this.defaultServiceErrorHandling(error); }
     );
   }
+  */
 
+  private loadShowsFilteredByEventName(eventName) {
+    console.log('Component: loadShowsFilteredByEventName');
+    this.showService.findShowsFilteredByEventName(eventName).subscribe(
+      (shows: Show[]) => {this.shows = shows; },
+      error => {this.defaultServiceErrorHandling(error); }
+    );
+  }
+
+  private loadShowsFilteredByLocationID(id) {
+    console.log('Component: loadShowsFilteredByLocationID');
+    this.showService.findShowsFilteredByLocationID(id).subscribe(
+      (shows: Show[]) => {this.shows = shows; },
+      error => {this.defaultServiceErrorHandling(error); }
+    );
+  }
+
+  private loadShowsFilteredByLocation(country, city, street, postalCode, description) {
+    console.log('Component: loadShowsFilteredByLocation');
+    this.showService.findShowsFilteredByLocation(country, city, street, postalCode, description).subscribe(
+      (shows: Show[]) => {this.shows = shows; },
+      error => {this.defaultServiceErrorHandling(error); }
+    );
+  }
+
+  private loadShowsFilteredByShowAttributes() {}
 
   private defaultServiceErrorHandling(error: any) {
     console.log(error);

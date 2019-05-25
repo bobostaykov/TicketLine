@@ -56,24 +56,24 @@ public class EventDataGenerator implements DataGenerator{
             Event event21 = Event.builder().id(21L).name("Guns and Ships").eventType(EventType.OPERA).artist(artistRepository.getOne(8L)).description("description").content("content").build();
             Event event22 = Event.builder().id(22L).name("Bad Girls Play With Fire").eventType(EventType.OPERA).artist(null).description("COMING SOON").content("content").build();
             Event event23 = Event.builder().id(23L).name("How to Party").eventType(EventType.CONCERT).artist(artistRepository.getOne(8L)).description("description").content("content").build();
-            Event event24 = Event.builder().id(24L).name("Magiciancon 2019").eventType(EventType.MUSICAL).artist(artistRepository.getOne(8L)).description("description").content("content").build();
+            Event event24 = Event.builder().id(24L).name("MagicValley 2019").eventType(EventType.MUSICAL).artist(artistRepository.getOne(8L)).description("description").content("content").build();
             Event event25 = Event.builder().id(25L).name("Zombie Mashup").eventType(EventType.OPERA).artist(artistRepository.getOne(8L)).description("description").content(null).build();
 
-            Event event26 = Event.builder().id(26L).name("Marathon For The Youngs").eventType(EventType.SPORT).artist(artistRepository.getOne(9L)).description("description").content("content").build();
-            Event event27 = Event.builder().id(27L).name("HighSchool Reopening'").eventType(EventType.CONCERT).artist(artistRepository.getOne(10L)).description("description").content(null).build();
+            Event event26 = Event.builder().id(26L).name("Marathon For The Young").eventType(EventType.SPORT).artist(artistRepository.getOne(9L)).description("description").content("content").build();
+            Event event27 = Event.builder().id(27L).name("High School Reopening'").eventType(EventType.CONCERT).artist(artistRepository.getOne(10L)).description("description").content(null).build();
             Event event28 = Event.builder().id(28L).name("Dirty Diana").eventType(EventType.MUSICAL).artist(null).description("COMING SOON").content(null).build();
             Event event29 = Event.builder().id(29L).name("Coachella 2020").eventType(EventType.FESTIVAL).artist(artistRepository.getOne(12L)).description("description").content("content").build();
             Event event30 = Event.builder().id(30L).name("Some Old Time Roads").eventType(EventType.THEATRE).artist(artistRepository.getOne(13L)).description("description").content(null).build();
 
             Event event31 = Event.builder().id(31L).name("Yoga for 1000 people").eventType(EventType.SPORT).artist(null).description("COMING SOON").content(null).build();
             Event event32 = Event.builder().id(32L).name("Cringe Party 2020").eventType(EventType.FESTIVAL).artist(null).description("COMING SOON").content("content").build();
-            Event event33 = Event.builder().id(33L).name("When God meets Groundmother").eventType(EventType.MOVIE).artist(artistRepository.getOne(11L)).description("description").content(null).build();
+            Event event33 = Event.builder().id(33L).name("When God meets Grandmother").eventType(EventType.MOVIE).artist(artistRepository.getOne(11L)).description("description").content(null).build();
             Event event34 = Event.builder().id(34L).name("Doggy with no style").eventType(EventType.FESTIVAL).artist(artistRepository.getOne(12L)).description("description").content(null).build();
             Event event35 = Event.builder().id(35L).name("Uncle Benny").eventType(EventType.MOVIE).artist(artistRepository.getOne(13L)).description("description").content(null).build();
 
             Event event36 = Event.builder().id(36L).name("Habibis United").eventType(EventType.FESTIVAL).artist(artistRepository.getOne(13L)).description("description").content("content").build();
-            Event event37 = Event.builder().id(37L).name("Tomato Sause").eventType(EventType.THEATRE).artist(artistRepository.getOne(13L)).description("description").content(null).build();
-            Event event38 = Event.builder().id(38L).name("Bobby Hobby").eventType(EventType.THEATRE).artist(artistRepository.getOne(9L)).description("description").content(null).build();
+            Event event37 = Event.builder().id(37L).name("Tomato Sauce").eventType(EventType.THEATRE).artist(artistRepository.getOne(13L)).description("description").content(null).build();
+            Event event38 = Event.builder().id(38L).name("Hobby Bobby").eventType(EventType.THEATRE).artist(artistRepository.getOne(9L)).description("description").content(null).build();
             Event event39 = Event.builder().id(39L).name("Best Of Opera").eventType(EventType.OPERA).artist(artistRepository.getOne(11L)).description("description").content("content").build();
             Event event40 = Event.builder().id(40L).name("Mozart Regrets Himself").eventType(EventType.CONCERT).artist(artistRepository.getOne(10L)).description("description").content(null).build();
 

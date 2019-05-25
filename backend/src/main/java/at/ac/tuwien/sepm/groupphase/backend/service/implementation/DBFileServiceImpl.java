@@ -27,11 +27,11 @@ public class DBFileServiceImpl implements DBFileService {
 
     @Override
     public Long storeFile(MultipartFile file) throws ServiceException{
-        // Normalize file name
+        // Normalize file username
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
 
         try {
-            // Check if the file's name contains invalid characters
+            // Check if the file's username contains invalid characters
             if(fileName.contains("..")) {
                 throw new ServiceException("File '" + fileName + "' could not be stored: Filename contains invalid path sequence ");
             }

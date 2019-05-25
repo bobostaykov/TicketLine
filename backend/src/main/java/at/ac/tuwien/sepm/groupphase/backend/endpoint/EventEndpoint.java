@@ -35,7 +35,7 @@ public class EventEndpoint {
         Set<EventType> categoriesSet = new HashSet<>();
         List<EventTicketsDTO> topTen = new ArrayList<>();
 
-        for (String s : categories.split(",")) {
+        for (String s: categories.split(",")) {
             categoriesSet.add(EventType.valueOf(s));
         }
 
@@ -44,12 +44,11 @@ public class EventEndpoint {
         }
         return topTen;
     }
-}
-/*
+
     @RequestMapping(method = RequestMethod.GET)
     @ApiOperation(value = "Get all events", authorizations = {@Authorization(value = "apiKey")})
     public List<EventDTO> findAll() {
         return eventService.findAll();
     }
 
-}*/
+}
