@@ -1,10 +1,10 @@
 package at.ac.tuwien.sepm.groupphase.backend.service;
 
-import at.ac.tuwien.sepm.groupphase.backend.entity.DBFile;
+import at.ac.tuwien.sepm.groupphase.backend.entity.File;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import org.springframework.web.multipart.MultipartFile;
 
-public interface DBFileService {
+public interface FileService {
 
     /**
      * Find a single news entry by id.
@@ -12,7 +12,7 @@ public interface DBFileService {
      * @param id the id of the news entry
      * @return the news entry
      */
-    DBFile getFile(Long id);
+    File getFile(Long id);
 
     /**
      * Store a single file

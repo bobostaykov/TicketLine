@@ -10,7 +10,7 @@ public class Customer {
     @SequenceGenerator(name = "seq_customer_id", sequenceName = "seq_customer_id")
     private Long id;
 
-    @Column(nullable = false, name = "username")
+    @Column(nullable = false, name = "name")
     private String name;
 
     @Column(nullable = false, name = "firstname")
@@ -70,7 +70,7 @@ public class Customer {
     public String toString() {
         String customer  = "Customer{" +
             "id=" + id +
-            ", username='" + name + '\'' +
+            ", name='" + name + '\'' +
             ", firstname=" + firstname +
             ", e-mail=" + email;
         if (birthday != null)

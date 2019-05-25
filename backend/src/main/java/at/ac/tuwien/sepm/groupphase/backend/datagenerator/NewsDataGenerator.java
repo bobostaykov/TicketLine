@@ -19,6 +19,7 @@ public class NewsDataGenerator implements DataGenerator{
 
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
     private static final int NUMBER_OF_NEWS_TO_GENERATE = 25;
+    private static final String TEST_NEWS_IMAGE_ID = "1";
 
     private final NewsRepository newsRepository;
     private final Faker faker;
@@ -38,6 +39,7 @@ public class NewsDataGenerator implements DataGenerator{
                 News news = News.builder()
                     .title(faker.lorem().characters(30, 40))
                     .text(faker.lorem().paragraph(faker.number().numberBetween(5, 10)))
+                    .image(TEST_NEWS_IMAGE_ID)
                     .publishedAt(
                         LocalDateTime.ofInstant(
                             faker.date()
