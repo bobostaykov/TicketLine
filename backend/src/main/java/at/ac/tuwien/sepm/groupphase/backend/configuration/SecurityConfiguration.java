@@ -67,8 +67,11 @@ public class SecurityConfiguration {
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth, List<AuthenticationProvider> providerList) throws Exception {
 
-        auth.jdbcAuthentication().dataSource(dataSource).getUserDetailsService();
+        auth.jdbcAuthentication().dataSource(dataSource).passwordEncoder(passwordEncoder).getUserDetailsService();
+
+
         providerList.forEach(auth::authenticationProvider);
+
     }
 
     @Configuration

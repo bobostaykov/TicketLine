@@ -49,10 +49,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO createUser(UserDTO userDTO) throws ServiceException {
+        LOGGER.info("creating user with name: " + userDTO.getUsername());
         try {
             userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword()));
             return userMapper.userToUserDTO(userRepository.save(userMapper.userDTOToUser(userDTO)));
         } catch (DataIntegrityViolationException e) {
+            LOGGER.error("Problems while creating user" + userDTO.toString());
             throw new ServiceException(e.getMessage(), e);
         }
     }
@@ -88,5 +90,6 @@ public class UserServiceImpl implements UserService {
             throw new NotFoundException("could not find user with id: "+ userId);
         }
     }
+
 
 }

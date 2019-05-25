@@ -60,6 +60,7 @@ public class UserEndpoint {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
 //    @PreAuthorize("hasRole('ADMIN')")
+
     @ApiOperation(value = "Delete a user by id", authorizations = {@Authorization(value = "apiKey")})
     public void delete(@PathVariable Long id) {
         LOGGER.info("\n\n\n" + id + "\n\n\n");
