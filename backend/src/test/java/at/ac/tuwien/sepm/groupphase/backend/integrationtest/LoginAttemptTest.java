@@ -16,27 +16,29 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.junit4.SpringRunner;
 
-@JdbcTest
+
 @RunWith(SpringRunner.class)
+@DataJpaTest
 public class LoginAttemptTest {
 
+
     @Autowired
-    private  UserService userService;
+    private LoginAttemptsRepository loginAttemptsRepository;
     @Autowired
-    LoginAttemptsRepository loginAttemptsRepository;
-    @Autowired
-    UserMapper userMapper;
+    private UserMapper userMapper;
     @Autowired
     private HeaderTokenAuthenticationService authenticationService;
     @Autowired
     private AuthenticationManager authenticationManager;
-
+    @Autowired
+    private UserService userService;
 
 
 
@@ -48,7 +50,6 @@ public class LoginAttemptTest {
     boolean init = false;
 
     @Before
-
     public void before() throws ServiceException {
         if(!init) {
             testUserDTO1 = userService.createUser(testUserDTO1);

@@ -39,7 +39,9 @@ import java.util.Map;
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 public class SecurityConfiguration {
 
+    @Autowired
     private DataSource dataSource;
+
     private final PasswordEncoder passwordEncoder;
 
     public SecurityConfiguration(PasswordEncoder passwordEncoder) {
