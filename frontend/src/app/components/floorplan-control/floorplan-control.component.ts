@@ -60,7 +60,6 @@ export class FloorplanControlComponent implements OnInit {
    * afterwards resets form
    */
   // tslint:disable-next-line:max-line-length
-  // TODO: there is a small potential for error here if user enters seatRowStart and seatRowEnd the wrong way. Same for Sectors. Fix this soon
   private addSeats(): void {
     if (this.addSeatsForm.valid) {
       const value = this.addSeatsForm.value;
@@ -69,13 +68,9 @@ export class FloorplanControlComponent implements OnInit {
       value.seatRowEnd = value.seatRowEnd === null ? value.seatRowStart : value.seatRowEnd;
       value.seatNumberStart = value.seatNumberStart === null ? value.seatNumberEnd : value.seatNumberStart;
       value.seatNumberEnd = value.seatNumberEnd === null ? value.seatNumberStart : value.seatNumberEnd;
-      // determine which value is min and which is max to run loop correctly afterwards
-      value.seatRowStart = Math.min(value.seatRowStart, value.seatRowEnd);
-      value.seatRowEnd = Math.max(value.seatRowStart, value.seatRowEnd);
-      value.seatNumberStart = Math.min(value.seatNumberStart, value.seatNumberEnd);
-      value.seatNumberEnd = Math.max(value.seatNumberStart, value.seatNumberEnd);
-      for (let row = value.seatRowStart; row <= value.seatRowEnd; row++) {
-        for (let number = value.seatNumberStart; number <= value.seatNumberEnd; number++) {
+      for (let row = Math.min(value.seatRowStart, value.seatRowEnd); row <= Math.max(value.seatRowStart, value.seatRowEnd); row++) {
+        // tslint:disable-next-line:max-line-length
+        for (let number = Math.min(value.seatNumberStart, value.seatNumberEnd); number <= Math.max(value.seatNumberStart, value.seatNumberEnd); number++) {
           if (!this.getSelectedHall().seats.some(seat => seat.seatRow === row && seat.seatNumber === number)) {
             this.getSelectedHall().seats.push(new Seat(null, number, row, value.seatPrice));
           }
@@ -86,6 +81,33 @@ export class FloorplanControlComponent implements OnInit {
       });
     }
   }
+
+  private deleteSeats(): void {
+    if (this.addSeatsForm.valid) {
+      const value = this.addSeatsForm.value;
+      console.log(value);
+      // if one of the seat row or number values is null, set equal to other seat row/number value
+      value.seatRowStart = value.seatRowStart === null ? value.seatRowEnd : value.seatRowStart;
+      value.seatRowEnd = value.seatRowEnd === null ? value.seatRowStart : value.seatRowEnd;
+      value.seatNumberStart = value.seatNumberStart === null ? value.seatNumberEnd : value.seatNumberStart;
+      value.seatNumberEnd = value.seatNumberEnd === null ? value.seatNumberStart : value.seatNumberEnd;
+      for (let row = Math.min(value.seatRowStart, value.seatRowEnd); row <= Math.max(value.seatRowStart, value.seatRowEnd); row++) {
+        // tslint:disable-next-line:max-line-length
+        for (let number = Math.min(value.seatNumberStart, value.seatNumberEnd); number <= Math.max(value.seatNumberStart, value.seatNumberEnd); number++) {
+          const hall = this.getSelectedHall();
+          for (let i = 0; i < hall.seats.length; i++) {
+            if (hall.seats[i].seatNumber === number && hall.seats[i].seatRow === row) {
+              hall.seats.splice(i, 1);
+            }
+          }
+        }
+      }
+      this.addSeatsForm.reset({
+        'seatPrice': PriceCategory.Cheap
+      });
+    }
+  }
+
 
   /**
    * called on submit of addSectorsForm
@@ -98,10 +120,8 @@ export class FloorplanControlComponent implements OnInit {
       // if one of the sector number values is null, set equal to other seat row/number value
       value.sectorNumberStart = value.sectorNumberStart === null ? value.sectorNumberEnd : value.sectorNumberStart;
       value.sectorNumberEnd = value.sectorNumberEnd === null ? value.sectorNumberStart : value.sectorNumberEnd;
-      // determine which value is min and which is max to run loop correctly afterwards
-      value.sectorNumberStart = Math.min(value.sectorNumberStart, value.sectorNumberEnd);
-      value.sectorNumberEnd = Math.max(value.sectorNumberStart, value.sectorNumberEnd);
-      for (let number = value.sectorNumberStart; number <= value.sectorNumberEnd; number++) {
+      // tslint:disable-next-line:max-line-length
+      for (let number = Math.min(value.sectorNumberStart, value.sectorNumberEnd); number <= Math.max(value.sectorNumberStart, value.sectorNumberEnd); number++) {
         if (!this.getSelectedHall().sectors.some(sector => sector.sectorNumber === number)) {
           this.getSelectedHall().sectors.push(new Sector(null, number, value.sectorPrice));
         }
@@ -111,6 +131,28 @@ export class FloorplanControlComponent implements OnInit {
       });
     }
   }
+
+  private deleteSectors(): void {
+    if (this.addSectorsForm.valid) {
+      const value = this.addSectorsForm.value;
+      // if one of the sector number values is null, set equal to other seat row/number value
+      value.sectorNumberStart = value.sectorNumberStart === null ? value.sectorNumberEnd : value.sectorNumberStart;
+      value.sectorNumberEnd = value.sectorNumberEnd === null ? value.sectorNumberStart : value.sectorNumberEnd;
+      // tslint:disable-next-line:max-line-length
+      for (let number = Math.min(value.sectorNumberStart, value.sectorNumberEnd); number <= Math.max(value.sectorNumberStart, value.sectorNumberEnd); number++) {
+        const hall = this.getSelectedHall();
+        for (let i = 0; i < hall.sectors.length; i++) {
+          if (hall.sectors[i].sectorNumber === number) {
+            hall.sectors.splice(i, 1);
+          }
+        }
+      }
+      this.addSectorsForm.reset({
+        'sectorPrice': PriceCategory.Cheap
+      });
+    }
+  }
+
 
   /**
    * called after initialization of component
@@ -290,7 +332,7 @@ export class FloorplanControlComponent implements OnInit {
 
   displayLocation(location: Location) {
     return location !== null ? location.street + ', ' +
-      location.city + location.postalCode : '';
+      location.city + ' ' + location.postalCode : '';
   }
 
   private getSelectedHall(): Hall {
@@ -326,7 +368,7 @@ export class FloorplanControlComponent implements OnInit {
 
   private updateSeat() {
     const values = this.updateSeatForm.value;
-    if (! this.getSelectedHall().seats.some(seat => seat !== this.selectedSeat && seat.seatNumber === this.selectedSeat.seatNumber &&
+    if (!this.getSelectedHall().seats.some(seat => seat !== this.selectedSeat && seat.seatNumber === this.selectedSeat.seatNumber &&
       seat.seatRow === values.seatRow)) {
       this.selectedSeat.seatNumber = values.seatNumber;
       this.selectedSeat.seatRow = values.seatRow;
@@ -352,7 +394,7 @@ export class FloorplanControlComponent implements OnInit {
 
   private updateSector() {
     const values = this.updateSectorForm.value;
-    if (! this.getSelectedHall().sectors.some(sector => sector !== this.selectedSector &&
+    if (!this.getSelectedHall().sectors.some(sector => sector !== this.selectedSector &&
       sector.sectorNumber === values.sectorNumber)) {
       this.selectedSector.sectorNumber = values.sectorNumber;
       this.selectedSector.priceCategory = values.sectorPrice;
