@@ -9,6 +9,7 @@ import at.ac.tuwien.sepm.groupphase.backend.service.NewsService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.*;
@@ -30,7 +31,9 @@ public class NewsEndpoint {
     private final NewsMapper newsMapper;
     private final FileService fileService;
 
-    private final String FILE_URI = "/file";
+    private static final String FILE_URI = "/file";
+    private static final String FORBIDDEN_FILE_TYPE_MESSAGE = "Could not post file: forbidden file type ";
+    private static final String ALLOWED_FILE_TYPES = "jpg, jpeg, pngALLOW";
 
     public NewsEndpoint(NewsService newsService, NewsMapper newsMapper, FileService fileService) {
         this.newsService = newsService;
@@ -65,27 +68,31 @@ public class NewsEndpoint {
         return newsService.publishNews(detailedNewsDTO);
     }
 
-    @RequestMapping(value = "/file/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = FILE_URI + "/{id}", method = RequestMethod.GET)
     @ApiOperation(value = "Get file by id", authorizations = {@Authorization(value = "apiKey")})
     public ResponseEntity<Resource> findFileById(@PathVariable Long id) {
         File file = fileService.getFile(id);
         ResponseEntity<Resource>  returnValue = ResponseEntity.ok()
-            .contentType(MediaType.parseMediaType(file.getFileType()))
+            .contentType(MediaType.parseMediaType("image/" + file.getFileType()))
             .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFileName() + "\"")
             .body(new ByteArrayResource((file.getData())));
         return returnValue;
     }
 
-    @RequestMapping(value = "/file", method = RequestMethod.POST, produces = "text/plain")
+    @RequestMapping(value = FILE_URI, method = RequestMethod.POST, produces = "text/plain")
     @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "Store file", authorizations = {@Authorization(value = "apiKey")})
     public String storeFile(@RequestParam("file") MultipartFile file) {
-        try {
-            Long returnValue = fileService.storeFile(file);
-            return returnValue.toString();
+        if (ALLOWED_FILE_TYPES.contains(FilenameUtils.getExtension(file.getOriginalFilename()))) {
+            try {
+                Long returnValue = fileService.storeFile(file);
+                return returnValue.toString();
+            } catch (Exception e) {
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+            }
         }
-        catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        else {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, FORBIDDEN_FILE_TYPE_MESSAGE + FilenameUtils.getExtension(file.getOriginalFilename()));
         }
     }
 

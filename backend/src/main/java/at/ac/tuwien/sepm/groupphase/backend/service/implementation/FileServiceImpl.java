@@ -5,6 +5,7 @@ import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.DBFileRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.FileService;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -36,7 +37,7 @@ public class FileServiceImpl implements FileService {
                 throw new ServiceException("File '" + fileName + "' could not be stored: Filename contains invalid path sequence ");
             }
 
-            File dbFile = File.builder().fileName(fileName).fileType(file.getContentType()).data(file.getBytes()).build();
+            File dbFile = File.builder().fileName(fileName).fileType(FilenameUtils.getExtension(file.getOriginalFilename())).data(file.getBytes()).build();
 
             Long id = dbFileRepository.save(dbFile).getId();
             return id;
