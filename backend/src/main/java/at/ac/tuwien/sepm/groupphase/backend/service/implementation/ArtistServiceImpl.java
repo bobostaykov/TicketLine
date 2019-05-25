@@ -25,7 +25,7 @@ public class ArtistServiceImpl implements ArtistService {
     @Override
     public List<ArtistDTO> findArtistsByName(String artistName) {
 //        List<Artist> list = artistRepository.findByNameContainingIgnoreCase(artistName);
-//        LOGGER.error("\n\n\n" + list.get(0).getName() + "\n\n\n");
+//        LOGGER.error("\n\n\n" + list.get(0).getUsername() + "\n\n\n");
 //        return list;
         return artistMapper.artistToArtistDTO(artistRepository.findByNameContainingIgnoreCase(artistName));
     }

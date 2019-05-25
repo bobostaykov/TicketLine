@@ -10,7 +10,7 @@ import java.util.List;
 public interface ArtistRepository extends JpaRepository<Artist, Long> {
 
     /**
-     * Get all artists whose name contains the string 'artistName'
+     * Get all artists whose username contains the string 'artistName'
      *
      * @return list of artists
      */

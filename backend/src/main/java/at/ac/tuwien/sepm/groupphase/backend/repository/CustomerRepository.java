@@ -32,15 +32,15 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     /**
      * Find all customers filtered by the following attributes:
      * ID - ID of customer
-     * name - part of the name of customer
-     * firstname - part of the first name of customer
+     * username - part of the username of customer
+     * firstname - part of the first username of customer
      * email - part of the e-mail address of customer
      * birthday - birthday of customer
      *
      * @param id ID of customer to search for
-     * @param name name of customer to search for
-     * @param firstname first name of customer to search for
-     * @param email e-mail adress of customer to search for
+     * @param name username of customer to search for
+     * @param firstname first username of customer to search for
+     * @param email e-mail address of customer to search for
      * @param birthday birthday of customer to search for
      * @return List of customers that met the requested filter methods
      */
@@ -56,9 +56,9 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
                                          @Param("birthday") LocalDate birthday);
 
     /**
-     * Change the name of customer with ID id.
+     * Change the username of customer with ID id.
      *
-     * @param name new name for customer
+     * @param name new username for customer
      * @param id ID of customer
      */
     @Modifying
@@ -69,7 +69,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     /**
      * Change the firstname of the customer with ID id.
      *
-     * @param firstname new first name for customer
+     * @param firstname new first username for customer
      * @param id ID of the customer
      */
     @Modifying

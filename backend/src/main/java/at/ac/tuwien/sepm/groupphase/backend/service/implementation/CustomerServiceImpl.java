@@ -29,9 +29,9 @@ public class CustomerServiceImpl implements CustomerService {
         if (customerDTO != null) {
             // VALIDATION START
             if (customerDTO.getName() == null || customerDTO.getName().isBlank())
-                throw new ServiceException("Customer " + customerDTO.toString() + "could not be added: name must not be empty");
+                throw new ServiceException("Customer " + customerDTO.toString() + "could not be added: username must not be empty");
             if (customerDTO.getFirstname() == null || customerDTO.getFirstname().isBlank())
-                throw new ServiceException("Customer " + customerDTO.toString() + "could not be added: first name must not be empty");
+                throw new ServiceException("Customer " + customerDTO.toString() + "could not be added: first username must not be empty");
             if (customerDTO.getEmail() == null || customerDTO.getEmail().isBlank())
                 throw new ServiceException("Customer " + customerDTO.toString() + "could not be added: email must not be empty");
             if (customerDTO.getBirthday() == null)

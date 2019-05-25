@@ -1,16 +1,20 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.implementation;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.user.UserDTO;
-import at.ac.tuwien.sepm.groupphase.backend.entity.LoginAttempts;
-import at.ac.tuwien.sepm.groupphase.backend.entity.User;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.user.UserMapper;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
-import at.ac.tuwien.sepm.groupphase.backend.repository.LoginAttemptsRepository;
+import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.UserRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.UserService;
+import at.ac.tuwien.sepm.groupphase.backend.service.Utils;
+import org.hibernate.JDBCException;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.PersistenceException;
+import java.security.NoSuchAlgorithmException;
+import java.sql.SQLException;
 import java.util.List;
 
 @Service
@@ -18,12 +22,12 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
-    private final LoginAttemptsRepository loginAttemptsRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper, LoginAttemptsRepository loginAttemptsRepository) {
+    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
-        this.loginAttemptsRepository = loginAttemptsRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -36,16 +40,18 @@ public class UserServiceImpl implements UserService {
         return userMapper.userToUserDTO(userRepository.findById(id).orElseThrow(NotFoundException::new));
     }
 
-    @Transactional
     @Override
-    public UserDTO createUser(UserDTO userDTO) {
-        User user = userRepository.save(userMapper.userDTOToUser(userDTO);
-        LoginAttempts loginAttempts = LoginAttempts.builder()
-            .setUser(user)
-            .setAttempts(0)
-            .setBlocked(false)
-            .build();
-        loginAttemptsRepository.save(loginAttempts);
-        return userMapper.userToUserDTO(user);
+    public UserDTO createUser(UserDTO userDTO) throws ServiceException {
+        try {
+            userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+            return userMapper.userToUserDTO(userRepository.save(userMapper.userDTOToUser(userDTO)));
+        } catch (DataIntegrityViolationException e) {
+            throw new ServiceException(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void deleteUser(Long userId) {
+        userRepository.deleteById(userId);
     }
 }

@@ -31,7 +31,7 @@ public interface ShowService {
     //List<Show> findAll();
 
     /*
-     * Finds all shows filtered by date range, time range, price range, event name and hall name
+     * Finds all shows filtered by date range, time range, price range, event name and hall username
      *
      * @param dateFrom lower bound of the date range in which the show is happening
      * @param dateTo upper bound of the date range in which the show is happening
