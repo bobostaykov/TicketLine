@@ -38,13 +38,15 @@ public class NewsEndpoint {
     @RequestMapping(value = "/unread", method = RequestMethod.GET)
     @ApiOperation(value = "Get list of unread News articles", authorizations = {@Authorization(value = "apiKey")})
     public List<SimpleNewsDTO> findUnread(HttpServletRequest request) {
-        return newsService.findUnread();
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        return newsService.findUnread(username);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ApiOperation(value = "Get detailed information about a specific news entry", authorizations = {@Authorization(value = "apiKey")})
     public DetailedNewsDTO find(@PathVariable Long id) {
-        return newsService.findOne(id);
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        return newsService.findOne(id, username);
     }
 
     @RequestMapping(method = RequestMethod.POST)

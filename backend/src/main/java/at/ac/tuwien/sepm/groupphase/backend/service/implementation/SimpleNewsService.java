@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.implementation;
 
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.NewsEndpoint;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.DetailedNewsDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.SimpleNewsDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.user.UserDTO;
@@ -11,6 +12,8 @@ import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.NewsRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.UserRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.NewsService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +29,7 @@ public class SimpleNewsService implements NewsService {
     private final UserRepository userRepository;
     private final NewsMapper newsMapper;
     private final UserMapper userMapper;
+    private static final Logger LOGGER = LoggerFactory.getLogger(SimpleNewsService.class);
 
     public SimpleNewsService(NewsRepository newsRepository, UserRepository userRepository, NewsMapper newsMapper,
                              UserMapper userMapper) {
@@ -41,8 +45,7 @@ public class SimpleNewsService implements NewsService {
     }
 
     @Override
-    public List<SimpleNewsDTO> findUnread() {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+    public List<SimpleNewsDTO> findUnread(String username) {
         Optional<User> found = userRepository.findOneByUsername(username);
         if (!found.isEmpty()) {
             User user = found.get();
@@ -81,8 +84,7 @@ public class SimpleNewsService implements NewsService {
     }
 
     @Override
-    public DetailedNewsDTO findOne(Long id) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+    public DetailedNewsDTO findOne(Long id, String username) {
         this.addNewsFetch(username, id);
         return newsMapper.newsToDetailedNewsDTO(newsRepository.findOneById(id).orElseThrow(NotFoundException::new));
     }

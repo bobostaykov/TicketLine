@@ -19,7 +19,7 @@ public interface NewsService {
      *
      * @return ordered list of latest news entries
      */
-    List<SimpleNewsDTO> findUnread();
+    List<SimpleNewsDTO> findUnread(String username);
 
     /**
      * Find a single news entry by id.
@@ -27,7 +27,7 @@ public interface NewsService {
      * @param id the id of the news entry
      * @return the news entry
      */
-    DetailedNewsDTO findOne(Long id);
+    DetailedNewsDTO findOne(Long id, String username);
 
 
     /**
