@@ -36,7 +36,6 @@ export class FileService {
     const formData = new FormData();
     formData.append('file', file);
     let returnValue: Observable<string>;
-
     returnValue = this.httpClient.post(this.fileBaseUri, formData, { responseType : 'text'});
     return returnValue;
   }
