@@ -28,6 +28,7 @@ export class LocationsComponent implements OnInit {
 
   ngOnInit() {
     this.resultsFor = this.route.snapshot.queryParamMap.get('resultsFor');
+    console.log(this.resultsFor);
     if (this.resultsFor === 'ATTRIBUTES') {
       this.loadLocationsFiltered(
         this.route.snapshot.queryParamMap.get('country'),

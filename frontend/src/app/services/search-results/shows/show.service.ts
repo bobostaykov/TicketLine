@@ -14,28 +14,18 @@ export class ShowService {
 
   constructor(private httpClient: HttpClient, private globals: Globals) { }
 
-  /**
-   * Get all shows that correspond to a particular type of filter (resultsFor: LOCATION, ARTIST, EVENT), with a specific name or id
-   * If resultsFor === ResultsFor.LOCATION, name_or_id will contain the id of the location, otherwise the name of the artist/event
-   */
-  /*
-  public findShows(resultsFor: ResultsFor, nameOrId: string): Observable<Show[]> {
-    return this.httpClient.get<Show[]>(this.showBaseUri, {params: { results_for: ResultsFor[resultsFor], name_or_id: nameOrId }});
-  }
-  */
   public findShowsFilteredByEventName(eventName): Observable<Show[]> {
-    console.log('ShowService: findShowsFilteredByEventName');
+    console.log('ShowResultsService: findShowsFilteredByEventName');
     return this.httpClient.get<Show[]>(this.showBaseUri + '/event', {params: {eventName: eventName}});
   }
 
   public findShowsFilteredByLocationID(id): Observable<Show[]> {
-    console.log('ShowService: findShowsFilteredByLocationID');
-    console.log('Test: ' + '/location/${id}');
-    return this.httpClient.get<Show[]>(this.showBaseUri + '/location/${id}');
+    console.log('ShowResultsService: findShowsFilteredByLocationID');
+    return this.httpClient.get<Show[]>(this.showBaseUri + '/location/' + id);
   }
 
   public findShowsFilteredByShowAttributes(eventName, hallName, dateFrom, dateTo, timeFrom, timeTo, minPrice, maxPrice, duration) {
-    console.log('ShowService: findShowsFilteredByShowAttributes');
+    console.log('ShowResultsService: findShowsFilteredByShowAttributes');
     return this.httpClient.get<Show[]>(this.showBaseUri + '/filter', {
       params: {
         eventName: eventName, hallName: hallName, dateFrom: dateFrom, dateTo: dateTo, timeFrom: timeFrom, timeTo: timeTo,

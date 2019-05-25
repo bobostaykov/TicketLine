@@ -9,6 +9,8 @@ import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.event.EventMapper;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.event.EventTicketsMapper;
 import at.ac.tuwien.sepm.groupphase.backend.repository.EventRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.EventService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -21,6 +23,8 @@ public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
     private final EventMapper eventMapper;
     private final EventTicketsMapper eventTicketsMapper;
+    private final Logger LOGGER = LoggerFactory.getLogger(getClass());
+
 
     public EventServiceImpl(EventRepository eventRepository, EventMapper eventMapper, EventTicketsMapper eventTicketsMapper) {
         this.eventRepository = eventRepository;
@@ -30,6 +34,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public List<EventTicketsDTO> findTopTenEvents(Set<String> monthsSet, Set<EventType> categoriesSet) {
+        LOGGER.info("Event Service: findTopTenEvents");
         ArrayList<EventTicketsDTO> toReturn = new ArrayList<>();
         for (Object[] o: eventRepository.findTopTenEvents(monthsSet, categoriesSet)) {
             toReturn.add(eventTicketsMapper.eventTicketsToEventTicketsDTO(new EventTickets((String)o[0], (Long)o[1])));
@@ -39,11 +44,13 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public List<EventDTO> findAll() {
-        List<EventDTO> toReturn = new ArrayList<>();
-        for (Event event: eventRepository.findAllByOrderByNameAsc()) {
-            toReturn.add(eventMapper.eventToEventDTO(event));
-        }
-        return toReturn;
+        LOGGER.info("Event Service: findAll");
+        return eventMapper.eventToEventDTO(eventRepository.findAll());
     }
 
+    @Override
+    public List<EventDTO> findEventsFilteredByArtistID(Long id) {
+        LOGGER.info("Event Service: findEventsFilteredByArtistID");
+        return eventMapper.eventToEventDTO(eventRepository.findAllByArtist_Id(id));
+    }
 }

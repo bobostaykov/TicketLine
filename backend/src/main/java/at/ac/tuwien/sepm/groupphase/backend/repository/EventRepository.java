@@ -27,4 +27,9 @@ public interface EventRepository extends JpaRepository<Event, Long> {
      */
     List<Event> findAllByOrderByNameAsc();
 
+    /**
+     * @param id of the artist
+     * @return a list of events in which the artist participates or had participated
+     */
+    List<Event> findAllByArtist_Id(@Param("id") Long id);
 }

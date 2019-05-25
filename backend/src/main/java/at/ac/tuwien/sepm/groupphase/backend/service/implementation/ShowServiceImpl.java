@@ -36,6 +36,15 @@ public class ShowServiceImpl implements ShowService {
         }
     }
 
+    @Override
+    public List<ShowDTO> findAll() {
+        LOGGER.info("Show Service: Find all shows");
+        try{
+            return showMapper.showToShowDTO(showRepository.findAll());
+        } catch (PersistenceException e) {
+            throw new ServiceException(e.getMessage(), e);
+        }
+    }
 /*
     @Override
     public List<Show> findAllShowsFilteredByLocationID(Integer locationID) {
@@ -43,16 +52,6 @@ public class ShowServiceImpl implements ShowService {
         try {
             if (locationID < 0) throw new IllegalArgumentException("The location id is negative");
             return showRepository.findAllByLocationID(locationID);
-        } catch (PersistenceException e) {
-            throw new ServiceException(e.getMessage(), e);
-        }
-    }
-
-    @Override
-    public List<Show> findAllShows() {
-        LOGGER.info("Find all shows");
-        try{
-            return showRepository.findAll();
         } catch (PersistenceException e) {
             throw new ServiceException(e.getMessage(), e);
         }

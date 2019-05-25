@@ -8,13 +8,13 @@
   </tr>
   </thead>
   <tbody>
-  <tr *ngFor="let event of events" routerLink="/events/search/results/shows" [queryParams]="{resultsFor: 'EVENT', name: event.name}">
+  <tr *ngFor="let event of events" routerLink="/events/search/results/shows" [queryParams]="{resultsFor: 'EVENT', name: event.name}" >
     <td class="align-middle">{{event.name}}</td>
     <td class="align-middle">{{event.eventType}}</td>
-    <td class="align-middle">{{event.artist}}</td>
+    <td class="align-middle" *ngIf="event.artist !== undefined">{{event.artist.name}}</td>
+    <td class="align-middle" *ngIf="event.artist === undefined"></td>
     <td class="align-middle">{{event.content}}</td>
     <td class="align-middle">{{event.description}}</td>
-    <td class="align-middle">{{event.name}}</td>
   </tr>
   </tbody>
 </table>

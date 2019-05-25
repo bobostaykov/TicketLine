@@ -10,6 +10,7 @@ import {Event} from '../../../dtos/event';
 })
 export class EventResultsComponent implements OnInit {
 
+  // TODO for some reason coping the pagination method from event component doesnt work
   private error: boolean = false;
   private errorMessage: string = '';
   private resultsFor: string;
@@ -18,16 +19,19 @@ export class EventResultsComponent implements OnInit {
     'Name',
     'Category',
     'Artist',
-    'Description',
     'Content',
-    'Buy'
+    'Description'
   ];
 
   constructor(private route: ActivatedRoute, private eventResultsService: EventResultsService) {}
 
   ngOnInit() {
     this.resultsFor = this.route.snapshot.queryParamMap.get('resultsFor');
+    console.log(this.resultsFor);
     switch (this.resultsFor) {
+      case 'ARTIST':
+        this.loadEventsFilteredByArtist( this.route.snapshot.queryParamMap.get('id'));
+        break;
       case 'ATTRIBUTES':
         this.loadEventsFilteredByAttributes(
           this.route.snapshot.queryParamMap.get('eventName'),
@@ -41,6 +45,16 @@ export class EventResultsComponent implements OnInit {
     }
   }
 
+  // OK
+  private loadEventsFilteredByArtist(id) {
+    console.log('Component Event-Results: loadEventsFilteredByArtist');
+    this.eventResultsService.findEventsFilteredByArtistID(id).subscribe(
+      (events: Event[]) => {this.events = events; },
+      error => {this.defaultServiceErrorHandling(error); }
+    );
+  }
+
+  // OK
   private loadEventsFilteredByAttributes(eventName, eventType, content, description) {
     console.log('Component Event-Results: loadEventsFilteredByAttributes');
     this.eventResultsService.findEventsFilteredByAttributes(eventName, eventType, content, description).subscribe(

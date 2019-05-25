@@ -26,6 +26,7 @@ public class ArtistEndpoint {
         this.artistService = artistService;
     }
 
+    // OK
     @RequestMapping(method = RequestMethod.GET)
     @ApiOperation(value = "Get artists with 'artistName' as part of their name", authorizations = {@Authorization(value = "apiKey")})
     public List<ArtistDTO> findArtistsByName(@RequestParam(value = "artist_name") String artistName) {

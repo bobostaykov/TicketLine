@@ -9,8 +9,8 @@
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let artist of artists">
-      <td ngbTooltip="Show events" routerLink="/events/search/results/artists" [queryParams]="{artist_name: artist.name}">{{artist.name}}</td>
+    <tr *ngFor="let artist of artists" routerLink="/events/search/results/events" [queryParams]="{resultsFor: 'ARTIST', id: artist.id}">
+      <td class="align-middle" ngbTooltip="Show events" >{{artist.name}}</td>
     </tr>
   </tbody>
 </table>

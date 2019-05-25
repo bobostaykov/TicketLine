@@ -9,12 +9,12 @@ import {Event} from '../../../dtos/event';
 })
 export class EventsComponent implements OnInit {
 
+  private page: number = 1;
+  private pageSize: number = 10;
   private error: boolean = false;
   private errorMessage: string = '';
   private dataReady: boolean = false;
   private events: Event[];
-  private page: number = 1;
-  private pageSize: number = 10;
   private headers: string[] = [
     'Name',
     'Type',

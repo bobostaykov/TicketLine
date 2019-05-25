@@ -3,6 +3,8 @@ import {ActivatedRoute} from '@angular/router';
 import {Show} from '../../../dtos/show';
 import {ResultsFor} from '../../../datatype/results_for';
 import {ShowService} from '../../../services/search-results/shows/show.service';
+import {Event} from '../../../dtos/event';
+import {Hall} from '../../../dtos/hall';
 
 @Component({
   selector: 'app-shows',
@@ -11,27 +13,28 @@ import {ShowService} from '../../../services/search-results/shows/show.service';
 })
 export class ShowComponent implements OnInit {
 
+  // TODO pagination
   private error: boolean = false;
   private errorMessage: string = '';
   private resultsFor: string;
   private shows: Show[];
   private headElements: string[] = [
     'Event',
-    'Artist',
+    'Type',
     'Location',
-    'Hall',
-    'Country - City',
     'Date',
-    'Category',
+    'Artist',
+    'Hall',
+    'Description',
     'Sold Tickets',
     'Buy'
   ];
+
 
   constructor(private route: ActivatedRoute, private showService: ShowService) { }
 
   ngOnInit() {
     this.resultsFor = this.route.snapshot.queryParamMap.get('resultsFor');
-    console.log(this.resultsFor);
     switch (this.resultsFor) {
       case 'EVENT':
         this.loadShowsFilteredByEventName(this.route.snapshot.queryParamMap.get('name'));
@@ -68,17 +71,18 @@ export class ShowComponent implements OnInit {
   }
   */
 
-  // TODO I know that name is unique, but why dont't we send the id?
+  // OK
   private loadShowsFilteredByEventName(eventName) {
-    console.log('Component: loadShowsFilteredByEventName');
+    console.log('ShowResultsComponent: loadShowsFilteredByEventName');
     this.showService.findShowsFilteredByEventName(eventName).subscribe(
       (shows: Show[]) => {this.shows = shows; },
       error => {this.defaultServiceErrorHandling(error); }
     );
   }
 
+  // OK
   private loadShowsFilteredByLocationID(id) {
-    console.log('Component: loadShowsFilteredByLocationID');
+    console.log('ShowResultsComponent: loadShowsFilteredByLocationID');
     this.showService.findShowsFilteredByLocationID(id).subscribe(
       (shows: Show[]) => {this.shows = shows; },
       error => {this.defaultServiceErrorHandling(error); }
@@ -86,7 +90,7 @@ export class ShowComponent implements OnInit {
   }
 
   private loadShowsFilteredByShowAttributes(eventName, hallName, dateFrom, dateTo, timeFrom, timeTo, minPrice, maxPrice, duration) {
-    console.log('Component: loadShowsFilteredByShowAttributes');
+    console.log('ShowResultsComponent: loadShowsFilteredByShowAttributes');
     this.showService.findShowsFilteredByShowAttributes(eventName, hallName, dateFrom, dateTo, timeFrom, timeTo, minPrice, maxPrice, duration).subscribe(
       (shows: Show[]) => {this.shows = shows; },
       error => {this.defaultServiceErrorHandling(error); }
