@@ -117,7 +117,7 @@ public class ShowEndpoint {
         }catch(NotFoundException e){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No shows are found for the given parameters:" + e.getMessage(), e);
         }
-    }
+        }
 /*
     @RequestMapping(value = "/location", method = RequestMethod.GET)
     @ApiOperation(value = "Get all shows filtered by location parameters", authorizations = {@Authorization(value = "apiKey")})

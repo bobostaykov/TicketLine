@@ -27,6 +27,12 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
+    public List<LocationDTO> findLocationsFiltered(String country, String city, String street, String postalCode, String description) throws ServiceException {
+        return null;
+    }
+
+    /*
+    @Override
     public List<LocationDTO> findLocationsFiltered(String country, String city, String street, String postalCode, String description) throws ServiceException{
         LOGGER.info("Service: findLocationsFiltered()");
         try{
@@ -35,4 +41,6 @@ public class LocationServiceImpl implements LocationService {
             throw new ServiceException(e.getMessage(), e);
         }
     }
+
+     */
 }

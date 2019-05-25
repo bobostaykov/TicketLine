@@ -9,30 +9,30 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@Component
+@Service
 public class AppUserDetailsService implements org.springframework.security.core.userdetails.UserDetailsService {
     @Autowired
     private UserRepository userRepository;
 
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<User> optionalUser = userRepository.findUserByName(username);
+        Optional<User> optionalUser = userRepository.findOneByUsername(username);
+        org.springframework.security.core.userdetails.User.UserBuilder builder = null;
         if(optionalUser.isPresent()){
             User user = optionalUser.get();
-            List<GrantedAuthority> authorities = new ArrayList<>();
-            //todo change User
-            if(user.getType().equals(UserType.ADMIN)){
-                authorities.add(new SimpleGrantedAuthority("ADMIN"));
-                authorities.add(new SimpleGrantedAuthority("USER"));
-            }else if(user.getType().equals(UserType.SELLER))
-
+            builder = org.springframework.security.core.userdetails.User.withUsername(username);
+            builder.password(user.getPassword());
+            builder.roles(user.getType().toString());
         }else{
             throw new UsernameNotFoundException("The username"+ username + "doesn't exist");
         }
+        return builder.build();
     }
 }

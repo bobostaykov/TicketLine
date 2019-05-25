@@ -22,6 +22,7 @@ public interface UserService {
      */
     UserDTO findOne(Long id);
 
+    UserDTO findUserByName (String name);
 
     /**
      * Create a user
@@ -39,4 +40,10 @@ public interface UserService {
      */
     void deleteUser(Long userId);
 
+    /**
+     *
+     * @param userId id of the user that is to be unblocked
+     * @return boolean if the operation was successful
+     */
+    boolean unblockUser(Long userId);
 }

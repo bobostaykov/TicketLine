@@ -5,6 +5,8 @@ import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.userNews.UserNewsMappe
 import at.ac.tuwien.sepm.groupphase.backend.repository.UserNewsRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.UserNewsService;
 import org.hibernate.service.spi.ServiceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.PersistenceException;
@@ -14,6 +16,8 @@ public class UserNewsServiceImpl implements UserNewsService {
 
     private final UserNewsRepository userNewsRepository;
     private final UserNewsMapper userNewsMapper;
+    private final Logger LOGGER = LoggerFactory.getLogger(getClass());
+
 
     public UserNewsServiceImpl(UserNewsRepository userNewsRepository, UserNewsMapper userNewsMapper) {
         this.userNewsRepository = userNewsRepository;

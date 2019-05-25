@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.repository;
 
 import at.ac.tuwien.sepm.groupphase.backend.entity.LoginAttempts;
+import at.ac.tuwien.sepm.groupphase.backend.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -12,6 +13,9 @@ import java.util.Optional;
 
 @Repository
 public interface LoginAttemptsRepository extends JpaRepository<LoginAttempts, Long> {
+
+    Optional<LoginAttempts> findById(Long id);
+
     /**
      *
      * @param id
@@ -20,6 +24,12 @@ public interface LoginAttemptsRepository extends JpaRepository<LoginAttempts, Lo
     @Transactional
     @Query(value = "UPDATE attempts SET blocked = true WHERE id = :id", nativeQuery = true)
     void blockUser(@Param("id") Long id);
+
+    @Override
+    LoginAttempts getOne(Long aLong);
+
+    LoginAttempts getByUser(User user);
+
 
     /**
      *
@@ -51,6 +61,5 @@ public interface LoginAttemptsRepository extends JpaRepository<LoginAttempts, Lo
     int getAttempts(@Param("id") Long id);
 
 
-    Optional<LoginAttempts> findById(Long id);
 
 }

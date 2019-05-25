@@ -33,7 +33,7 @@ public class EventServiceImpl implements EventService {
         }
         return toReturn;
     }
-
+/*
     @Override
     public List<EventDTO> findAll() {
         List<EventDTO> toReturn = new ArrayList<>();
@@ -42,5 +42,5 @@ public class EventServiceImpl implements EventService {
         }
         return toReturn;
     }
-
+*/
 }
