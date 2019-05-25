@@ -63,6 +63,8 @@ public class LoginAttempts {
         this.blocked = blocked;
     }
 
+    public static LoginAttemptsBuilder builder(){return new LoginAttemptsBuilder();}
+
     public static class LoginAttemptsBuilder {
         private Long id;
         private User user;
@@ -91,7 +93,7 @@ public class LoginAttempts {
             return this;
         }
 
-        public LoginAttempts createLoginAttempts() {
+        public LoginAttempts build() {
             return new LoginAttempts(id, user, attempts, blocked);
         }
     }

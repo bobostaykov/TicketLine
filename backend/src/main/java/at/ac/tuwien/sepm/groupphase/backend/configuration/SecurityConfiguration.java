@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.configuration;
 
 import at.ac.tuwien.sepm.groupphase.backend.configuration.properties.H2ConsoleConfigurationProperties;
+import at.ac.tuwien.sepm.groupphase.backend.entity.User_;
 import at.ac.tuwien.sepm.groupphase.backend.security.HeaderTokenAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
@@ -29,6 +30,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
 import java.util.List;
 import java.util.Map;
 
@@ -37,6 +39,7 @@ import java.util.Map;
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 public class SecurityConfiguration {
 
+    private DataSource dataSource;
     private final PasswordEncoder passwordEncoder;
 
     public SecurityConfiguration(PasswordEncoder passwordEncoder) {
@@ -61,11 +64,8 @@ public class SecurityConfiguration {
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth, List<AuthenticationProvider> providerList) throws Exception {
-        new InMemoryUserDetailsManagerConfigurer<AuthenticationManagerBuilder>()
-            .withUser("user").password(passwordEncoder.encode("password")).authorities("USER").and()
-            .withUser("admin").password(passwordEncoder.encode("password")).authorities("ADMIN", "USER").and()
-            .passwordEncoder(passwordEncoder)
-            .configure(auth);
+
+        auth.jdbcAuthentication().dataSource(dataSource).getUserDetailsService();
         providerList.forEach(auth::authenticationProvider);
     }
 
@@ -78,6 +78,7 @@ public class SecurityConfiguration {
 
         @Autowired
         private AuthenticationManager authenticationManager;
+        @Autowired
 
         public WebSecurityConfiguration(
             H2ConsoleConfigurationProperties h2ConsoleConfigurationProperties
