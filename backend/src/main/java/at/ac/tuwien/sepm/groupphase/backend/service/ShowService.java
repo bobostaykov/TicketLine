@@ -16,6 +16,13 @@ public interface ShowService {
      */
     List<ShowDTO> findAllShowsFilteredByEventName(String eventName);
 
+    /**
+     * Finds all shows
+     *
+     * @return a list of all shows
+     */
+    List<ShowDTO> findAll();
+
     /*
      * Finds all shows filtered by location id
      *
@@ -23,13 +30,6 @@ public interface ShowService {
      * @return a list of found shows matching the criteria
      */
     //List<Show> findAllShowsFilteredByLocationID(Integer locationID);
-
-    /*
-     * Finds all shows
-     *
-     * @return a list of all shows
-     */
-    //List<Show> findAll();
 
     /*
      * Finds all shows filtered by date range, time range, price range, event name and hall username

@@ -28,4 +28,9 @@ public interface EventService {
 
     List<EventDTO> findAllFiltered(EventSearchParametersDTO parameters);
 
+    /**
+     * @param id of the artist
+     * @return a list of all events in which the artist performs
+     */
+    List<EventDTO> findEventsFilteredByArtistID(Long id);
 }

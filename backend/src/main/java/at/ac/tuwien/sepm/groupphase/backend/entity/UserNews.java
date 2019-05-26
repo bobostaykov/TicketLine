@@ -3,7 +3,6 @@ package at.ac.tuwien.sepm.groupphase.backend.entity;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
 public class UserNews {

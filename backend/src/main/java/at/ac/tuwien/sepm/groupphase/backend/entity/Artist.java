@@ -3,7 +3,6 @@ package at.ac.tuwien.sepm.groupphase.backend.entity;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
-import java.util.List;
 import java.util.Objects;
 
 @Entity

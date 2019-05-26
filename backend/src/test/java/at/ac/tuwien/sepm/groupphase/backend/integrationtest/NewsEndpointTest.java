@@ -2,19 +2,24 @@ package at.ac.tuwien.sepm.groupphase.backend.integrationtest;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.DetailedNewsDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.SimpleNewsDTO;
+import at.ac.tuwien.sepm.groupphase.backend.entity.File;
 import at.ac.tuwien.sepm.groupphase.backend.entity.News;
 import at.ac.tuwien.sepm.groupphase.backend.integrationtest.base.BaseIntegrationTest;
+import at.ac.tuwien.sepm.groupphase.backend.repository.DBFileRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.NewsRepository;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import io.restassured.internal.util.IOUtils;
 import io.restassured.response.Response;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.*;
 import org.mockito.BDDMockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-
+import org.springframework.http.MediaType;
+import org.springframework.util.ResourceUtils;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
@@ -26,7 +31,8 @@ import static org.mockito.Matchers.any;
 public class NewsEndpointTest extends BaseIntegrationTest {
 
     private static final String NEWS_ENDPOINT = "/news";
-    private static final String LATEST_NEWS_ENDPOINT = "/news/unread";
+    private static final String FILE_ENDPOINT = NEWS_ENDPOINT + "/file";
+    private static final String LATEST_NEWS_ENDPOINT = NEWS_ENDPOINT + "/unread";
     private static final String SPECIFIC_NEWS_PATH = "/{newsId}";
 
     private static final String TEST_NEWS_TEXT = "TestNewsText";
@@ -36,8 +42,34 @@ public class NewsEndpointTest extends BaseIntegrationTest {
         LocalDateTime.of(2016, 11, 13, 12, 15, 0, 0);
     private static final long TEST_NEWS_ID = 1L;
 
+    private static final String TEST_FILE_NAME = "TestFileName";
+    private static final String TEST_FILE_TYPE = "jpg";
+    private static final long TEST_FILE_ID = 1L;
+
     @MockBean
     private NewsRepository newsRepository;
+    @MockBean
+    private DBFileRepository dbFileRepository;
+
+    /*
+    @Autowired
+    protected WebApplicationContext wac;
+
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder();
+
+    @Before
+    public void configureMockMvcInstance() {
+        RestAssuredMockMvc.webAppContextSetup(wac);
+        RestAssuredMockMvc.postProcessors(csrf().asHeader());
+    }
+
+    @After
+    public void restRestAssured() {
+        RestAssuredMockMvc.reset();
+    }
+
+    */
 
     @Test
     public void findAllNewsUnauthorizedAsAnonymous() {
@@ -194,5 +226,125 @@ public class NewsEndpointTest extends BaseIntegrationTest {
             .image(TEST_NEWS_IMAGEID)
             .publishedAt(TEST_NEWS_PUBLISHED_AT)
             .build()));
+    }
+
+    @Test
+    public void findImageFileAsAdmin() throws IOException {
+
+        java.io.File file = ResourceUtils.getFile("classpath:data/1.jpg");
+
+        BDDMockito.
+            given(dbFileRepository.findOneById(TEST_FILE_ID)).
+            willReturn(Optional.of(File.builder()
+                .id(TEST_FILE_ID)
+                .fileName(TEST_FILE_NAME)
+                .fileType(TEST_FILE_TYPE)
+                .data(IOUtils.toByteArray(new FileInputStream(file)))
+                .build()));
+
+        RestAssured
+            .given()
+            .header(HttpHeaders.AUTHORIZATION, validAdminTokenWithPrefix)
+            .contentType(ContentType.ANY)
+            .when()
+            .get(FILE_ENDPOINT + "/" + TEST_FILE_ID)
+            .then()
+            .assertThat()
+            .statusCode(is(HttpStatus.OK.value()))
+            .assertThat()
+            .contentType(is("image/jpg"));
+    }
+
+    @Test
+    public void findNotExistingImageFileNotFound() throws IOException {
+        BDDMockito.
+            given(dbFileRepository.findOneById(TEST_FILE_ID)).
+            willReturn(Optional.empty());
+
+        RestAssured
+            .given()
+            .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
+            .contentType(ContentType.ANY)
+            .when()
+            .get(FILE_ENDPOINT + "/" + TEST_FILE_ID)
+            .then()
+            .assertThat()
+            .statusCode(is(HttpStatus.NOT_FOUND.value()));
+    }
+
+
+    @Test
+    public void postImageFileUnauthorizedAsUser() throws IOException {
+
+        BDDMockito.
+            given(dbFileRepository.save(any(File.class))).
+            willReturn(File.builder()
+                .id(TEST_FILE_ID)
+                .fileName(TEST_FILE_NAME)
+                .fileType(TEST_FILE_TYPE)
+                .build());
+
+        java.io.File file = ResourceUtils.getFile("classpath:data/1.jpg");
+
+        RestAssured
+            .given()
+            .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
+            .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
+            .multiPart("file", file)
+            .when()
+            .post(FILE_ENDPOINT)
+            .then()
+            .assertThat()
+            .statusCode(is(HttpStatus.FORBIDDEN.value()));
+    }
+
+    @Test
+    public void postIllegalFileAsAdmin() throws IOException {
+        BDDMockito.
+            given(dbFileRepository.save(any(File.class))).
+            willReturn(File.builder()
+                .id(TEST_FILE_ID)
+                .fileName(TEST_FILE_NAME)
+                .fileType(TEST_FILE_TYPE)
+                .build());
+
+        java.io.File file = ResourceUtils.getFile("classpath:data/1.txt");
+
+        RestAssured
+            .given()
+            .header(HttpHeaders.AUTHORIZATION, validAdminTokenWithPrefix)
+            .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
+            .multiPart("file", file)
+            .when()
+            .post(FILE_ENDPOINT)
+            .then()
+            .assertThat()
+            .statusCode(is(HttpStatus.FORBIDDEN.value()));
+    }
+
+    @Test
+    public void postImageFileAsAdmin() throws IOException {
+        BDDMockito.
+            given(dbFileRepository.save(any(File.class))).
+            willReturn(File.builder()
+                .id(TEST_FILE_ID)
+                .fileName(TEST_FILE_NAME)
+                .fileType(TEST_FILE_TYPE)
+                .build());
+
+        java.io.File file = ResourceUtils.getFile("classpath:data/1.jpg");
+
+        RestAssured
+            .given()
+            .header(HttpHeaders.AUTHORIZATION, validAdminTokenWithPrefix)
+            .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
+            .multiPart("file", file)
+            .when()
+            .post(FILE_ENDPOINT)
+            .then()
+            .assertThat()
+            .body(is(Long.toString(TEST_FILE_ID)))
+            .assertThat()
+            .statusCode(is(HttpStatus.OK.value()));
     }
 }

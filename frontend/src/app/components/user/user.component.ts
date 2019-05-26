@@ -16,11 +16,14 @@ export class UserComponent implements OnInit {
   users: User[];
   userForm: FormGroup;
   submitted: boolean = false;
-  headElements = ['Id', 'Name', 'Type', 'User Since', 'Last Login'];
+  usernameError: boolean = false;
+  headElements = ['Id', 'Name', 'Type', 'User Since', 'Last Login', 'Remove'];
 
   constructor(private authService: AuthService, private userService: UserService, private formBuilder: FormBuilder) {
     this.userForm = this.formBuilder.group({
-      name: ['', [Validators.required]],
+      username: ['', [Validators.required]],
+      password: ['', [Validators.compose([Validators.required, Validators.minLength(8)])]],
+      rePassword: ['', []],
       type: ['', [Validators.required]],
     });
   }
@@ -32,7 +35,7 @@ export class UserComponent implements OnInit {
   /**
    * Load all users from the backend
    */
-  loadUsers() {
+  private loadUsers() {
     this.userService.getAllUsers().subscribe(
       (users: User[]) => { this.users = users; },
       error => { this.defaultServiceErrorHandling(error); }
@@ -43,33 +46,51 @@ export class UserComponent implements OnInit {
    * Starts form validation and builds a user dto for sending a creation request if the form is valid.
    * If the procedure was successful, the form will be cleared.
    */
-  addUser() {
+  private async addUser() {
     this.submitted = true;
-    if (this.userForm.valid && (this.userForm.controls.type.value === 'ADMIN' || this.userForm.controls.type.value === 'SELLER')) {
+    if (this.userForm.valid
+      && (this.userForm.controls.type.value === 'ADMIN' || this.userForm.controls.type.value === 'SELLER')
+      && this.userForm.controls.rePassword.value === this.userForm.controls.password.value) {
       const user: User = new User(null,
-        this.userForm.controls.name.value,
+        this.userForm.controls.username.value,
+        this.userForm.controls.password.value,
         this.userForm.controls.type.value,
         new Date().toISOString(),
         null
       );
+      this.usernameError = false;
       this.createUser(user);
+      await this.delay(500);
+      if (this.usernameError) {
+        console.log('User with the same username already exists');
+        return;
+      }
       this.clearForm();
     } else {
       console.log('Invalid input');
     }
   }
 
-  createUser(user: User) {
+  private createUser(user: User) {
     this.userService.createUser(user).subscribe(
-      () => { this.loadUsers(); },
-      error => { this.defaultServiceErrorHandling(error); }
+      (newUser: User) => { if (newUser.id === -1) { this.usernameError = true; } },
+      error => { this.defaultServiceErrorHandling(error); },
+      () => { this.loadUsers(); }
+    );
+  }
+
+  private deleteUser(userId: number) {
+    this.userService.deleteUser(userId).subscribe(
+      () => {},
+      error => { this.defaultServiceErrorHandling(error); },
+      () => { this.loadUsers(); }
     );
   }
 
   /**
    * Returns true if the authenticated user is an admin
    */
-  isAdmin(): boolean {
+  private isAdmin(): boolean {
     return this.authService.getUserRole() === 'ADMIN';
   }
 
@@ -86,13 +107,17 @@ export class UserComponent implements OnInit {
   /**
    * Error flag will be deactivated, which clears the error message
    */
-  vanishError() {
+  private vanishError() {
     this.error = false;
   }
 
   private clearForm() {
     this.userForm.reset();
     this.submitted = false;
+  }
+
+  private delay(ms: number) {
+    return new Promise( resolve => setTimeout(resolve, ms) );
   }
 
 }
