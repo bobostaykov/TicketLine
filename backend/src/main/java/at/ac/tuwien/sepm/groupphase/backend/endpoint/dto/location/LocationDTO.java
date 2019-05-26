@@ -81,19 +81,18 @@ public class LocationDTO {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         LocationDTO that = (LocationDTO) o;
-        return id.equals(that.id) &&
-            country.equals(that.country) &&
-            city.equals(that.city) &&
-            postalCode.equals(that.postalCode) &&
-            street.equals(that.street) &&
-            Objects.equals(description, that.description);
+        return Objects.equals(getId(), that.getId()) &&
+            Objects.equals(getCountry(), that.getCountry()) &&
+            Objects.equals(getCity(), that.getCity()) &&
+            Objects.equals(getPostalCode(), that.getPostalCode()) &&
+            Objects.equals(getStreet(), that.getStreet()) &&
+            Objects.equals(getDescription(), that.getDescription());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, country, city, postalCode, street, description);
+        return Objects.hash(getId(), getCountry(), getCity(), getPostalCode(), getStreet(), getDescription());
     }
-
     @Override
     public String toString() {
         return "LocationDTO{" +

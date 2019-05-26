@@ -36,6 +36,7 @@ public class HallEndpoint {
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
+    @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(value = "Add a new Hall with seats or sectors", authorizations = {@Authorization(value = "apiKey")})
     public HallDTO postHall(@RequestBody HallDTO hallDto) {
         LOGGER.info("POST Halls: " + hallDto.toString());
