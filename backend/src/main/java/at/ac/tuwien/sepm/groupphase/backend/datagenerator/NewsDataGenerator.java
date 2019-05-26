@@ -38,7 +38,6 @@ public class NewsDataGenerator implements DataGenerator{
                 News news = News.builder()
                     .title(faker.lorem().characters(30, 40))
                     .text(faker.lorem().paragraph(faker.number().numberBetween(5, 10)))
-                    .image(TEST_NEWS_IMAGE_ID)
                     .publishedAt(
                         LocalDateTime.ofInstant(
                             faker.date()
