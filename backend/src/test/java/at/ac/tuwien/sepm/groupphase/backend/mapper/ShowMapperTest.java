@@ -73,7 +73,6 @@ public class ShowMapperTest {
             .hall(HALL)
             .date(DATE)
             .time(TIME)
-      //      .durationInMinutes(DURATION_IN_MINUTES)
             .ticketsSold(TICKETSSOLD)
             .description(DESCRIPTION)
             .build();
@@ -86,8 +85,6 @@ public class ShowMapperTest {
         assertThat(showDTO.getTime()).isEqualTo(TIME);
         assertThat(showDTO.getDescription()).isEqualTo(DESCRIPTION);
         assertThat(showDTO.getTicketsSold()).isEqualTo(TICKETSSOLD);
-        assertThat(showDTO.getDurationInMinutes()).isEqualTo(DURATION_IN_MINUTES);
-
         assertThat(showDTO.getEvent().getId()).isEqualTo(2L);
         assertThat(showDTO.getEvent().getName()).isEqualTo("Event");
         assertThat(showDTO.getEvent().getEventType()).isEqualTo(MOVIE);
@@ -134,7 +131,6 @@ public class ShowMapperTest {
             .hall(hallDTO)
             .date(DATE)
             .time(TIME)
-            .durationInMinutes(DURATION_IN_MINUTES)
             .ticketsSold(TICKETSSOLD)
             .description(DESCRIPTION)
             .build();

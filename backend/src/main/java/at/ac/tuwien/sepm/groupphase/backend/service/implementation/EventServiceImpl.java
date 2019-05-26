@@ -48,7 +48,7 @@ public class EventServiceImpl implements EventService {
     @Override
     public List<EventDTO> findAll() {
         LOGGER.info("Event Service: findAll");
-        return eventMapper.eventToEventDTO(eventRepository.findAll());
+        return eventMapper.eventToEventDTO(eventRepository.findAllByOrderByNameAsc());
     }
     @Override
     public List<EventDTO> findAllFiltered(EventSearchParametersDTO parameters) {
