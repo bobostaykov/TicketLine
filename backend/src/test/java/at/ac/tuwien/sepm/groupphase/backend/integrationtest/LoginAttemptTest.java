@@ -28,7 +28,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDateTime;
 
-@RunWith(SpringRunner.class)
+@RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
 public class LoginAttemptTest {
 
@@ -68,8 +68,9 @@ public class LoginAttemptTest {
             loginAttempts2.setNumberOfAttempts(MAX_NUMBER_OF_ATTEMPTS + 1);
             loginAttempts2 = loginAttemptsRepository.save(loginAttempts2);
             init = true;
-             */
             userRepository.save(userMapper.userDTOToUser(testUserDTO1));
+
+             */
         }
 
     }

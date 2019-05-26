@@ -1,21 +1,21 @@
 package at.ac.tuwien.sepm.groupphase.backend.entity;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Table(name = "Login_attempts")
 public class LoginAttempts {
 
-
     public LoginAttempts() { }
 
     @Id
-    @Column
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "seq_loginAttempts_id")
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.REFRESH})
-    @MapsId(value = "id")
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id")
+    @MapsId
     private User user;
 
     @Column(name = "attempts")
@@ -24,8 +24,44 @@ public class LoginAttempts {
     @Column(name = "blocked")
      private boolean blocked;
 
+    public void setUserSynch(User user) {
+        if (user == null) {
+            if (this.user != null) {
+                this.user.setLoginAttempts(null);
+            }
+        }
+        else {
+            user.setLoginAttempts(this);
+        }
+        this.user = user;
+    }
 
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        LoginAttempts attempts1 = (LoginAttempts) o;
+        return attempts == attempts1.attempts &&
+            blocked == attempts1.blocked &&
+            Objects.equals(id, attempts1.id) &&
+            Objects.equals(user, attempts1.user);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, user, attempts, blocked);
+    }
+
+    @Override
+    public String toString() {
+        return "LoginAttempts{" +
+            "id=" + id +
+            ", user=" + user +
+            ", attempts=" + attempts +
+            ", blocked=" + blocked +
+            '}';
+    }
 
     public LoginAttempts(Long id, User user, int attempts, boolean blocked) {
         this.id = id;
