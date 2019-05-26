@@ -23,6 +23,7 @@ export class NewsComponent implements OnInit {
   submitted: boolean = false;
   private news: News[];
   showReadNews = false;
+  NOT_FOUND_IMAGE_URL: string = '../../../assets/image_not_found.png';
 
   constructor(private newsService: NewsService, private fileService: FileService, private userService: UserService,
               private ngbPaginationConfig: NgbPaginationConfig, private formBuilder: FormBuilder,
@@ -134,11 +135,10 @@ export class NewsComponent implements OnInit {
                 result.imageURL = <string>reader.result;}, false);
               if(val) {
                 reader.readAsDataURL(val);
-                console.log('imageURL: ' + result.imageURL);
               }
             },
             error => {
-              this.defaultServiceErrorHandling(error);
+              result.imageURL = this.NOT_FOUND_IMAGE_URL;
             }
           );
         }

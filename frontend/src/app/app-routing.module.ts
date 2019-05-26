@@ -6,7 +6,6 @@ import {AuthGuard} from './guards/auth.guard';
 import {NewsComponent} from './components/news/news.component';
 import {UserComponent} from './components/user/user.component';
 import {TopTenEventsComponent} from './components/events/top-ten-events/top-ten-events.component';
-import {CustomerAddComponent} from './components/customerAdd/customer-add.component';
 import {SearchEventsComponent} from './components/events/search-events/search-events.component';
 import {ShowComponent} from './components/search-results/shows/show.component';
 import {ArtistResultsComponent} from './components/search-results/artists/artist-results.component';
