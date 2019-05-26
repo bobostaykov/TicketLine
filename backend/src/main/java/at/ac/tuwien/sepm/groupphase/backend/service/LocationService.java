@@ -22,5 +22,5 @@ public interface LocationService {
     /** gets a list of all locations saved in the backend
      * @return a list of all locations
      */
-    List<LocationDTO>  findAllLocations();
+    List<LocationDTO>  findAll();
 }

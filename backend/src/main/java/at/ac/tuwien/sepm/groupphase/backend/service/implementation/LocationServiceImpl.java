@@ -25,23 +25,24 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
-    public List<LocationDTO> findLocationsFiltered(String country, String city, String street, String postalCode, String description) throws ServiceException{
+    public List<LocationDTO> findLocationsFiltered(String country, String city, String street, String postalCode, String description) throws ServiceException {
         LOGGER.info("Location Service: findLocationsFiltered()");
-        try{
-            if(country != null && country.equals("")) country = null;
-            if(city != null && city.equals("")) city = null;
-            if(street != null && street .equals("")) street = null;
-            if(postalCode != null && postalCode.equals("")) postalCode = null;
-            if(description != null && description.equals("")) description = null;
+        try {
+            if (country != null && country.equals("")) country = null;
+            if (city != null && city.equals("")) city = null;
+            if (street != null && street.equals("")) street = null;
+            if (postalCode != null && postalCode.equals("")) postalCode = null;
+            if (description != null && description.equals("")) description = null;
 
             return locationMapper.locationToLocationDTO(locationRepository.findLocationsFiltered(country, city, street, postalCode, description));
-        }catch (PersistenceException e){
+        } catch (PersistenceException e) {
             throw new ServiceException(e.getMessage(), e);
         }
+    }
 
     @Override
-    public List<LocationDTO> findAllLocations() {
+    public List<LocationDTO> findAll() {
         LOGGER.info("Retrieving a list of all locations from repository");
-        return locationMapper.locationListToLocationDTOs(locationRepository.findAll());
+        return locationMapper.locationToLocationDTO(locationRepository.findAll());
     }
 }

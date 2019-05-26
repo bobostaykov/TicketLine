@@ -30,6 +30,13 @@ public class LocationEndpoint {
         this.locationService = locationService;
     }
 
+    /*@RequestMapping(method = RequestMethod.GET)
+    @ApiOperation(value = "Get all saved halls", authorizations = {@Authorization(value = "apiKey")})
+    public List<LocationDTO> getLocations(){
+        LOGGER.info("Getting all locations by name descending");
+        return locationService.findAll();
+    }*/
+
     @RequestMapping(method = RequestMethod.GET)
     @ApiOperation(value = "Get all shows filtered by location", authorizations = {@Authorization(value = "apiKey")})
     public List<LocationDTO> findLocationsFiltered(
@@ -42,7 +49,8 @@ public class LocationEndpoint {
         boolean filterData = country == null && city == null && postalCode == null && street == null && description == null;
         try {
             if (filterData) {
-                throw new IllegalArgumentException("No parameters are specified.");
+                //TODO: maybe change this back at some point but need a method to get all locations
+                return locationService.findAll();
             } else {
                 LOGGER.info("Location Endpoint: Get all locations filtered by location");
                 return locationService.findLocationsFiltered(country, city, street, postalCode, description);
@@ -54,17 +62,5 @@ public class LocationEndpoint {
         } catch (NotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No locations are found for the given parameters:" + e.getMessage(), e);
         }
-    private final LocationService locationService;
-    private final Logger LOGGER = LoggerFactory.getLogger(getClass());
-
-    public LocationEndpoint(LocationService locationService){
-        this.locationService = locationService;
-    }
-
-    @RequestMapping(method = RequestMethod.GET)
-    @ApiOperation(value = "Get all saved halls", authorizations = {@Authorization(value = "apiKey")})
-    public List<LocationDTO> getLocations(){
-        LOGGER.info("Getting all locations");
-        return locationService.findAllLocations();
     }
 }
