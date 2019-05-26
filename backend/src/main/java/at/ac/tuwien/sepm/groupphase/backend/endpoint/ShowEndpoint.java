@@ -29,7 +29,7 @@ public class ShowEndpoint {
 
     private final ShowService showService;
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
-    private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+    private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
 
     ShowEndpoint(ShowService showService){
@@ -81,46 +81,51 @@ public class ShowEndpoint {
         @RequestParam(value = "hallName", required = false) String hallName,
         @RequestParam(value="minPrice", required = false) Integer minPrice,
         @RequestParam(value="maxPrice", required = false) Integer maxPrice,
-        @RequestParam(value="maxPrice", required = false) Integer duration,
         @RequestParam(value="dateFrom", required = false) String dateFrom,
         @RequestParam(value="dateTo", required = false) String dateTo,
         @RequestParam(value="timeFrom", required = false) String timeFrom,
         @RequestParam(value="timeTo", required = false) String timeTo,
+        @RequestParam(value="duration", required = false) Integer duration,
+
         @RequestParam(value = "country", required = false) String country,
         @RequestParam(value = "city", required = false) String city,
-        @RequestParam(value = "postalcode", required = false) String postalcode,
+        @RequestParam(value = "postalCode", required = false) String postalCode,
         @RequestParam(value = "street", required = false) String street)
-        //@RequestParam(value="dateFrom", required = false) @DateTimeFormat(iso= DateTimeFormat.ISO.DATE) LocalDateTime dateFrom,
-        //@RequestParam(value="dateTo", required = false) @DateTimeFormat(iso= DateTimeFormat.ISO.DATE) LocalDateTime dateTo,
-        //@RequestParam(value="timeFrom", required = false) @DateTimeFormat(pattern="HHmm") LocalDateTime timeFrom,
-        //@RequestParam(value="timeTo", required = false) @DateTimeFormat(pattern="HHmm") LocalDateTime timeTo,
     {
         boolean filterData = (
             dateFrom == null && dateTo == null &&
                 timeFrom == null && timeTo == null &&
                 minPrice == null && maxPrice == null &&
                 eventName == null && hallName == null &&
-                country == null && city == null
-                && postalcode == null && street == null);
+                duration == null &&
+                country == null && city == null &&
+                postalCode == null && street == null);
         try {
+            LOGGER.debug("eventName: " + eventName + "\nhallName: " + hallName + "\nminPrice: " + minPrice + "\nmaxPrice: " + maxPrice +
+                "\ndateFrom: " + dateFrom + "\ndateTo: " + dateTo+ "\ntimeFrom: " + timeFrom
+                + "\ntimeTo: " + timeTo + "\nduration: " +duration);
+
             if (filterData) {
                 LOGGER.info("Get all shows");
                 return showService.findAllShows();
             } else {
+
                 ShowSearchParametersDTO parameters = new ShowSearchParametersDTO.builder()
-                    .setDateFrom(LocalDate.parse(dateFrom, dateFormatter))
-                    .setDateTo(LocalDate.parse(dateTo, dateFormatter))
-                    .setTimeFrom(LocalTime.parse(timeFrom, timeFormatter))
-                    .setTimeTo(LocalTime.parse(timeFrom, timeFormatter))
                     .setPriceInEuroFrom(minPrice)
                     .setPriceInEuroTo(maxPrice)
                     .setEventName(eventName)
                     .setHallName(hallName)
+                    .setDateFrom(dateFrom.equals("null") ? null : LocalDate.parse(dateFrom, dateFormatter))
+                    .setDateTo(dateTo.equals("null") ? null : LocalDate.parse(dateTo, dateFormatter))
+                    .setTimeFrom(timeFrom.equals("null") ? null : LocalTime.parse(timeFrom, timeFormatter))
+                    .setTimeTo(timeTo.equals("null") ? null : LocalTime.parse(timeTo, timeFormatter))
+                    .setDurationInMinutes(duration)
                     .country(country)
                     .city(city)
                     .street(street)
-                    .postalcode(postalcode)
+                    .postalcode(postalCode)
                     .build();
+
                 LOGGER.info("Get all shows filtered by specified attributes: " + parameters.toString());
 
                 return showService.findAllShowsFiltered(parameters);

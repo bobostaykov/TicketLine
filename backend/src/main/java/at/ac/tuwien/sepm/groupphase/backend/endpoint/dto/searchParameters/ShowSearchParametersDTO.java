@@ -25,9 +25,6 @@ public class ShowSearchParametersDTO {
     @ApiModelProperty(name = "the street of the Location")
     private String street;
 
-
-
-
     public LocalDate getDateFrom() {
         return dateFrom;
     }

@@ -24,6 +24,7 @@ export class ShowService {
     return this.httpClient.get<Show[]>(this.showBaseUri + '/location/' + id);
   }
 
+  // TODO try sending DataTypes instead of strings
   public findShowsFilteredByShowAttributes(eventName, hallName, dateFrom, dateTo, timeFrom, timeTo, minPrice, maxPrice, duration) {
     console.log('ShowResultsService: findShowsFilteredByShowAttributes');
     return this.httpClient.get<Show[]>(this.showBaseUri + '/filter', {

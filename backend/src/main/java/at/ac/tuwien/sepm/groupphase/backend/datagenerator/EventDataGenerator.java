@@ -54,7 +54,7 @@ public class EventDataGenerator implements DataGenerator{
             Event event20 = Event.builder().id(20L).name("Theatre Seven Dwarfs").durationInMinutes(160).eventType(EventType.THEATRE).artist(artistRepository.getOne(6L)).description("description").content(null).build();
 
             Event event21 = Event.builder().id(21L).name("Guns and Ships").durationInMinutes(80).eventType(EventType.OPERA).artist(artistRepository.getOne(8L)).description("description").content("content").build();
-            Event event22 = Event.builder().id(22L).name("Bad Girls Play With Fire").eventType(EventType.OPERA).artist(null).description("COMING SOON").content("content").build();
+            Event event22 = Event.builder().id(22L).name("Bad Girls Play With Fire").durationInMinutes(240).eventType(EventType.OPERA).artist(null).description("COMING SOON").content("content").build();
             Event event23 = Event.builder().id(23L).name("How to Party").durationInMinutes(90).eventType(EventType.CONCERT).artist(artistRepository.getOne(8L)).description("description").content("content").build();
             Event event24 = Event.builder().id(24L).name("MagicValley 2019").durationInMinutes(50).eventType(EventType.MUSICAL).artist(artistRepository.getOne(8L)).description("description").content("content").build();
             Event event25 = Event.builder().id(25L).name("Zombie Mashup").durationInMinutes(180).eventType(EventType.OPERA).artist(artistRepository.getOne(8L)).description("description").content(null).build();

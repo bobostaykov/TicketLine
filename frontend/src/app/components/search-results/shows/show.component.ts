@@ -13,6 +13,10 @@ import {Hall} from '../../../dtos/hall';
 })
 export class ShowComponent implements OnInit {
 
+  private minPrice: number;
+  private maxPrice: number;
+  private duration: number;
+
   private page: number = 1;
   private pageSize: number = 10;
   private dataReady: boolean = false;
@@ -53,9 +57,9 @@ export class ShowComponent implements OnInit {
           this.route.snapshot.queryParamMap.get('dateTo'),
           this.route.snapshot.queryParamMap.get('timeFrom'),
           this.route.snapshot.queryParamMap.get('timeTo'),
-          this.route.snapshot.queryParamMap.get('minPrice'),
-          this.route.snapshot.queryParamMap.get('maxPrice'),
-          this.route.snapshot.queryParamMap.get('duration')
+          this.minPrice = +this.route.snapshot.queryParamMap.get('minPrice'),
+          this.maxPrice = +this.route.snapshot.queryParamMap.get('maxPrice'),
+          this.duration = +this.route.snapshot.queryParamMap.get('duration')
         );
         break;
       default:
@@ -94,7 +98,7 @@ export class ShowComponent implements OnInit {
     );
   }
 
-  private loadShowsFilteredByShowAttributes(eventName, hallName, dateFrom, dateTo, timeFrom, timeTo, minPrice, maxPrice, duration) {
+  private loadShowsFilteredByShowAttributes(eventName, hallName, dateFrom, dateTo, timeFrom, timeTo, minPrice: number, maxPrice: number, duration: number) {
     console.log('ShowResultsComponent: loadShowsFilteredByShowAttributes');
     this.showService.findShowsFilteredByShowAttributes(eventName, hallName, dateFrom, dateTo, timeFrom, timeTo, minPrice, maxPrice, duration).subscribe(
       (shows: Show[]) => {this.shows = shows; },

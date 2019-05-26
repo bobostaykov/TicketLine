@@ -61,6 +61,12 @@ public class EventEndpoint {
             LOGGER.info("Event Endpoint: findAll");
             return eventService.findAll();
         } else {
+            LOGGER.info("Event Endpoint: findEventsFilteredByAttributes");
+            LOGGER.debug(eventName);
+            EventType et = EventType.valueOf(eventType);
+            LOGGER.debug(et.toString());
+            LOGGER.debug(content);
+            LOGGER.debug(description);
             EventType eventTypeConv = null;
             if (eventType != null) {
                 for (EventType type : EventType.values()
@@ -70,14 +76,6 @@ public class EventEndpoint {
                     }
 
                 }
-                LOGGER.info("Event Endpoint: findEventsFilteredByAttributes");
-                LOGGER.debug(eventName);
-                EventType et = EventType.valueOf(eventType);
-                LOGGER.debug(et.toString());
-                LOGGER.debug(content);
-                LOGGER.debug(description);
-
-
             }
             EventSearchParametersDTO parameters = EventSearchParametersDTO.builder()
                 .setName(eventName)
