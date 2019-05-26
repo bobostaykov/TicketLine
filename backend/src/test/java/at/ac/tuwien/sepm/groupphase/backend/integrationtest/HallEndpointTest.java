@@ -25,7 +25,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.core.Is.is;
-
+/*
 public class HallEndpointTest extends BaseIntegrationTest {
 
     private static final String HALL_ENDPOINT = "/halls";
@@ -37,7 +37,7 @@ public class HallEndpointTest extends BaseIntegrationTest {
     private static List<SeatDTO> seat_dto_list;
 
     // TODO: Unfinished Tests
-    /*
+
     @MockBean
     HallRepository hallRepository;
 
@@ -122,5 +122,7 @@ public class HallEndpointTest extends BaseIntegrationTest {
             .seats(seat_dto_list)
             .build()
         )));
-    }*/
+    }
 }
+*/
+
