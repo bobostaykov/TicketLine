@@ -1,7 +1,9 @@
 package at.ac.tuwien.sepm.groupphase.backend.repository.implementation;
 
 import at.ac.tuwien.sepm.groupphase.backend.entity.LoginAttempts;
+import at.ac.tuwien.sepm.groupphase.backend.entity.LoginAttempts_;
 import at.ac.tuwien.sepm.groupphase.backend.entity.User;
+import at.ac.tuwien.sepm.groupphase.backend.entity.User_;
 import at.ac.tuwien.sepm.groupphase.backend.repository.UserRepositoryCustom;
 import org.hibernate.Session;
 import org.slf4j.Logger;
@@ -11,7 +13,10 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.*;
 import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.List;
 
 @Transactional
 @Repository
@@ -31,5 +36,20 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
         loginAttempts.setUserSynch(user);
         entityManager.persist(user);
         return user;
+    }
+
+    @Override
+    public List<User> findAllBlockedUsers() {
+
+        CriteriaBuilder cBuilder = entityManager.getCriteriaBuilder();
+        //Sammlung der Bedingungen
+        List<Predicate> predicates = new ArrayList<>();
+        CriteriaQuery<User> cq = cBuilder.createQuery(User.class);
+        Root<User> userRoot = cq.from(entityManager.getMetamodel().entity(User.class));
+        Join<User, LoginAttempts> userLoginAttemptsJoin = userRoot.join(User_.LOGIN_ATTEMPTS);
+        predicates.add(cBuilder.isTrue(userLoginAttemptsJoin.get(LoginAttempts_.BLOCKED)));
+        cq.where(predicates.toArray(new Predicate[predicates.size()]));
+        cq.select(userRoot);
+        return entityManager.createQuery(cq).getResultList();
     }
 }

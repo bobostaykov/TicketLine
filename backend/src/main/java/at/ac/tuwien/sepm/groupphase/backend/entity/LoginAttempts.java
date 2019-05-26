@@ -13,7 +13,7 @@ public class LoginAttempts {
     @Id
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name = "id")
     @MapsId
     private User user;

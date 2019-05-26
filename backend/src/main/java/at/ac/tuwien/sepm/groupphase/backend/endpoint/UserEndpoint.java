@@ -67,4 +67,17 @@ public class UserEndpoint {
         userService.deleteUser(id);
     }
 
+    @RequestMapping(value = "/blocked", method = RequestMethod.GET)
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "Get all blocked Users", authorizations = {@Authorization(value = "apiKey")})
+    public List<UserDTO> findAllBlockedUsers (){
+        return userService.findAllBlockedUsers();
+    }
+
+    @RequestMapping(value = "/blocked/{id}",method = RequestMethod.PUT)
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "Get all blocked Users", authorizations = {@Authorization(value = "apiKey")})
+    public boolean unblockUser(@PathVariable Long id){
+        return userService.unblockUser(id);
+    }
 }

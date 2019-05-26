@@ -106,7 +106,6 @@ public class UserDTO {
             ", type=" + type +
             ", userSince=" + userSince +
             ", lastLogin=" + lastLogin +
-            ", readNews=" + readNews.toString() +
             '}';
     }
 

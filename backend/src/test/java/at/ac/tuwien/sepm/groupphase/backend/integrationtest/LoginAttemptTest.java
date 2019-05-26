@@ -26,8 +26,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 
+@Transactional
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
 public class LoginAttemptTest {
@@ -53,10 +55,13 @@ public class LoginAttemptTest {
     LoginAttempts loginAttempts1;
     LoginAttempts loginAttempts2;
     boolean init = false;
+    Long userID1 = userMapper.userToUserDTO(userRepository.findOneByUsername("user").get()).getId();
 
     @Before
     public void before() throws ServiceException {
         if(!init) {
+
+            loginAttempts1 = userRepository.findOneByUsername("user").get().getLoginAttempts();
             /*
             testUserDTO1 = userService.createUser(testUserDTO1);
 
@@ -76,9 +81,6 @@ public class LoginAttemptTest {
     }
     @Test
     public void emptyTest(){
-        if(userMapper == null){
-            System.out.println("Fuck");
-        }
     }
 
     @Test

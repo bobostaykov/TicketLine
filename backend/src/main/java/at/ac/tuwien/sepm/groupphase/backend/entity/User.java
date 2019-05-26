@@ -37,10 +37,10 @@ public class User {
     @Column(name = "last_login")
     private LocalDateTime lastLogin;
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.EAGER)
     private List<News> readNews;
 
-    @OneToOne(mappedBy =  "user",cascade = { CascadeType.ALL}, orphanRemoval = true, optional = false, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy =  "user",cascade = { CascadeType.ALL}, orphanRemoval = true, optional = false)
     private LoginAttempts loginAttempts;
 
 
@@ -123,7 +123,7 @@ public class User {
             ", type=" + type +
             ", userSince=" + userSince +
             ", lastLogin=" + lastLogin +
-            ", readNews=" + readNews.toString() + '}';
+            ", readNews="+ readNews != null ? readNews.toString() : "" + '}';
     }
 
     @Override

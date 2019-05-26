@@ -110,5 +110,13 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    public List<UserDTO> findAllBlockedUsers() {
+        /*List<UserDTO> userList = userMapper.userToUserDTO(userRepository.findAll());
+        userList.stream().filter(userDTO -> {userDTO})
+         */
+        return userMapper.userToUserDTO(userRepository.findAllBlockedUsers());
+    }
+
 
 }

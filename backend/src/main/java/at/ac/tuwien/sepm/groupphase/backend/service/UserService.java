@@ -57,4 +57,10 @@ public interface UserService {
      * @return boolean if the operation was successful
      */
     boolean unblockUser(Long userId);
+
+    /**
+     *
+     * @return a list of all users that are currently blocked
+     */
+    List<UserDTO> findAllBlockedUsers();
 }
