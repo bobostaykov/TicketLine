@@ -2,8 +2,9 @@ package at.ac.tuwien.sepm.groupphase.backend.entity;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Objects;
 
-//TODO add missing attributes
+//TODO: add properties determining price?
 @Entity
 public class Hall {
 
@@ -119,9 +120,32 @@ public class Hall {
             return hall;
         }
 
-        //TODO: add properties determining price
-        //TODO: add equals and hash and toString methods
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Hall hall = (Hall) o;
+            return Objects.equals(id, hall.getId()) &&
+                Objects.equals(name, hall.getName()) &&
+                Objects.equals(location, hall.getLocation()) &&
+                Objects.equals(seats, hall.getSeats()) &&
+                Objects.equals(sectors, hall.getSectors());
+        }
 
+        @Override
+        public int hashCode() {
+            return Objects.hash(id, name, location, seats, sectors);
+        }
+
+        @Override
+        public String toString() {
+            return "Hall{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", location=" + location +
+                ", seats=" + seats +
+                ", sectors=" + sectors +
+                '}';
+        }
     }
-
 }

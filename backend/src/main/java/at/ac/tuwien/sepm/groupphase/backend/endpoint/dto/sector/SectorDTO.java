@@ -5,6 +5,8 @@ import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.hall.HallDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import java.util.Objects;
+
 @ApiModel(value = "SectorDTO", description = "A DTO for sector entities")
 public class SectorDTO {
 
@@ -16,9 +18,6 @@ public class SectorDTO {
 
     @ApiModelProperty(name = "The sector's price category. Either cheap, average or expensive")
     private PriceCategory priceCategory;
-
-    @ApiModelProperty(name = "Hall entity the sector belongs to")
-    private HallDTO hallDTO;
 
     public Long getId() {
         return id;
@@ -48,14 +47,6 @@ public class SectorDTO {
         return new SectorDTOBuilder();
     }
 
-    public HallDTO getHallDTO() {
-        return hallDTO;
-    }
-
-    public void setHallDTO(HallDTO hallDTO) {
-        this.hallDTO = hallDTO;
-    }
-
     @Override
     public String toString() {
         return "SectorDTO{" +
@@ -70,9 +61,9 @@ public class SectorDTO {
         if(this == o) return  true;
         if(o == null || getClass() != o.getClass()) return false;
         SectorDTO sectorDTO = (SectorDTO) o;
-        if(id != null ? ! id.equals(sectorDTO.id) : sectorDTO.id != null) return false;
-        if(sectorNumber != null ? ! sectorNumber.equals(sectorDTO.getSectorNumber()) : sectorDTO.getSectorNumber() != null) return false;
-        return priceCategory != null ? priceCategory.equals(sectorDTO.getPriceCategory()) : sectorDTO.getPriceCategory() == null;
+        return Objects.equals(id, sectorDTO.getId()) &&
+            Objects.equals(sectorNumber, sectorDTO.getSectorNumber()) &&
+            Objects.equals(priceCategory, sectorDTO.getPriceCategory());
     }
 
     @Override
@@ -87,7 +78,6 @@ public class SectorDTO {
         private Long id;
         private Integer sectorNumber;
         private PriceCategory priceCategory;
-        private HallDTO hallDTO;
 
         private SectorDTOBuilder(){}
 
@@ -106,20 +96,12 @@ public class SectorDTO {
             return this;
         }
 
-        public SectorDTOBuilder hallDTO(HallDTO hallDTO){
-            this.hallDTO = hallDTO;
-            return this;
-        }
-
         public SectorDTO build(){
             SectorDTO sectorDTO = new SectorDTO();
             sectorDTO.setId(id);
             sectorDTO.setSectorNumber(sectorNumber);
             sectorDTO.setPriceCategory(priceCategory);
-            sectorDTO.setHallDTO(hallDTO);
             return sectorDTO;
         }
     }
-
-    //TODO: incorporate halldto into equals hashcode and toString methods
 }

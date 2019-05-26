@@ -5,6 +5,8 @@ import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.hall.HallDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import java.util.Objects;
+
 @ApiModel(value = "SeatDTO", description = "DTO for seat entities")
 public class SeatDTO {
 
@@ -19,9 +21,6 @@ public class SeatDTO {
 
     @ApiModelProperty(name = "The seat's price category. Either cheap, average or expensive.")
     private PriceCategory priceCategory;
-
-    @ApiModelProperty(name = "Hall entity the seat belongs to")
-    private HallDTO hallDTO;
 
     public Long getId() {
         return id;
@@ -55,14 +54,6 @@ public class SeatDTO {
         this.priceCategory = priceCategory;
     }
 
-    public HallDTO getHallDTO() {
-        return hallDTO;
-    }
-
-    public void setHallDTO(HallDTO hallDTO) {
-        this.hallDTO = hallDTO;
-    }
-
     public static SeatDTOBuilder builder(){
         return new SeatDTOBuilder();
     }
@@ -82,10 +73,10 @@ public class SeatDTO {
         if(this == o) return  true;
         if(o == null || getClass() != o.getClass()) return false;
         SeatDTO seatDTO = (SeatDTO) o;
-        if(id != null ? ! id.equals(seatDTO.id) : seatDTO.id != null) return false;
-        if(seatNumber != null ? ! seatNumber.equals(seatDTO.getSeatNumber()) : seatDTO.getSeatNumber() != null) return false;
-        if(seatRow != null ? ! seatRow.equals(seatDTO.getSeatRow()) : seatDTO.getSeatRow() != null) return false;
-        return priceCategory != null ? priceCategory.equals(seatDTO.getPriceCategory()) : seatDTO.getPriceCategory() == null;
+        return Objects.equals(id, seatDTO.getId()) &&
+            Objects.equals(seatNumber, seatDTO.getSeatNumber()) &&
+            Objects.equals(seatRow, seatDTO.getSeatRow()) &&
+            Objects.equals(priceCategory, seatDTO.getPriceCategory());
     }
 
     @Override
@@ -102,7 +93,6 @@ public class SeatDTO {
         private Integer seatNumber;
         private Integer seatRow;
         private PriceCategory priceCategory;
-        private HallDTO hallDTO;
 
         private SeatDTOBuilder(){}
 
@@ -126,21 +116,13 @@ public class SeatDTO {
             return this;
         }
 
-        public SeatDTOBuilder hallDTO(HallDTO hallDTO){
-            this.hallDTO = hallDTO;
-            return this;
-        }
-
         public SeatDTO build(){
             SeatDTO seatDTO = new SeatDTO();
             seatDTO.setId(id);
             seatDTO.setSeatNumber(seatNumber);
             seatDTO.setSeatRow(seatRow);
             seatDTO.setPriceCategory(priceCategory);
-            seatDTO.setHallDTO(hallDTO);
             return seatDTO;
         }
     }
-
-    //TODO: incorporate halldto into equals hashcode and toString methods
 }

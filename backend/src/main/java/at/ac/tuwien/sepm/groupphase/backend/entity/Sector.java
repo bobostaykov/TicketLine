@@ -3,6 +3,7 @@ package at.ac.tuwien.sepm.groupphase.backend.entity;
 import at.ac.tuwien.sepm.groupphase.backend.datatype.PriceCategory;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 public class Sector {
@@ -64,6 +65,7 @@ public class Sector {
             "id=" + id +
             ", sectorNumber=" + sectorNumber +
             ", priceCategory='" + priceCategory + "\'" +
+            ", hall=" + hall +
             '}';
     }
 
@@ -72,9 +74,10 @@ public class Sector {
         if(this == o) return  true;
         if(o == null || getClass() != o.getClass()) return false;
         Sector sector = (Sector) o;
-        if(id != null ? ! id.equals(sector.id) : sector.id != null) return false;
-        if(sectorNumber != null ? ! sectorNumber.equals(sector.getSectorNumber()) : sector.getSectorNumber() != null) return false;
-        return priceCategory != null ? priceCategory.equals(sector.getPriceCategory()) : sector.getPriceCategory() == null;
+        return Objects.equals(id, sector.getId()) &&
+            Objects.equals(sectorNumber, sector.getSectorNumber()) &&
+            Objects.equals(priceCategory, sector.getPriceCategory()) &&
+            Objects.equals(hall, sector.getHall());
     }
 
     @Override
@@ -82,6 +85,7 @@ public class Sector {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (sectorNumber != null ? sectorNumber.hashCode() : 0);
         result = 31 * result + (priceCategory != null ? priceCategory.hashCode() : 0);
+        result = 31 * result + (hall != null ? hall.hashCode() : 0);
         return result;
     }
 
@@ -122,6 +126,4 @@ public class Sector {
             return sector;
         }
     }
-
-    //TODO: incorporate hall id into equals, hashcode and tostring methods
 }

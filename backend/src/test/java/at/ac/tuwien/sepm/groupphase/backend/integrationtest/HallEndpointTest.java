@@ -36,6 +36,8 @@ public class HallEndpointTest extends BaseIntegrationTest {
     private static List<Seat> seat_list;
     private static List<SeatDTO> seat_dto_list;
 
+    // TODO: Unfinished Tests
+    /*
     @MockBean
     HallRepository hallRepository;
 
@@ -120,5 +122,5 @@ public class HallEndpointTest extends BaseIntegrationTest {
             .seats(seat_dto_list)
             .build()
         )));
-    }
+    }*/
 }

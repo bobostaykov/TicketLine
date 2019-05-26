@@ -3,6 +3,7 @@ package at.ac.tuwien.sepm.groupphase.backend.entity;
 import at.ac.tuwien.sepm.groupphase.backend.datatype.PriceCategory;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 public class Seat {
@@ -76,6 +77,7 @@ public class Seat {
             ", seatNumber=" + seatNumber +
             ", seatRow=" + seatRow +
             ", priceCategory='" + priceCategory + "\'" +
+            ", hall=" + hall +
             '}';
     }
 
@@ -84,10 +86,11 @@ public class Seat {
         if(this == o) return  true;
         if(o == null || getClass() != o.getClass()) return false;
         Seat seat = (Seat) o;
-        if(id != null ? ! id.equals(seat.id) : seat.id != null) return false;
-        if(seatNumber != null ? ! seatNumber.equals(seat.getSeatNumber()) : seat.getSeatNumber() != null) return false;
-        if(seatRow != null ? ! seatRow.equals(seat.getSeatRow()) : seat.getSeatRow() != null) return false;
-        return priceCategory != null ? priceCategory.equals(seat.getPriceCategory()) : seat.getPriceCategory() == null;
+        return Objects.equals(id, seat.getId()) &&
+            Objects.equals(seatNumber, seat.getSeatNumber()) &&
+            Objects.equals(seatRow, seat.getSeatRow()) &&
+            Objects.equals(priceCategory, seat.getPriceCategory()) &&
+            Objects.equals(hall, seat.getHall());
     }
 
     @Override
@@ -96,6 +99,7 @@ public class Seat {
         result = 31 * result + (seatNumber != null ? seatNumber.hashCode() : 0);
         result = 31 * result + (seatRow != null ? seatRow.hashCode() : 0);
         result = 31 * result + (priceCategory != null ? priceCategory.hashCode() : 0);
+        result = 31 * result + (hall != null ? hall.hashCode() : 0);
         return result;
     }
 
@@ -143,6 +147,4 @@ public class Seat {
             return seat;
         }
     }
-
-    //TODO: incorporate hall id into equals, hashcode and tostring methods
 }

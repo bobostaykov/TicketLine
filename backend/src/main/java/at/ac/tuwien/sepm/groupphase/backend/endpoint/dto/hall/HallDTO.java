@@ -10,7 +10,6 @@ import io.swagger.annotations.ApiModelProperty;
 import java.util.List;
 import java.util.Objects;
 
-//TODO add missing attributes
 public class HallDTO {
 
     @ApiModelProperty(name = "The automatically generated database id")
@@ -77,14 +76,16 @@ public class HallDTO {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         HallDTO hallDTO = (HallDTO) o;
-        return id.equals(hallDTO.id) &&
-            name.equals(hallDTO.name) &&
-            location.equals(hallDTO.location);
+        return Objects.equals(id, hallDTO.getId()) &&
+            Objects.equals(name, hallDTO.getName()) &&
+            Objects.equals(location, hallDTO.getLocation()) &&
+            Objects.equals(seats, hallDTO.getSeats()) &&
+            Objects.equals(sectors, hallDTO.getSectors());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, location);
+        return Objects.hash(id, name, location, seats, sectors);
     }
 
     @Override
@@ -93,6 +94,8 @@ public class HallDTO {
             "id=" + id +
             ", name='" + name + '\'' +
             ", location=" + location +
+            ", seats=" + seats +
+            ", sectors=" + sectors +
             '}';
     }
 
@@ -141,6 +144,4 @@ public class HallDTO {
             return hall;
         }
     }
-
-    //TODO: incorporate seat and sector lists into equals toString and hashcode methods
 }
