@@ -90,7 +90,6 @@ public class SecurityConfiguration {
 
         @Override
         protected void configure(HttpSecurity http) throws Exception {
-
             http
                 .csrf().disable()
                 .headers().frameOptions().sameOrigin().and()
@@ -116,6 +115,7 @@ public class SecurityConfiguration {
                 .anyRequest().fullyAuthenticated()
                 .and()
                 .addFilterBefore(new HeaderTokenAuthenticationFilter(authenticationManager), UsernamePasswordAuthenticationFilter.class);
+
 
 
             //http.authorizeRequests().antMatchers("/").permitAll();   // Enable this to disable authentication

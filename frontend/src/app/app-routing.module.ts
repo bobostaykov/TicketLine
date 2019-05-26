@@ -23,7 +23,7 @@ const routes: Routes = [
   {path: 'events/search', canActivate: [AuthGuard], component: SearchEventsComponent},
   {path: 'events/search/results/artist', canActivate: [AuthGuard], component: ArtistResultsComponent},
   {path: 'shows', canActivate: [AuthGuard], component: ShowComponent},
-  {path: 'events', canActivate: [AuthGuard], component: EventsComponent}
+  {path: 'events', canActivate: [AuthGuard], component: EventsComponent},
   {path: 'ticket', canActivate: [AuthGuard], component: TicketComponent}
 ];
 

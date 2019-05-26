@@ -29,6 +29,8 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
      * @param shows list of shows to search for
      * @return List of found tickets
      */
+    // NOT WOKRING
+    /*
     @Query("SELECT t from Ticket t " +
         "WHERE (customer_id in :customers)" +
         "JOIN Customer c ON t.customer = c " +
@@ -37,6 +39,7 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
         "WHERE (c.name LIKE CONCAT('%',:customerName,'%') OR :customerName IS NULL) " +
         "AND (e.name LIKE CONCAT('%',:showName,'%') OR :showName IS NULL)")
     List<Ticket> findAllFilteredByCustomerAndEvent(@Param("customers") List<Customer> customers, @Param("shows") List<Show> shows);
+     */
 
     /**
      * Find ticket by given reservation number
@@ -44,5 +47,21 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
      * @return found ticket
      */
      Optional<Ticket> findOneByReservationNumber(Long reservationNumber);
-    
+
+    /**
+     * Delete Ticket by reservation number
+     *
+     * @return deleted Ticket
+     */
+    Ticket deleteByReservationNumber(Long id);
+
+    /**
+     * Find tickets for the given customer name and show name.
+     *
+     * @param customer customer the ticket was issued for
+     * @param show the ticket was issued for
+     * @return List of found tickets
+     */
+    List<Ticket> findAllByCustomerAndShow(Customer customer, Show show);
+
 }

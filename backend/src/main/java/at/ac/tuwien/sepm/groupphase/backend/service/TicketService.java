@@ -1,5 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.service;
 
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.show.ShowDTO;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.ticket.TicketDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Ticket;
 
 import java.util.List;
@@ -37,4 +39,21 @@ public interface TicketService {
      * @return found ticket
      */
     Ticket findOne(Long id);
+
+    /**
+     * Delete one ticket by the given ticket/reservation number (id)
+     *
+     * @param id ticket/reservation number of the ticket
+     * @return deleted ticket
+     */
+    Ticket deleteOne(Long id);
+
+    /**
+     * Get all tickets filtered by customer and show
+     *
+     * @param customerName name of customer the ticket was issued for
+     * @param show show the ticket was issued for
+     * @return list of found tickets
+     */
+    List<TicketDTO> findByCustomerNameAndShow(String customerName, ShowDTO show);
 }
