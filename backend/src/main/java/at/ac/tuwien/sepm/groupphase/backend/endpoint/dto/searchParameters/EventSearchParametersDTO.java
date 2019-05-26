@@ -1,5 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.searchParameters;
 
+import at.ac.tuwien.sepm.groupphase.backend.datatype.EventType;
+
 import java.util.Objects;
 
 public class EventSearchParametersDTO {
@@ -7,12 +9,16 @@ public class EventSearchParametersDTO {
     private Integer durationInMinutes;
     private String content;
     private String artistName;
+    private String description;
+    private EventType eventType;
 
-    public EventSearchParametersDTO(String name, Integer durationInMinutes, String content, String artistName) {
+    public EventSearchParametersDTO(String name, Integer durationInMinutes, String content, String artistName, String description, EventType eventType) {
         this.name = name;
         this.durationInMinutes = durationInMinutes;
         this.content = content;
         this.artistName = artistName;
+        this.description = description;
+        this.eventType = eventType;
     }
 
     public String getName() {
@@ -49,14 +55,20 @@ public class EventSearchParametersDTO {
         this.artistName = artistName;
     }
 
-    @Override
-    public String toString() {
-        return "EventSearchParametersDTO{" +
-            (name != null ? "name='" + name + '\'' : "") +
-            (durationInMinutes != null ?", durationInMinutes="+ durationInMinutes : "") +
-            (content != null ? ", content='" + content + '\'' : "") +
-            (artistName != null ? ", artistName='" + artistName + '\'' : "") +
-            '}';
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public EventType getEventType() {
+        return eventType;
+    }
+
+    public void setEventType(EventType eventType) {
+        this.eventType = eventType;
     }
 
     @Override
@@ -67,12 +79,26 @@ public class EventSearchParametersDTO {
         return Objects.equals(name, that.name) &&
             Objects.equals(durationInMinutes, that.durationInMinutes) &&
             Objects.equals(content, that.content) &&
-            Objects.equals(artistName, that.artistName);
+            Objects.equals(artistName, that.artistName) &&
+            Objects.equals(description, that.description) &&
+            eventType == that.eventType;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, durationInMinutes, content, artistName);
+        return Objects.hash(name, durationInMinutes, content, artistName, description, eventType);
+    }
+
+    @Override
+    public String toString() {
+        return "EventSearchParametersDTO{" +
+            "name='" + name + '\'' +
+            ", durationInMinutes=" + durationInMinutes +
+            ", content='" + content + '\'' +
+            ", artistName='" + artistName + '\'' +
+            ", description='" + description + '\'' +
+            ", eventType=" + eventType +
+            '}';
     }
 
     public static class EventSearchParametersDTOBuilder {
@@ -80,6 +106,8 @@ public class EventSearchParametersDTO {
         private Integer durationInMinutes;
         private String content;
         private String artistName;
+        private String description;
+        private EventType eventType;
 
         public  EventSearchParametersDTOBuilder(){}
 
@@ -102,8 +130,18 @@ public class EventSearchParametersDTO {
             return this;
         }
 
+        public EventSearchParametersDTOBuilder setDescription(String description){
+            this.description = description;
+            return this;
+        }
+
+        public EventSearchParametersDTOBuilder setEventType (EventType eventType){
+            this.eventType = eventType;
+            return this;
+        }
+
         public EventSearchParametersDTO build() {
-            return new EventSearchParametersDTO(name, durationInMinutes, content, artistName);
+            return new EventSearchParametersDTO(name, durationInMinutes, content, artistName, description, eventType);
         }
     }
 }

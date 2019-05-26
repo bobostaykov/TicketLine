@@ -25,6 +25,9 @@ public class EventDTO {
     @ApiModelProperty(name = "A content of the event")
     private String content;
 
+    @ApiModelProperty(name = "The duration of the Event")
+    private Integer durationInMinutes;
+
     @ApiModelProperty(name = "The artist that participates in the event")
     private ArtistDTO artist;
 
@@ -76,6 +79,14 @@ public class EventDTO {
         this.artist = artist;
     }
 
+    public Integer getDurationInMinutes() {
+        return durationInMinutes;
+    }
+
+    public void setDurationInMinutes(Integer durationInMinutes) {
+        this.durationInMinutes = durationInMinutes;
+    }
+
     public static EventDTOBuilder builder() {
         return new EventDTOBuilder();
     }
@@ -117,6 +128,7 @@ public class EventDTO {
         private String description;
         private String content;
         private ArtistDTO artist;
+        private Integer durationInMinutes;
 
         private EventDTOBuilder() {}
 
@@ -150,6 +162,11 @@ public class EventDTO {
             return this;
         }
 
+        public EventDTOBuilder durationInMinutes (Integer duration){
+            this.durationInMinutes = duration;
+            return this;
+        }
+
         public EventDTO build() {
             EventDTO eventDTO = new EventDTO();
             eventDTO.setId(id);
@@ -158,6 +175,7 @@ public class EventDTO {
             eventDTO.setDescription(description);
             eventDTO.setContent(content);
             eventDTO.setArtist(artist);
+            eventDTO.setDurationInMinutes(durationInMinutes);
             return eventDTO;
         }
     }

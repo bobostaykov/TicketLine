@@ -64,7 +64,7 @@ public class ShowRepositoryTest {
         .setTimeFrom(LocalTime.parse("18:00",timeFormatter))
         .setTimeTo(LocalTime.parse("22:00",timeFormatter)).build();
     private final ShowSearchParametersDTO NAME_ONLY_PARAMETERS = new ShowSearchParametersDTO.builder()
-        .setEventName("Birthday").build();
+        .setEventName("irthday").build();
     private final ShowSearchParametersDTO FROMDATE_ONLY_PARAMETERS = new ShowSearchParametersDTO.builder()
         .setDateFrom(LocalDate.parse("16-03-2020", dateFormatter)).build();
     private boolean init = false;

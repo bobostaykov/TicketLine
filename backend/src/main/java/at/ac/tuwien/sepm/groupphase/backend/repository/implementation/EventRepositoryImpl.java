@@ -28,35 +28,51 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
     }
 
     @Override
+
     public List<Event> findAllEventsFiltered(EventSearchParametersDTO parameters) throws PersistenceException {
+/*
         LOGGER.info("Find Events filtered by: " + parameters.toString());
         CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
         List<Predicate> predicates = new ArrayList<>();
         CriteriaQuery<Event> query = criteriaBuilder.createQuery(Event.class);
         Root<Event> eventRoot = query.from(Event.class);
         if(parameters.getName() != null){
-            predicates.add(criteriaBuilder.like(eventRoot.get(Event_.name), "%" + parameters.getName()+ "%"));
+            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(eventRoot.get(Event_.name)), "%" + parameters.getName().toLowerCase() + "%"));
         }
         if(parameters.getContent() != null){
-            predicates.add(criteriaBuilder.like(eventRoot.get(Event_.content), "%" + parameters.getContent()+ "%"));
+            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(eventRoot.get(Event_.content)), "%" + parameters.getContent().toLowerCase() + "%"));
         }
         //Current Search Area is +- 30 minutes
+
         if(parameters.getDurationInMinutes()!= null){
-            predicates.add(criteriaBuilder.between(eventRoot.get(Event_.durationInMinutes), parameters.getDurationInMinutes() -30 , parameters.getDurationInMinutes()               + 30));
-        }
-        if(parameters.getArtistName() != null){
-            Join<Event, Artist> eventArtistJoin = eventRoot.join(Event_.artist);
-            predicates.add(criteriaBuilder.like(eventArtistJoin.get(Artist_.name), "%" + parameters.getArtistName()+ "%"));
+            predicates.add(criteriaBuilder.between(
+                eventRoot.get(Event_.durationInMinutes), parameters.getDurationInMinutes() -30 , parameters.getDurationInMinutes() + 30));
         }
 
+        if(parameters.getArtistName() != null){
+            Join<Event, Artist> eventArtistJoin = eventRoot.join(Event_.artist);
+            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(eventArtistJoin.get(Artist_.name)), "%" + parameters.getArtistName().toLowerCase() + "%"));
+        }
+        if(parameters.getDescription() != null){
+            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(eventRoot.get(Event_.description)), "%" + parameters.getDescription().toLowerCase() + "%"));
+        }
+        if(parameters.getEventType() != null){
+            predicates.add(criteriaBuilder.equal(eventRoot.get(Event_.EVENT_TYPE), parameters.getEventType()));
+        }
+
+
         query.select(eventRoot).where(predicates.toArray(new Predicate[predicates.size()]));
-        query.orderBy(criteriaBuilder.asc(eventRoot.get(Event_.name)));
+        query.orderBy(criteriaBuilder.asc(eventRoot.get(Event_.eventType))).orderBy(criteriaBuilder.asc(eventRoot.get(Event_.name)));
         List results = em.createQuery(query).getResultList();
         return results;
+
+ */
+return null;
     }
     /*
     @Query("SELECT e.name, SUM(s.ticketsSold) FROM Show s, Event e WHERE s.event = e.id AND MONTHNAME(s.date) IN :monthsSet AND e.eventType IN :categoriesSet GROUP BY s.event ORDER BY SUM(s.ticketsSold) DESC")
      */
+
 
     @Override
     public List<Object> findTopTenEvents2(Set<String> monthsSet, Set<EventType> categoriesSet) {

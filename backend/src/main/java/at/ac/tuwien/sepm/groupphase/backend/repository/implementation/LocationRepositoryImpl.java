@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.repository.implementation;
 
 import at.ac.tuwien.sepm.groupphase.backend.entity.Location;
+import at.ac.tuwien.sepm.groupphase.backend.entity.Location_;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.LocationRepositoryCustom;
 import org.slf4j.Logger;
@@ -30,6 +31,7 @@ public class LocationRepositoryImpl implements LocationRepositoryCustom {
 
     @Override
     public List<Location> findLocationsFiltered(String country, String city, String street, String postalCode, String description) {
+        /*
         LOGGER.info("Location Criteria Builder: findLocationsFiltered");
 
         CriteriaBuilder cBuilder = entityManager.getCriteriaBuilder();
@@ -38,19 +40,19 @@ public class LocationRepositoryImpl implements LocationRepositoryCustom {
         Root<Location> location = criteriaQuery.from(Location.class);
 
         if(country != null){
-            predicates.add(cBuilder.equal(location.get("country"), country));
+            predicates.add(cBuilder.equal(location.get(Location_.country), country));
         }
         if(city != null){
-            predicates.add(cBuilder.like(cBuilder.lower(location.get("city")), city.toLowerCase()));
+            predicates.add(cBuilder.like(cBuilder.lower(location.get(Location_.city)), city.toLowerCase()));
         }
         if(street != null){
-            predicates.add(cBuilder.like(cBuilder.lower(location.get("street")), "%" + street + "%".toLowerCase()));
+            predicates.add(cBuilder.like(cBuilder.lower(location.get(Location_.street)), "%" + street + "%".toLowerCase()));
         }
         if(postalCode != null){
-            predicates.add(cBuilder.equal(cBuilder.lower(location.get("postalCode")), postalCode));
+            predicates.add(cBuilder.equal(cBuilder.lower(location.get(Location_.postalCode)), postalCode));
         }
         if(description != null){
-            predicates.add(cBuilder.like(cBuilder.lower(location.get("description")), "%" + description + "%"));
+            predicates.add(cBuilder.like(cBuilder.lower(location.get(Location_.description)), "%" + description + "%"));
         }
 
         criteriaQuery.select(location).where(predicates.toArray(new Predicate[predicates.size()]));
@@ -63,5 +65,8 @@ public class LocationRepositoryImpl implements LocationRepositoryCustom {
         }
 
         return results;
+
+         */
+        return null;
     }
 }

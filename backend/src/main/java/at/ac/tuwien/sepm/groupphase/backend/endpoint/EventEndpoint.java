@@ -49,36 +49,45 @@ public class EventEndpoint {
         return topTen;
     }
 
-    @RequestMapping(value = "/filter", method = RequestMethod.GET)
-    @ApiOperation(value = "Get all events filtered by specified attributes", authorizations = {@Authorization(value = "apiKey")})
-    public List<EventDTO> findAllShowsFiltered(
-        @RequestParam(value="name", required = false) String name,
-        @RequestParam(value="duration", required = false) Integer durationInMinutes,
-        @RequestParam(value = "content", required = false) String content,
-        @RequestParam(value = "artistName", required = false) String artistName) {
-        EventSearchParametersDTO parameters = EventSearchParametersDTO.builder().setName(name).setContent(content).setDurationInMinutes(durationInMinutes).setArtistName(artistName).build();
-        LOGGER.info("getting all events filtered by parameters: "+ parameters.toString());
-        return (eventService.findAllFiltered(parameters));
-    }
-}
-/*
     // OK
     @RequestMapping(method = RequestMethod.GET)
     public List<EventDTO> findEventsFilteredByAttributes(@RequestParam(value = "eventName", required = false) String eventName,
                                                          @RequestParam(value = "eventType", required = false) String eventType,
                                                          @RequestParam(value = "content", required = false) String content,
-                                                         @RequestParam(value = "description", required = false) String description) {
-        if( eventName == null && eventType == null && content == null && description == null) {
+                                                         @RequestParam(value = "description", required = false) String description,
+                                                         @RequestParam(value = "duration", required = false) Integer duration,
+                                                         @RequestParam(value = "artistName", required = false) String artistName) {
+        if (eventName == null && eventType == null && content == null && description == null && duration == null) {
             LOGGER.info("Event Endpoint: findAll");
             return eventService.findAll();
-        }else{
-            LOGGER.info("Event Endpoint: findEventsFilteredByAttributes");
-            LOGGER.debug(eventName);
-            EventType et = EventType.valueOf(eventType);
-            LOGGER.debug(et.toString());
-            LOGGER.debug(content);
-            LOGGER.debug(description);
-            return eventService.findAll(); // replace this line
+        } else {
+            EventType eventTypeConv = null;
+            if (eventType != null) {
+                for (EventType type : EventType.values()
+                ) {
+                    if (eventType.equals(type)) {
+                        eventTypeConv = type;
+                    }
+
+                }
+                LOGGER.info("Event Endpoint: findEventsFilteredByAttributes");
+                LOGGER.debug(eventName);
+                EventType et = EventType.valueOf(eventType);
+                LOGGER.debug(et.toString());
+                LOGGER.debug(content);
+                LOGGER.debug(description);
+
+
+            }
+            EventSearchParametersDTO parameters = EventSearchParametersDTO.builder()
+                .setName(eventName)
+                .setContent(content)
+                .setDurationInMinutes(duration)
+                .setArtistName(artistName)
+                .setDescription(description)
+                .setEventType(eventTypeConv)
+                .build();
+            return eventService.findAllFiltered(parameters);
         }
     }
 

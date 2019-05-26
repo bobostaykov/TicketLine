@@ -1,5 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.searchParameters;
 
+import io.swagger.annotations.ApiModelProperty;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -14,17 +16,16 @@ public class ShowSearchParametersDTO {
     private String hallName;
     private Integer durationInMinutes;
 
-    public ShowSearchParametersDTO(LocalDate dateFrom, LocalDate dateTo, LocalTime timeFrom, LocalTime timeTo, Integer priceInEuroFrom, Integer priceInEuroTo, String eventName, String hallName,Integer durationInMinutes) {
-        this.dateFrom = dateFrom;
-        this.dateTo = dateTo;
-        this.timeFrom = timeFrom;
-        this.timeTo = timeTo;
-        this.priceInEuroFrom = priceInEuroFrom;
-        this.priceInEuroTo = priceInEuroTo;
-        this.eventName = eventName;
-        this.hallName = hallName;
-        this.durationInMinutes = durationInMinutes;
-    }
+    @ApiModelProperty(name = "The Country of the Location")
+    private String country;
+    @ApiModelProperty(name = "The city of the location")
+    private String city;
+    @ApiModelProperty(name = "the postal Code of the location")
+    private String postalCode;
+    @ApiModelProperty(name = "the street of the Location")
+    private String street;
+
+
 
 
     public LocalDate getDateFrom() {
@@ -97,6 +98,38 @@ public class ShowSearchParametersDTO {
         return durationInMinutes;
     }
 
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getPostalCode() {
+        return postalCode;
+    }
+
+    public void setPostalCode(String postalCode) {
+        this.postalCode = postalCode;
+    }
+
+    public String getStreet() {
+        return street;
+    }
+
+    public void setStreet(String street) {
+        this.street = street;
+    }
+
     public void setDurationInMinutes(Integer durationInMinutes) {
         this.durationInMinutes = durationInMinutes;
     }
@@ -111,6 +144,10 @@ public class ShowSearchParametersDTO {
         private String eventName;
         private String hallName;
         private Integer durationInMinutes;
+        private String country;
+        private String city;
+        private String postalCode;
+        private String street;
 
         public builder(){}
 
@@ -157,9 +194,42 @@ public class ShowSearchParametersDTO {
             this.durationInMinutes = durationInMinutes;
             return this;
         }
+        public builder country(String country){
+            this.country = country;
+            return this;
+        }
+
+        public builder city (String city){
+            this.city = city;
+            return this;
+        }
+
+        public builder postalcode (String postalCode){
+            this.postalCode = postalCode;
+            return this;
+        }
+
+        public builder street (String street){
+            this.street = street;
+            return this;
+        }
 
         public ShowSearchParametersDTO build() {
-            return new ShowSearchParametersDTO(dateFrom, dateTo, timeFrom, timeTo, priceInEuroFrom, priceInEuroTo, eventName, hallName, durationInMinutes);
+            ShowSearchParametersDTO parametersDTO = new ShowSearchParametersDTO();
+            parametersDTO.setDateFrom(dateFrom);
+            parametersDTO.setDateTo(dateTo);
+            parametersDTO.setDurationInMinutes(durationInMinutes);
+            parametersDTO.setEventName(eventName);
+            parametersDTO.setTimeTo(timeTo);
+            parametersDTO.setTimeFrom(timeFrom);
+            parametersDTO.setCountry(country);
+            parametersDTO.setStreet(street);
+            parametersDTO.setCity(city);
+            parametersDTO.setPostalCode(postalCode);
+            parametersDTO.setHallName(hallName);
+            parametersDTO.setPriceInEuroFrom(priceInEuroFrom);
+            parametersDTO.setPriceInEuroTo(priceInEuroTo);
+            return parametersDTO;
         }
 
     }
@@ -176,6 +246,10 @@ public class ShowSearchParametersDTO {
             (eventName != null ? " eventName='" + eventName + '\'': "") +
             (hallName != null ? " hallName='" + hallName + '\'' : "")  +
             (durationInMinutes != null ? " durationInMinutes=" + durationInMinutes : "") +
+            (country != null ? " country = " + country : "") +
+            (city != null ? "city = " + city : "") +
+            (postalCode != null ? "postalcode = " + postalCode : "") +
+            (street != null ? "street = " + street : "") +
             '}';
     }
 }

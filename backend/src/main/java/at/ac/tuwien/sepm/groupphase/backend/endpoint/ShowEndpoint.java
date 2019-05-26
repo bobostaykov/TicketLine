@@ -17,6 +17,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 //TODO Class is unfinished
@@ -27,7 +28,9 @@ import java.util.List;
 public class ShowEndpoint {
 
     private final ShowService showService;
-        private final Logger LOGGER = LoggerFactory.getLogger(getClass());
+    private final Logger LOGGER = LoggerFactory.getLogger(getClass());
+    private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+    private final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
 
     ShowEndpoint(ShowService showService){
         this.showService = showService;
@@ -68,7 +71,7 @@ public class ShowEndpoint {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No shows for that location were found:" + e.getMessage(), e);
         }
     }
-*/
+
 
     // OK
     @RequestMapping(value = "/filter", method = RequestMethod.GET)
@@ -82,32 +85,41 @@ public class ShowEndpoint {
         @RequestParam(value="dateFrom", required = false) String dateFrom,
         @RequestParam(value="dateTo", required = false) String dateTo,
         @RequestParam(value="timeFrom", required = false) String timeFrom,
-        @RequestParam(value="timeTo", required = false) String timeTo
+        @RequestParam(value="timeTo", required = false) String timeTo,
+        @RequestParam(value = "country", required = false) String country,
+        @RequestParam(value = "city", required = false) String city,
+        @RequestParam(value = "postalcode", required = false) String postalcode,
+        @RequestParam(value = "street", required = false) String street)
         //@RequestParam(value="dateFrom", required = false) @DateTimeFormat(iso= DateTimeFormat.ISO.DATE) LocalDateTime dateFrom,
         //@RequestParam(value="dateTo", required = false) @DateTimeFormat(iso= DateTimeFormat.ISO.DATE) LocalDateTime dateTo,
         //@RequestParam(value="timeFrom", required = false) @DateTimeFormat(pattern="HHmm") LocalDateTime timeFrom,
         //@RequestParam(value="timeTo", required = false) @DateTimeFormat(pattern="HHmm") LocalDateTime timeTo,
-
-    ){
+    {
         boolean filterData = (
             dateFrom == null && dateTo == null &&
                 timeFrom == null && timeTo == null &&
-                priceInEuroFrom == null && priceInEuroTo == null &&
-                eventName == null && hallName == null);
+                minPrice == null && maxPrice == null &&
+                eventName == null && hallName == null &&
+                country == null && city == null
+                && postalcode == null && street == null);
         try {
             if (filterData) {
                 LOGGER.info("Get all shows");
                 return showService.findAllShows();
             } else {
                 ShowSearchParametersDTO parameters = new ShowSearchParametersDTO.builder()
-                    .setDateFrom(dateFrom)
-                    .setDateTo(dateTo)
-                    .setTimeFrom(timeFrom)
-                    .setTimeTo(timeTo)
-                    .setPriceInEuroFrom(priceInEuroFrom)
-                    .setPriceInEuroTo(priceInEuroTo)
+                    .setDateFrom(LocalDate.parse(dateFrom, dateFormatter))
+                    .setDateTo(LocalDate.parse(dateTo, dateFormatter))
+                    .setTimeFrom(LocalTime.parse(timeFrom, timeFormatter))
+                    .setTimeTo(LocalTime.parse(timeFrom, timeFormatter))
+                    .setPriceInEuroFrom(minPrice)
+                    .setPriceInEuroTo(maxPrice)
                     .setEventName(eventName)
                     .setHallName(hallName)
+                    .country(country)
+                    .city(city)
+                    .street(street)
+                    .postalcode(postalcode)
                     .build();
                 LOGGER.info("Get all shows filtered by specified attributes: " + parameters.toString());
 
@@ -122,6 +134,7 @@ public class ShowEndpoint {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No shows are found for the given parameters:" + e.getMessage(), e);
         }
     }
+}
 /*
     @RequestMapping(value = "/location", method = RequestMethod.GET)
     @ApiOperation(value = "Get all shows filtered by location parameters", authorizations = {@Authorization(value = "apiKey")})
@@ -167,3 +180,5 @@ public class ShowEndpoint {
         }
     }
 }
+
+ */

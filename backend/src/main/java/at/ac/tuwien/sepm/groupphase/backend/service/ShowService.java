@@ -60,7 +60,7 @@ public interface ShowService {
      */
     List<ShowDTO> findAllShows() throws ServiceException;
 
-    /*
+    /**
      * Finds all shows filtered by country, city , postal code and street
      *
      * @param country the name of the country in which the show takes place
@@ -69,6 +69,6 @@ public interface ShowService {
      * @param street the street where the show takes place
      * @return a list of found shows matching the criteria
      */
-    //List<Show> findAllShowsFilteredByLocation(String country, String city, String postalcode, String street);
+    List<ShowDTO> findAllShowsFilteredByLocation(String country, String city, String postalcode, String street);
 
 }

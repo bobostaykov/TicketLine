@@ -4,6 +4,8 @@ import at.ac.tuwien.sepm.groupphase.backend.datatype.EventType;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.event.EventDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.event.EventTicketsDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.searchParameters.EventSearchParametersDTO;
+import at.ac.tuwien.sepm.groupphase.backend.entity.EventTickets;
+import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.event.EventMapper;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.event.EventTicketsMapper;
 import at.ac.tuwien.sepm.groupphase.backend.repository.EventRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.EventService;
@@ -31,6 +33,7 @@ public class EventServiceImpl implements EventService {
         this.eventTicketsMapper = eventTicketsMapper;
     }
 
+
     @Override
     public List<EventTicketsDTO> findTopTenEvents(Set<String> monthsSet, Set<EventType> categoriesSet) {
         LOGGER.info("Event Service: findTopTenEvents");
@@ -57,4 +60,6 @@ public class EventServiceImpl implements EventService {
         LOGGER.info("Event Service: findEventsFilteredByArtistID");
         return eventMapper.eventToEventDTO(eventRepository.findAllByArtist_Id(id));
     }
+
+
 }

@@ -2,6 +2,7 @@ package at.ac.tuwien.sepm.groupphase.backend.service.implementation;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.searchParameters.ShowSearchParametersDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.show.ShowDTO;
+import at.ac.tuwien.sepm.groupphase.backend.entity.Show;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.show.ShowMapper;
 import at.ac.tuwien.sepm.groupphase.backend.repository.ShowRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.ShowService;
@@ -26,6 +27,11 @@ public class ShowServiceImpl implements ShowService {
     ShowServiceImpl(ShowRepository showRepository, ShowMapper showMapper) {
         this.showRepository = showRepository;
         this.showMapper = showMapper;
+    }
+
+    @Override
+    public List<ShowDTO> findAllShows() throws at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException {
+        return showMapper.showToShowDTO(showRepository.findAll());
     }
 
     @Override
@@ -70,16 +76,11 @@ public class ShowServiceImpl implements ShowService {
 
     }
 
-    @Override
-    public List<Show> findAllShowsFiltered(LocalDateTime dateFrom, LocalDateTime dateTo, LocalDateTime timeFrom, LocalDateTime timeTo, Integer priceInEuroFrom, Integer priceInEuroTo, String eventName, String hallName) {
-        LOGGER.info("Find all shows filtered by date, time, price, event or hall");
-        return null;
-    }
 
     @Override
-    public List<Show> findAllShowsFilteredByLocation(String country, String city, String postalcode, String street) {
+    public List<ShowDTO> findAllShowsFilteredByLocation(String country, String city, String postalcode, String street) {
         LOGGER.info("Find all shows filtered by location");
         return null;
     }
-     */
+
 }
