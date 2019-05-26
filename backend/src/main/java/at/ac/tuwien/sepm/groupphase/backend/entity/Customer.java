@@ -10,7 +10,7 @@ public class Customer {
     @SequenceGenerator(name = "seq_customer_id", sequenceName = "seq_customer_id")
     private Long id;
 
-    @Column(nullable = false, name = "username")
+    @Column(nullable = false, name = "name")
     private String name;
 
     @Column(nullable = false, name = "firstname")
