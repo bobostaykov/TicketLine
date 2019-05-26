@@ -38,5 +38,10 @@ public class LocationServiceImpl implements LocationService {
         }catch (PersistenceException e){
             throw new ServiceException(e.getMessage(), e);
         }
+
+    @Override
+    public List<LocationDTO> findAllLocations() {
+        LOGGER.info("Retrieving a list of all locations from repository");
+        return locationMapper.locationListToLocationDTOs(locationRepository.findAll());
     }
 }

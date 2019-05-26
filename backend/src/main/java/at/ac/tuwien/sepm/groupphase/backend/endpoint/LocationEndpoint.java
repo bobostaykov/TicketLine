@@ -54,5 +54,17 @@ public class LocationEndpoint {
         } catch (NotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No locations are found for the given parameters:" + e.getMessage(), e);
         }
+    private final LocationService locationService;
+    private final Logger LOGGER = LoggerFactory.getLogger(getClass());
+
+    public LocationEndpoint(LocationService locationService){
+        this.locationService = locationService;
+    }
+
+    @RequestMapping(method = RequestMethod.GET)
+    @ApiOperation(value = "Get all saved halls", authorizations = {@Authorization(value = "apiKey")})
+    public List<LocationDTO> getLocations(){
+        LOGGER.info("Getting all locations");
+        return locationService.findAllLocations();
     }
 }

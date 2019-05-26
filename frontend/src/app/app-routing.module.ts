@@ -13,6 +13,7 @@ import {ArtistResultsComponent} from './components/search-results/artists/artist
 import {EventsComponent} from './components/events/start page/events.component';
 import {LocationsComponent} from './components/search-results/locations/locations.component';
 import {EventResultsComponent} from './components/search-results/events/event-results.component';
+import {FloorplanControlComponent} from './components/floorplan-control/floorplan-control.component';
 
 // TODO Refactor Names: ShowComponent -> ShowResultsComponent; the same for LocationComponent; in Service as well
 const routes: Routes = [
@@ -28,6 +29,7 @@ const routes: Routes = [
   {path: 'events/search/results/shows', canActivate: [AuthGuard], component: ShowComponent},
   {path: 'events/search/results/locations', canActivate: [AuthGuard], component: LocationsComponent},
   {path: 'events/search/results/events', canActivate: [AuthGuard], component: EventResultsComponent}
+  {path: 'floorplan', canActivate: [AuthGuard], component: FloorplanControlComponent}
 ];
 
 @NgModule({

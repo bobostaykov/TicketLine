@@ -26,6 +26,8 @@ import { EventsComponent } from './components/events/start page/events.component
 import { LocationsComponent } from './components/search-results/locations/locations.component';
 import { Ng5SliderModule } from 'ng5-slider';
 import { EventResultsComponent } from './components/search-results/events/event-results.component';
+import {FloorplanControlComponent} from './components/floorplan-control/floorplan-control.component';
+import {FloorplanComponent} from './components/floorplan/floorplan.component';
 
 @NgModule({
   declarations: [
@@ -44,6 +46,8 @@ import { EventResultsComponent } from './components/search-results/events/event-
     EventsComponent,
     LocationsComponent,
     EventResultsComponent,
+    FloorplanControlComponent,
+    FloorplanComponent
   ],
   imports: [
     BrowserModule,
