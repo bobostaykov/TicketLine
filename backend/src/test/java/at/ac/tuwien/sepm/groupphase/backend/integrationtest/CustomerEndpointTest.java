@@ -34,7 +34,7 @@ public class CustomerEndpointTest extends BaseIntegrationTest {
     private static final long TEST_CUSTOMER_ID = 1L;
 
     private static final String CUSTOMER_FILTERED_ID = "/customers?id=1";
-    private static final String CUSTOMER_FILTERED_NAME = "/customers?username=ller";
+    private static final String CUSTOMER_FILTERED_NAME = "/customers?name=ller";
     private static final String CUSTOMER_FILTERED_FIRSTNAME = "/customers?firstname=etr";
     private static final String CUSTOMER_FILTERED_EMAIL = "/customers?email=ller@gmail.co";
     private static final String CUSTOMER_FILTERED_BIRTHDAY = "/customers?birthday=22.07.1982";
