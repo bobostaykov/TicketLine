@@ -63,15 +63,13 @@ public class EventEndpoint {
         } else {
             LOGGER.info("Event Endpoint: findEventsFilteredByAttributes");
             LOGGER.debug(eventName);
-            EventType et = EventType.valueOf(eventType);
-            LOGGER.debug(et.toString());
             LOGGER.debug(content);
             LOGGER.debug(description);
             EventType eventTypeConv = null;
             if (eventType != null) {
                 for (EventType type : EventType.values()
                 ) {
-                    if (eventType.equals(type)) {
+                    if (eventType.equalsIgnoreCase(type.name())) {
                         eventTypeConv = type;
                     }
 
