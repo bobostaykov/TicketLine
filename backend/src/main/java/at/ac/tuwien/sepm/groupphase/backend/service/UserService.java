@@ -5,6 +5,7 @@ import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UserService {
 
@@ -39,5 +40,13 @@ public interface UserService {
      * @param userId id of user to delete
      */
     void deleteUser(Long userId) throws ServiceException;
+
+    /**
+     * Find user by username.
+     *
+     * @param username name of user
+     * @return found user
+     */
+    UserDTO findOneByUsername(String username);
 
 }

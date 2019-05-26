@@ -1,6 +1,6 @@
 export enum ResultsFor {
-  'EVENT',
-  'LOCATION',
-  'ARTIST',
-  'ATTRIBUTES'
+  EVENT,
+  LOCATION,
+  ARTIST,
+  ATTRIBUTES
 }

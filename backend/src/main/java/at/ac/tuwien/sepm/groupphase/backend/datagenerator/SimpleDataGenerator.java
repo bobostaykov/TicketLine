@@ -8,8 +8,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -21,7 +22,8 @@ import java.util.*;
 public class SimpleDataGenerator {
 
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
-    private final DateTimeFormatter formatter;
+    private final DateTimeFormatter dateFormatter;
+    private final DateTimeFormatter timeFormatter;
 
     private EventRepository eventRepository;
     private ShowRepository showRepository;
@@ -35,11 +37,13 @@ public class SimpleDataGenerator {
         this.showRepository = showRepository;
         this.hallRepository = hallRepository;
         this.locationRepository = locationRepository;
-        formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
+        dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
     }
 
     //@PostConstruct
     public void generateData() {
+        /*
         if (eventRepository.count() > 0 || showRepository.count() > 0 || artistRepository.count() > 0) {
             LOGGER.info("Data already generated");
         } else {
@@ -163,6 +167,7 @@ public class SimpleDataGenerator {
                 add(event37);
             }});
             */
+        /*
             event1.setArtist(artist1);
             event3.setArtist(artist1);
             event4.setArtist(artist1);
@@ -195,65 +200,65 @@ public class SimpleDataGenerator {
             event39.setArtist(artist11);
             event40.setArtist(artist10);
 
-            Show show1 = Show.builder().id(1L).durationInMinutes(180).ticketsSold(10000L).dateTime(LocalDateTime.parse("09-10-2019 10:30", formatter)).description("description").build();
-            Show show2 = Show.builder().id(2L).durationInMinutes(200).ticketsSold(2000L).dateTime(LocalDateTime.parse("15-11-2019 20:30", formatter)).description("description").build();
-            Show show3 = Show.builder().id(3L).durationInMinutes(100).ticketsSold(1500L).dateTime(LocalDateTime.parse("14-08-2019 17:30", formatter)).description("description").build();
-            Show show4 = Show.builder().id(4L).durationInMinutes(50).ticketsSold(150L).dateTime(LocalDateTime.parse("07-07-2019 19:00", formatter)).description("description").build();
-            Show show5 = Show.builder().id(5L).durationInMinutes(60).ticketsSold(200L).dateTime(LocalDateTime.parse("01-01-2019 19:30", formatter)).description("description").build();
+            Show show1 = Show.builder().id(1L).durationInMinutes(180).ticketsSold(10000L).date(LocalDate.parse("09-10-2019", dateFormatter)).time(LocalTime.parse( "10:30", timeFormatter)).description("description").build();
+            Show show2 = Show.builder().id(2L).durationInMinutes(200).ticketsSold(2000L).date(LocalDate.parse("15-11-2019", dateFormatter)).time(LocalTime.parse( "20:30", timeFormatter)).description("description").build();
+            Show show3 = Show.builder().id(3L).durationInMinutes(100).ticketsSold(1500L).date(LocalDate.parse("14-08-2019", dateFormatter)).time(LocalTime.parse( "17:30", timeFormatter)).description("description").build();
+            Show show4 = Show.builder().id(4L).durationInMinutes(50).ticketsSold(150L).date(LocalDate.parse("07-07-2019", dateFormatter)).time(LocalTime.parse( "19:00", timeFormatter)).description("description").build();
+            Show show5 = Show.builder().id(5L).durationInMinutes(60).ticketsSold(200L).date(LocalDate.parse("01-01-2019", dateFormatter)).time(LocalTime.parse( "19:30", timeFormatter)).description("description").build();
 
-            Show show6 = Show.builder().id(6L).durationInMinutes(110).ticketsSold(1000L).dateTime(LocalDateTime.parse("17-09-2029 21:00", formatter)).description("description").build();
-            Show show7 = Show.builder().id(7L).durationInMinutes(120).ticketsSold(500L).dateTime(LocalDateTime.parse("19-02-2019 23:00", formatter)).description("description").build();
-            Show show8 = Show.builder().id(8L).durationInMinutes(40).ticketsSold(400L).dateTime(LocalDateTime.parse("04-04-2019 23:30", formatter)).description("description").build();
-            Show show9 = Show.builder().id(9L).durationInMinutes(130).ticketsSold(500L).dateTime(LocalDateTime.parse("22-06-2019 14:30", formatter)).description("description").build();
-            Show show10 = Show.builder().id(10L).durationInMinutes(130).ticketsSold(500L).dateTime(LocalDateTime.parse("29-12-2019 15:30", formatter)).description("description").build();
+            Show show6 = Show.builder().id(6L).durationInMinutes(110).ticketsSold(1000L).date(LocalDate.parse("17-09-2029", dateFormatter)).time(LocalTime.parse( "21:00", timeFormatter)).description("description").build();
+            Show show7 = Show.builder().id(7L).durationInMinutes(120).ticketsSold(500L).date(LocalDate.parse("19-02-2019", dateFormatter)).time(LocalTime.parse( "23:00", timeFormatter)).description("description").build();
+            Show show8 = Show.builder().id(8L).durationInMinutes(40).ticketsSold(400L).date(LocalDate.parse("04-04-2019", dateFormatter)).time(LocalTime.parse( "23:30", timeFormatter)).description("description").build();
+            Show show9 = Show.builder().id(9L).durationInMinutes(130).ticketsSold(500L).date(LocalDate.parse("22-06-2019", dateFormatter)).time(LocalTime.parse( "14:30", timeFormatter)).description("description").build();
+            Show show10 = Show.builder().id(10L).durationInMinutes(130).ticketsSold(500L).date(LocalDate.parse("29-12-2019", dateFormatter)).time(LocalTime.parse( "15:30", timeFormatter)).description("description").build();
 
-            Show show11 = Show.builder().id(11L).durationInMinutes(100).ticketsSold(2000L).dateTime(LocalDateTime.parse("16-07-2019 10:30", formatter)).description("description").build();
-            Show show12 = Show.builder().id(12L).durationInMinutes(110).ticketsSold(1800L).dateTime(LocalDateTime.parse("04-12-2019 12:00", formatter)).description("description").build();
-            Show show13 = Show.builder().id(13L).durationInMinutes(120).ticketsSold(1200L).dateTime(LocalDateTime.parse("03-11-2019 12:30", formatter)).description("description").build();
-            Show show14 = Show.builder().id(14L).durationInMinutes(90).ticketsSold(1400L).dateTime(LocalDateTime.parse("17-02-2019 13:00", formatter)).description("description").build();
-            Show show15 = Show.builder().id(15L).durationInMinutes(70).ticketsSold(100L).dateTime(LocalDateTime.parse("23-02-2019 15:00", formatter)).description("description").build();
+            Show show11 = Show.builder().id(11L).durationInMinutes(100).ticketsSold(2000L).date(LocalDate.parse("16-07-2019", dateFormatter)).time(LocalTime.parse( "10:30", timeFormatter)).description("description").build();
+            Show show12 = Show.builder().id(12L).durationInMinutes(110).ticketsSold(1800L).date(LocalDate.parse("04-12-2019", dateFormatter)).time(LocalTime.parse( "12:00", timeFormatter)).description("description").build();
+            Show show13 = Show.builder().id(13L).durationInMinutes(120).ticketsSold(1200L).date(LocalDate.parse("03-11-2019", dateFormatter)).time(LocalTime.parse( "12:30", timeFormatter)).description("description").build();
+            Show show14 = Show.builder().id(14L).durationInMinutes(90).ticketsSold(1400L).date(LocalDate.parse("17-02-2019", dateFormatter)).time(LocalTime.parse( "13:00", timeFormatter)).description("description").build();
+            Show show15 = Show.builder().id(15L).durationInMinutes(70).ticketsSold(100L).date(LocalDate.parse("23-02-2019", dateFormatter)).time(LocalTime.parse( "15:00", timeFormatter)).description("description").build();
 
-            Show show16 = Show.builder().id(16L).durationInMinutes(70).ticketsSold(200L).dateTime(LocalDateTime.parse("28-07-2019 17:30", formatter)).description("description").build();
-            Show show17 = Show.builder().id(17L).durationInMinutes(80).ticketsSold(400L).dateTime(LocalDateTime.parse("30-08-2019 15:00", formatter)).description("description").build();
-            Show show18 = Show.builder().id(18L).durationInMinutes(80).ticketsSold(100L).dateTime(LocalDateTime.parse("30-03-2019 11:00", formatter)).description("description").build();
-            Show show19 = Show.builder().id(19L).durationInMinutes(80).ticketsSold(500L).dateTime(LocalDateTime.parse("11-05-2019 19:00", formatter)).description("description").build();
-            Show show20 = Show.builder().id(20L).durationInMinutes(80).ticketsSold(500L).dateTime(LocalDateTime.parse("06-01-2019 21:30", formatter)).description("description").build();
+            Show show16 = Show.builder().id(16L).durationInMinutes(70).ticketsSold(200L).date(LocalDate.parse("28-07-2019", dateFormatter)).time(LocalTime.parse( "17:30", timeFormatter)).description("description").build();
+            Show show17 = Show.builder().id(17L).durationInMinutes(80).ticketsSold(400L).date(LocalDate.parse("30-08-2019", dateFormatter)).time(LocalTime.parse( "15:00", timeFormatter)).description("description").build();
+            Show show18 = Show.builder().id(18L).durationInMinutes(80).ticketsSold(100L).date(LocalDate.parse("30-03-2019", dateFormatter)).time(LocalTime.parse( "11:00", timeFormatter)).description("description").build();
+            Show show19 = Show.builder().id(19L).durationInMinutes(80).ticketsSold(500L).date(LocalDate.parse("11-05-2019", dateFormatter)).time(LocalTime.parse( "19:30", timeFormatter)).description("description").build();
+            Show show20 = Show.builder().id(20L).durationInMinutes(80).ticketsSold(500L).date(LocalDate.parse("06-01-2019", dateFormatter)).time(LocalTime.parse( "21:30", timeFormatter)).description("description").build();
 
-            Show show21 = Show.builder().id(21L).durationInMinutes(190).ticketsSold(12000L).dateTime(LocalDateTime.parse("05-02-2020 21:00", formatter)).description("description").build();
-            Show show22 = Show.builder().id(22L).durationInMinutes(200).ticketsSold(25000L).dateTime(LocalDateTime.parse("19-03-2020 23:30", formatter)).description("description").build();
-            Show show23 = Show.builder().id(23L).durationInMinutes(150).ticketsSold(1000L).dateTime(LocalDateTime.parse("24-04-2020 23:30", formatter)).description("description").build();
-            Show show24 = Show.builder().id(24L).durationInMinutes(160).ticketsSold(11000L).dateTime(LocalDateTime.parse("22-08-2020 23:00", formatter)).description("description").build();
-            Show show25 = Show.builder().id(25L).durationInMinutes(130).ticketsSold(1800L).dateTime(LocalDateTime.parse("23-11-2020 18:30", formatter)).description("description").build();
+            Show show21 = Show.builder().id(21L).durationInMinutes(190).ticketsSold(12000L).date(LocalDate.parse("05-02-2020", dateFormatter)).time(LocalTime.parse( "21:00", timeFormatter)).description("description").build();
+            Show show22 = Show.builder().id(22L).durationInMinutes(200).ticketsSold(25000L).date(LocalDate.parse("19-03-2020", dateFormatter)).time(LocalTime.parse( "23:30", timeFormatter)).description("description").build();
+            Show show23 = Show.builder().id(23L).durationInMinutes(150).ticketsSold(1000L).date(LocalDate.parse("24-04-2020", dateFormatter)).time(LocalTime.parse( "23:30", timeFormatter)).description("description").build();
+            Show show24 = Show.builder().id(24L).durationInMinutes(160).ticketsSold(11000L).date(LocalDate.parse("22-08-2020", dateFormatter)).time(LocalTime.parse( "23:00", timeFormatter)).description("description").build();
+            Show show25 = Show.builder().id(25L).durationInMinutes(130).ticketsSold(1800L).date(LocalDate.parse("23-11-2020", dateFormatter)).time(LocalTime.parse( "18:30", timeFormatter)).description("description").build();
 
-            Show show26 = Show.builder().id(26L).durationInMinutes(180).ticketsSold(1000L).dateTime(LocalDateTime.parse("09-10-2020 10:30", formatter)).description("description").build();
-            Show show27 = Show.builder().id(27L).durationInMinutes(200).ticketsSold(2500L).dateTime(LocalDateTime.parse("15-11-2020 20:30", formatter)).description("description").build();
-            Show show28 = Show.builder().id(28L).durationInMinutes(100).ticketsSold(1700L).dateTime(LocalDateTime.parse("14-08-2020 17:30", formatter)).description("description").build();
-            Show show29 = Show.builder().id(29L).durationInMinutes(50).ticketsSold(100L).dateTime(LocalDateTime.parse("07-07-2020 19:00", formatter)).description("description").build();
-            Show show30 = Show.builder().id(30L).durationInMinutes(60).ticketsSold(150L).dateTime(LocalDateTime.parse("01-01-2020 19:30", formatter)).description("description").build();
+            Show show26 = Show.builder().id(26L).durationInMinutes(180).ticketsSold(1000L).date(LocalDate.parse("09-10-2020", dateFormatter)).time(LocalTime.parse( "10:30", timeFormatter)).description("description").build();
+            Show show27 = Show.builder().id(27L).durationInMinutes(200).ticketsSold(2500L).date(LocalDate.parse("15-11-2020", dateFormatter)).time(LocalTime.parse( "20:30", timeFormatter)).description("description").build();
+            Show show28 = Show.builder().id(28L).durationInMinutes(100).ticketsSold(1700L).date(LocalDate.parse("14-08-2020", dateFormatter)).time(LocalTime.parse( "17:30", timeFormatter)).description("description").build();
+            Show show29 = Show.builder().id(29L).durationInMinutes(50).ticketsSold(100L).date(LocalDate.parse("07-07-2020", dateFormatter)).time(LocalTime.parse( "19:00", timeFormatter)).description("description").build();
+            Show show30 = Show.builder().id(30L).durationInMinutes(60).ticketsSold(150L).date(LocalDate.parse("01-01-2020", dateFormatter)).time(LocalTime.parse( "19:30", timeFormatter)).description("description").build();
 
-            Show show31 = Show.builder().id(31L).durationInMinutes(110).ticketsSold(1700L).dateTime(LocalDateTime.parse("17-09-2020 21:00", formatter)).description("description").build();
-            Show show32 = Show.builder().id(32L).durationInMinutes(120).ticketsSold(550L).dateTime(LocalDateTime.parse("19-02-2020 23:00", formatter)).description("description").build();
-            Show show33 = Show.builder().id(33L).durationInMinutes(40).ticketsSold(450L).dateTime(LocalDateTime.parse("04-04-2020 23:30", formatter)).description("description").build();
-            Show show34 = Show.builder().id(34L).durationInMinutes(130).ticketsSold(550L).dateTime(LocalDateTime.parse("22-06-2020 14:30", formatter)).description("description").build();
-            Show show35 = Show.builder().id(35L).durationInMinutes(130).ticketsSold(50L).dateTime(LocalDateTime.parse("29-12-2020 15:30", formatter)).description("description").build();
+            Show show31 = Show.builder().id(31L).durationInMinutes(110).ticketsSold(1700L).date(LocalDate.parse("17-09-2020", dateFormatter)).time(LocalTime.parse( "21:00", timeFormatter)).description("description").build();
+            Show show32 = Show.builder().id(32L).durationInMinutes(120).ticketsSold(550L).date(LocalDate.parse("19-02-2020", dateFormatter)).time(LocalTime.parse( "23:00", timeFormatter)).description("description").build();
+            Show show33 = Show.builder().id(33L).durationInMinutes(40).ticketsSold(450L).date(LocalDate.parse("04-04-2020", dateFormatter)).time(LocalTime.parse( "23:30", timeFormatter)).description("description").build();
+            Show show34 = Show.builder().id(34L).durationInMinutes(130).ticketsSold(550L).date(LocalDate.parse("22-06-2020", dateFormatter)).time(LocalTime.parse( "14:30", timeFormatter)).description("description").build();
+            Show show35 = Show.builder().id(35L).durationInMinutes(130).ticketsSold(50L).date(LocalDate.parse("29-12-2020", dateFormatter)).time(LocalTime.parse( "15:30", timeFormatter)).description("description").build();
 
-            Show show36 = Show.builder().id(36L).durationInMinutes(100).ticketsSold(200L).dateTime(LocalDateTime.parse("16-07-2020 10:30", formatter)).description("description").build();
-            Show show37 = Show.builder().id(37L).durationInMinutes(110).ticketsSold(180L).dateTime(LocalDateTime.parse("04-12-2020 12:00", formatter)).description("description").build();
-            Show show38 = Show.builder().id(38L).durationInMinutes(120).ticketsSold(120L).dateTime(LocalDateTime.parse("03-11-2020 12:30", formatter)).description("description").build();
-            Show show39 = Show.builder().id(39L).durationInMinutes(90).ticketsSold(140L).dateTime(LocalDateTime.parse("17-02-2020 13:00", formatter)).description("description").build();
-            Show show40 = Show.builder().id(40L).durationInMinutes(70).ticketsSold(190L).dateTime(LocalDateTime.parse("23-02-2020 15:00", formatter)).description("description").build();
+            Show show36 = Show.builder().id(36L).durationInMinutes(100).ticketsSold(200L).date(LocalDate.parse("16-07-2020", dateFormatter)).time(LocalTime.parse( "10:30", timeFormatter)).description("description").build();
+            Show show37 = Show.builder().id(37L).durationInMinutes(110).ticketsSold(180L).date(LocalDate.parse("04-12-2020", dateFormatter)).time(LocalTime.parse( "12:00", timeFormatter)).description("description").build();
+            Show show38 = Show.builder().id(38L).durationInMinutes(120).ticketsSold(120L).date(LocalDate.parse("03-11-2020", dateFormatter)).time(LocalTime.parse( "12:30", timeFormatter)).description("description").build();
+            Show show39 = Show.builder().id(39L).durationInMinutes(90).ticketsSold(140L).date(LocalDate.parse("17-02-2020", dateFormatter)).time(LocalTime.parse( "13:00", timeFormatter)).time(LocalTime.parse( "10:30", timeFormatter)).description("description").build();
+            Show show40 = Show.builder().id(40L).durationInMinutes(70).ticketsSold(190L).date(LocalDate.parse("23-02-2020", dateFormatter)).time(LocalTime.parse( "15:00", timeFormatter)).description("description").build();
 
-            Show show41 = Show.builder().id(41L).durationInMinutes(70).ticketsSold(210L).dateTime(LocalDateTime.parse("28-07-2020 17:30", formatter)).description("description").build();
-            Show show42 = Show.builder().id(42L).durationInMinutes(80).ticketsSold(440L).dateTime(LocalDateTime.parse("30-08-2020 15:00", formatter)).description("description").build();
-            Show show43 = Show.builder().id(43L).durationInMinutes(80).ticketsSold(150L).dateTime(LocalDateTime.parse("30-03-2020 11:00", formatter)).description("description").build();
-            Show show44 = Show.builder().id(44L).durationInMinutes(80).ticketsSold(590L).dateTime(LocalDateTime.parse("11-05-2020 19:00", formatter)).description("description").build();
-            Show show45 = Show.builder().id(45L).durationInMinutes(80).ticketsSold(520L).dateTime(LocalDateTime.parse("06-01-2020 21:30", formatter)).description("description").build();
+            Show show41 = Show.builder().id(41L).durationInMinutes(70).ticketsSold(210L).date(LocalDate.parse("28-07-2020", dateFormatter)).time(LocalTime.parse( "17:30", timeFormatter)).description("description").build();
+            Show show42 = Show.builder().id(42L).durationInMinutes(80).ticketsSold(440L).date(LocalDate.parse("30-08-2020", dateFormatter)).time(LocalTime.parse( "15:00", timeFormatter)).description("description").build();
+            Show show43 = Show.builder().id(43L).durationInMinutes(80).ticketsSold(150L).date(LocalDate.parse("30-03-2020", dateFormatter)).time(LocalTime.parse( "11:00", timeFormatter)).description("description").build();
+            Show show44 = Show.builder().id(44L).durationInMinutes(80).ticketsSold(590L).date(LocalDate.parse("11-05-2020", dateFormatter)).time(LocalTime.parse( "19:00", timeFormatter)).description("description").build();
+            Show show45 = Show.builder().id(45L).durationInMinutes(80).ticketsSold(520L).date(LocalDate.parse("06-01-2020", dateFormatter)).time(LocalTime.parse( "21:30", timeFormatter)).description("description").build();
 
-            Show show46 = Show.builder().id(46L).durationInMinutes(190).ticketsSold(1200L).dateTime(LocalDateTime.parse("05-02-2019 21:00", formatter)).description("description").build();
-            Show show47 = Show.builder().id(47L).durationInMinutes(200).ticketsSold(2500L).dateTime(LocalDateTime.parse("19-03-2019 23:30", formatter)).description("description").build();
-            Show show48 = Show.builder().id(48L).durationInMinutes(150).ticketsSold(1800L).dateTime(LocalDateTime.parse("24-04-2019 23:30", formatter)).description("description").build();
-            Show show49 = Show.builder().id(49L).durationInMinutes(160).ticketsSold(1100L).dateTime(LocalDateTime.parse("22-08-2019 23:00", formatter)).description("description").build();
-            Show show50 = Show.builder().id(50L).durationInMinutes(130).ticketsSold(1800L).dateTime(LocalDateTime.parse("23-11-2019 18:30", formatter)).description("description").build();
+            Show show46 = Show.builder().id(46L).durationInMinutes(190).ticketsSold(1200L).date(LocalDate.parse("05-02-2019", dateFormatter)).time(LocalTime.parse( "21:00", timeFormatter)).description("description").build();
+            Show show47 = Show.builder().id(47L).durationInMinutes(200).ticketsSold(2500L).date(LocalDate.parse("19-03-2019", dateFormatter)).time(LocalTime.parse( "23:30", timeFormatter)).description("description").build();
+            Show show48 = Show.builder().id(48L).durationInMinutes(150).ticketsSold(1800L).date(LocalDate.parse("24-04-2019", dateFormatter)).time(LocalTime.parse( "23:30", timeFormatter)).description("description").build();
+            Show show49 = Show.builder().id(49L).durationInMinutes(160).ticketsSold(1100L).date(LocalDate.parse("22-08-2019", dateFormatter)).time(LocalTime.parse( "23:00", timeFormatter)).description("description").build();
+            Show show50 = Show.builder().id(50L).durationInMinutes(130).ticketsSold(1800L).date(LocalDate.parse("23-11-2019", dateFormatter)).time(LocalTime.parse( "18:30", timeFormatter)).description("description").build();
 
             show1.setEvent(event1);
             show2.setEvent(event3);
@@ -364,6 +369,7 @@ public class SimpleDataGenerator {
                 add(show23);
             }});
             */
+            /*
 
             Hall hall1 = Hall.builder().id(1L).name("Hall1").build();
             Hall hall2 = Hall.builder().id(2L).name("Hall2").build();
@@ -464,7 +470,8 @@ public class SimpleDataGenerator {
             locationRepository.saveAll(Arrays.asList(location1, location2, location3, location4, location5, location6, location7, location8, location9, location10));
             hallRepository.saveAll(Arrays.asList(hall1, hall2, hall3, hall4, hall5, hall6, hall7, hall8, hall9, hall10, hall11, hall12, hall13, hall14, hall15));
             showRepository.saveAll(Arrays.asList(show1, show2, show3, show4, show5, show6, show7, show8, show9, show10, show11, show12, show13, show14, show15, show16, show17, show18, show19, show20, show21, show22, show23, show24, show25, show26, show27, show28, show29, show30, show31, show32, show33, show34, show35, show36, show37, show38, show39, show40, show41, show42, show43, show44, show45, show46, show47, show48, show49, show50));
-        }
+
+        }*/
     }
 
 }

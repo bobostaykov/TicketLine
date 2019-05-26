@@ -4,7 +4,8 @@ import javax.persistence.*;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Objects;
 
 @Entity
@@ -19,12 +20,12 @@ public class Show {
     @JoinColumn(name = "event_id")
     private Event event;
 
-    @Column(nullable = false, name = "date_time")
-    private LocalDateTime dateTime;
+    @Column(nullable = false, name = "time")
+    private LocalTime time;
 
-    @Column(nullable = false, name = "duration")
-    @Positive
-    private Integer durationInMinutes;
+    @Column(nullable = false, name = "date")
+    private LocalDate date;
+
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "hall_id")
@@ -54,13 +55,15 @@ public class Show {
         this.event = event;
     }
 
-    public LocalDateTime getDateTime() {
-        return dateTime;
+    public LocalDate getDate() {return date;}
+
+    public void setDate(LocalDate date) {this.date = date;}
+
+    public LocalTime getTime() {
+        return time;
     }
 
-    public void setDateTime(LocalDateTime dateTime) {
-        this.dateTime = dateTime;
-    }
+    public void setTime(LocalTime time) {this.time = time;}
 
     public Hall getHall() {
         return hall;
@@ -78,15 +81,6 @@ public class Show {
         this.description = description;
     }
 
-    public Integer getDurationInMinutes() {
-        return durationInMinutes;
-    }
-
-    public void setDurationInMinutes(Integer durationInMinutes) {
-        this.durationInMinutes = durationInMinutes;
-    }
-
-
     public Long getTicketsSold() {
         return ticketsSold;
     }
@@ -99,43 +93,31 @@ public class Show {
         return new ShowBuilder();
     }
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Show show = (Show) o;
-        return id.equals(show.id) &&
-            event.equals(show.event) &&
-            dateTime.equals(show.dateTime) &&
-            durationInMinutes.equals(show.durationInMinutes) &&
-            hall.equals(show.hall) &&
+        return Objects.equals(id, show.id) &&
+            Objects.equals(event, show.event) &&
+            Objects.equals(time, show.time) &&
+            Objects.equals(date, show.date) &&
+            Objects.equals(hall, show.hall) &&
             Objects.equals(description, show.description) &&
-            ticketsSold.equals(show.ticketsSold);
+            Objects.equals(ticketsSold, show.ticketsSold);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, event, dateTime, durationInMinutes, ticketsSold, hall, description);
-    }
-
-    @Override
-    public String toString() {
-        return "Show{" +
-            "id=" + id +
-            ", event=" + event +
-            ", dateTime=" + dateTime +
-            ", durationInMinutes=" + durationInMinutes +
-            ", ticketsSold=" + ticketsSold +
-            ", hall=" + hall +
-            ", description='" + description + '\'' +
-            '}';
+        return Objects.hash(id, event, time, date, hall, description, ticketsSold);
     }
 
     public static final class ShowBuilder {
         private Long id;
         private Event event;
-        private LocalDateTime dateTime;
-        private Integer durationInMinutes;
+        private LocalDate date;
+        private LocalTime time;
         private Hall hall;
         private String description;
         private Long ticketsSold;
@@ -152,13 +134,14 @@ public class Show {
             return this;
         }
 
-        public ShowBuilder durationInMinutes(Integer durationInMinutes) {
-            this.durationInMinutes = durationInMinutes;
+
+        public ShowBuilder date(LocalDate date) {
+            this.date = date;
             return this;
         }
 
-        public ShowBuilder dateTime(LocalDateTime dateTime) {
-            this.dateTime = dateTime;
+        public ShowBuilder time(LocalTime time) {
+            this.time = time;
             return this;
         }
 
@@ -181,8 +164,8 @@ public class Show {
             Show show = new Show();
             show.setId(id);
             show.setEvent(event);
-            show.setDurationInMinutes(durationInMinutes);
-            show.setDateTime(dateTime);
+            show.setDate(date);
+            show.setTime(time);
             show.setHall(hall);
             show.setDescription(description);
             show.setTicketsSold(ticketsSold);

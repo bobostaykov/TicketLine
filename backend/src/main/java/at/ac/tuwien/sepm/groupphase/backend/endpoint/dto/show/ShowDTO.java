@@ -5,7 +5,9 @@ import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.hall.HallDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Objects;
 
 @ApiModel(value = "ShowDTO")
@@ -23,14 +25,19 @@ public class ShowDTO {
     @ApiModelProperty(name = "The number of tickets sold for that show")
     private Long ticketsSold;
 
-    @ApiModelProperty(name = "The date and time of the show")
-    private LocalDateTime dateTime;
+    @ApiModelProperty(name = "The date of the show")
+    private LocalDate date;
+
+    @ApiModelProperty(name = "The time of the show")
+    private LocalTime time;
 
     @ApiModelProperty(name = "The hall in which the show takes place")
     private HallDTO hall;
 
     @ApiModelProperty(name = "A description of the show")
     private String description;
+
+
 
     public Long getId() {
         return id;
@@ -48,13 +55,24 @@ public class ShowDTO {
         this.event = event;
     }
 
-    public LocalDateTime getDateTime() {
-        return dateTime;
+
+    public LocalDate getDate() {
+        return date;
     }
 
-    public void setDateTime(LocalDateTime dateTime) {
-        this.dateTime = dateTime;
+    public void setDate(LocalDate date) {
+        this.date = date;
     }
+
+    public LocalTime getTime() {
+        return time;
+    }
+
+    public void setTime(LocalTime time) {
+        this.time = time;
+    }
+
+
 
     public HallDTO getHall() {
         return hall;
@@ -95,31 +113,20 @@ public class ShowDTO {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ShowDTO showDTO = (ShowDTO) o;
-        return id.equals(showDTO.id) &&
-            event.equals(showDTO.event) &&
-            durationInMinutes.equals(showDTO.durationInMinutes) &&
-            ticketsSold.equals(showDTO.ticketsSold) &&
-            dateTime.equals(showDTO.dateTime) &&
-            hall.equals(showDTO.hall) &&
+        return Objects.equals(id, showDTO.id) &&
+            Objects.equals(event, showDTO.event) &&
+            Objects.equals(durationInMinutes, showDTO.durationInMinutes) &&
+            Objects.equals(ticketsSold, showDTO.ticketsSold) &&
+            Objects.equals(date, showDTO.date) &&
+            Objects.equals(time, showDTO.time) &&
+            Objects.equals(hall, showDTO.hall) &&
             Objects.equals(description, showDTO.description);
+
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, event, durationInMinutes, ticketsSold, dateTime, hall, description);
-    }
-
-    @Override
-    public String toString() {
-        return "ShowDTO{" +
-            "id=" + id +
-            ", event=" + event +
-            ", durationInMinutes=" + durationInMinutes +
-            ", ticketsSold=" + ticketsSold +
-            ", dateTime=" + dateTime +
-            ", hall=" + hall +
-            ", description='" + description + '\'' +
-            '}';
+        return Objects.hash(id, event, durationInMinutes, ticketsSold, date, time, hall, description);
     }
 
     public static final class ShowDTOBuilder {
@@ -128,9 +135,11 @@ public class ShowDTO {
         private EventDTO event;
         private Integer durationInMinutes;
         private Long ticketsSold;
-        private LocalDateTime dateTime;
+        private LocalDate date;
         private HallDTO hall;
         private String description;
+        private LocalTime time;
+
 
         private ShowDTOBuilder() {}
 
@@ -154,8 +163,13 @@ public class ShowDTO {
             return this;
         }
 
-        public ShowDTOBuilder dateTime(LocalDateTime dateTime) {
-            this.dateTime = dateTime;
+        public ShowDTOBuilder date(LocalDate date) {
+            this.date = date;
+            return this;
+        }
+
+        public ShowDTOBuilder time(LocalTime time){
+            this.time = time;
             return this;
         }
 
@@ -169,13 +183,16 @@ public class ShowDTO {
             return this;
         }
 
+
+
         public ShowDTO build() {
             ShowDTO showDTO = new ShowDTO();
             showDTO.setId(id);
             showDTO.setEvent(event);
             showDTO.setDurationInMinutes(durationInMinutes);
             showDTO.setTicketsSold(ticketsSold);
-            showDTO.setDateTime(dateTime);
+            showDTO.setDate(date);
+            showDTO.setTime(time);
             showDTO.setHall(hall);
             showDTO.setDescription(description);
             return showDTO;
