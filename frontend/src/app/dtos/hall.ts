@@ -6,7 +6,6 @@ export class Hall {
   constructor(
     public id: number,
     public name: string,
-    // public shows: Show[], TODO: do we need a list of shows here
     public location: Location,
     public seats: Seat[],
     public sectors: Sector[]

@@ -13,14 +13,10 @@ export class FloorplanComponent implements OnInit {
   @Input() private sectors?: Sector[];
   @Output() private selectedSeat: EventEmitter<{eventTarget: HTMLElement, seat: Seat}> = new EventEmitter();
   @Output() private selectedSector: EventEmitter<{eventTarget: HTMLElement, sector: Sector}> = new EventEmitter();
-  // private priceCategories: string[] = Object.keys(PriceCategory);
   private viewboxPosX: number = 0;
   private viewboxPosY: number = 0;
   private viewboxWidth: number = 500;
   private viewbox: string = this.viewboxPosX + ' ' + this.viewboxPosY + ' ' + this.viewboxWidth + ' ' + this.viewboxWidth;
-  // private selectedElement: Seat | Sector;
-  // private elementModel: Seat | Sector = (this.seats === undefined) ? new Sector(null, null, null) :
-  // new Seat(null, null, null, null);
 
   constructor() {
   }
@@ -69,7 +65,7 @@ export class FloorplanComponent implements OnInit {
    * allows users to zoom in by adjusting svg viewbox
    * @param event mousewheel event used to zoom
    */
-  private zoom(event) {
+  /*private zoom(event) {
     event.preventDefault();
     this.viewboxWidth = event.deltaY > 0 ? this.viewboxWidth * 1.05 : this.viewboxWidth / 1.05;
     this.viewboxWidth = this.viewboxWidth < 300 ? 300 : (this.viewboxWidth > 1310 ? 1310 : this.viewboxWidth);
@@ -79,45 +75,6 @@ export class FloorplanComponent implements OnInit {
     this.viewboxPosX = this.viewboxPosX < 0 ? 0 : this.viewboxPosX;
     this.viewboxPosY = this.viewboxPosY < 0 ? 0 : this.viewboxPosX;
     this.viewbox = this.viewboxPosX + ' ' + this.viewboxPosY + ' ' + this.viewboxWidth + ' ' + this.viewboxWidth;
-  }
-
-  /**
-   * displays form to update a seat
-   * @param elem to be updated
-   * @param e mouse click event used to determine position of update form
-   */
-  /*
-  private displayUpdateForm(elem: Seat | Sector, e: Event) {
-    const updateForm = document.getElementById('updateForm');
-    updateForm.style.display = 'inline-block';
-    const rectEvent = (e.target as Element).getBoundingClientRect();
-    const rectUpdateForm = updateForm.getBoundingClientRect();
-    updateForm.style.left = rectEvent.left - rectUpdateForm.width / 2 + rectEvent.width / 2 + 'px';
-    updateForm.style.top = rectEvent.top + rectEvent.height + 20 + 'px';
-    // update form with seat parameters
-    this.selectedElement = elem;
-    Object.assign(this.elementModel, elem);
-  }*/
-
-  /**
-   * disables update form
-   * called when clicking inside the svg but not on a path element or the form itself
-   * @param e click event
-   */
-  /*
-  private disableUpdateForm(e: Event) {
-    if (e.target['tagName'] !== 'path') {
-      const updateForm = document.getElementById('updateForm');
-      updateForm.style.display = 'none';
-    }
-  }*/
-
-  /**
-   * updates selected seat with parameters passed into form
-   */
-  /*
-  updateFloorplanElement() {
-    Object.assign(this.selectedElement, this.elementModel);
   }*/
 
   ngOnInit() {
