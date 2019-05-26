@@ -157,10 +157,14 @@
     button to open bootstrap modal which allows submitting a newly created seat or sector plan
     Modal also asks users to enter name and location if locationSelection is currently invalid
           -->
-    <div class="form-inline col-12 mt-3" *ngIf="getSelectedHall() === newSeatPlan || getSelectedHall() === newSectorPlan">
-      <button type="button" class="btn btn-success"
-              data-toggle="modal" data-target="#enterName" [disabled]="getSelectedHall().seats.length < 1">
-        {{getSelectedHall() === newSeatPlan ? 'Add SeatPlan' : 'Add SectorPlan'}}
+    <div class="form-inline col-12 mt-3">
+      <button type="button" class="btn btn-success" data-toggle="modal" data-target="#enterName"
+              [disabled]="getSelectedHall().seats.length < 1" *ngIf="getSelectedHall() === newSeatPlan">
+        New SeatPlan
+      </button>
+      <button type="button" class="btn btn-success" data-toggle="modal" data-target="#enterName"
+              [disabled]="getSelectedHall().sectors.length < 1" *ngIf="getSelectedHall() === newSectorPlan">
+        New SectorPlan
       </button>
     </div>
   </form>
