@@ -233,7 +233,7 @@ updateSeatForm: allows updating a single seat in the seat plan
 later should also have the option to buy ticket for seats in already created halls
 custom styling
 -->
-<div id="updateSeatForm" class="updateForm">
+<div id="updateSeatForm" class="updateForm" [hidden]="getSelectedHall() !== newSeatPlan">
   <form [formGroup]="updateSeatForm">
     <div class="form-row-custom">
       <!-- seat number can be changed with the following input -->
@@ -304,7 +304,7 @@ updateSectorForm: allows updating a single sector in the sector plan
 later will also contain the option to buy ticket for the sector
 custom styling
  -->
-<div id="updateSectorForm" class="updateForm">
+<div id="updateSectorForm" class="updateForm" [hidden]="getSelectedHall() !== newSectorPlan">
   <form [formGroup]="updateSectorForm">
     <div class="form-row-custom">
       <!-- sector number can be changed with the following input -->

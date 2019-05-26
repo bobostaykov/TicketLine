@@ -14,6 +14,7 @@ import {EventsComponent} from './components/events/start page/events.component';
 import {LocationsComponent} from './components/search-results/locations/locations.component';
 import {EventResultsComponent} from './components/search-results/events/event-results.component';
 import {FloorplanControlComponent} from './components/floorplan-control/floorplan-control.component';
+import {CustomerComponent} from './components/customer/customer.component';
 
 // TODO Refactor Names: ShowComponent -> ShowResultsComponent; the same for LocationComponent; in Service as well
 const routes: Routes = [
@@ -21,7 +22,7 @@ const routes: Routes = [
   {path: 'login', component: LoginComponent},
   {path: 'news', canActivate: [AuthGuard], component: NewsComponent},
   {path: 'user', canActivate: [AuthGuard], component: UserComponent},
-  {path: 'customer-add', canActivate: [AuthGuard], component: CustomerAddComponent},
+  {path: 'customers', canActivate: [AuthGuard], component: CustomerComponent},
   {path: 'events', canActivate: [AuthGuard], component: EventsComponent},
   {path: 'events/topten', canActivate: [AuthGuard], component: TopTenEventsComponent},
   {path: 'events/search', canActivate: [AuthGuard], component: SearchEventsComponent},

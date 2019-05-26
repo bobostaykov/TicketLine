@@ -18,7 +18,6 @@ import { TopTenEventsComponent } from './components/events/top-ten-events/top-te
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MatButtonModule, MatCheckboxModule, MatInputModule, MatSelectModule, MatSnackBarModule} from '@angular/material';
 import {NgxChartsModule} from '@swimlane/ngx-charts';
-import { CustomerAddComponent } from './components/customerAdd/customer-add.component';
 import { SearchEventsComponent } from './components/events/search-events/search-events.component';
 import { ArtistResultsComponent } from './components/search-results/artists/artist-results.component';
 import { ShowComponent } from './components/search-results/shows/show.component';
@@ -28,6 +27,8 @@ import { Ng5SliderModule } from 'ng5-slider';
 import { EventResultsComponent } from './components/search-results/events/event-results.component';
 import {FloorplanControlComponent} from './components/floorplan-control/floorplan-control.component';
 import {FloorplanComponent} from './components/floorplan/floorplan.component';
+import {CustomerComponent} from './components/customer/customer.component';
+import {CustomerDialogComponent} from './components/customer-dialog/customer-dialog.component';
 
 @NgModule({
   declarations: [
@@ -39,7 +40,6 @@ import {FloorplanComponent} from './components/floorplan/floorplan.component';
     NewsComponent,
     UserComponent,
     TopTenEventsComponent,
-    CustomerAddComponent,
     SearchEventsComponent,
     ArtistResultsComponent,
     ShowComponent,
@@ -47,7 +47,9 @@ import {FloorplanComponent} from './components/floorplan/floorplan.component';
     LocationsComponent,
     EventResultsComponent,
     FloorplanControlComponent,
-    FloorplanComponent
+    FloorplanComponent,
+    CustomerComponent,
+    CustomerDialogComponent
   ],
   imports: [
     BrowserModule,
