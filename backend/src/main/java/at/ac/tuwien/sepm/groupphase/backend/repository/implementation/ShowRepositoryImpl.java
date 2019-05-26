@@ -29,7 +29,7 @@ public class ShowRepositoryImpl implements ShowRepositoryCustom {
 
     @Override
     public List<Show> findAllShowsFiltered(ShowSearchParametersDTO parameters) {
-/*
+
         LOGGER.info("find shows filtered by " + parameters.toString());
         CriteriaBuilder cBuilder = em.getCriteriaBuilder();
         //Sammlung der Bedingungen
@@ -87,7 +87,7 @@ public class ShowRepositoryImpl implements ShowRepositoryCustom {
             }
         }
 
- */
+
         /*
         if(parameters.getPriceInEuroFrom() != null){
             predicates.add(cBuilder.greaterThanOrEqualTo(show.get(Show_.price), parameters.getPriceInEuroFrom()));
@@ -96,7 +96,7 @@ public class ShowRepositoryImpl implements ShowRepositoryCustom {
             predicates.add(cBuilder.lessThanOrEqualTo(show.get("price"), parameters.getPriceInEuroTo()));
         }
         */
-        /*
+
         //Übergabe der Predicates
         criteriaQuery.select(show).where(predicates.toArray(new Predicate[predicates.size()]));
         criteriaQuery
@@ -107,8 +107,8 @@ public class ShowRepositoryImpl implements ShowRepositoryCustom {
         List results = em.createQuery(criteriaQuery).getResultList();
         return results;
 
-         */
-        return null;
+
+
 
     }
 }

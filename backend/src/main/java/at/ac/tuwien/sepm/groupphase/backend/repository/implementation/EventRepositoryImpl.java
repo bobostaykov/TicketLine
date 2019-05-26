@@ -30,7 +30,7 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
     @Override
 
     public List<Event> findAllEventsFiltered(EventSearchParametersDTO parameters) throws PersistenceException {
-/*
+
         LOGGER.info("Find Events filtered by: " + parameters.toString());
         CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
         List<Predicate> predicates = new ArrayList<>();
@@ -42,8 +42,8 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
         if(parameters.getContent() != null){
             predicates.add(criteriaBuilder.like(criteriaBuilder.lower(eventRoot.get(Event_.content)), "%" + parameters.getContent().toLowerCase() + "%"));
         }
-        //Current Search Area is +- 30 minutes
 
+        //Current Search Area is +- 30 minutes
         if(parameters.getDurationInMinutes()!= null){
             predicates.add(criteriaBuilder.between(
                 eventRoot.get(Event_.durationInMinutes), parameters.getDurationInMinutes() -30 , parameters.getDurationInMinutes() + 30));
@@ -65,9 +65,6 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
         query.orderBy(criteriaBuilder.asc(eventRoot.get(Event_.eventType))).orderBy(criteriaBuilder.asc(eventRoot.get(Event_.name)));
         List results = em.createQuery(query).getResultList();
         return results;
-
- */
-return null;
     }
     /*
     @Query("SELECT e.name, SUM(s.ticketsSold) FROM Show s, Event e WHERE s.event = e.id AND MONTHNAME(s.date) IN :monthsSet AND e.eventType IN :categoriesSet GROUP BY s.event ORDER BY SUM(s.ticketsSold) DESC")

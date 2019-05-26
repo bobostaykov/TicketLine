@@ -31,7 +31,7 @@ public class LocationRepositoryImpl implements LocationRepositoryCustom {
 
     @Override
     public List<Location> findLocationsFiltered(String country, String city, String street, String postalCode, String description) {
-        /*
+
         LOGGER.info("Location Criteria Builder: findLocationsFiltered");
 
         CriteriaBuilder cBuilder = entityManager.getCriteriaBuilder();
@@ -65,8 +65,5 @@ public class LocationRepositoryImpl implements LocationRepositoryCustom {
         }
 
         return results;
-
-         */
-        return null;
-    }
+        }
 }
