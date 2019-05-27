@@ -17,7 +17,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 import static at.ac.tuwien.sepm.groupphase.backend.datatype.EventType.MOVIE;

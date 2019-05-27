@@ -11,13 +11,15 @@ import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.internal.util.IOUtils;
 import io.restassured.response.Response;
-import org.junit.*;
+import org.junit.Assert;
+import org.junit.Test;
 import org.mockito.BDDMockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.util.ResourceUtils;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;

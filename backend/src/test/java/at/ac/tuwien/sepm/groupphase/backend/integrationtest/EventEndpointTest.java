@@ -4,7 +4,6 @@ import at.ac.tuwien.sepm.groupphase.backend.datatype.EventType;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.event.EventDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.event.EventTicketsDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Event;
-import at.ac.tuwien.sepm.groupphase.backend.entity.EventTickets;
 import at.ac.tuwien.sepm.groupphase.backend.integrationtest.base.BaseIntegrationTest;
 import at.ac.tuwien.sepm.groupphase.backend.repository.EventRepository;
 import io.restassured.RestAssured;
@@ -98,7 +97,6 @@ public class EventEndpointTest extends BaseIntegrationTest {
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.UNAUTHORIZED.value()));
     }
 
-    // TODO 2 Tests are failing
     @Test
     public void findAllEventsAsUser() {
         BDDMockito
@@ -111,7 +109,7 @@ public class EventEndpointTest extends BaseIntegrationTest {
                     .build()));
         Response response = RestAssured
             .given()
-            .contentType(ContentType.JSON)
+            .contentType(ContentType    .JSON)
             .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
             .when().get(EVENT_ENDPOINT)
             .then().extract().response();
