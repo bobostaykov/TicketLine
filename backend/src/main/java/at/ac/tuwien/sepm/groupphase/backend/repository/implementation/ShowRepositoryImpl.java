@@ -56,7 +56,7 @@ public class ShowRepositoryImpl implements ShowRepositoryCustom {
         }
 
 
-        if(parameters.getHallName() != null){
+        if(parameters.getHallName() != null && !parameters.getHallName().equals("")){
             Join<Show, Hall> halls = show.join(Show_.hall);
             predicates.add(cBuilder.like(cBuilder.lower(halls.get(Hall_.name)),"%" + parameters.getHallName().toLowerCase() + "%"));
         }
@@ -65,7 +65,7 @@ public class ShowRepositoryImpl implements ShowRepositoryCustom {
             predicates.add(cBuilder.like(cBuilder.lower(event.get(Event_.name)), "%" + parameters.getEventName().toLowerCase() + "%"));
         }
 
-        if(parameters.getDurationInMinutes() != null){
+        if(parameters.getDurationInMinutes() != null && parameters.getDurationInMinutes() != 0){
             Join<Show,Event> eventJoin = show.join(Show_.event);
             predicates.add(cBuilder.between(eventJoin.get(Event_.durationInMinutes), parameters.getDurationInMinutes() -30 , parameters.getDurationInMinutes() + 30));
         }
