@@ -5,6 +5,8 @@ import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.hall.HallDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -19,9 +21,11 @@ public class ShowDTO {
     @ApiModelProperty(name = "The event to which the show belongs")
     private EventDTO event;
 
+    @Positive
     @ApiModelProperty(name = "The duration in minutes")
     private Integer durationInMinutes;
 
+    @PositiveOrZero
     @ApiModelProperty(name = "The number of tickets sold for that show")
     private Long ticketsSold;
 

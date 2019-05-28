@@ -10,7 +10,6 @@ import io.swagger.annotations.Authorization;
 import org.hibernate.service.spi.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -77,6 +76,7 @@ public class ShowEndpoint {
     @RequestMapping(value = "/filter", method = RequestMethod.GET)
     @ApiOperation(value = "Get all shows filtered by specified attributes", authorizations = {@Authorization(value = "apiKey")})
     public List<ShowDTO> findShowsFilteredByShowAttributes(
+        @RequestParam(value = "eventId", required = false) Long eventId,
         @RequestParam(value = "eventName", required = false) String eventName,
         @RequestParam(value = "hallName", required = false) String hallName,
         @RequestParam(value="minPrice", required = false) Integer minPrice,
@@ -86,20 +86,22 @@ public class ShowEndpoint {
         @RequestParam(value="timeFrom", required = false) String timeFrom,
         @RequestParam(value="timeTo", required = false) String timeTo,
         @RequestParam(value="duration", required = false) Integer duration,
-
+        @RequestParam(value = "locationName", required = false) String locationName,
         @RequestParam(value = "country", required = false) String country,
         @RequestParam(value = "city", required = false) String city,
         @RequestParam(value = "postalCode", required = false) String postalCode,
-        @RequestParam(value = "street", required = false) String street)
+        @RequestParam(value = "street", required = false) String street,
+        @RequestParam(value = "houseNr", required = false) Integer houseNr)
     {
         boolean filterData = (
             dateFrom == null && dateTo == null &&
                 timeFrom == null && timeTo == null &&
                 minPrice == null && maxPrice == null &&
                 eventName == null && hallName == null &&
-                duration == null &&
+                duration == null && locationName == null &&
                 country == null && city == null &&
-                postalCode == null && street == null);
+                postalCode == null && street == null &&
+                eventId == null && houseNr == null);
         try {
             LOGGER.debug("eventName: " + eventName + "\nhallName: " + hallName + "\nminPrice: " + minPrice + "\nmaxPrice: " + maxPrice +
                 "\ndateFrom: " + dateFrom + "\ndateTo: " + dateTo+ "\ntimeFrom: " + timeFrom
@@ -111,15 +113,16 @@ public class ShowEndpoint {
             } else {
 
                 ShowSearchParametersDTO parameters = new ShowSearchParametersDTO.builder()
-                    .setPriceInEuroFrom(minPrice)
-                    .setPriceInEuroTo(maxPrice)
-                    .setEventName(eventName)
-                    .setHallName(hallName)
-                    .setDateFrom(dateFrom.equals("null") ? null : LocalDate.parse(dateFrom, dateFormatter))
-                    .setDateTo(dateTo.equals("null") ? null : LocalDate.parse(dateTo, dateFormatter))
-                    .setTimeFrom(timeFrom.equals("null") ? null : LocalTime.parse(timeFrom, timeFormatter))
-                    .setTimeTo(timeTo.equals("null") ? null : LocalTime.parse(timeTo, timeFormatter))
-                    .setDurationInMinutes(duration)
+                    .eventId(eventId)
+                    .priceInEuroFrom(minPrice)
+                    .priceInEuroTo(maxPrice)
+                    .eventName(eventName)
+                    .hallName(hallName)
+                    .dateFrom(dateFrom.equals("null") ? null : LocalDate.parse(dateFrom, dateFormatter))
+                    .dateTo(dateTo.equals("null") ? null : LocalDate.parse(dateTo, dateFormatter))
+                    .timeFrom(timeFrom.equals("null") ? null : LocalTime.parse(timeFrom, timeFormatter))
+                    .timeTo(timeTo.equals("null") ? null : LocalTime.parse(timeTo, timeFormatter))
+                    .durationInMinutes(duration)
                     .country(country)
                     .city(city)
                     .street(street)
