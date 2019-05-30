@@ -1,6 +1,8 @@
 package at.ac.tuwien.sepm.groupphase.backend.service;
 
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.searchParameters.ShowSearchParametersDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.show.ShowDTO;
+import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 
 import java.util.List;
 
@@ -14,6 +16,13 @@ public interface ShowService {
      */
     List<ShowDTO> findAllShowsFilteredByEventName(String eventName);
 
+    /**
+     * Finds all shows
+     *
+     * @return a list of all shows
+     */
+    List<ShowDTO> findAll();
+
     /*
      * Finds all shows filtered by location id
      *
@@ -21,13 +30,6 @@ public interface ShowService {
      * @return a list of found shows matching the criteria
      */
     //List<Show> findAllShowsFilteredByLocationID(Integer locationID);
-
-    /*
-     * Finds all shows
-     *
-     * @return a list of all shows
-     */
-    //List<Show> findAll();
 
     /*
      * Finds all shows filtered by date range, time range, price range, event name and hall username
@@ -42,9 +44,23 @@ public interface ShowService {
      * @param hallName name of the hall
      * @return a list of found shows matching the criteria
      */
-    //List<Show> findAllShowsFiltered(LocalDateTime dateFrom, LocalDateTime dateTo, LocalDateTime timeFrom, LocalDateTime timeTo, Integer priceInEuroFrom, Integer priceInEuroTo, String eventName, String hallName);
 
-    /*
+    /**
+     *
+     * @param searchParameters: The parameter dto of criteria that can be searched for
+     * @return a list of Shows that matches the specified criteria
+     * @throws ServiceException is thrown if something went wrong in the process
+     */
+    List<ShowDTO> findAllShowsFiltered(ShowSearchParametersDTO searchParameters) throws ServiceException;
+
+    /**
+     *
+     * @return a List of all shows(as a DTO) that are found in the database
+     * @throws ServiceException is thrown if something went wrong in the process
+     */
+    List<ShowDTO> findAllShows() throws ServiceException;
+
+    /**
      * Finds all shows filtered by country, city , postal code and street
      *
      * @param country the name of the country in which the show takes place
@@ -53,6 +69,6 @@ public interface ShowService {
      * @param street the street where the show takes place
      * @return a list of found shows matching the criteria
      */
-    //List<Show> findAllShowsFilteredByLocation(String country, String city, String postalcode, String street);
+    List<ShowDTO> findAllShowsFilteredByLocation(String country, String city, String postalcode, String street);
 
 }

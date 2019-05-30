@@ -10,6 +10,7 @@ public interface CustomerService {
     /**
      * Add customer.
      * @param customerDTO customer to be added
+     * @return added customer
      */
     CustomerDTO addCustomer(CustomerDTO customerDTO);
 
@@ -17,8 +18,9 @@ public interface CustomerService {
      * Change customer information.
      *
      * @param customerDTO customer to be changed
+     * @return changed customer
      */
-    void adaptCustomer(CustomerDTO customerDTO);
+    CustomerDTO adaptCustomer(CustomerDTO customerDTO);
 
     /**
      * Find all customers saved in the database.

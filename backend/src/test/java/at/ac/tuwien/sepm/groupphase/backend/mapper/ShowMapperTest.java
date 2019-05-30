@@ -16,7 +16,9 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 import static at.ac.tuwien.sepm.groupphase.backend.datatype.EventType.MOVIE;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -58,8 +60,10 @@ public class ShowMapperTest {
     private static final Long TICKETSSOLD = 25L;
     private static final Integer DURATION_IN_MINUTES = 180;
     private static final String DESCRIPTION = "show description";
-    private static final LocalDateTime DATE_TIME =
-        LocalDateTime.of(2016, 1, 1, 12, 0, 0, 0);
+    private static final LocalDate DATE =
+        LocalDate.of(2016, 1, 1);
+    private static final LocalTime TIME =
+        LocalTime.of(1,1);
 
     @Test
     public void shouldMapShowToShowDTO(){
@@ -67,8 +71,8 @@ public class ShowMapperTest {
             .id(ID)
             .event(EVENT)
             .hall(HALL)
-            .dateTime(DATE_TIME)
-            .durationInMinutes(DURATION_IN_MINUTES)
+            .date(DATE)
+            .time(TIME)
             .ticketsSold(TICKETSSOLD)
             .description(DESCRIPTION)
             .build();
@@ -77,11 +81,10 @@ public class ShowMapperTest {
 
         assertThat(showDTO).isNotNull();
         assertThat(showDTO.getId()).isEqualTo(ID);
-        assertThat(showDTO.getDateTime()).isEqualTo(DATE_TIME);
+        assertThat(showDTO.getDate()).isEqualTo(DATE);
+        assertThat(showDTO.getTime()).isEqualTo(TIME);
         assertThat(showDTO.getDescription()).isEqualTo(DESCRIPTION);
         assertThat(showDTO.getTicketsSold()).isEqualTo(TICKETSSOLD);
-        assertThat(showDTO.getDurationInMinutes()).isEqualTo(DURATION_IN_MINUTES);
-
         assertThat(showDTO.getEvent().getId()).isEqualTo(2L);
         assertThat(showDTO.getEvent().getName()).isEqualTo("Event");
         assertThat(showDTO.getEvent().getEventType()).isEqualTo(MOVIE);
@@ -126,8 +129,8 @@ public class ShowMapperTest {
             .id(ID)
             .event(eventDTO)
             .hall(hallDTO)
-            .dateTime(DATE_TIME)
-            .durationInMinutes(DURATION_IN_MINUTES)
+            .date(DATE)
+            .time(TIME)
             .ticketsSold(TICKETSSOLD)
             .description(DESCRIPTION)
             .build();
@@ -137,8 +140,9 @@ public class ShowMapperTest {
         assertThat(show).isNotNull();
         assertThat(show.getId()).isEqualTo(ID);
         assertThat(show.getTicketsSold()).isEqualTo(TICKETSSOLD);
-        assertThat(show.getDurationInMinutes()).isEqualTo(DURATION_IN_MINUTES);
-        assertThat(show.getDateTime()).isEqualTo(DATE_TIME);
+  //      assertThat(show.getDurationInMinutes()).isEqualTo(DURATION_IN_MINUTES);
+        assertThat(show.getDate()).isEqualTo(DATE);
+        assertThat(show.getTime()).isEqualTo(TIME);
         assertThat(show.getDescription()).isEqualTo(DESCRIPTION);
 
         assertThat(show.getEvent().getId()).isEqualTo(2L);

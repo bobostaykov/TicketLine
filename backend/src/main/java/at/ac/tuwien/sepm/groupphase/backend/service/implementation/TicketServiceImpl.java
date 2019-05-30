@@ -68,6 +68,7 @@ public class TicketServiceImpl implements TicketService {
 
     @Override
     public List<TicketDTO> findByCustomerNameAndShow(String customerName, ShowDTO showDTO) {
+        /*
         List<Customer> customers = customerRepository.findAllByName(customerName);
         List<Ticket> tickets = new ArrayList<>();
         Show show = showMapper.showDTOToShow(showDTO);
@@ -78,6 +79,8 @@ public class TicketServiceImpl implements TicketService {
             }
         }
         return ticketMapper.ticketToTicketDTO(tickets);
+         */
+        return null;
     }
 
 }

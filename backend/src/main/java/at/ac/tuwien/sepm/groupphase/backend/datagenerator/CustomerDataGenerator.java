@@ -16,11 +16,6 @@ import java.util.Arrays;
 public class CustomerDataGenerator implements DataGenerator {
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
-    private static final Double TICKET_PRICE = 100.0;
-    private static final int SECTOR_NUMBER = 1;
-    private static final String TICKET_STATUS_RESERVATED = "reservated";
-    private static final String TICKET_STATUS_SOLD = "sold";
-
     Faker faker = new Faker();
 
     private final CustomerRepository customerRepository;

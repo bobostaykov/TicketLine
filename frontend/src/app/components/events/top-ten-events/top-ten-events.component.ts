@@ -140,10 +140,10 @@ export class TopTenEventsComponent implements OnInit {
   /**
    * Navigate to the shows page
    */
-  private viewShows(click_event: any) {
-    this.router.navigate(['/shows'], {queryParams: {
+  private viewShows(event: any) {
+    this.router.navigate(['/events/search/results/shows'], {queryParams: {
       results_for: 'EVENT',
-      name:        click_event.valueOf()['name']
+      name:        event.valueOf()['name']
     }});
   }
 

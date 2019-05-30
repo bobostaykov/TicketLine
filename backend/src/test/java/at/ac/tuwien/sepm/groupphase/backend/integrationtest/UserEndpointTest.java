@@ -1,7 +1,9 @@
 package at.ac.tuwien.sepm.groupphase.backend.integrationtest;
 
 import at.ac.tuwien.sepm.groupphase.backend.datatype.UserType;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.SimpleNewsDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.user.UserDTO;
+import at.ac.tuwien.sepm.groupphase.backend.entity.News;
 import at.ac.tuwien.sepm.groupphase.backend.entity.User;
 import at.ac.tuwien.sepm.groupphase.backend.integrationtest.base.BaseIntegrationTest;
 import at.ac.tuwien.sepm.groupphase.backend.repository.UserRepository;
@@ -16,7 +18,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.core.Is.is;
@@ -33,6 +37,8 @@ public class UserEndpointTest extends BaseIntegrationTest {
     private static final UserType TEST_USER_TYPE = UserType.ADMIN;
     private static final LocalDateTime TEST_USER_SINCE = LocalDateTime.of(1011, 11, 11, 11, 11, 11, 11);
     private static final LocalDateTime TEST_USER_LAST_LOGIN = LocalDateTime.of(2012, 12, 12, 12, 12, 12, 12);
+    private static final List<News> TEST_READ_NEWS = new ArrayList<News>();
+    private static final List<SimpleNewsDTO> TEST_READ_NEWS_DTO = new ArrayList<SimpleNewsDTO>();
 
     @MockBean
     private UserRepository userRepository;
@@ -158,6 +164,7 @@ public class UserEndpointTest extends BaseIntegrationTest {
                 .type(TEST_USER_TYPE)
                 .userSince(TEST_USER_SINCE)
                 .lastLogin(TEST_USER_LAST_LOGIN)
+                .readNews(TEST_READ_NEWS)
                 .build());
         Response response = RestAssured
             .given()
@@ -178,6 +185,7 @@ public class UserEndpointTest extends BaseIntegrationTest {
             .type(TEST_USER_TYPE)
             .userSince(TEST_USER_SINCE)
             .lastLogin(TEST_USER_LAST_LOGIN)
+            .readNews(TEST_READ_NEWS_DTO)
             .build()));
     }
 

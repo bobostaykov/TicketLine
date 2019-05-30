@@ -34,13 +34,13 @@ public class CustomerEndpointTest extends BaseIntegrationTest {
     private static final long TEST_CUSTOMER_ID = 1L;
 
     private static final String CUSTOMER_FILTERED_ID = "/customers?id=1";
-    private static final String CUSTOMER_FILTERED_NAME = "/customers?username=ller";
+    private static final String CUSTOMER_FILTERED_NAME = "/customers?name=ller";
     private static final String CUSTOMER_FILTERED_FIRSTNAME = "/customers?firstname=etr";
     private static final String CUSTOMER_FILTERED_EMAIL = "/customers?email=ller@gmail.co";
     private static final String CUSTOMER_FILTERED_BIRTHDAY = "/customers?birthday=22.07.1982";
-    private static final String CUSTOMER_FILTERED_BIRTHDAY_AND_NAME = "/customers?birthday=22.07.1982&username=Müller";
-    private static final String CUSTOMER_FILTERED_FIRSTNAME_AND_NAME = "/customers?firstname=Pe&username=Müller";
-    private static final String CUSTOMER_FILTERED_FIRSTNAME_AND_NAME_AND_EMAIL = "/customers?firstname=Pe&username=Müller&email=@gmail.com";
+    private static final String CUSTOMER_FILTERED_BIRTHDAY_AND_NAME = "/customers?birthday=22.07.1982&name=Müller";
+    private static final String CUSTOMER_FILTERED_FIRSTNAME_AND_NAME = "/customers?firstname=Pe&name=Müller";
+    private static final String CUSTOMER_FILTERED_FIRSTNAME_AND_NAME_AND_EMAIL = "/customers?firstname=Pe&name=Müller&email=@gmail.com";
     private static final String SPECIFIC_CUSTOMER_PATH = "/{customerID}";
 
     private static final Long CUSTOMER_ID = 1L;
@@ -255,6 +255,39 @@ public class CustomerEndpointTest extends BaseIntegrationTest {
                 .birthday(TEST_CUSTOMER_BIRTHDATE)
                 .build())
             .when().post(CUSTOMER_ENDPOINT)
+            .then().extract().response();
+        Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
+        Assert.assertThat(response.as(CustomerDTO.class), is(CustomerDTO.builder()
+            .id(TEST_CUSTOMER_ID)
+            .name(TEST_CUSTOMER_NAME)
+            .firstname(TEST_CUSTOMER_FIRSTNAME)
+            .email(TEST_CUSTOMER_EMAIL)
+            .birthday(TEST_CUSTOMER_BIRTHDATE)
+            .build()));
+    }
+
+    @Test
+    public void changeUserThenHTTPResponseOKAndChangedCustomerIsReturned() {
+        BDDMockito.
+            given(customerRepository.save(any(Customer.class))).
+            willReturn(Customer.builder()
+                .id(TEST_CUSTOMER_ID)
+                .name(TEST_CUSTOMER_NAME)
+                .firstname(TEST_CUSTOMER_FIRSTNAME)
+                .email(TEST_CUSTOMER_EMAIL)
+                .birthday(TEST_CUSTOMER_BIRTHDATE)
+                .build());
+        Response response = RestAssured
+            .given()
+            .contentType(ContentType.JSON)
+            .header(HttpHeaders.AUTHORIZATION, validAdminTokenWithPrefix)
+            .body(CustomerDTO.builder()
+                .name(TEST_CUSTOMER_NAME)
+                .firstname(TEST_CUSTOMER_FIRSTNAME)
+                .email(TEST_CUSTOMER_EMAIL)
+                .birthday(TEST_CUSTOMER_BIRTHDATE)
+                .build())
+            .when().put(CUSTOMER_ENDPOINT + SPECIFIC_CUSTOMER_PATH, TEST_CUSTOMER_ID)
             .then().extract().response();
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
         Assert.assertThat(response.as(CustomerDTO.class), is(CustomerDTO.builder()

@@ -1,9 +1,11 @@
 package at.ac.tuwien.sepm.groupphase.backend.service;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.user.UserDTO;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UserService {
 
@@ -12,7 +14,7 @@ public interface UserService {
      *
      * @return all users
      */
-    List<UserDTO> findAll();
+    List<UserDTO> findAll() throws ServiceException;
 
     /**
      * Find a single user entry by id.
@@ -20,7 +22,7 @@ public interface UserService {
      * @param id the is of the user entry
      * @return the user entry
      */
-    UserDTO findOne(Long id);
+    UserDTO findOne(Long id) throws NotFoundException;
 
 
     /**
@@ -37,6 +39,14 @@ public interface UserService {
      *
      * @param userId id of user to delete
      */
-    void deleteUser(Long userId);
+    void deleteUser(Long userId) throws ServiceException;
+
+    /**
+     * Find user by username.
+     *
+     * @param username name of user
+     * @return found user
+     */
+    UserDTO findOneByUsername(String username);
 
 }

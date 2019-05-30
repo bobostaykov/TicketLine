@@ -19,6 +19,7 @@ export class ShowService {
    * If resultsFor === ResultsFor.LOCATION, name_or_id will contain the id of the location, otherwise the name of the artist/event
    */
   public findShows(resultsFor: ResultsFor, nameOrId: string): Observable<Show[]> {
+    console.log('Find shows for', resultsFor, nameOrId);
     return this.httpClient.get<Show[]>(this.showBaseUri, {params: { results_for: ResultsFor[resultsFor], name_or_id: nameOrId }});
   }
 

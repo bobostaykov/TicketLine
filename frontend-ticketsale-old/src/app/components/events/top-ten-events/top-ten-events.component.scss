@@ -1,0 +1,22 @@
+.left {
+  float: left;
+}
+
+.right {
+  float: right;
+}
+
+::ng-deep .ngx-charts {
+  text {
+    font-size: 20px!important;
+  }
+}
+
+.mytooltip {
+  height: 30px;
+  width: 90px;
+}
+
+.buy {
+  font-size: 14px;
+}

@@ -7,10 +7,9 @@
 
 
 <div class="mt-4 container">
-
   <div class="row p-2 mb-4">
     <button *ngIf="isAdmin()" type="button" class="btn btn-secondary btn-sm mr-4" data-toggle="modal" data-target=".create-news-modal">Add news</button>
-    <button type="button" class="btn btn-secondary btn-sm mr-4" (click)="loadUnreadNews()">Show former news</button>
+    <mat-checkbox (change)="changeChecked()">Show Read News</mat-checkbox>
 
     <div class="modal fade create-news-modal" tabindex="-1" role="dialog" aria-labelledby="Create news modal" aria-hidden="true">
       <div class="modal-dialog modal-lg">
@@ -114,7 +113,7 @@
                 <p class="mt-2"> {{news.text}} </p>
               </div>
               <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" (click)="loadNews()" class="btn btn-secondary" data-dismiss="modal">Close</button>
               </div>
             </div>
           </div>

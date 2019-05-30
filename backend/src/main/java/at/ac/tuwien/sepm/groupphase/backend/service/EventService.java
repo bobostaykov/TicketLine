@@ -3,7 +3,9 @@ package at.ac.tuwien.sepm.groupphase.backend.service;
 import at.ac.tuwien.sepm.groupphase.backend.datatype.EventType;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.event.EventDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.event.EventTicketsDTO;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.searchParameters.EventSearchParametersDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.EventTickets;
+import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 
 import java.util.List;
 import java.util.Set;
@@ -17,12 +19,19 @@ public interface EventService {
      * @param categoriesSet a list with the categories by which to filter
      * @return top 10 events
      */
-    List<EventTicketsDTO> findTopTenEvents(Set<String> monthsSet, Set<EventType> categoriesSet);
+    List<EventTicketsDTO> findTopTenEvents(Set<String> monthsSet, Set<EventType> categoriesSet) throws ServiceException;
 
     /**
      * Get all events from backend
      * @return a list of all events ordered by name
      */
-    List<EventDTO> findAll();
+    List<EventDTO> findAll() throws ServiceException;
 
+    List<EventDTO> findAllFiltered(EventSearchParametersDTO parameters);
+
+    /**
+     * @param id of the artist
+     * @return a list of all events in which the artist performs
+     */
+    List<EventDTO> findEventsFilteredByArtistID(Long id);
 }

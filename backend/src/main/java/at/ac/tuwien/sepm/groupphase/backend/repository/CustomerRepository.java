@@ -22,14 +22,6 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     List<Customer> findAllByOrderByIdAsc();
 
     /**
-     * Find all customer by name.
-     *
-     * @param name name of customers to search for
-     * @return found customers
-     */
-    List<Customer> findAllByName(String name);
-
-    /**
      * Find a single customer entry by id.
      *
      * @param id id of the customer entry
@@ -40,14 +32,14 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     /**
      * Find all customers filtered by the following attributes:
      * ID - ID of customer
-     * username - part of the username of customer
-     * firstname - part of the first username of customer
+     * name - part of the name of customer
+     * firstname - part of the first name of customer
      * email - part of the e-mail address of customer
      * birthday - birthday of customer
      *
      * @param id ID of customer to search for
-     * @param name username of customer to search for
-     * @param firstname first username of customer to search for
+     * @param name name of customer to search for
+     * @param firstname first name of customer to search for
      * @param email e-mail address of customer to search for
      * @param birthday birthday of customer to search for
      * @return List of customers that met the requested filter methods
@@ -62,48 +54,4 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     List<Customer> findCustomersFiltered(@Param("id") Long id, @Param("name") String name,
                                          @Param("firstname") String firstname, @Param("email") String email,
                                          @Param("birthday") LocalDate birthday);
-
-    /**
-     * Change the username of customer with ID id.
-     *
-     * @param name new username for customer
-     * @param id ID of customer
-     */
-    @Modifying
-    @Transactional
-    @Query(value = "UPDATE Customer c SET c.name = :name WHERE c.id = :id", nativeQuery = true)
-    void updateName(@Param("name") String name, @Param("id") Long id);
-
-    /**
-     * Change the firstname of the customer with ID id.
-     *
-     * @param firstname new first username for customer
-     * @param id ID of the customer
-     */
-    @Modifying
-    @Transactional
-    @Query(value = "UPDATE Customer SET firstname = :firstname WHERE id = :id", nativeQuery = true)
-    void updateFirstname(@Param("firstname") String firstname, @Param("id") Long id);
-
-    /**
-     * Change the e-mail address of the customer with ID id.
-     *
-     * @param email new e-mail address for customer
-     * @param id ID of the customer
-     */
-    @Modifying
-    @Transactional
-    @Query(value = "UPDATE Customer SET email = :email WHERE id = :id", nativeQuery = true)
-    void updateEmail(@Param("email") String email, @Param("id") Long id);
-
-    /**
-     * Change the birthday of the customer with ID id.
-     *
-     * @param birthday new birthday for customer
-     * @param id ID of the customer
-     */
-    @Modifying
-    @Transactional
-    @Query(value = "UPDATE Customer SET birthday = :birthday WHERE id = :id", nativeQuery = true)
-    void updateBirthday(@Param("birthday") LocalDate birthday, @Param("id") Long id);
 }

@@ -10,7 +10,7 @@ import java.util.List;
 
 //TODO Class is unfinished
 @Repository
-public interface ShowRepository extends JpaRepository<Show, Long> {
+public interface ShowRepository extends JpaRepository<Show, Long>, ShowRepositoryCustom {
 
     /**
      * Finds all shows filtered by event name
