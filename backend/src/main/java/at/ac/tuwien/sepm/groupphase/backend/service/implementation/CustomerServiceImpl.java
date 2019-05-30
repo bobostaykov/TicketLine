@@ -22,11 +22,11 @@ public class CustomerServiceImpl implements CustomerService {
         this.customerRepository = customerRepository;
         this.customerMapper = customerMapper;
     }
-    // TODO throw new ServiceException("Customer could not be added " + customerDTO.toString()); will throw NullPointerExc because customerDTO is == null
+
     @Override
     public CustomerDTO addCustomer(CustomerDTO customerDTO) {
-        LOGGER.info("Add a customer");
         if (customerDTO != null) {
+            LOGGER.info("Add customer " + customerDTO.toString());
             // VALIDATION START
             if (customerDTO.getName() == null || customerDTO.getName().isBlank())
                 throw new ServiceException("Customer " + customerDTO.toString() + "could not be added: username must not be empty");
@@ -39,8 +39,10 @@ public class CustomerServiceImpl implements CustomerService {
             //VALIDATION END
             return customerMapper.customerToCustomerDTO(customerRepository.save(customerMapper.customerDTOToCustomer(customerDTO)));
         }
-        else
+        else {
+            LOGGER.info("Add customer failed");
             throw new ServiceException("Customer could not be added " + customerDTO.toString());
+        }
     }
 
     @Override
@@ -50,22 +52,9 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public void adaptCustomer(CustomerDTO customerDTO) {
+    public CustomerDTO adaptCustomer(CustomerDTO customerDTO) {
         LOGGER.info("Adapt customer: " + customerDTO.toString());
-        Long id = customerDTO.getId();
-        if (customerDTO.getName() != null) {
-            customerRepository.updateName(customerDTO.getName(), id);
-        }
-
-        if (customerDTO.getFirstname() != null) {
-            customerRepository.updateFirstname(customerDTO.getFirstname(), id);
-        }
-        if (customerDTO.getEmail() != null) {
-            customerRepository.updateEmail(customerDTO.getEmail(), id);
-        }
-        if (customerDTO.getBirthday() != null) {
-            customerRepository.updateBirthday(customerDTO.getBirthday(), id);
-        }
+        return customerMapper.customerToCustomerDTO(customerRepository.save(customerMapper.customerDTOToCustomer(customerDTO)));
     }
 
     @Override
