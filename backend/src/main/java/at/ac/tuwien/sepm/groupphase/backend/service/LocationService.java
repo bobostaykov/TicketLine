@@ -23,4 +23,9 @@ public interface LocationService {
      * @return a list of all locations
      */
     List<LocationDTO>  findAll();
+
+    /**
+     * @return a list of all countries in the data base
+     */
+    List<String> getCountriesOrderedByName() throws ServiceException;
 }

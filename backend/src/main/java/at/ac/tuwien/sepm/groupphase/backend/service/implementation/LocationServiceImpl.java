@@ -42,7 +42,17 @@ public class LocationServiceImpl implements LocationService {
 
     @Override
     public List<LocationDTO> findAll() {
-        LOGGER.info("Retrieving a list of all locations from repository");
+        LOGGER.info("Location Service: Retrieving a list of all locations from repository");
         return locationMapper.locationToLocationDTO(locationRepository.findAll());
+    }
+
+    @Override
+    public List<String> getCountriesOrderedByName() throws ServiceException{
+        LOGGER.info("Location Service: Retrieving a list of all countries ordered alphabetically");
+        try {
+            return locationRepository.getCountriesOrderedByName();
+        } catch (PersistenceException e) {
+            throw new ServiceException(e.getMessage(), e);
+        }
     }
 }

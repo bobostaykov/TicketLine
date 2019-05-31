@@ -14,7 +14,12 @@ export class LocationsService {
   constructor(private httpClient: HttpClient, private globals: Globals) { }
 
   public findLocationsFiltered(country, city, street, postalCode, description): Observable<Location[]> {
-    console.log('Service: findLocationsFiltered');
+    console.log('Location Service: findLocationsFiltered');
     return this.httpClient.get<Location[]>(this.locationsBaseUri, {params: { country: country, city: city, street: street, postalCode: postalCode, description: description }});
+  }
+
+  public getCountriesOrderedByName(): Observable<string[]> {
+    console.log('Location Service: getCountriesOrderedByName');
+    return this.httpClient.get<string[]>(this.locationsBaseUri + '/countries');
   }
 }

@@ -50,6 +50,7 @@ public class LocationEndpoint {
         try {
             if (filterData) {
                 //TODO: maybe change this back at some point but need a method to get all locations
+                LOGGER.info("Location Endpoint: Get all locations");
                 return locationService.findAll();
             } else {
                 LOGGER.info("Location Endpoint: Get all locations filtered by location");
@@ -61,6 +62,19 @@ public class LocationEndpoint {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error while looking for locations with those parameters", e);
         } catch (NotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No locations are found for the given parameters:" + e.getMessage(), e);
+        }
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/countries")
+    @ApiOperation(value = "Get all countries filtered alphabetically", authorizations = {@Authorization(value = "apiKey")})
+    public List<String> getCountriesOrderedByName() {
+        try {
+            LOGGER.info("Location Endpoint: Get all countries ordered alphabetically");
+            return locationService.getCountriesOrderedByName();
+        } catch (ServiceException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error while trying to get all countries ordered: ", e);
+        } catch (NotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No locations are found: " + e.getMessage(), e);
         }
     }
 }
