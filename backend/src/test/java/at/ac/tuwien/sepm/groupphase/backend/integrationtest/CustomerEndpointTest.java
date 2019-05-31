@@ -266,6 +266,39 @@ public class CustomerEndpointTest extends BaseIntegrationTest {
     }
 
     @Test
+    public void changeUserThenHTTPResponseOKAndChangedCustomerIsReturned() {
+        BDDMockito.
+            given(customerRepository.save(any(Customer.class))).
+            willReturn(Customer.builder()
+                .id(TEST_CUSTOMER_ID)
+                .name(TEST_CUSTOMER_NAME)
+                .firstname(TEST_CUSTOMER_FIRSTNAME)
+                .email(TEST_CUSTOMER_EMAIL)
+                .birthday(TEST_CUSTOMER_BIRTHDATE)
+                .build());
+        Response response = RestAssured
+            .given()
+            .contentType(ContentType.JSON)
+            .header(HttpHeaders.AUTHORIZATION, validAdminTokenWithPrefix)
+            .body(CustomerDTO.builder()
+                .name(TEST_CUSTOMER_NAME)
+                .firstname(TEST_CUSTOMER_FIRSTNAME)
+                .email(TEST_CUSTOMER_EMAIL)
+                .birthday(TEST_CUSTOMER_BIRTHDATE)
+                .build())
+            .when().put(CUSTOMER_ENDPOINT + SPECIFIC_CUSTOMER_PATH, TEST_CUSTOMER_ID)
+            .then().extract().response();
+        Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
+        Assert.assertThat(response.as(CustomerDTO.class), is(CustomerDTO.builder()
+            .id(TEST_CUSTOMER_ID)
+            .name(TEST_CUSTOMER_NAME)
+            .firstname(TEST_CUSTOMER_FIRSTNAME)
+            .email(TEST_CUSTOMER_EMAIL)
+            .birthday(TEST_CUSTOMER_BIRTHDATE)
+            .build()));
+    }
+
+    @Test
     public void addIllegalUserThenHTPPResponseBADREQUEST() {
         Response response = RestAssured
             .given()
