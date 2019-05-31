@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.repository.implementation;
 
+import at.ac.tuwien.sepm.groupphase.backend.datatype.PriceCategory;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.searchParameters.ShowSearchParametersDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.*;
 import at.ac.tuwien.sepm.groupphase.backend.repository.ShowRepositoryCustom;
@@ -123,15 +124,18 @@ public class ShowRepositoryImpl implements ShowRepositoryCustom {
             }
         }
 
+/*
+        if(parameters.getPriceInEuroFrom() != null || parameters.getPriceInEuroTo() != null){
+            Join<Show, PricePattern> pricePatternJoin = show.join(Show_.PRICE_PATTERN);
+            MapJoin<Show, PriceCategory, Double> mapJoin = pricePatternJoin.joinMap(PricePattern_.PRICE_MAPPING);
+            if(parameters.getPriceInEuroFrom() != null){
+                predicates.add(cBuilder.greaterThanOrEqualTo(mapJoin.in, parameters.getPriceInEuroFrom()));
+            }
+            if(parameters.getPriceInEuroTo() != null){
+                predicates.add(cBuilder.lessThanOrEqualTo(show.get("price"), parameters.getPriceInEuroTo()));
+            } }
+*/
 
-        /*
-        if(parameters.getPriceInEuroFrom() != null){
-            predicates.add(cBuilder.greaterThanOrEqualTo(show.get(Show_.price), parameters.getPriceInEuroFrom()));
-        }
-        if(parameters.getPriceInEuroTo() != null){
-            predicates.add(cBuilder.lessThanOrEqualTo(show.get("price"), parameters.getPriceInEuroTo()));
-        }
-        */
 
         //Übergabe der Predicates
         criteriaQuery.select(show).where(predicates.toArray(new Predicate[predicates.size()]));
@@ -139,7 +143,13 @@ public class ShowRepositoryImpl implements ShowRepositoryCustom {
             .orderBy(cBuilder.asc(show.get(Show_.date)))
             .orderBy(cBuilder.asc(show.get(Show_.time)))
             .orderBy(cBuilder.asc(show.get(Show_.id)));
-        List results = em.createQuery(criteriaQuery).getResultList();
+        List<Show> results = em.createQuery(criteriaQuery).getResultList();
+        if(parameters.getPriceInEuroFrom() != null || parameters.getPriceInEuroTo() != null) {
+            for (Show  showStream: results
+             ){
+                //showStream.getPricePattern().getPriceMapping().values().stream()..filter(); //todo find stream method to extract fitting shows
+            }
+        }
         return results;
     }
 }

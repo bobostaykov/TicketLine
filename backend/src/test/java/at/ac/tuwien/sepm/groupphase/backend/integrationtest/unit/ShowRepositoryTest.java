@@ -1,20 +1,22 @@
 package at.ac.tuwien.sepm.groupphase.backend.integrationtest.unit;
 
 import at.ac.tuwien.sepm.groupphase.backend.datatype.EventType;
+import at.ac.tuwien.sepm.groupphase.backend.datatype.PriceCategory;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.searchParameters.ShowSearchParametersDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.*;
 import at.ac.tuwien.sepm.groupphase.backend.repository.*;
-import org.junit.*;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.validation.constraints.AssertTrue;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @RunWith(SpringRunner.class)
@@ -31,6 +33,8 @@ public class ShowRepositoryTest {
     private  HallRepository hallRepository;
     @Autowired
     private  LocationRepository locationRepository;
+    @Autowired
+    private PricePatternRepository pricePatternRepository;
 
     private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
     private final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
@@ -57,6 +61,9 @@ public class ShowRepositoryTest {
         .content("warten")
         .description("nicht da")
         .artist(artist1).durationInMinutes(400).build();
+    private HashMap<PriceCategory, Double> priceMap = new HashMap<>();
+    private PricePattern pricePattern1 = PricePattern.builder().setName("normal").createPricePattern();
+
     private   Show show1 = Show.builder().id(1L).ticketsSold(10000L).date(LocalDate.parse("17-03-2020", dateFormatter)).time(LocalTime.parse( "20:30", timeFormatter)).description("description").event(event1).hall(hall1).build();
     private   Show show2 = Show.builder().id(2L).ticketsSold(10000L).date(LocalDate.parse("15-10-2020", dateFormatter)).time(LocalTime.parse( "16:30", timeFormatter)).description("description").event(event1).hall(hall1).build();
     private  Show show3 = Show.builder().id(3L).ticketsSold(10000L).date(LocalDate.parse("15-10-2020", dateFormatter)).time(LocalTime.parse( "16:31", timeFormatter)).description("description").event(event2).hall(hall1).build();
@@ -77,6 +84,15 @@ public class ShowRepositoryTest {
     @Before
     public void  before(){
         if (!init) {
+            priceMap.put(PriceCategory.CHEAP, 10.0); priceMap.put(PriceCategory.AVERAGE, 20.0); priceMap.put(PriceCategory.EXPENSIVE, 40.0);
+            pricePattern1.setPriceMapping(priceMap);
+            pricePattern1 = pricePatternRepository.save(pricePattern1);
+
+            show1.setPricePattern(pricePattern1);
+            show2.setPricePattern(pricePattern1);
+            show3.setPricePattern(pricePattern1);
+            show4.setPricePattern(pricePattern1);
+
             locationAustria = locationRepository.save(locationAustria);
             locationGermany = locationRepository.save(locationGermany);
             artist1 = artistRepository.save(artist1);
