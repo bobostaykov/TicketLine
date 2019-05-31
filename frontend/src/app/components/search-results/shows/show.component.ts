@@ -59,7 +59,11 @@ export class ShowComponent implements OnInit {
           this.route.snapshot.queryParamMap.get('timeTo'),
           this.minPrice = +this.route.snapshot.queryParamMap.get('minPrice'),
           this.maxPrice = +this.route.snapshot.queryParamMap.get('maxPrice'),
-          this.duration = +this.route.snapshot.queryParamMap.get('duration')
+          this.duration = +this.route.snapshot.queryParamMap.get('duration'),
+          this.route.snapshot.queryParamMap.get('country'),
+          this.route.snapshot.queryParamMap.get('city'),
+          this.route.snapshot.queryParamMap.get('street'),
+          this.route.snapshot.queryParamMap.get('postalCode')
         );
         break;
       default:
@@ -78,7 +82,6 @@ export class ShowComponent implements OnInit {
   }
   */
 
-  // OK
   private loadShowsFilteredByEventName(eventName) {
     console.log('ShowResultsComponent: loadShowsFilteredByEventName');
     this.showService.findShowsFilteredByEventName(eventName).subscribe(
@@ -88,7 +91,6 @@ export class ShowComponent implements OnInit {
     );
   }
 
-  // OK
   private loadShowsFilteredByLocationID(id) {
     console.log('ShowResultsComponent: loadShowsFilteredByLocationID');
     this.showService.findShowsFilteredByLocationID(id).subscribe(
@@ -98,9 +100,11 @@ export class ShowComponent implements OnInit {
     );
   }
 
-  private loadShowsFilteredByShowAttributes(eventName, hallName, dateFrom, dateTo, timeFrom, timeTo, minPrice: number, maxPrice: number, duration: number) {
+  private loadShowsFilteredByShowAttributes(eventName, hallName, dateFrom, dateTo, timeFrom, timeTo, minPrice: number, maxPrice: number,
+                                            duration: number, country, city, street, postalCode) {
     console.log('ShowResultsComponent: loadShowsFilteredByShowAttributes');
-    this.showService.findShowsFilteredByShowAttributes(eventName, hallName, dateFrom, dateTo, timeFrom, timeTo, minPrice, maxPrice, duration).subscribe(
+    this.showService.findShowsFilteredByShowAttributes(eventName, hallName, dateFrom, dateTo, timeFrom, timeTo, minPrice, maxPrice,
+      duration, country, city, street, postalCode).subscribe(
       (shows: Show[]) => {this.shows = shows; },
       error => {this.defaultServiceErrorHandling(error); },
       () => { this.dataReady = true; }

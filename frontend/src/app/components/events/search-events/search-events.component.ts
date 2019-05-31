@@ -22,12 +22,12 @@ export class SearchEventsComponent implements OnInit {
   private artistForm: FormGroup;
 
   // Search for locations
-  private country: string = '';
-  private city: string = '';
-  private street: string = '';
-  private postalCode: string = '';
-  private locationDescription: string = '';
   private countries: string[];
+  private locationCountry: string = '';
+  private locationCity: string = '';
+  private locationStreet: string = '';
+  private locationPostalCode: string = '';
+  private locationDescription: string = '';
   private locationForm: FormGroup;
 
   // Search events by name and type
@@ -53,8 +53,12 @@ export class SearchEventsComponent implements OnInit {
     }
   };
   private duration: number;
-  private eventName2: string = '';
   private hallName: string = '';
+  private showEventName: string = '';
+  private showCountry: string = '';
+  private showCity: string = '';
+  private showStreet: string = '';
+  private showPostalCode: string = '';
   private showForm: FormGroup;
 
   constructor(private router: Router, private locationsService: LocationsService, public snackBar: MatSnackBar) { }
@@ -66,10 +70,10 @@ export class SearchEventsComponent implements OnInit {
     });
 
     this.locationForm = new FormGroup({
-      country: new FormControl(),
-      city: new FormControl(),
-      street  : new FormControl(),
-      postalCode: new FormControl(),
+      locationCountry: new FormControl(),
+      locationCity: new FormControl(),
+      locationStreet  : new FormControl(),
+      locationPostalCode: new FormControl(),
       locationDescription: new FormControl()
       });
 
@@ -81,7 +85,7 @@ export class SearchEventsComponent implements OnInit {
     });
 
     this.showForm = new FormGroup({
-      eventName2: new FormControl(),
+      showEventName: new FormControl(),
       hallName: new FormControl(),
       minPrice: new FormControl(),
       maxPrice: new FormControl(),
@@ -89,7 +93,11 @@ export class SearchEventsComponent implements OnInit {
       dateTo: new FormControl(),
       timeFrom: new FormControl(),
       timeTo: new FormControl(),
-      duration: new FormControl()
+      duration: new FormControl(),
+      showCountry: new FormControl(),
+      showCity: new FormControl(),
+      showStreet: new FormControl(),
+      showPostalCode: new FormControl()
     });
 
     this.getCountriesOrderedByName();
@@ -109,11 +117,11 @@ export class SearchEventsComponent implements OnInit {
   }
 
   private searchByLocation(): void {
-    if (this.country !== '' || this.city !== '' || this.street !== '' || this.postalCode !== '' || this.postalCode !== '' || this.locationDescription !== '') {
+    if (this.locationCountry !== '' || this.locationCity !== '' || this.locationStreet !== '' || this.locationPostalCode !== '' || this.locationPostalCode !== '' || this.locationDescription !== '') {
       this.router.navigate(['events/search/results/locations'], {
         queryParams: {
-          resultsFor: 'ATTRIBUTES', country: this.country, city: this.city, street: this.street,
-          postalCode: this.postalCode, description: this.locationDescription
+          resultsFor: 'ATTRIBUTES', locationCountry: this.locationCountry, locationCity: this.locationCity, locationStreet: this.locationStreet,
+          locationPostalCode: this.locationPostalCode, description: this.locationDescription
         }
       });
     }
@@ -146,13 +154,14 @@ export class SearchEventsComponent implements OnInit {
       return;
     }
 
-    if (this.eventName2 !== '' || this.hallName !== '' || this.dateFrom !== undefined || this.dateTo !== undefined || this.timeFrom !== undefined ||
-      this.timeTo !== undefined || this.minPrice !== null || this.maxPrice !== null || this.duration !== null) {
+    if (this.showEventName !== '' || this.hallName !== '' || this.dateFrom !== undefined || this.dateTo !== undefined || this.timeFrom !== undefined ||
+      this.timeTo !== undefined || this.minPrice !== null || this.maxPrice !== null || this.duration !== null || this.showCountry !== '' ||
+    this.showCity !== '' || this.showStreet !== '' || this.showPostalCode !== '') {
       this.router.navigate(['/events/search/results/shows'], {
         queryParams: {
-          resultsFor: 'ATTRIBUTES', eventName: this.eventName2, hallName: this.hallName, dateFrom: this.dateFrom,
-          dateTo: this.dateTo, timeFrom: this.timeFrom, timeTo: this.timeTo, minPrice: this.minPrice,
-          maxPrice: this.maxPrice, duration: this.duration
+          resultsFor: 'ATTRIBUTES', eventName: this.showEventName, hallName: this.hallName, dateFrom: this.dateFrom,
+          dateTo: this.dateTo, timeFrom: this.timeFrom, timeTo: this.timeTo, minPrice: this.minPrice, maxPrice: this.maxPrice,
+          duration: this.duration, country: this.showCountry, city: this.showCity, street: this.showStreet, postalCode: this.showPostalCode
         }
       });
     }

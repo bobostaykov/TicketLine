@@ -58,16 +58,6 @@ public class EventEndpoint {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    @ApiOperation(value = "Get all events", authorizations = {@Authorization(value = "apiKey")})
-    public List<EventDTO> findAll() {
-        LOGGER.info("Get all events");
-        try {
-            return eventService.findAll();
-        } catch (ServiceException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        }
-    }
-
     public List<EventDTO> findEventsFilteredByAttributes(@RequestParam(value = "eventName", required = false) String eventName,
                                                          @RequestParam(value = "eventType", required = false) String eventType,
                                                          @RequestParam(value = "content", required = false) String content,
@@ -83,9 +73,6 @@ public class EventEndpoint {
             }
         } else {
             LOGGER.info("Event Endpoint: findEventsFilteredByAttributes");
-            LOGGER.debug(eventName);
-            LOGGER.debug(content);
-            LOGGER.debug(description);
             EventType eventTypeConv = null;
             if (eventType != null) {
                 for (EventType type : EventType.values()

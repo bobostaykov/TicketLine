@@ -24,13 +24,14 @@ export class ShowService {
     return this.httpClient.get<Show[]>(this.showBaseUri + '/location/' + id);
   }
 
-  // TODO try sending DataTypes instead of strings
-  public findShowsFilteredByShowAttributes(eventName, hallName, dateFrom, dateTo, timeFrom, timeTo, minPrice, maxPrice, duration) {
+  // TODO sending DataTypes instead of strings?
+  public findShowsFilteredByShowAttributes(eventName, hallName, dateFrom, dateTo, timeFrom, timeTo, minPrice, maxPrice,
+                                           duration, country, city, street, postalCode) {
     console.log('ShowResultsService: findShowsFilteredByShowAttributes');
     return this.httpClient.get<Show[]>(this.showBaseUri + '/filter', {
       params: {
         eventName: eventName, hallName: hallName, dateFrom: dateFrom, dateTo: dateTo, timeFrom: timeFrom, timeTo: timeTo,
-        minPrice: minPrice, maxPrice: maxPrice, duration: duration
+        minPrice: minPrice, maxPrice: maxPrice, duration: duration, country: country, city: city, street: street, postalCode: postalCode
       }
     });
   }

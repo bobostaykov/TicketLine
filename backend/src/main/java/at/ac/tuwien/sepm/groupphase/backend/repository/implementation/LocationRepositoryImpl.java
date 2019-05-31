@@ -74,6 +74,7 @@ public class LocationRepositoryImpl implements LocationRepositoryCustom {
         return results;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public List<String> getCountriesOrderedByName() throws NotFoundException {
         LOGGER.info("Location Repository Impl: getCountriesOrderedByName");

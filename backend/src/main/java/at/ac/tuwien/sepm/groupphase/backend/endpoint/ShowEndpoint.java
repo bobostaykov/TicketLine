@@ -10,7 +10,6 @@ import io.swagger.annotations.Authorization;
 import org.hibernate.service.spi.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -36,14 +35,13 @@ public class ShowEndpoint {
         this.showService = showService;
     }
 
-    // OK
     @RequestMapping(value = "/event", method = RequestMethod.GET)
     @ApiOperation(value = "Get list of all shows filtered by eventName", authorizations = {@Authorization(value = "apiKey")})
     public List<ShowDTO> findAllShowsFilteredByEventName(@RequestParam(value = "eventName") String eventName){
         LOGGER.info("Show Endpoint: Get all shows which belong to event \"" + eventName + " \"");
         try{
             // TODO
-            //return showService.findAllShowsFilteredByEventName(eventName);
+            //  return showService.findAllShowsFilteredByEventName(eventName);
             return showService.findAll(); // replace this line
         }catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error while looking for shows belonging to event with name " + eventName, e);
@@ -54,14 +52,13 @@ public class ShowEndpoint {
         }
     }
 
-    // OK
     @RequestMapping(value = "/location/{id}", method = RequestMethod.GET)
     @ApiOperation(value = "Get list of all shows filtered by location id", authorizations = {@Authorization(value = "apiKey")})
     public List<ShowDTO> findAllShowsFilteredByLocationID(@PathVariable("id") Integer locationID){
         LOGGER.info("Show Endpoint:  Get all shows filtered by location with id " + locationID);
         try{
             // TODO
-            //return showMapper.showToShowDTO(showService.findAllShowsFilteredByLocationID(locationID));
+            //  return showMapper.showToShowDTO(showService.findAllShowsFilteredByLocationID(locationID));
             return showService.findAll(); // replace this line
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error while looking for shows for that location", e);
@@ -72,8 +69,6 @@ public class ShowEndpoint {
         }
     }
 
-
-    // OK
     @RequestMapping(value = "/filter", method = RequestMethod.GET)
     @ApiOperation(value = "Get all shows filtered by specified attributes", authorizations = {@Authorization(value = "apiKey")})
     public List<ShowDTO> findShowsFilteredByShowAttributes(
@@ -101,11 +96,12 @@ public class ShowEndpoint {
                 country == null && city == null &&
                 postalCode == null && street == null);
         try {
-            LOGGER.debug("eventName: " + eventName + "\nhallName: " + hallName + "\nminPrice: " + minPrice + "\nmaxPrice: " + maxPrice +
-                "\ndateFrom: " + dateFrom + "\ndateTo: " + dateTo+ "\ntimeFrom: " + timeFrom
-                + "\ntimeTo: " + timeTo + "\nduration: " +duration);
+            LOGGER.debug("\neventName: " + eventName + "\nhallName: " + hallName + "\nminPrice: " + minPrice + "\nmaxPrice: " + maxPrice +
+                "\ndateFrom: " + dateFrom + "\ndateTo: " + dateTo + "\ntimeFrom: " + timeFrom + "\ntimeTo: " + timeTo +
+                "\nduration: " +duration + "\ncountry: " + country + "\ncity: " + city + "\nstreet: " + street + "\npostalCode: " + postalCode);
 
             if (filterData) {
+                // TODO we actually never get inside this block, because of priceMin and priceMax
                 LOGGER.info("Get all shows");
                 return showService.findAllShows();
             } else {
@@ -129,7 +125,6 @@ public class ShowEndpoint {
                 LOGGER.info("Get all shows filtered by specified attributes: " + parameters.toString());
 
                 return showService.findAllShowsFiltered(parameters);
-                //}
             }
         }catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error while looking for shows with those parameters: " + e.getMessage(), e);
@@ -140,50 +135,3 @@ public class ShowEndpoint {
         }
     }
 }
-/*
-    @RequestMapping(value = "/location", method = RequestMethod.GET)
-    @ApiOperation(value = "Get all shows filtered by location parameters", authorizations = {@Authorization(value = "apiKey")})
-    public List<ShowDTO> findAllShowsFilteredByLocation(
-        @RequestParam(value="country", required = false) String country,
-        @RequestParam(value="city", required = false)  String city,
-        @RequestParam(value="postalcode", required = false)  String postalcode,
-        @RequestParam(value="street", required = false)  String street
-    ){
-        boolean filterData = country == null && city == null && postalcode == null && street == null;
-        try{
-            if (filterData) {
-                throw new IllegalArgumentException("No parameters are specified.");
-            } else {
-                LOGGER.info("Get all shows filtered by specified attributes");
-                return showMapper.showToShowDTO(showService.findAllShowsFilteredByLocation(country, city, postalcode, street));
-            }
-                dateFrom == null && dateTo == null &&
-                timeFrom == null && timeTo == null &&
-                minPrice == null && maxPrice == null &&
-                eventName == null && hallName == null &&
-                duration == null
-        );
-        try{
-        if (filterData) {
-            LOGGER.info("Show Endpoint: Get all shows");
-            // TODO
-            return showService.findAll();
-        } else {
-            LOGGER.info("Show Endpoint: Get all shows filtered by specified attributes");
-            // TODO return showService.findShowsFilteredByShowAttributes(dateFrom, dateTo, timeFrom, timeTo, minPrice, maxPrice, eventName, hallName));
-            //  Example for parsing String to Date or Time
-            //  String sDate1 = "31/12/1998";
-            //  Date date1=new SimpleDateFormat("dd/MM/yyyy").parse(sDate1);
-            return showService.findAll(); // replace this line
-        }
-        }catch (IllegalArgumentException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error while looking for shows with those parameters: " + e.getMessage(), e);
-        }catch (ServiceException e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error while looking for shows with those parameters", e);
-        }catch(NotFoundException e){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No shows are found for the given parameters:" + e.getMessage(), e);
-        }
-    }
-}
-
- */
