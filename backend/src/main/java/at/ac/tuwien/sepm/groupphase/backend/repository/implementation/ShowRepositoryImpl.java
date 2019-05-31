@@ -1,6 +1,5 @@
 package at.ac.tuwien.sepm.groupphase.backend.repository.implementation;
 
-import at.ac.tuwien.sepm.groupphase.backend.datatype.PriceCategory;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.searchParameters.ShowSearchParametersDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.*;
 import at.ac.tuwien.sepm.groupphase.backend.repository.ShowRepositoryCustom;
@@ -11,9 +10,10 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.*;
-import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class ShowRepositoryImpl implements ShowRepositoryCustom {
@@ -152,6 +152,7 @@ public class ShowRepositoryImpl implements ShowRepositoryCustom {
         }
         return results;
     }
+
 }
 
 

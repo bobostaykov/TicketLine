@@ -14,7 +14,9 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.PersistenceException;
 import javax.persistence.criteria.CriteriaBuilder;
+import java.util.Comparator;
 import java.util.List;
+import java.util.function.Predicate;
 
 //TODO Class is unfinished
 @Service
@@ -70,6 +72,7 @@ public class ShowServiceImpl implements ShowService {
         try{
             LOGGER.info("Find all shows filtered by :" + parameters.toString());
             return showMapper.showToShowDTO(showRepository.findAllShowsFiltered(parameters));
+
         }catch (PersistenceException e){
             throw new ServiceException(e.getMessage(), e);
         }
@@ -81,6 +84,14 @@ public class ShowServiceImpl implements ShowService {
     public List<ShowDTO> findAllShowsFilteredByLocation(String country, String city, String postalcode, String street) {
         LOGGER.info("Find all shows filtered by location");
         return null;
+    }
+    private static Predicate<Show> compareMin(Double minPrice){
+        return show -> show.getPricePattern()
+            .getPriceMapping()
+            .values()
+            .stream()
+            .min(Comparator
+                .comparingDouble(value -> value.doubleValue())).get().doubleValue() > minPrice;
     }
 
 }
