@@ -23,7 +23,6 @@ public class HallServiceImpl implements HallService {
     private final HallMapper hallMapper;
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
-    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     public HallServiceImpl(HallRepository hallRepository, HallMapper hallMapper) {
         this.hallMapper = hallMapper;
         this.hallRepository = hallRepository;
@@ -42,7 +41,7 @@ public class HallServiceImpl implements HallService {
         validateHallDTO(hallDTO);
         // map hall dto to entity
         Hall hall = hallMapper.hallDTOToHall(hallDTO);
-        // set child column in ManyToOne relationship and validate seats/sectors;
+        //sets child column in ManyToOne relationship and validate seats/sectors;
         if (!isEmpty(hall.getSeats())) {
             for(Seat seat : hall.getSeats()){
                 validateSeat(seat);
@@ -71,6 +70,10 @@ public class HallServiceImpl implements HallService {
             LOGGER.error("Hall " + hallDTO.toString() + " could not be added because it contains both seats and sectors");
             throw new ServiceException("Hall " + hallDTO.toString() + " could not be added: Hall cannot contain both seats and sectors");
         }
+        if(isEmpty(hallDTO.getSeats()) && isEmpty(hallDTO.getSectors())){
+            LOGGER.error("Hall " + hallDTO.toString() + " could not be added because it does not contain seats or sectors");
+            throw new ServiceException("Hall " + hallDTO.toString() + " could not be added: Hall contains no seats or sectors");
+        }
     }
     //helper method to validate seat and improve code readability
     private void validateSeat(Seat seat) throws ServiceException {
@@ -86,6 +89,10 @@ public class HallServiceImpl implements HallService {
             throw new ServiceException("Hall could not be added due to seat " + seat.toString() +
                 ". Seat Row must be set and greater than 0");
         }
+        if(seat.getPriceCategory() == null){
+            LOGGER.error("Hall could not be added because no price category was set for seat " + seat.toString());
+            throw new ServiceException("Hall could not be added because no price category was set for seat " + seat.toString());
+        }
     }
     //helper method to validate sector and improve code readability
     private void validateSector(Sector sector) throws ServiceException{
@@ -94,6 +101,10 @@ public class HallServiceImpl implements HallService {
                 + ". Sector number was " + (sector.getSectorNumber() == null ? "not set-" : "less than 1."));
             throw new ServiceException("Hall could not be added due to sector " + sector.toString()
                 + ". Sector number must be set and greater than 0");
+        }
+        if(sector.getPriceCategory() == null){
+            LOGGER.error("Hall could not be added because no price category was set for sector " + sector.toString());
+            throw new ServiceException("Hall could not be added because no price category was set for sector " + sector.toString());
         }
     }
 }
