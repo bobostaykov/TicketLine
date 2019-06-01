@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 // TODO I copied everything like you had it in EventRepoTest including the 'initiated' variable and still the id-s were getting bigger
-//  and the tests because of that failing! except 'searchByDescription' for some wondering reason ?!
+//  and the tests because of that failing! except for 'searchByDescription' which for some wondering reason not ?!
 //  Note: I was getting the right Locations, but with different id-s
 
 @RunWith(SpringJUnit4ClassRunner.class)
