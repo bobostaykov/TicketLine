@@ -87,34 +87,20 @@ public class ShowEndpoint {
         @RequestParam(value = "postalCode", required = false) String postalCode,
         @RequestParam(value = "street", required = false) String street)
     {
-        boolean filterData = (
-            dateFrom == null && dateTo == null &&
-                timeFrom == null && timeTo == null &&
-                minPrice == null && maxPrice == null &&
-                eventName == null && hallName == null &&
-                duration == null &&
-                country == null && city == null &&
-                postalCode == null && street == null);
         try {
             LOGGER.debug("\neventName: " + eventName + "\nhallName: " + hallName + "\nminPrice: " + minPrice + "\nmaxPrice: " + maxPrice +
                 "\ndateFrom: " + dateFrom + "\ndateTo: " + dateTo + "\ntimeFrom: " + timeFrom + "\ntimeTo: " + timeTo +
                 "\nduration: " +duration + "\ncountry: " + country + "\ncity: " + city + "\nstreet: " + street + "\npostalCode: " + postalCode);
-
-            if (filterData) {
-                // TODO we actually never get inside this block, because of priceMin and priceMax
-                LOGGER.info("Get all shows");
-                return showService.findAllShows();
-            } else {
 
                 ShowSearchParametersDTO parameters = new ShowSearchParametersDTO.builder()
                     .setPriceInEuroFrom(minPrice)
                     .setPriceInEuroTo(maxPrice)
                     .setEventName(eventName)
                     .setHallName(hallName)
-                    .setDateFrom(dateFrom.equals("null") ? null : LocalDate.parse(dateFrom, dateFormatter))
-                    .setDateTo(dateTo.equals("null") ? null : LocalDate.parse(dateTo, dateFormatter))
-                    .setTimeFrom(timeFrom.equals("null") ? null : LocalTime.parse(timeFrom, timeFormatter))
-                    .setTimeTo(timeTo.equals("null") ? null : LocalTime.parse(timeTo, timeFormatter))
+                    .setDateFrom(dateFrom == null ? null : LocalDate.parse(dateFrom, dateFormatter))
+                    .setDateTo(dateTo == null ? null : LocalDate.parse(dateTo, dateFormatter))
+                    .setTimeFrom(timeFrom == null ? null : LocalTime.parse(timeFrom, timeFormatter))
+                    .setTimeTo(timeTo == null ? null : LocalTime.parse(timeTo, timeFormatter))
                     .setDurationInMinutes(duration)
                     .country(country)
                     .city(city)
@@ -123,9 +109,8 @@ public class ShowEndpoint {
                     .build();
 
                 LOGGER.info("Get all shows filtered by specified attributes: " + parameters.toString());
-
                 return showService.findAllShowsFiltered(parameters);
-            }
+
         }catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error while looking for shows with those parameters: " + e.getMessage(), e);
         }catch (at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException e) {

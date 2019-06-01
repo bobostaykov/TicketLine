@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {ResultsFor} from '../../../datatype/results_for';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpParams} from '@angular/common/http';
 import {Globals} from '../../../global/globals';
 import {Observable} from 'rxjs';
 import {Show} from '../../../dtos/show';
@@ -28,11 +28,20 @@ export class ShowResultsService {
   public findShowsFilteredByShowAttributes(eventName, hallName, dateFrom, dateTo, timeFrom, timeTo, minPrice, maxPrice,
                                            duration, country, city, street, postalCode) {
     console.log('ShowResultsService: findShowsFilteredByShowAttributes');
-    return this.httpClient.get<Show[]>(this.showBaseUri + '/filter', {
-      params: {
-        eventName: eventName, hallName: hallName, dateFrom: dateFrom, dateTo: dateTo, timeFrom: timeFrom, timeTo: timeTo,
-        minPrice: minPrice, maxPrice: maxPrice, duration: duration, country: country, city: city, street: street, postalCode: postalCode
-      }
-    });
+    let parameters = new HttpParams();
+    parameters = eventName ? parameters.append('eventName', eventName) : parameters;
+    parameters = hallName ? parameters.append('hallName', hallName) : parameters;
+    parameters = dateFrom ? parameters.append('dateFrom', dateFrom) : parameters;
+    parameters = dateTo ? parameters.append('dateTo', dateTo) : parameters;
+    parameters = timeFrom ? parameters.append('timeFrom', timeFrom) : parameters;
+    parameters = timeTo ? parameters.append('timeTo', timeTo) : parameters;
+    parameters = minPrice ? parameters.append('minPrice', minPrice) : parameters;
+    parameters = maxPrice ? parameters.append('maxPrice', maxPrice) : parameters;
+    parameters = duration ? parameters.append('duration', duration) : parameters;
+    parameters = country ? parameters.append('country', country) : parameters;
+    parameters = city ? parameters.append('city', city) : parameters;
+    parameters = street ? parameters.append('street', street) : parameters;
+    parameters = postalCode ? parameters.append('postalCode', postalCode) : parameters;
+    return this.httpClient.get<Show[]>(this.showBaseUri + '/filter', { params: parameters });
   }
 }

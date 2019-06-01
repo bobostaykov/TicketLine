@@ -18,7 +18,7 @@ import { TopTenEventsComponent } from './components/events/top-ten-events/top-te
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MatButtonModule, MatCheckboxModule, MatInputModule, MatSelectModule, MatSnackBarModule} from '@angular/material';
 import {NgxChartsModule} from '@swimlane/ngx-charts';
-import { SearchEventsComponent } from './components/events/search-events/search-events.component';
+import { SearchPageComponent } from './components/events/search page/search-page.component';
 import { ArtistResultsComponent } from './components/search-results/artists/artist-results.component';
 import { ShowResultsComponent } from './components/search-results/shows/show-results.component';
 import { EventsComponent } from './components/events/start page/events.component';
@@ -40,7 +40,7 @@ import {CustomerDialogComponent} from './components/customer-dialog/customer-dia
     NewsComponent,
     UserComponent,
     TopTenEventsComponent,
-    SearchEventsComponent,
+    SearchPageComponent,
     ArtistResultsComponent,
     ShowResultsComponent,
     EventsComponent,

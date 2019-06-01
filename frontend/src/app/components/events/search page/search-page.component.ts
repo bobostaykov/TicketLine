@@ -8,11 +8,11 @@ import {MatSnackBar} from '@angular/material';
 import {LocationResultsService} from '../../../services/search-results/locations/location-results.service';
 
 @Component({
-  selector: 'app-search-events',
-  templateUrl: './search-events.component.html',
-  styleUrls: ['./search-events.component.scss']
+  selector: 'app-search-page',
+  templateUrl: './search-page.component.html',
+  styleUrls: ['./search-page.component.scss']
 })
-export class SearchEventsComponent implements OnInit {
+export class SearchPageComponent implements OnInit {
 
   private error: boolean = false;
   private errorMessage: string = '';
@@ -23,17 +23,17 @@ export class SearchEventsComponent implements OnInit {
 
   // Search for locations
   private countries: string[];
-  private locationCountry: string = '';
-  private locationCity: string = '';
-  private locationStreet: string = '';
-  private locationPostalCode: string = '';
-  private locationDescription: string = '';
+  private locationCountry: string;
+  private locationCity: string;
+  private locationStreet: string;
+  private locationPostalCode: string;
+  private locationDescription: string;
   private locationForm: FormGroup;
 
   // Search events by name and type
-  private eventName: string = '';
-  private eventContent: string = '';
-  private eventDescription: string = '';
+  private eventName: string;
+  private eventContent: string;
+  private eventDescription: string;
   private eventType: EventType;
   private eventTypeKeys: string[] = Object.keys(EventType);
   private eventForm: FormGroup;
@@ -43,22 +43,20 @@ export class SearchEventsComponent implements OnInit {
   private dateTo: Date;
   private timeFrom: Time;
   private timeTo: Time;
-  private minPrice: number = 40;
-  private maxPrice: number = 160;
   private priceOptions: Options = {
     floor: 0,
     ceil: 200,
-    translate: (value: number): string => {
-      return '€' + value;
-    }
+    translate: (value: number): string => '€' + value
   };
+  private minPrice: number = this.priceOptions.floor;
+  private maxPrice: number = this.priceOptions.ceil;
   private duration: number;
-  private hallName: string = '';
-  private showEventName: string = '';
-  private showCountry: string = '';
-  private showCity: string = '';
-  private showStreet: string = '';
-  private showPostalCode: string = '';
+  private hallName: string;
+  private showEventName: string;
+  private showCountry: string;
+  private showCity: string;
+  private showStreet: string;
+  private showPostalCode: string;
   private showForm: FormGroup;
 
   constructor(private router: Router, private locationsService: LocationResultsService, public snackBar: MatSnackBar) { }
@@ -117,18 +115,19 @@ export class SearchEventsComponent implements OnInit {
   }
 
   private searchByLocation(): void {
-    if (this.locationCountry !== '' || this.locationCity !== '' || this.locationStreet !== '' || this.locationPostalCode !== '' || this.locationPostalCode !== '' || this.locationDescription !== '') {
+    if (this.locationCountry !== undefined || this.locationCity !== undefined || this.locationStreet !== undefined ||
+      this.locationPostalCode !== undefined || this.locationDescription !== undefined ) {
       this.router.navigate(['events/search/results/locations'], {
         queryParams: {
-          resultsFor: 'ATTRIBUTES', locationCountry: this.locationCountry, locationCity: this.locationCity, locationStreet: this.locationStreet,
-          locationPostalCode: this.locationPostalCode, description: this.locationDescription
+          resultsFor: 'ATTRIBUTES', country: this.locationCountry, city: this.locationCity, street: this.locationStreet,
+          postalCode: this.locationPostalCode, description: this.locationDescription
         }
       });
     }
   }
 
   private searchByEventAttributes(): void {
-    if (this.eventName !== '' || this.eventContent !== '' || this.eventDescription !== '' || this.eventType !== null) {
+    if (this.eventName !== undefined || this.eventContent !== undefined || this.eventDescription !== undefined || this.eventType !== undefined) {
       this.router.navigate(['/events/search/results/events'], {
         queryParams: {
           resultsFor: 'ATTRIBUTES', eventName: this.eventName, eventType: this.eventType, content: this.eventContent, description: this.eventDescription
@@ -149,22 +148,19 @@ export class SearchEventsComponent implements OnInit {
       return;
     }
 
-    if (this.duration < 0) {
-      this.openSnackBar('Invalid Duration: Duration cannot be negative');
+    if (this.duration <= 0) {
+      this.openSnackBar('Invalid Duration: Duration must be positive');
       return;
     }
 
-    if (this.showEventName !== '' || this.hallName !== '' || this.dateFrom !== undefined || this.dateTo !== undefined || this.timeFrom !== undefined ||
-      this.timeTo !== undefined || this.minPrice !== null || this.maxPrice !== null || this.duration !== null || this.showCountry !== '' ||
-    this.showCity !== '' || this.showStreet !== '' || this.showPostalCode !== '') {
-      this.router.navigate(['/events/search/results/shows'], {
-        queryParams: {
-          resultsFor: 'ATTRIBUTES', eventName: this.showEventName, hallName: this.hallName, dateFrom: this.dateFrom,
-          dateTo: this.dateTo, timeFrom: this.timeFrom, timeTo: this.timeTo, minPrice: this.minPrice, maxPrice: this.maxPrice,
-          duration: this.duration, country: this.showCountry, city: this.showCity, street: this.showStreet, postalCode: this.showPostalCode
-        }
-      });
-    }
+    this.router.navigate(['/events/search/results/shows'], {
+      queryParams: {
+        resultsFor: 'ATTRIBUTES', eventName: this.showEventName, hallName: this.hallName, dateFrom: this.dateFrom,
+        dateTo: this.dateTo, timeFrom: this.timeFrom, timeTo: this.timeTo, minPrice: this.minPrice, maxPrice: this.maxPrice,
+        duration: this.duration, country: this.showCountry, city: this.showCity, street: this.showStreet, postalCode: this.showPostalCode
+      }
+    });
+
   }
 
   openSnackBar(message: string) {

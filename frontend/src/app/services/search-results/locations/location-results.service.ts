@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpParams} from '@angular/common/http';
 import {Globals} from '../../../global/globals';
 import {Observable} from 'rxjs';
 import {Location} from '../../../dtos/location';
@@ -15,7 +15,13 @@ export class LocationResultsService {
 
   public findLocationsFiltered(country, city, street, postalCode, description): Observable<Location[]> {
     console.log('Location Service: findLocationsFiltered');
-    return this.httpClient.get<Location[]>(this.locationsBaseUri, {params: { country: country, city: city, street: street, postalCode: postalCode, description: description }});
+    let parameters = new HttpParams();
+    parameters = country ? parameters.append('country', country) : parameters;
+    parameters = city ? parameters.append('city', city) : parameters;
+    parameters = street ? parameters.append('street', street) : parameters;
+    parameters = postalCode ? parameters.append('postalCode', postalCode) : parameters;
+    parameters = description ? parameters.append('postalCode', description) : parameters;
+    return this.httpClient.get<Location[]>(this.locationsBaseUri, {params: parameters});
   }
 
   public getCountriesOrderedByName(): Observable<string[]> {

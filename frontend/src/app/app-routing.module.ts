@@ -6,7 +6,7 @@ import {AuthGuard} from './guards/auth.guard';
 import {NewsComponent} from './components/news/news.component';
 import {UserComponent} from './components/user/user.component';
 import {TopTenEventsComponent} from './components/events/top-ten-events/top-ten-events.component';
-import {SearchEventsComponent} from './components/events/search-events/search-events.component';
+import {SearchPageComponent} from './components/events/search page/search-page.component';
 import {ShowResultsComponent} from './components/search-results/shows/show-results.component';
 import {ArtistResultsComponent} from './components/search-results/artists/artist-results.component';
 import {EventsComponent} from './components/events/start page/events.component';
@@ -24,7 +24,7 @@ const routes: Routes = [
   {path: 'customers', canActivate: [AuthGuard], component: CustomerComponent},
   {path: 'events', canActivate: [AuthGuard], component: EventsComponent},
   {path: 'events/topten', canActivate: [AuthGuard], component: TopTenEventsComponent},
-  {path: 'events/search', canActivate: [AuthGuard], component: SearchEventsComponent},
+  {path: 'events/search', canActivate: [AuthGuard], component: SearchPageComponent},
   {path: 'events/search/results/artists', canActivate: [AuthGuard], component: ArtistResultsComponent},
   {path: 'events/search/results/shows', canActivate: [AuthGuard], component: ShowResultsComponent},
   {path: 'events/search/results/locations', canActivate: [AuthGuard], component: LocationResultsComponent},
