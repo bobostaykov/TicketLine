@@ -371,21 +371,21 @@ public class SimpleDataGenerator {
             */
             /*
 
-            Hall hall1 = Hall.builder().id(1L).name("Hall1").build();
-            Hall hall2 = Hall.builder().id(2L).name("Hall2").build();
-            Hall hall3 = Hall.builder().id(3L).name("Hall3").build();
-            Hall hall4 = Hall.builder().id(4L).name("Hall4").build();
-            Hall hall5 = Hall.builder().id(5L).name("Hall5").build();
-            Hall hall6 = Hall.builder().id(6L).name("Hall6").build();
-            Hall hall7 = Hall.builder().id(7L).name("Hall7").build();
-            Hall hall8 = Hall.builder().id(8L).name("Hall8").build();
-            Hall hall9 = Hall.builder().id(9L).name("Hall9").build();
-            Hall hall10 = Hall.builder().id(10L).name("Hall10").build();
-            Hall hall11 = Hall.builder().id(11L).name("Hall11").build();
-            Hall hall12 = Hall.builder().id(12L).name("Hall12").build();
-            Hall hall13 = Hall.builder().id(13L).name("Hall13").build();
-            Hall hall14 = Hall.builder().id(14L).name("Hall14").build();
-            Hall hall15 = Hall.builder().id(15L).name("Hall15").build();
+            hall hall1 = hall.builder().id(1L).name("Hall1").build();
+            hall hall2 = hall.builder().id(2L).name("Hall2").build();
+            hall hall3 = hall.builder().id(3L).name("Hall3").build();
+            hall hall4 = hall.builder().id(4L).name("Hall4").build();
+            hall hall5 = hall.builder().id(5L).name("Hall5").build();
+            hall hall6 = hall.builder().id(6L).name("Hall6").build();
+            hall hall7 = hall.builder().id(7L).name("Hall7").build();
+            hall hall8 = hall.builder().id(8L).name("Hall8").build();
+            hall hall9 = hall.builder().id(9L).name("Hall9").build();
+            hall hall10 = hall.builder().id(10L).name("Hall10").build();
+            hall hall11 = hall.builder().id(11L).name("Hall11").build();
+            hall hall12 = hall.builder().id(12L).name("Hall12").build();
+            hall hall13 = hall.builder().id(13L).name("Hall13").build();
+            hall hall14 = hall.builder().id(14L).name("Hall14").build();
+            hall hall15 = hall.builder().id(15L).name("Hall15").build();
 
             show1.setHall(hall1);
             show2.setHall(hall2);

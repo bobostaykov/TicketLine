@@ -1,4 +1,4 @@
-package at.ac.tuwien.sepm.groupphase.backend.integrationtest.unit;
+package at.ac.tuwien.sepm.groupphase.backend.unit.persistance;
 
 import at.ac.tuwien.sepm.groupphase.backend.datatype.EventType;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.searchParameters.ShowSearchParametersDTO;

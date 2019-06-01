@@ -1,4 +1,4 @@
-package at.ac.tuwien.sepm.groupphase.backend.mapper;
+package at.ac.tuwien.sepm.groupphase.backend.unit.mapper;
 
 import at.ac.tuwien.sepm.groupphase.backend.datatype.UserType;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.user.UserDTO;
@@ -20,7 +20,7 @@ public class UserMapperTest {
 
     @Configuration
     @ComponentScan(basePackages = "at.ac.tuwien.sepm.groupphase.backend.entity.mapper")
-    public static class NewsMapperTestContextConfiguration {
+    public static class UserMapperTestContextConfiguration {
     }
 
     @Autowired

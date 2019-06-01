@@ -1,4 +1,4 @@
-package at.ac.tuwien.sepm.groupphase.backend.entity.mapper.Hall;
+package at.ac.tuwien.sepm.groupphase.backend.entity.mapper.hall;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.hall.HallDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Hall;

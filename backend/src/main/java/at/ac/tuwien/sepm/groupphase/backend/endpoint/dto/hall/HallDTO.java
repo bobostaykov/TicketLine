@@ -10,7 +10,7 @@ import io.swagger.annotations.ApiModelProperty;
 import java.util.List;
 import java.util.Objects;
 
-@ApiModel(value = "HallDTO", description = "A DTO to transfer Hall entities between backend and frontend")
+@ApiModel(value = "HallDTO", description = "A DTO to transfer hall entities between backend and frontend")
 public class HallDTO {
 
     @ApiModelProperty(name = "The automatically generated database id")

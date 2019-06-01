@@ -1,4 +1,4 @@
-package at.ac.tuwien.sepm.groupphase.backend.mapper;
+package at.ac.tuwien.sepm.groupphase.backend.unit.mapper;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.location.LocationDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Location;
@@ -12,13 +12,12 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-//TODO List mapping?
 @RunWith(SpringJUnit4ClassRunner.class)
 public class LocationMapperTest {
 
     @Configuration
     @ComponentScan(basePackages = "at.ac.tuwien.sepm.groupphase.backend.entity.mapper")
-    public static class ShowMapperTestContextConfiguration {
+    public static class LocationMapperTestContextConfiguration {
     }
 
     @Autowired

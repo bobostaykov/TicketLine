@@ -1,4 +1,4 @@
-package at.ac.tuwien.sepm.groupphase.backend.mapper;
+package at.ac.tuwien.sepm.groupphase.backend.unit.mapper;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.event.EventDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.hall.HallDTO;
@@ -22,7 +22,6 @@ import java.time.LocalTime;
 import static at.ac.tuwien.sepm.groupphase.backend.datatype.EventType.MOVIE;
 import static org.assertj.core.api.Assertions.assertThat;
 
-//TODO List mapping?
 @RunWith(SpringJUnit4ClassRunner.class)
 public class ShowMapperTest {
 
@@ -53,11 +52,10 @@ public class ShowMapperTest {
         .build();
     private static final Hall HALL = Hall.builder()
         .id(4L)
-        .name("Hall")
+        .name("hall")
         .location(LOCATION)
         .build();
     private static final Long TICKETSSOLD = 25L;
-    private static final Integer DURATION_IN_MINUTES = 180;
     private static final String DESCRIPTION = "show description";
     private static final LocalDate DATE =
         LocalDate.of(2016, 1, 1);
@@ -92,7 +90,7 @@ public class ShowMapperTest {
         assertThat(showDTO.getEvent().getArtist()).isNull();
 
         assertThat(showDTO.getHall().getId()).isEqualTo(4L);
-        assertThat(showDTO.getHall().getName()).isEqualTo("Hall");
+        assertThat(showDTO.getHall().getName()).isEqualTo("hall");
 
         assertThat(showDTO.getHall().getLocation().getId()).isEqualTo(LOCATION.getId());
         assertThat(showDTO.getHall().getLocation().getCountry()).isEqualTo(LOCATION.getCountry());
@@ -121,7 +119,7 @@ public class ShowMapperTest {
             .build();
         HallDTO hallDTO = HallDTO.builder()
             .id(4L)
-            .name("Hall")
+            .name("hall")
             .location(locationDTO)
             .build();
         ShowDTO showDTO = ShowDTO.builder()
@@ -139,7 +137,6 @@ public class ShowMapperTest {
         assertThat(show).isNotNull();
         assertThat(show.getId()).isEqualTo(ID);
         assertThat(show.getTicketsSold()).isEqualTo(TICKETSSOLD);
-  //      assertThat(show.getDurationInMinutes()).isEqualTo(DURATION_IN_MINUTES);
         assertThat(show.getDate()).isEqualTo(DATE);
         assertThat(show.getTime()).isEqualTo(TIME);
         assertThat(show.getDescription()).isEqualTo(DESCRIPTION);
@@ -152,7 +149,7 @@ public class ShowMapperTest {
         assertThat(show.getEvent().getArtist()).isNull();
 
         assertThat(show.getHall().getId()).isEqualTo(4L);
-        assertThat(show.getHall().getName()).isEqualTo("Hall");
+        assertThat(show.getHall().getName()).isEqualTo("hall");
 
         assertThat(show.getHall().getLocation().getId()).isEqualTo(locationDTO.getId());
         assertThat(show.getHall().getLocation().getCountry()).isEqualTo(locationDTO.getCountry());

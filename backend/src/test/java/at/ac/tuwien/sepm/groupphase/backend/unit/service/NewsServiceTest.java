@@ -1,4 +1,4 @@
-package at.ac.tuwien.sepm.groupphase.backend.unit;
+package at.ac.tuwien.sepm.groupphase.backend.unit.service;
 
 import at.ac.tuwien.sepm.groupphase.backend.datatype.UserType;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.DetailedNewsDTO;
