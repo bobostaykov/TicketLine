@@ -2,16 +2,16 @@ import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {Show} from '../../../dtos/show';
 import {ResultsFor} from '../../../datatype/results_for';
-import {ShowService} from '../../../services/search-results/shows/show.service';
+import {ShowResultsService} from '../../../services/search-results/shows/show-results.service';
 import {Event} from '../../../dtos/event';
 import {Hall} from '../../../dtos/hall';
 
 @Component({
   selector: 'app-shows',
-  templateUrl: './show.component.html',
-  styleUrls: ['./show.component.scss']
+  templateUrl: './show-results.component.html',
+  styleUrls: ['./show-results.component.scss']
 })
-export class ShowComponent implements OnInit {
+export class ShowResultsComponent implements OnInit {
 
   private minPrice: number;
   private maxPrice: number;
@@ -37,7 +37,7 @@ export class ShowComponent implements OnInit {
   ];
 
 
-  constructor(private route: ActivatedRoute, private showService: ShowService) { }
+  constructor(private route: ActivatedRoute, private showService: ShowResultsService) { }
 
   ngOnInit() {
     this.resultsFor = this.route.snapshot.queryParamMap.get('resultsFor');

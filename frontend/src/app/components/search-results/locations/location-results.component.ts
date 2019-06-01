@@ -1,16 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {LocationsService} from '../../../services/search-results/locations/locations.service';
+import {LocationResultsService} from '../../../services/search-results/locations/location-results.service';
 import {Location} from '../../../dtos/location';
 
 // TODO remove all console.log()
 
 @Component({
   selector: 'app-locations',
-  templateUrl: './locations.component.html',
-  styleUrls: ['./locations.component.scss']
+  templateUrl: './location-results.component.html',
+  styleUrls: ['./location-results.component.scss']
 })
-export class LocationsComponent implements OnInit {
+export class LocationResultsComponent implements OnInit {
 
   private page: number = 1;
   private pageSize: number = 10;
@@ -27,7 +27,7 @@ export class LocationsComponent implements OnInit {
     'Description'
   ];
 
-  constructor(private route: ActivatedRoute, private locationsService: LocationsService) { }
+  constructor(private route: ActivatedRoute, private locationsService: LocationResultsService) { }
 
   ngOnInit() {
     this.resultsFor = this.route.snapshot.queryParamMap.get('resultsFor');

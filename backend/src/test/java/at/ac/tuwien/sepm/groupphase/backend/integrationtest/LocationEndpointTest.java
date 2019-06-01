@@ -205,21 +205,27 @@ public class LocationEndpointTest extends BaseIntegrationTest {
                 .description(DESCRIPTION)
                 .build())));
     }
-    /*
-    // TODO fix the test
+/* TODO
+
     @Test
     public void findSpecificNonExistingLocationNotFoundAsUser() {
-        BDDMockito.
-            given(locationRepository.findLocationsFiltered("Austria", "Innsbruck", null, null, null)).
-            willReturn(Arrays.asList());
         Response response = RestAssured
             .given()
             .contentType(ContentType.JSON)
             .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
             .when().get(LOCATION_FILTERED_COUNTRY_AND_CITY_NOT_FOUND)
             .then().extract().response();
-        System.out.println(response);
+        Assert.assertThat(Arrays.asList(response.as(LocationDTO[].class)), is(Collections.singletonList(
+            LocationDTO.builder()
+                .id(ID)
+                .country(COUNTRY)
+                .city(CITY)
+                .postalCode(POSTAL_CODE)
+                .street(STREET)
+                .description(DESCRIPTION)
+                .build())));
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.NOT_FOUND.value()));
     }
-    */
+
+ */
 }

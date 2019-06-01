@@ -5,7 +5,7 @@ import {EventType} from '../../../datatype/event_type';
 import {Time} from '@angular/common';
 import { Options } from 'ng5-slider';
 import {MatSnackBar} from '@angular/material';
-import {LocationsService} from '../../../services/search-results/locations/locations.service';
+import {LocationResultsService} from '../../../services/search-results/locations/location-results.service';
 
 @Component({
   selector: 'app-search-events',
@@ -61,7 +61,7 @@ export class SearchEventsComponent implements OnInit {
   private showPostalCode: string = '';
   private showForm: FormGroup;
 
-  constructor(private router: Router, private locationsService: LocationsService, public snackBar: MatSnackBar) { }
+  constructor(private router: Router, private locationsService: LocationResultsService, public snackBar: MatSnackBar) { }
 
   ngOnInit() {
 

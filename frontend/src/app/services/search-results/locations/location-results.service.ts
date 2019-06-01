@@ -7,7 +7,7 @@ import {Location} from '../../../dtos/location';
 @Injectable({
   providedIn: 'root'
 })
-export class LocationsService {
+export class LocationResultsService {
 
   private locationsBaseUri: string = this.globals.backendUri + '/locations';
 

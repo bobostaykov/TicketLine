@@ -7,15 +7,15 @@ import {NewsComponent} from './components/news/news.component';
 import {UserComponent} from './components/user/user.component';
 import {TopTenEventsComponent} from './components/events/top-ten-events/top-ten-events.component';
 import {SearchEventsComponent} from './components/events/search-events/search-events.component';
-import {ShowComponent} from './components/search-results/shows/show.component';
+import {ShowResultsComponent} from './components/search-results/shows/show-results.component';
 import {ArtistResultsComponent} from './components/search-results/artists/artist-results.component';
 import {EventsComponent} from './components/events/start page/events.component';
-import {LocationsComponent} from './components/search-results/locations/locations.component';
+import {LocationResultsComponent} from './components/search-results/locations/location-results.component';
 import {EventResultsComponent} from './components/search-results/events/event-results.component';
 import {FloorplanControlComponent} from './components/floorplan-control/floorplan-control.component';
 import {CustomerComponent} from './components/customer/customer.component';
 
-// TODO Refactor Names: ShowComponent -> ShowResultsComponent; the same for LocationComponent; in Service as well
+// TODO Refactor Names: ShowResultsComponent -> ShowResultsComponent; the same for LocationComponent; in Service as well
 const routes: Routes = [
   {path: '', component: HomeComponent},
   {path: 'login', component: LoginComponent},
@@ -26,8 +26,8 @@ const routes: Routes = [
   {path: 'events/topten', canActivate: [AuthGuard], component: TopTenEventsComponent},
   {path: 'events/search', canActivate: [AuthGuard], component: SearchEventsComponent},
   {path: 'events/search/results/artists', canActivate: [AuthGuard], component: ArtistResultsComponent},
-  {path: 'events/search/results/shows', canActivate: [AuthGuard], component: ShowComponent},
-  {path: 'events/search/results/locations', canActivate: [AuthGuard], component: LocationsComponent},
+  {path: 'events/search/results/shows', canActivate: [AuthGuard], component: ShowResultsComponent},
+  {path: 'events/search/results/locations', canActivate: [AuthGuard], component: LocationResultsComponent},
   {path: 'events/search/results/events', canActivate: [AuthGuard], component: EventResultsComponent},
   {path: 'floorplan', canActivate: [AuthGuard], component: FloorplanControlComponent}
 ];

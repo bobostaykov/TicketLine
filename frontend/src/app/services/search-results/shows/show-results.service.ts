@@ -8,7 +8,7 @@ import {Show} from '../../../dtos/show';
 @Injectable({
   providedIn: 'root'
 })
-export class ShowService {
+export class ShowResultsService {
 
   private showBaseUri: string = this.globals.backendUri + '/shows';
 
