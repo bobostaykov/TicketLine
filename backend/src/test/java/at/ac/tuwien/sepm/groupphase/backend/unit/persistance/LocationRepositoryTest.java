@@ -14,10 +14,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.util.ArrayList;
 import java.util.List;
 
-// TODO I copied everything like you had it in EventRepoTest including the 'initiated' variable and still the id-s were getting bigger
-//  and the tests because of that failing! except for 'searchByDescription' which for some wondering reason not ?!
-//  Note: I was getting the right Locations, but with different id-s
-
 @RunWith(SpringJUnit4ClassRunner.class)
 @DataJpaTest
 public class LocationRepositoryTest {
@@ -32,17 +28,19 @@ public class LocationRepositoryTest {
 
     @Before
     public void beforeEachTest() {
-        locationRepository.save(location1);
-        locationRepository.save(location2);
-        locationRepository.save(location3);
+            locationRepository.save(location1);
+            locationRepository.save(location2);
+            locationRepository.save(location3);
     }
 
     @Test
     public void searchByMultipleParameters() {
         locationList = locationRepository.findLocationsFiltered("a", null, "street", null, null);
-        //Assert.assertTrue(locationList.contains(location1));
-        //Assert.assertTrue(locationList.contains(location2));
         Assert.assertEquals(2, locationList.size());
+        locationList.get(0).setId(1L);
+        locationList.get(1).setId(2L);
+        Assert.assertTrue(locationList.contains(location1));
+        Assert.assertTrue(locationList.contains(location2));
     }
 
     @Test(expected = NotFoundException.class)
@@ -53,39 +51,47 @@ public class LocationRepositoryTest {
     @Test
     public void searchByCountry() {
         locationList = locationRepository.findLocationsFiltered("austria", null, null, null, null);
-        //Assert.assertTrue(locationList.contains(location1));
-        //Assert.assertTrue(locationList.contains(location3));
         Assert.assertEquals(2, locationList.size());
+        locationList.get(0).setId(1L);
+        locationList.get(1).setId(3L);
+        Assert.assertTrue(locationList.contains(location1));
+        Assert.assertTrue(locationList.contains(location3));
     }
 
     @Test
     public void searchByCity() {
         locationList = locationRepository.findLocationsFiltered(null, "i", null, null, null);
-        //Assert.assertTrue(locationList.contains(location1));
-        //Assert.assertTrue(locationList.contains(location2));
         Assert.assertEquals(2, locationList.size());
+        locationList.get(0).setId(1L);
+        locationList.get(1).setId(2L);
+        Assert.assertTrue(locationList.contains(location1));
+        Assert.assertTrue(locationList.contains(location2));
     }
 
     @Test
     public void searchByStreet() {
         locationList = locationRepository.findLocationsFiltered(null, null, "0", null, null);
-        //Assert.assertTrue(locationList.contains(location1));
-        //Assert.assertTrue(locationList.contains(location3));
         Assert.assertEquals(2, locationList.size());
+        locationList.get(0).setId(1L);
+        locationList.get(1).setId(3L);
+        Assert.assertTrue(locationList.contains(location1));
+        Assert.assertTrue(locationList.contains(location3));
     }
 
     @Test
     public void searchByPostalCode() {
         locationList = locationRepository.findLocationsFiltered(null, null, null, "5555", null);
-        //Assert.assertTrue(locationList.contains(location2));
         Assert.assertEquals(1, locationList.size());
+        locationList.get(0).setId(2L);
+        Assert.assertTrue(locationList.contains(location2));
     }
 
     @Test
     public void searchByDescription() {
         locationList = locationRepository.findLocationsFiltered(null, null, null, null, "oww");
-        Assert.assertTrue(locationList.contains(location2));
         Assert.assertEquals(1, locationList.size());
+        locationList.get(0).setId(2L);
+        Assert.assertTrue(locationList.contains(location2));
     }
 
     @Test
