@@ -33,7 +33,6 @@ public class LocationRepositoryImpl implements LocationRepositoryCustom {
     public List<Location> findLocationsFiltered(String country, String city, String street, String postalCode, String description) {
 
         LOGGER.info("Location Repository Impl: findLocationsFiltered");
-        LOGGER.debug(country + "\n" + city + "\n" + street + "\n" + postalCode + "\n" + description);
         CriteriaBuilder cBuilder = entityManager.getCriteriaBuilder();
         List<Predicate> predicates = new ArrayList<>();
         CriteriaQuery<Location> criteriaQuery = cBuilder.createQuery(Location.class);

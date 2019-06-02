@@ -53,7 +53,7 @@ public class LocationEndpoint {
                 LOGGER.info("Location Endpoint: Get all locations");
                 return locationService.findAll();
             } else {
-                LOGGER.info("Location Endpoint: Get all locations filtered by location");
+                LOGGER.info("Location Endpoint: Get all locations filtered by some parameters");
                 return locationService.findLocationsFiltered(country, city, street, postalCode, description);
             }
         } catch (IllegalArgumentException e) {
