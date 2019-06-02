@@ -3,6 +3,7 @@ package at.ac.tuwien.sepm.groupphase.backend.unit.persistance;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Location;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.LocationRepository;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,23 +23,25 @@ public class LocationRepositoryTest {
     private Location location1 = Location.builder().id(1L).country("Austria").city("Vienna").street("NoStreet 100").postalCode("2000").description("Description").build();
     private Location location2 = Location.builder().id(2L).country("Bulgaria").city("Sofia").street("DummyStreet 5").postalCode("5555").description("Oww").build();
     private Location location3 = Location.builder().id(3L).country("Austria").city("Graz").street("BrodaFromAnathaMada 0").postalCode("7777").build();
+    private boolean init = false;
 
     @Autowired
     private LocationRepository locationRepository;
 
     @Before
     public void beforeEachTest() {
-            locationRepository.save(location1);
-            locationRepository.save(location2);
-            locationRepository.save(location3);
+        if (!init) {
+            location1 = locationRepository.save(location1);
+            location2 = locationRepository.save(location2);
+            location3 = locationRepository.save(location3);
+            init = true;
+        }
     }
 
     @Test
     public void searchByMultipleParameters() {
         locationList = locationRepository.findLocationsFiltered("a", null, "street", null, null);
         Assert.assertEquals(2, locationList.size());
-        locationList.get(0).setId(1L);
-        locationList.get(1).setId(2L);
         Assert.assertTrue(locationList.contains(location1));
         Assert.assertTrue(locationList.contains(location2));
     }
@@ -52,8 +55,6 @@ public class LocationRepositoryTest {
     public void searchByCountry() {
         locationList = locationRepository.findLocationsFiltered("austria", null, null, null, null);
         Assert.assertEquals(2, locationList.size());
-        locationList.get(0).setId(1L);
-        locationList.get(1).setId(3L);
         Assert.assertTrue(locationList.contains(location1));
         Assert.assertTrue(locationList.contains(location3));
     }
@@ -62,8 +63,6 @@ public class LocationRepositoryTest {
     public void searchByCity() {
         locationList = locationRepository.findLocationsFiltered(null, "i", null, null, null);
         Assert.assertEquals(2, locationList.size());
-        locationList.get(0).setId(1L);
-        locationList.get(1).setId(2L);
         Assert.assertTrue(locationList.contains(location1));
         Assert.assertTrue(locationList.contains(location2));
     }
@@ -72,8 +71,6 @@ public class LocationRepositoryTest {
     public void searchByStreet() {
         locationList = locationRepository.findLocationsFiltered(null, null, "0", null, null);
         Assert.assertEquals(2, locationList.size());
-        locationList.get(0).setId(1L);
-        locationList.get(1).setId(3L);
         Assert.assertTrue(locationList.contains(location1));
         Assert.assertTrue(locationList.contains(location3));
     }
@@ -82,7 +79,6 @@ public class LocationRepositoryTest {
     public void searchByPostalCode() {
         locationList = locationRepository.findLocationsFiltered(null, null, null, "5555", null);
         Assert.assertEquals(1, locationList.size());
-        locationList.get(0).setId(2L);
         Assert.assertTrue(locationList.contains(location2));
     }
 
@@ -90,7 +86,6 @@ public class LocationRepositoryTest {
     public void searchByDescription() {
         locationList = locationRepository.findLocationsFiltered(null, null, null, null, "oww");
         Assert.assertEquals(1, locationList.size());
-        locationList.get(0).setId(2L);
         Assert.assertTrue(locationList.contains(location2));
     }
 
