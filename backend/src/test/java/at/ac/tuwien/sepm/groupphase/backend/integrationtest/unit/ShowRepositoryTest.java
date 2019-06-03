@@ -273,5 +273,32 @@ public class ShowRepositoryTest {
         Assert.assertEquals(show4, shows.get(3));
     }
 
+    @Test
+    public void findShowByMaxPrice_filtersCorrectly_andIsOrderedCorrectly(){
+        ShowSearchParametersDTO successParameters = new ShowSearchParametersDTO.builder().priceInEuroTo(30).build();
+        ShowSearchParametersDTO failureParameters = new ShowSearchParametersDTO.builder().priceInEuroTo(50).build();
+        List<Show> shows = showRepository.findAllShowsFiltered(successParameters);
+        Assert.assertEquals(4, shows.size());
+        Assert.assertEquals(show1, shows.get(0));
+        Assert.assertEquals(show2, shows.get(1));
+        Assert.assertEquals(show3, shows.get(2));
+        Assert.assertEquals(show4, shows.get(3));
+        shows = showRepository.findAllShowsFiltered(failureParameters);
+        Assert.assertEquals(0 ,shows.size());
+    }
+    @Test
+    public void findShowByMinPrice_filtersCorrectly_andIsOrderedCorrectly(){
+        ShowSearchParametersDTO successParameters = new ShowSearchParametersDTO.builder().priceInEuroFrom(30).build();
+        ShowSearchParametersDTO failureParameters = new ShowSearchParametersDTO.builder().priceInEuroFrom(50).build();
+        List<Show> shows = showRepository.findAllShowsFiltered(successParameters);
+        Assert.assertEquals(4, shows.size());
+        Assert.assertEquals(show1, shows.get(0));
+        Assert.assertEquals(show2, shows.get(1));
+        Assert.assertEquals(show3, shows.get(2));
+        Assert.assertEquals(show4, shows.get(3));
+        shows = showRepository.findAllShowsFiltered(failureParameters);
+        Assert.assertEquals(0 ,shows.size());
+    }
+
 
 }

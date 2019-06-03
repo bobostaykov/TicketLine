@@ -10,6 +10,7 @@ import at.ac.tuwien.sepm.groupphase.backend.service.ShowService;
 import org.hibernate.service.spi.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.PersistenceException;
@@ -17,19 +18,25 @@ import javax.persistence.criteria.CriteriaBuilder;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 //TODO Class is unfinished
 @Service
 public class ShowServiceImpl implements ShowService {
 
-    private final ShowRepository showRepository;
-    private final ShowMapper showMapper;
+
+    @Autowired
+    private ShowRepository showRepository;
+    @Autowired
+    private  ShowMapper showMapper;
     private static final Logger LOGGER = LoggerFactory.getLogger(ShowServiceImpl.class);
 
-    ShowServiceImpl(ShowRepository showRepository, ShowMapper showMapper) {
+    public ShowServiceImpl(ShowRepository showRepository, ShowMapper showMapper) {
         this.showRepository = showRepository;
         this.showMapper = showMapper;
     }
+    public ShowServiceImpl(){}
+
 
     @Override
     public List<ShowDTO> findAllShows() throws at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException {
@@ -71,7 +78,9 @@ public class ShowServiceImpl implements ShowService {
     public List<ShowDTO> findAllShowsFiltered(ShowSearchParametersDTO parameters) throws ServiceException {
         try{
             LOGGER.info("Find all shows filtered by :" + parameters.toString());
-            return showMapper.showToShowDTO(showRepository.findAllShowsFiltered(parameters));
+
+            List<ShowDTO> showList = showMapper.showToShowDTO(showRepository.findAllShowsFiltered(parameters));
+            return showList;
 
         }catch (PersistenceException e){
             throw new ServiceException(e.getMessage(), e);
@@ -85,13 +94,25 @@ public class ShowServiceImpl implements ShowService {
         LOGGER.info("Find all shows filtered by location");
         return null;
     }
-    private static Predicate<Show> compareMin(Double minPrice){
+    /*
+    private static Predicate<ShowDTO> compareMinPrice(Double minPrice){
         return show -> show.getPricePattern()
             .getPriceMapping()
             .values()
             .stream()
             .min(Comparator
-                .comparingDouble(value -> value.doubleValue())).get().doubleValue() > minPrice;
+                .comparingDouble(Double :: doubleValue))
+            .get() > minPrice;
     }
 
+    private static Predicate<ShowDTO> compareMaxPrice(Double maxPrice){
+        return show -> show.getPricePattern()
+            .getPriceMapping()
+            .values()
+            .stream()
+            .min(Comparator
+                .comparingDouble(Double::doubleValue))
+            .get() > maxPrice;
+    }
+     */
 }
