@@ -51,15 +51,6 @@ public class EventEndpoint {
     }
 
 
-    public List<EventDTO> findAll() {
-        LOGGER.info("Get all events");
-        try {
-            return eventService.findAll();
-        } catch (ServiceException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        }
-    }
-
     @RequestMapping(method = RequestMethod.GET)
     @ApiOperation(value = "Get all events", authorizations = {@Authorization(value = "apiKey")})
     public List<EventDTO> findEventsFilteredByAttributes(@RequestParam(value = "eventName", required = false) String eventName,
@@ -68,7 +59,7 @@ public class EventEndpoint {
                                                          @RequestParam(value = "description", required = false) String description,
                                                          @RequestParam(value = "duration", required = false) Integer duration,
                                                          @RequestParam(value = "artistName", required = false) String artistName) {
-        if (eventName == null && eventType == null && content == null && description == null && duration == null && artistName != null) {
+        if (eventName == null && eventType == null && content == null && description == null && duration == null && artistName == null) {
             LOGGER.info("Event Endpoint: findAll");
             try {
                 return eventService.findAll();

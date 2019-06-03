@@ -61,8 +61,10 @@ public class ShowRepositoryTest {
         .content("warten")
         .description("nicht da")
         .artist(artist1).durationInMinutes(400).build();
-    private HashMap<PriceCategory, Double> priceMap = new HashMap<>();
+    private HashMap<PriceCategory, Double> priceMap1 = new HashMap<>();
+    private HashMap<PriceCategory, Double> priceMap2 = new HashMap<>();
     private PricePattern pricePattern1 = PricePattern.builder().setName("normal").createPricePattern();
+    private PricePattern pricePattern2 = PricePattern.builder().setName("normal2").createPricePattern();
 
     private   Show show1 = Show.builder().id(1L).ticketsSold(10000L).date(LocalDate.parse("17-03-2020", dateFormatter)).time(LocalTime.parse( "20:30", timeFormatter)).description("description").event(event1).hall(hall1).build();
     private   Show show2 = Show.builder().id(2L).ticketsSold(10000L).date(LocalDate.parse("15-10-2020", dateFormatter)).time(LocalTime.parse( "16:30", timeFormatter)).description("description").event(event1).hall(hall1).build();
@@ -84,14 +86,16 @@ public class ShowRepositoryTest {
     @Before
     public void  before(){
         if (!init) {
-            priceMap.put(PriceCategory.CHEAP, 10.0); priceMap.put(PriceCategory.AVERAGE, 20.0); priceMap.put(PriceCategory.EXPENSIVE, 40.0);
-            pricePattern1.setPriceMapping(priceMap);
+            priceMap1.put(PriceCategory.CHEAP, 10.0); priceMap1.put(PriceCategory.AVERAGE, 20.0); priceMap1.put(PriceCategory.EXPENSIVE, 40.0);
+            pricePattern1.setPriceMapping(priceMap1);
             pricePattern1 = pricePatternRepository.save(pricePattern1);
-
+            priceMap2.put(PriceCategory.CHEAP, 10.0); priceMap2.put(PriceCategory.AVERAGE, 15.0); priceMap2.put(PriceCategory.EXPENSIVE, 20.0);
+            pricePattern2.setPriceMapping(priceMap2);
+            pricePattern2 = pricePatternRepository.save(pricePattern2);
             show1.setPricePattern(pricePattern1);
             show2.setPricePattern(pricePattern1);
             show3.setPricePattern(pricePattern1);
-            show4.setPricePattern(pricePattern1);
+            show4.setPricePattern(pricePattern2);
 
             locationAustria = locationRepository.save(locationAustria);
             locationGermany = locationRepository.save(locationGermany);
@@ -278,11 +282,10 @@ public class ShowRepositoryTest {
         ShowSearchParametersDTO successParameters = new ShowSearchParametersDTO.builder().priceInEuroTo(30).build();
         ShowSearchParametersDTO failureParameters = new ShowSearchParametersDTO.builder().priceInEuroTo(50).build();
         List<Show> shows = showRepository.findAllShowsFiltered(successParameters);
-        Assert.assertEquals(4, shows.size());
+        Assert.assertEquals(3, shows.size());
         Assert.assertEquals(show1, shows.get(0));
         Assert.assertEquals(show2, shows.get(1));
         Assert.assertEquals(show3, shows.get(2));
-        Assert.assertEquals(show4, shows.get(3));
         shows = showRepository.findAllShowsFiltered(failureParameters);
         Assert.assertEquals(0 ,shows.size());
     }
@@ -291,11 +294,10 @@ public class ShowRepositoryTest {
         ShowSearchParametersDTO successParameters = new ShowSearchParametersDTO.builder().priceInEuroFrom(30).build();
         ShowSearchParametersDTO failureParameters = new ShowSearchParametersDTO.builder().priceInEuroFrom(50).build();
         List<Show> shows = showRepository.findAllShowsFiltered(successParameters);
-        Assert.assertEquals(4, shows.size());
+        Assert.assertEquals(3, shows.size());
         Assert.assertEquals(show1, shows.get(0));
         Assert.assertEquals(show2, shows.get(1));
         Assert.assertEquals(show3, shows.get(2));
-        Assert.assertEquals(show4, shows.get(3));
         shows = showRepository.findAllShowsFiltered(failureParameters);
         Assert.assertEquals(0 ,shows.size());
     }

@@ -2,12 +2,16 @@ package at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.searchParameters;
 
 import io.swagger.annotations.ApiModelProperty;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Objects;
 
 public class ShowSearchParametersDTO {
     @ApiModelProperty(name = "the id of the corresponding event")
+    @PositiveOrZero
     private Long eventId;
     @ApiModelProperty(name = "the minimum show date")
     private LocalDate dateFrom;
@@ -18,27 +22,38 @@ public class ShowSearchParametersDTO {
     @ApiModelProperty(name = "minimum show starting time")
     private LocalTime timeTo;
     @ApiModelProperty(name = "the minimum price")
+    @PositiveOrZero
     private Integer priceInEuroFrom;
     @ApiModelProperty(name = "the maximum price")
+    @PositiveOrZero
     private Integer priceInEuroTo;
     @ApiModelProperty(name = "the name of the location")
+    @NotBlank
     private String locationName;
     @ApiModelProperty(name = "the name of the event")
+    @NotBlank
     private String eventName;
     @ApiModelProperty(name = "the name of the hall")
+    @NotBlank
     private String hallName;
     @ApiModelProperty(name = "the duration of the Event")
+    @Positive
     private Integer durationInMinutes;
 
     @ApiModelProperty(name = "The Country of the Location")
+    @NotBlank
     private String country;
     @ApiModelProperty(name = "The city of the location")
+    @NotBlank
     private String city;
     @ApiModelProperty(name = "the postal Code of the location")
+    @NotBlank
     private String postalCode;
     @ApiModelProperty(name = "the street of the Location")
+    @NotBlank
     private String street;
     @ApiModelProperty(name = "the house number of the Location")
+    @NotBlank
     private Integer houseNr;
 
 
