@@ -18,21 +18,18 @@ export class FloorplanControlComponent implements OnInit {
   // initialization of two new halls which users can edit and post to backend
   private newSeatPlan: Hall = new Hall(null, 'New SeatPlan', null, [], null);
   private newSectorPlan: Hall = new Hall(null, 'New SectorPlan', null, null, []);
-  // // allHalls contains all halls found in the backend database
-  // private allHalls: Hall[];
-  // // halls contains the specific selection of halls that shows up in the hall selection. Depends on selected location
-  // private halls: Hall[];
-  // list of all locations
+  // contains names and id of all Halls
+  private allHalls: Hall[];
+  // contains names of specific halls that show up after selecting a specific location
+  private halls: Hall[];
+  // contains all locations
   private locations: Location[];
-  // list of priceCategories to loop through select field
+  // list of priceCategories to loop through in select fields
   private priceCategories: string[] = Object.keys(PriceCategory);
   // form groups to add seats/sectors and persist new halls to backend
   private addSeatsForm: FormGroup;
   private addSectorsForm: FormGroup;
   private createHallForm: FormGroup;
-  // booleans necessary to check if seat/sector already exists error should be displayed to the user
-  private sectorAlreadyExists: boolean = false;
-  private seatAlreadyExists: boolean = false;
 
   constructor(private hallService: HallService, private locationService: LocationService) {
   }

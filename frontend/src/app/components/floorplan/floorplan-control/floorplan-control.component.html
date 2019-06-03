@@ -1,4 +1,4 @@
-<div class="row mt-2">
+<div class="row mt-3">
   <div class="col-6">
     <form class="d-none">
       <div class="row">
@@ -36,9 +36,9 @@
             <input matInput id="seatNumberEnd" type="number" class="text-left"/>
           </mat-form-field>
         </div>
-        <div class="col-6 d-flex flex-row mt-1">
-          <button mat-raised-button color="primary" class="h-50 mr-2 mt-3">Add Seats</button>
-          <button mat-raised-button color="warn" class="h-50 mt-3">Delete Seats</button>
+        <div class="col-6 mt-1">
+          <button mat-raised-button color="primary" class="mr-2 mt-3 inputButton">Add Seats</button>
+          <button mat-raised-button color="warn" class="mt-3 inputButton">Delete Seats</button>
         </div>
       </div>
     </form>
@@ -66,14 +66,83 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-6 h-100">
-          <button mat-raised-button color="primary" class="h-50 mr-2 mt-3">Add Sectors</button>
-          <button mat-raised-button color="warn" class="h-50 mt-3">Delete Sectors</button>
+        <div class="col-6 h-100 mt-1">
+          <button mat-raised-button color="primary" class="mr-2 mt-3 inputButton">Add Sectors</button>
+          <button mat-raised-button color="warn" class="mt-3 inputButton">Delete Sectors</button>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="col-6">
+    <form class="text-right">
+      <div>
+        <mat-form-field appearance="outline" class="col-6">
+          <mat-label>Location</mat-label>
+          <label for="locationSelection" class="sr-only">Location Selection</label>
+          <select matNativeControl id="locationSelection">
+            <option>Option 1</option>
+          </select>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="col-6">
+          <mat-label>Hall</mat-label>
+          <label for="hallSelection" class="sr-only">Hall Selection</label>
+          <select matNativeControl id="hallSelection">
+            <option>Option 1</option>
+          </select>
+        </mat-form-field>
+      </div>
+      <div class="row">
+        <div class="col-12 mt-1 text-right">
+          <button mat-raised-button color="primary" class="mr-3 mt-3 inputButton">Save Hall</button>
         </div>
       </div>
     </form>
   </div>
 </div>
+
+<!--  &lt;!&ndash; createHallForm allows creating new Halls or selecting old ones to view their floorplan &ndash;&gt;-->
+<!--  <form [formGroup]="createHallForm" class="col-5">-->
+<!--    <div class="form-inline col-12 mt-3">-->
+<!--      &lt;!&ndash; locationSelection input allows selecting one of the locations saved in the database and sets hall parameters accordingly &ndash;&gt;-->
+<!--      <label for="locationSelection" class="col-3 input-group-text justify-content-start">Location</label>-->
+<!--      <select id="locationSelection" class="form-control col-9"-->
+<!--              formControlName="locationSelection"-->
+<!--              aria-labelledby="Location selection">-->
+<!--        <option [ngValue]="null"></option>-->
+<!--        <option *ngFor="let location of locations"-->
+<!--                [ngValue]="location">{{displayLocation(location)}}</option>-->
+<!--      </select>-->
+<!--    </div>-->
+<!--    &lt;!&ndash; hallSelection input allows selecting one of the halls saved in the database or a new seat/sector hall plan that may be created &ndash;&gt;-->
+<!--    <div class="form-inline col-12 mt-3">-->
+<!--      <label for="hallSelection" class="col-3 input-group-text justify-content-start">Hall</label>-->
+<!--      <select id="hallSelection" class="form-control col-9"-->
+<!--              formControlName="hallSelection"-->
+<!--              aria-labelledby="Hall">-->
+<!--        <option [ngValue]="newSeatPlan">{{newSeatPlan.name}}</option>-->
+<!--        <option [ngValue]="newSectorPlan">{{newSectorPlan.name}}</option>-->
+<!--        <option *ngFor="let hall of halls" [ngValue]="hall">{{hall.name}}</option>-->
+<!--      </select>-->
+<!--    </div>-->
+<!--    &lt;!&ndash;-->
+<!--    button to open bootstrap modal which allows submitting a newly created seat or sector plan-->
+<!--    Modal also asks users to enter name and location if locationSelection is currently invalid-->
+<!--          &ndash;&gt;-->
+<!--    <div class="form-inline col-12 mt-3">-->
+<!--      <button type="button" class="btn btn-success" data-toggle="modal" data-target="#enterName"-->
+<!--              [disabled]="getSelectedHall().seats.length < 1" *ngIf="getSelectedHall() === newSeatPlan">-->
+<!--        New SeatPlan-->
+<!--      </button>-->
+<!--      <button type="button" class="btn btn-success" data-toggle="modal" data-target="#enterName"-->
+<!--              [disabled]="getSelectedHall().sectors.length < 1" *ngIf="getSelectedHall() === newSectorPlan">-->
+<!--        New SectorPlan-->
+<!--      </button>-->
+<!--    </div>-->
+<!--  </form>-->
+<!--</div>-->
+<!--<hr/>-->
+
+
 <hr/>
 
 <!--<div class="col-12 row">-->
