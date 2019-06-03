@@ -1,0 +1,126 @@
+<!--
+updateSeatForm: allows updating a single seat in the seat plan
+later should also have the option to buy ticket for seats in already created halls
+custom styling
+-->
+<div id="updateSeatForm" class="updateForm" [hidden]="getSelectedHall() !== newSeatPlan">
+  <form [formGroup]="updateSeatForm">
+    <div class="form-row-custom">
+      <!-- seat number can be changed with the following input -->
+      <div class="form-inline-custom">
+        <label for="seatNumber">Number</label>
+        <input id="seatNumber" type="number" formControlName="seatNumber" aria-labelledby="seat number"/>
+      </div>
+      <!-- seat price category can be changed with the following input -->
+      <div class="form-inline-custom">
+        <label for="priceCategorySeat" class="sr-only">Price Category</label>
+        <select id="priceCategorySeat" formControlName="seatPrice" aria-labelledby="price category">
+          <option *ngFor="let price of priceCategories">{{price}}</option>
+        </select>
+      </div>
+    </div>
+    <!-- seat number warning is displayed if seat number is changed to an invalid input -->
+    <div class="error-row-custom" [hidden]="updateSeatForm.get('seatNumber').valid || updateSeatForm.pristine">
+      <small class="form-text text-danger text-left">
+        A valid seat number between 1 and 100 is required!
+      </small>
+    </div>
+    <!-- price category warning is displayed if price is changed to an invalid input -->
+    <div class="error-row-custom" [hidden]="updateSeatForm.get('seatPrice').valid || updateSeatForm.pristine">
+      <small class="form-text text-danger">
+        A price category must be chosen
+      </small>
+    </div>
+    <div class="form-row-custom">
+      <!-- seat row can be changed with the following input -->
+      <div class="form-inline-custom">
+        <label for="seatRow">Row</label>
+        <input id="seatRow" type="number" formControlName="seatRow" aria-labelledby="seat row"/>
+      </div>
+      <!-- button to submit form and update seat -->
+      <div class="form-inline-custom">
+        <button type="button" class="btn btn-success" (click)="updateSeat()">Update Seat</button>
+      </div>
+    </div>
+    <div class="form-row-custom">
+      <!-- mostly a placeholder div for styling, will lader hold buy ticket button -->
+      <div class="form-inline-custom">
+
+      </div>
+      <!-- button to delete seat rather than updating -->
+      <div class="form-inline-custom">
+        <button type="button" class="btn btn-danger" (click)="deleteSeat()">Delete Seat</button>
+      </div>
+    </div>
+    <!-- seat row warning is displayed if seat row is changed to an invalid input -->
+    <div class="error-row-custom" [hidden]="updateSeatForm.get('seatRow').valid || updateSeatForm.pristine">
+      <small class="form-text text-danger text-left">
+        A valid seat row between 1 and 100 must be chosen!
+      </small>
+    </div>
+    <!--
+     warning is displayed if a seat with the updated number and row already exists
+     and the seat can therefore not be updated with input parameters
+    -->
+    <div class="error-row-custom" [hidden]="seatAlreadyExists === false">
+      <small class="form-text text-danger text-left">
+        A seat with this number already exists in this row!
+      </small>
+    </div>
+  </form>
+</div>
+<!--
+updateSectorForm: allows updating a single sector in the sector plan
+later will also contain the option to buy ticket for the sector
+custom styling
+ -->
+<div id="updateSectorForm" class="updateForm" [hidden]="getSelectedHall() !== newSectorPlan">
+  <form [formGroup]="updateSectorForm">
+    <div class="form-row-custom">
+      <!-- sector number can be changed with the following input -->
+      <div class="form-inline-custom">
+        <label for="sectorNumber">Number</label>
+        <input id="sectorNumber" type="number" formControlName="sectorNumber" aria-labelledby="sector number"/>
+      </div>
+      <!-- sector price can be changed with the following input -->
+      <div class="form-inline-custom">
+        <label for="priceCategorySector" class="sr-only">Price Category</label>
+        <select id="priceCategorySector" formControlName="sectorPrice" aria-labelledby="price category">
+          <option *ngFor="let price of priceCategories">{{price}}</option>
+        </select>
+      </div>
+    </div>
+    <!-- sector number warning is displayed if sector number has been changed to an invalid input -->
+    <div class="error-row-custom" [hidden]="updateSectorForm.get('sectorNumber').valid || updateSectorForm.pristine">
+      <small class="form-text text-danger text-left">
+        A valid sector number must be entered!
+      </small>
+    </div>
+    <!-- sector price warning is displayed if sector price has been changed to an invalid input -->
+    <div class="error-row-custom" [hidden]="updateSectorForm.get('sectorPrice').valid || updateSectorForm.pristine">
+      <small class="form-text text-danger">
+        A price category must be chosen!
+      </small>
+    </div>
+    <!-- button to update sector with the input parameters -->
+    <div class="form-row-custom">
+      <div class="form-inline-custom"></div>
+      <div class="form-inline-custom">
+        <button type="submit" class="btn btn-success" (click)="updateSector()">Update Sector</button>
+      </div>
+    </div>
+    <!-- button to delete sector instead of updating it -->
+    <div class="form-row-custom">
+      <div class="form-inline-custom"></div>
+      <div class="form-inline-custom">
+        <button type="submit" class="btn btn-danger" (click)="deleteSector()">Delete Sector</button>
+      </div>
+    </div>
+    <!-- sector number warning is displayed if sector number has been changed to an invalid input -->
+    <div class="error-row-custom" [hidden]="sectorAlreadyExists === false">
+      <small class="form-text text-danger text-left">
+        A sector with this number already exists!
+      </small>
+    </div>
+  </form>
+</div>

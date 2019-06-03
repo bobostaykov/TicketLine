@@ -12,7 +12,7 @@ import {ArtistResultsComponent} from './components/search-results/artists/artist
 import {EventsComponent} from './components/events/start page/events.component';
 import {LocationResultsComponent} from './components/search-results/locations/location-results.component';
 import {EventResultsComponent} from './components/search-results/events/event-results.component';
-import {FloorplanControlComponent} from './components/floorplan-control/floorplan-control.component';
+import {FloorplanControlComponent} from './components/floorplan/floorplan-control/floorplan-control.component';
 import {CustomerComponent} from './components/customer/customer.component';
 
 // TODO Refactor Names: ShowResultsComponent -> ShowResultsComponent; the same for LocationComponent; in Service as well
