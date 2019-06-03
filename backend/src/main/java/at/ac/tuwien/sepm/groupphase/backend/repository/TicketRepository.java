@@ -1,12 +1,10 @@
 package at.ac.tuwien.sepm.groupphase.backend.repository;
 
+import at.ac.tuwien.sepm.groupphase.backend.datatype.TicketStatus;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Customer;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Event;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Show;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Ticket;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -19,7 +17,7 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
      *
      * @return ordered list of all ticket entries
      */
-    List<Ticket> findAllByOrderByReservationNumberAsc();
+    List<Ticket> findAllByOrderByIdAsc();
 
 
     /**
@@ -44,16 +42,26 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
     /**
      * Find ticket by given reservation number
      *
+     * @param id of Ticket to be found
      * @return found ticket
      */
-     Optional<Ticket> findOneByReservationNumber(Long reservationNumber);
+     Optional<Ticket> findOneById(Long id);
+
+    /**
+     * Find ticket by given reservation number
+     *
+     * @param id of Ticket to be found
+     * @param status of Ticket to be found
+     * @return found ticket
+     */
+    Optional<Ticket> findOneByIdAndStatus(Long id, TicketStatus status);
 
     /**
      * Delete Ticket by reservation number
      *
-     * @return deleted Ticket
+     * @param id of Ticket to be deleted
      */
-    Ticket deleteByReservationNumber(Long id);
+    void deleteById(Long id);
 
     /**
      * Find tickets for the given customer name and show name.

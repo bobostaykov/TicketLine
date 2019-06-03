@@ -1,5 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.entity;
 
+import at.ac.tuwien.sepm.groupphase.backend.datatype.TicketStatus;
+
 import javax.persistence.*;
 
 @Entity
@@ -8,7 +10,7 @@ public class Ticket {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "seq_ticket_id")
     @SequenceGenerator(name = "seq_ticket_id", sequenceName = "seq_ticket_id")
-    private Long reservationNumber;
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false, name = "show_id")
@@ -31,14 +33,14 @@ public class Ticket {
     private Integer sectorNumber;
 
     @Column(nullable = false)
-    private String status;
+    private TicketStatus status;
 
     public void setId(Long reservationNumber) {
-        this.reservationNumber = reservationNumber;
+        this.id = reservationNumber;
     }
 
     public Long getId() {
-        return reservationNumber;
+        return id;
     }
 
     public void setShow(Show show) {
@@ -89,11 +91,11 @@ public class Ticket {
         return sectorNumber;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(TicketStatus status) {
         this.status = status;
     }
 
-    public String getStatus() {
+    public TicketStatus getStatus() {
         return status;
     }
 
@@ -104,7 +106,7 @@ public class Ticket {
     @Override
     public String toString() {
         String out = "Ticket{" +
-            "reservationNumber=" + reservationNumber +
+            "id=" + id +
             ", show='" + show.toString() + '\'' +
             ", price=" + price +
             ", customer=" + customer.toString() +
@@ -129,7 +131,7 @@ public class Ticket {
 
         Ticket ticket = (Ticket) o;
 
-        if (reservationNumber != null ? !reservationNumber.equals(ticket.reservationNumber) : ticket.reservationNumber != null) return false;
+        if (id != null ? !id.equals(ticket.id) : ticket.id != null) return false;
         if (show != null ? !show.equals(ticket.show) : ticket.show != null) return false;
         if (price != null ? !price.equals(ticket.price) : ticket.price != null) return false;
         if (customer != null ? !customer.equals(ticket.customer) : ticket.customer != null) return false;
@@ -141,7 +143,7 @@ public class Ticket {
 
     @Override
     public int hashCode() {
-        int result = reservationNumber != null ? reservationNumber.hashCode() : 0;
+        int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (show != null ? show.hashCode() : 0);
         result = 31 * result + (price != null ? price.hashCode() : 0);
         result = 31 * result + (customer != null ? customer.hashCode() : 0);
@@ -154,17 +156,17 @@ public class Ticket {
 
     public static final class TicketBuilder {
 
-        private Long reservationNumber;
+        private Long id;
         private Show show;
         private Double price;
         private Customer customer;
         private Integer seatNumber;
         private Integer rowNumber;
         private Integer sectorNumber;
-        private String status;
+        private TicketStatus status;
 
-        public TicketBuilder reservationNumber(Long reservationNumber) {
-            this.reservationNumber = reservationNumber;
+        public TicketBuilder id(Long reservationNumber) {
+            this.id = reservationNumber;
             return this;
         }
 
@@ -197,14 +199,14 @@ public class Ticket {
             return this;
         }
 
-        public TicketBuilder status(String status) {
+        public TicketBuilder status(TicketStatus status) {
             this.status = status;
             return this;
         }
 
         public Ticket build() {
             Ticket ticket = new Ticket();
-            ticket.setId(reservationNumber);
+            ticket.setId(id);
             ticket.setShow(show);
             ticket.setPrice(price);
             ticket.setCustomer(customer);

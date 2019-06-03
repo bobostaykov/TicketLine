@@ -1,10 +1,8 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.implementation;
 
+import at.ac.tuwien.sepm.groupphase.backend.datatype.TicketStatus;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.show.ShowDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.ticket.TicketDTO;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Customer;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Event;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Show;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Ticket;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.show.ShowMapper;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.ticket.TicketMapper;
@@ -14,9 +12,10 @@ import at.ac.tuwien.sepm.groupphase.backend.repository.EventRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.TicketRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.TicketService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TicketServiceImpl implements TicketService {
@@ -36,18 +35,18 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public Ticket postTicket(Ticket ticket) {
-        return ticketRepository.save(ticket);
+    public TicketDTO postTicket(TicketDTO ticketDTO) {
+        return ticketMapper.ticketToTicketDTO(ticketRepository.save(ticketMapper.ticketDTOToTicket(ticketDTO)));
     }
 
     @Override
-    public List<Ticket> findAll() {
-        return ticketRepository.findAllByOrderByReservationNumberAsc();
+    public List<TicketDTO> findAll() {
+        return ticketMapper.ticketToTicketDTO(ticketRepository.findAllByOrderByIdAsc());
     }
 
     //NOT WORKING
     @Override
-    public List<Ticket> findAllFilteredByCustomerAndEvent(String customerName, String eventName) {
+    public List<TicketDTO> findAllFilteredByCustomerAndEvent(String customerName, String eventName) {
         /*
         List<Customer> customers = customerRepository.findAllByName(customerName);
         List<Event> events =  eventRepository.findAllByName(eventName);
@@ -57,13 +56,25 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public Ticket findOne(Long id) {
-        return ticketRepository.findOneByReservationNumber(id).orElseThrow(NotFoundException::new);
+    public TicketDTO findOne(Long id) {
+        return ticketMapper.ticketToTicketDTO(ticketRepository.findOneById(id).orElseThrow(NotFoundException::new));
     }
 
     @Override
-    public Ticket deleteOne(Long id) {
-        return ticketRepository.deleteByReservationNumber(id);
+    public TicketDTO findOneReservated(Long id) {
+        return ticketMapper.ticketToTicketDTO(ticketRepository.findOneByIdAndStatus(id, TicketStatus.RESERVATED).orElseThrow(NotFoundException::new));
+    }
+
+    @Override
+    @Transactional
+    public TicketDTO deleteOne(Long id) {
+        Optional<Ticket> ticket = ticketRepository.findOneById(id);
+        if (ticket.isPresent()) {
+            ticketRepository.delete(ticket.get());
+        }
+        else
+            throw new NotFoundException("Ticket with id " + id + " not found.");
+        return ticketMapper.ticketToTicketDTO(ticket.get());
     }
 
     @Override

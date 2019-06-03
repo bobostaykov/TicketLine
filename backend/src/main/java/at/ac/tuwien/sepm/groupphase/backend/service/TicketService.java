@@ -11,17 +11,17 @@ public interface TicketService {
     /**
      * Save a single ticket entry
      *
-     * @param ticket to be saved
+     * @param ticketDTO to be saved
      * @return saved ticket entry
      */
-    Ticket postTicket(Ticket ticket);
+    TicketDTO postTicket(TicketDTO ticketDTO);
 
     /**
      * Get all ticket entries
      *
      * @return list of all ticket entries
      */
-    List<Ticket> findAll();
+    List<TicketDTO> findAll();
 
     /**
      * Get all ticket entries filtered by the corresponsing customer and/or event name
@@ -30,7 +30,7 @@ public interface TicketService {
      * @param eventName name of event the ticket was issued for
      * @return list of found customers
      */
-    List<Ticket> findAllFilteredByCustomerAndEvent(String customerName, String eventName);
+    List<TicketDTO> findAllFilteredByCustomerAndEvent(String customerName, String eventName);
 
     /**
      * Find one ticket by the given reservation number (id)
@@ -38,7 +38,15 @@ public interface TicketService {
      * @param id reservation number of the ticket
      * @return found ticket
      */
-    Ticket findOne(Long id);
+    TicketDTO findOne(Long id);
+
+    /**
+     * Find one ticket with status rservated by the given reservation number (id)
+     *
+     * @param id reservation number of the ticket
+     * @return found ticket
+     */
+    TicketDTO findOneReservated(Long id);
 
     /**
      * Delete one ticket by the given ticket/reservation number (id)
@@ -46,7 +54,7 @@ public interface TicketService {
      * @param id ticket/reservation number of the ticket
      * @return deleted ticket
      */
-    Ticket deleteOne(Long id);
+    TicketDTO deleteOne(Long id);
 
     /**
      * Get all tickets filtered by customer and show

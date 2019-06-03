@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.ticket;
 
+import at.ac.tuwien.sepm.groupphase.backend.datatype.TicketStatus;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.customer.CustomerDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.show.ShowDTO;
 import io.swagger.annotations.ApiModel;
@@ -10,7 +11,7 @@ import io.swagger.annotations.ApiModelProperty;
 public class TicketDTO {
 
     @ApiModelProperty(name = "The automatically generated database id")
-    private Long reservationNumber;
+    private Long id;
 
     @ApiModelProperty(name = "The show this tickets was issued for")
     private ShowDTO show;
@@ -30,15 +31,15 @@ public class TicketDTO {
     @ApiModelProperty(name = "The sector number of this ticket")
     private Integer sectorNumber;
 
-    @ApiModelProperty(name = "Status of the ticket (reservation/sold)")
-    private String status;
+    @ApiModelProperty(name = "Status of the ticket (RESERVATED, SOLD)")
+    private TicketStatus status;
 
     public void setId(Long reservationNumber) {
-        this.reservationNumber = reservationNumber;
+        this.id = reservationNumber;
     }
 
     public Long getId() {
-        return reservationNumber;
+        return id;
     }
 
     public void setShow(ShowDTO show) {
@@ -89,11 +90,11 @@ public class TicketDTO {
         return sectorNumber;
     }
 
-    public String getStatus() {
+    public TicketStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(TicketStatus status) {
         this.status = status;
     }
 
@@ -104,7 +105,7 @@ public class TicketDTO {
     @Override
     public String toString() {
         String out = "TicketDTO{" +
-            "reservationNumber=" + reservationNumber +
+            "id=" + id +
             ", show='" + show.toString() + '\'' +
             ", price=" + price +
             ", customer=" + customer.toString() +
@@ -129,7 +130,7 @@ public class TicketDTO {
 
         TicketDTO ticketDTO = (TicketDTO) o;
 
-        if (reservationNumber != null ? !reservationNumber.equals(ticketDTO.reservationNumber) : ticketDTO.reservationNumber != null) return false;
+        if (id != null ? !id.equals(ticketDTO.id) : ticketDTO.id != null) return false;
         if (show != null ? !show.equals(ticketDTO.show) : ticketDTO.show != null) return false;
         if (price != null ? !price.equals(ticketDTO.price) : ticketDTO.price != null) return false;
         if (customer != null ? !customer.equals(ticketDTO.customer) : ticketDTO.customer != null) return false;
@@ -141,7 +142,7 @@ public class TicketDTO {
 
     @Override
     public int hashCode() {
-        int result = reservationNumber != null ? reservationNumber.hashCode() : 0;
+        int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (show != null ? show.hashCode() : 0);
         result = 31 * result + (price != null ? price.hashCode() : 0);
         result = 31 * result + (customer != null ? customer.hashCode() : 0);
@@ -154,17 +155,17 @@ public class TicketDTO {
 
     public static final class TicketDTOBuilder {
 
-        private Long reservationNumber;
+        private Long id;
         private ShowDTO show;
         private Double price;
         private CustomerDTO customer;
         private Integer seatNumber;
         private Integer rowNumber;
         private Integer sectorNumber;
-        private String status;
+        private TicketStatus status;
 
-        public TicketDTOBuilder reservationNumber(Long reservationNumber) {
-            this.reservationNumber = reservationNumber;
+        public TicketDTOBuilder id(Long reservationNumber) {
+            this.id = reservationNumber;
             return this;
         }
 
@@ -197,14 +198,14 @@ public class TicketDTO {
             return this;
         }
 
-        public TicketDTOBuilder status(String status) {
+        public TicketDTOBuilder status(TicketStatus status) {
             this.status = status;
             return this;
         }
 
         public TicketDTO build() {
             TicketDTO ticketDTO = new TicketDTO();
-            ticketDTO.setId(reservationNumber);
+            ticketDTO.setId(id);
             ticketDTO.setShow(show);
             ticketDTO.setPrice(price);
             ticketDTO.setCustomer(customer);

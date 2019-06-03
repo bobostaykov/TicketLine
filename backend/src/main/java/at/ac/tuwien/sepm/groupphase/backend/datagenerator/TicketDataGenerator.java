@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.datagenerator;
 
+import at.ac.tuwien.sepm.groupphase.backend.datatype.TicketStatus;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Ticket;
 import at.ac.tuwien.sepm.groupphase.backend.repository.CustomerRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.ShowRepository;
@@ -43,7 +44,7 @@ public class TicketDataGenerator implements DataGenerator {
             LOGGER.info("Generating tickets");
             List<Ticket> tickets = new ArrayList<>();
             for (Long i = 1L; i <= NUM_OF_TICKETS; i++) {
-                tickets.add(Ticket.builder().customer(customerRepository.getOne(i)).show(showRepository.getOne(i)).price(faker.random().nextDouble()).rowNumber(faker.random().nextInt(1, 100).intValue()).seatNumber(faker.random().nextInt(1, 100).intValue()).status("reservated").build());
+                tickets.add(Ticket.builder().customer(customerRepository.getOne(i)).show(showRepository.getOne(i)).price(faker.random().nextDouble()).rowNumber(faker.random().nextInt(1, 100).intValue()).seatNumber(faker.random().nextInt(1, 100).intValue()).status(TicketStatus.RESERVATED).build());
             }
             /*Long id = 1L, cn = 1L, sn = 1L;
             Customer customer1 = Customer.builder().id(id++).name(faker.name().lastName()).firstname(faker.name().firstName()).email(faker.bothify("????##@gmail.com")).birthday(faker.date().birthday().toInstant()
