@@ -22,6 +22,14 @@ public interface EventRepository extends JpaRepository<Event, Long>, EventReposi
     List<Object[]> findTopTenEvents(@Param("monthsSet") Set<String> monthsSet, @Param("categoriesSet") Set<EventType> categoriesSet);
 
     /**
+     * Get all events by name.
+     *
+     * @param name name to search for
+     * @return list of found events
+     */
+    List<Event> findAllByName(String name);
+
+    /**
      * Get all events sorted by name
      * @return a list with all events sorted by name
     */

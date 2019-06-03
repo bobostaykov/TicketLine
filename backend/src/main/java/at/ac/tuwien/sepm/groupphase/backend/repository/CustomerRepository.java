@@ -30,6 +30,15 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     Optional<Customer> findOneById(Long id);
 
     /**
+     * Find all customer by name.
+     *
+     * @param name name of customers to search for
+     * @return found customers
+     */
+    List<Customer> findAllByName(String name);
+
+
+    /**
      * Find all customers filtered by the following attributes:
      * ID - ID of customer
      * name - part of the name of customer
