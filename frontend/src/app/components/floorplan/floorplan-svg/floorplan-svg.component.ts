@@ -1,14 +1,14 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {Seat} from '../../dtos/seat';
-import {Sector} from '../../dtos/sector';
-import {PriceCategory} from '../../dtos/priceCategory';
+import {Seat} from '../../../dtos/seat';
+import {Sector} from '../../../dtos/sector';
+import {PriceCategory} from '../../../dtos/priceCategory';
 
 @Component({
   selector: 'app-floorplan',
-  templateUrl: './floorplan.component.html',
-  styleUrls: ['./floorplan.component.scss']
+  templateUrl: './floorplan-svg.component.html',
+  styleUrls: ['./floorplan-svg.component.scss']
 })
-export class FloorplanComponent implements OnInit {
+export class FloorplanSvgComponent implements OnInit {
   @Input() private seats?: Seat[];
   @Input() private sectors?: Sector[];
   @Output() private selectedSeat: EventEmitter<{eventTarget: HTMLElement, seat: Seat}> = new EventEmitter();

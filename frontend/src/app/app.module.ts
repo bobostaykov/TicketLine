@@ -25,10 +25,11 @@ import { EventsComponent } from './components/events/start page/events.component
 import { LocationResultsComponent } from './components/search-results/locations/location-results.component';
 import { Ng5SliderModule } from 'ng5-slider';
 import { EventResultsComponent } from './components/search-results/events/event-results.component';
-import {FloorplanControlComponent} from './components/floorplan-control/floorplan-control.component';
-import {FloorplanComponent} from './components/floorplan/floorplan.component';
+import {FloorplanControlComponent} from './components/floorplan/floorplan-control/floorplan-control.component';
+import {FloorplanSvgComponent} from './components/floorplan/floorplan-svg/floorplan-svg.component';
 import {CustomerComponent} from './components/customer/customer.component';
 import {CustomerDialogComponent} from './components/customer-dialog/customer-dialog.component';
+import { FloorplanTicketComponent } from './components/floorplan/floorplan-ticket/floorplan-ticket.component';
 import { BlockedUsersComponent } from './components/blocked-users/blocked-users.component';
 
 @NgModule({
@@ -48,9 +49,10 @@ import { BlockedUsersComponent } from './components/blocked-users/blocked-users.
     LocationResultsComponent,
     EventResultsComponent,
     FloorplanControlComponent,
-    FloorplanComponent,
+    FloorplanSvgComponent,
     CustomerComponent,
     CustomerDialogComponent,
+    FloorplanTicketComponent,
     BlockedUsersComponent
   ],
   imports: [
