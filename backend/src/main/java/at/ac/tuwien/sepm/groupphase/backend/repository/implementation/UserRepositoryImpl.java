@@ -40,7 +40,6 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
 
     @Override
     public List<User> findAllBlockedUsers() {
-
         CriteriaBuilder cBuilder = entityManager.getCriteriaBuilder();
         //Sammlung der Bedingungen
         List<Predicate> predicates = new ArrayList<>();
