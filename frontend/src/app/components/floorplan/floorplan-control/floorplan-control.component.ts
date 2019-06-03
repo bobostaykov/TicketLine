@@ -15,9 +15,8 @@ import {LocationService} from '../../../services/location/location.service';
 })
 export class FloorplanControlComponent implements OnInit {
 
-  // initialization of two new halls which users can edit and post to backend
-  private newSeatPlan: Hall = new Hall(null, 'New SeatPlan', null, [], null);
-  private newSectorPlan: Hall = new Hall(null, 'New SectorPlan', null, null, []);
+  // initialization of new hall entity
+  private newHall: Hall = new Hall(null, 'New Hall', null, [], []);
   // contains names and id of all Halls
   private allHalls: Hall[];
   // contains names of specific halls that show up after selecting a specific location
@@ -41,13 +40,14 @@ export class FloorplanControlComponent implements OnInit {
    */
   ngOnInit(): void {
     // loading halls saved in backend and adding them to the halls  and allHalls array
-    // this.getAllHalls();
-    // // loading locations saved in backend and adding them to the locations array
-    // this.getAllLocations();
-    // // initializing forms that allow users to add seats and sectors to new Halls
-    // this.buildSeatForm();
-    // this.buildSectorForm();
-    // this.buildHallForm();
+    this.getAllHalls();
+    // loading locations saved in backend and adding them to the locations array
+    this.getAllLocations();
+    // initializing forms that allow users to add seats and sectors to new Halls
+    // as well as persist hall to backend
+    this.buildSeatForm();
+    this.buildSectorForm();
+    this.buildHallForm();
   }
 
   /**
@@ -77,6 +77,7 @@ export class FloorplanControlComponent implements OnInit {
       this.addSeatsForm.reset({
         'seatPrice': PriceCategory.Cheap
       });
+      this.changeHallTypeSelection();
     }
   }
 
@@ -102,6 +103,7 @@ export class FloorplanControlComponent implements OnInit {
       this.addSectorsForm.reset({
         'sectorPrice': PriceCategory.Cheap
       });
+      this.changeHallTypeSelection();
     }
   }
 
@@ -132,6 +134,7 @@ export class FloorplanControlComponent implements OnInit {
       this.addSeatsForm.reset({
         'seatPrice': PriceCategory.Cheap
       });
+      this.changeHallTypeSelection();
     }
   }
 
@@ -158,6 +161,7 @@ export class FloorplanControlComponent implements OnInit {
       this.addSectorsForm.reset({
         'sectorPrice': PriceCategory.Cheap
       });
+      this.changeHallTypeSelection();
     }
   }
 
@@ -167,7 +171,7 @@ export class FloorplanControlComponent implements OnInit {
    * posts hall to backend via hallService
    * afterwards resets form
    */
-  createFloorplan() {
+  private postHall() {
     const values = this.createHallForm.value;
     const hall: Hall = new Hall(
       null,
@@ -176,17 +180,18 @@ export class FloorplanControlComponent implements OnInit {
       values.hallSelection.seats,
       values.hallSelection.sectors
     );
-    this.hallService.createHall(hall).subscribe();
+    this.hallService.createHall(hall).subscribe(
+      createdHall => {
+        this.allHalls.push(createdHall);
+        this.halls.push(createdHall);
+      },
+      error => console.log(error)
+    );
     this.createHallForm.reset({
-      'hallSelection': (values.hallSelection === this.newSeatPlan ? this.newSeatPlan = new Hall(null, 'New SeatPlan', null, [], null) :
-        this.newSectorPlan = new Hall(null, 'New SectorPlan', null, null, []))
+      'hallSelection': this.newHall = new Hall(null, 'New SectorPlan', null, [], []),
+      'hallType': 'seats'
     });
   }
-
-
-
-
-
 
 
   /**
@@ -275,53 +280,50 @@ export class FloorplanControlComponent implements OnInit {
     });
   }
 
-  // /**
-  //  * called after initialization of component
-  //  * initializes createHallForm
-  //  * also notes changes to hall and location selection to set halls locations accordingly
-  //  * if a specific hall with set location is selected its location will also automatically be set in locationSelection
-  //  * if a specific location is selected only halls from given location will be presented to the user
-  //  */
-  // private buildHallForm() {
-  //   this.createHallForm = new FormGroup({
-  //     'hallSelection': new FormControl(this.newSeatPlan, [Validators.required]),
-  //     'locationSelection': new FormControl(null, [Validators.required]),
-  //     'floorplanName': new FormControl(null, [Validators.required])
-  //   });
-  //   const hallSelection = this.createHallForm.get('hallSelection');
-  //   const locationSelection = this.createHallForm.get('locationSelection');
-  //   hallSelection.valueChanges.subscribe(hall => {
-  //     if (hall.location !== null) {
-  //       // necessary because location select tag does not recognize hall.location
-  //       locationSelection.setValue(this.locations.find(location => location.id === hall.location.id), {emitEvent: false});
-  //     }
-  //     this.disableUpdateForms();
-  //   });
-  //   locationSelection.valueChanges.subscribe(location => {
-  //     if (location !== null) {
-  //       this.halls = this.allHalls.filter(hall => hall.location.id === location.id);
-  //     } else {
-  //       this.halls = this.allHalls;
-  //     }
-  //     this.disableUpdateForms();
-  //   });
-  // }
-  //
-  //
-  //
-  // /**
-  //  * load all halls from backend via hallService
-  //  */
-  // private getAllHalls(): void {
-  //   console.log('Loading all halls from backend');
-  //   this.hallService.getAllHalls().subscribe(
-  //     halls => {
-  //       this.allHalls = halls;
-  //       this.halls = halls;
-  //     },
-  //     error => console.log(error)
-  //   );
-  // }
+  /**
+   * called after initialization of component
+   * initializes createHallForm
+   * also notes changes to hall and location selection to set halls locations accordingly
+   * if a specific hall with set location is selected its location will also automatically be set in locationSelection
+   * if a specific location is selected only halls from given location will be presented to the user
+   */
+  private buildHallForm() {
+    this.createHallForm = new FormGroup({
+      'hallSelection': new FormControl(this.newHall, [Validators.required]),
+      'locationSelection': new FormControl(null, [Validators.required]),
+      'floorplanName': new FormControl(null, [Validators.required]),
+      'hallType': new FormControl('seats', [Validators.required])
+    });
+    const hallSelection = this.createHallForm.get('hallSelection');
+    const locationSelection = this.createHallForm.get('locationSelection');
+    hallSelection.valueChanges.subscribe(hall => {
+      if (hall.location !== null) {
+        // necessary because location select tag does not recognize hall.location
+        locationSelection.setValue(this.locations.find(location => location.id === hall.location.id), {emitEvent: false});
+      }
+    });
+    locationSelection.valueChanges.subscribe(location => {
+      if (location !== null) {
+        this.halls = this.allHalls.filter(hall => hall.location.id === location.id);
+      } else {
+        this.halls = this.allHalls;
+      }
+    });
+  }
+
+  /**
+   * load all halls from backend via hallService
+   */
+  private getAllHalls(): void {
+    console.log('Loading all halls from backend');
+    this.hallService.getAllHalls().subscribe(
+      halls => {
+        this.allHalls = halls;
+        this.halls = halls;
+      },
+      error => console.log(error)
+    );
+  }
 
   /**
    * loads all locations from backend via locationService
@@ -334,20 +336,6 @@ export class FloorplanControlComponent implements OnInit {
       error => console.log(error)
     );
   }
-
-  // /**
-  //  * event handler
-  //  * called if floorplan svg is clicked
-  //  * if click target was not a seat/sector svg update forms are disabled
-  //  * @param event click event
-  //  */
-  // private onSvgClick(event: Event) {
-  //   if ((<HTMLElement>event.target).tagName !== 'path') {
-  //     this.disableUpdateForms();
-  //   }
-  // }
-
-
 
   /**
    * helper method
@@ -368,33 +356,62 @@ export class FloorplanControlComponent implements OnInit {
   }
 
   /**
-   * helper method
-   * returns true if sectorNumberStart or sectorNumberEnd have been edited and are invalid
-   * called to determine if error message needs to be displayed
+   * called when changes are made to seat or sector arrays of selectedHall
+   * disables hallType selection if hall already contains seats or sectors
+   * enables hallType selection if hall does not contain seats or sectors anymore
    */
-  private sectorNumberErrors(): boolean {
-    const sectorNumberStart = this.addSectorsForm.get('sectorNumberStart');
-    const sectorNumberEnd = this.addSectorsForm.get('sectorNumberEnd');
-    return (sectorNumberStart.dirty || sectorNumberEnd.dirty) && (sectorNumberStart.invalid || sectorNumberEnd.invalid);
+  private changeHallTypeSelection(): void {
+    const hallTypeSelection = this.createHallForm.get('hallType');
+    if (this.getSelectedHall().seats && this.getSelectedHall().seats.length ||
+      this.getSelectedHall().sectors && this.getSelectedHall().sectors.length) {
+      hallTypeSelection.disable();
+    } else {
+      hallTypeSelection.enable();
+    }
   }
 
-  /**
-   * returns true, if inputs seatRowStart or seatRowError have been edited and are invalid
-   * called to determine if error message needs to be displayed
-   */
-  private seatRowErrors(): boolean {
-    const seatRowStart = this.addSeatsForm.get('seatRowStart');
-    const seatRowEnd = this.addSeatsForm.get('seatRowEnd');
-    return (seatRowStart.dirty || seatRowEnd.dirty) && (seatRowStart.invalid || seatRowEnd.invalid);
-  }
 
-  /**
-   * returns ture, if inputs seatNumberStart or seatNumberEnd have been edited and are invalid
-   * called to determine if error message needs to be displayed
-   */
-  private seatNumberErrors(): boolean {
-    const seatNumberStart = this.addSeatsForm.get('seatNumberStart');
-    const seatNumberEnd = this.addSeatsForm.get('seatNumberEnd');
-    return (seatNumberStart.dirty || seatNumberEnd.dirty) && (seatNumberStart.invalid || seatNumberEnd.invalid);
-  }
+  // /**
+  //  * helper method
+  //  * returns true if sectorNumberStart or sectorNumberEnd have been edited and are invalid
+  //  * called to determine if error message needs to be displayed
+  //  */
+  // private sectorNumberErrors(): boolean {
+  //   const sectorNumberStart = this.addSectorsForm.get('sectorNumberStart');
+  //   const sectorNumberEnd = this.addSectorsForm.get('sectorNumberEnd');
+  //   return (sectorNumberStart.dirty || sectorNumberEnd.dirty) && (sectorNumberStart.invalid || sectorNumberEnd.invalid);
+  // }
+  //
+  // /**
+  //  * returns true, if inputs seatRowStart or seatRowError have been edited and are invalid
+  //  * called to determine if error message needs to be displayed
+  //  */
+  // private seatRowErrors(): boolean {
+  //   const seatRowStart = this.addSeatsForm.get('seatRowStart');
+  //   const seatRowEnd = this.addSeatsForm.get('seatRowEnd');
+  //   return (seatRowStart.dirty || seatRowEnd.dirty) && (seatRowStart.invalid || seatRowEnd.invalid);
+  // }
+  //
+  // /**
+  //  * returns ture, if inputs seatNumberStart or seatNumberEnd have been edited and are invalid
+  //  * called to determine if error message needs to be displayed
+  //  */
+  // private seatNumberErrors(): boolean {
+  //   const seatNumberStart = this.addSeatsForm.get('seatNumberStart');
+  //   const seatNumberEnd = this.addSeatsForm.get('seatNumberEnd');
+  //   return (seatNumberStart.dirty || seatNumberEnd.dirty) && (seatNumberStart.invalid || seatNumberEnd.invalid);
+  // }
+
+  // /**
+  //  * event handler
+  //  * called if floorplan svg is clicked
+  //  * if click target was not a seat/sector svg update forms are disabled
+  //  * @param event click event
+  //  */
+  // private onSvgClick(event: Event) {
+  //   if ((<HTMLElement>event.target).tagName !== 'path') {
+  //     this.disableUpdateForms();
+  //   }
+  // }
+
 }

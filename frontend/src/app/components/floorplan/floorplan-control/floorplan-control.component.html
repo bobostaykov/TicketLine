@@ -1,23 +1,25 @@
-<div class="row mt-3">
-  <div class="col-6">
-    <form class="d-none">
+<div class="row mt-3 bottom-box-shadow pb-3 mb-3">
+  <div class="col-6" [ngSwitch]="createHallForm.get('hallType').value">
+    <form *ngSwitchCase="'seats'" [formGroup]="addSeatsForm" (ngSubmit)="addSeats()">
       <div class="row">
         <div class="row col-6">
           <mat-form-field appearance="standard" class="col-7 pr-0">
             <mat-label>Seat Rows</mat-label>
             <label for="seatRowStart" class="sr-only">Seat Row Start</label>
-            <input matInput id="seatRowStart" type="number" class="text-right"/>
+            <input matInput id="seatRowStart" formControlName="seatRowStart" type="number" class="text-right"
+                   aria-labelledby="seat row start"/>
           </mat-form-field>
           <mat-form-field appearance="standard" class="col-5 pl-0">
             <span matPrefix class="pr-3">&ndash;</span>
             <label for="seatRowEnd" class="sr-only">Seat Row End</label>
-            <input matInput id="seatRowEnd" type="number" class="text-left"/>
+            <input matInput id="seatRowEnd" formControlName="seatRowEnd" type="number" class="text-left"
+                   aria-labelledby="seat row end"/>
           </mat-form-field>
         </div>
         <div class="row col-6">
           <mat-form-field appearance="standard">
             <label for="seatPrice" class="sr-only">Seat Price</label>
-            <select matNativeControl id="seatPrice">
+            <select matNativeControl id="seatPrice" formControlName="seatPrice" aria-labelledby="seat price">
               <option *ngFor="let price of priceCategories">{{price}}</option>
             </select>
           </mat-form-field>
@@ -28,38 +30,42 @@
           <mat-form-field appearance="standard" class="col-7 pr-0">
             <mat-label>Seat Numbers</mat-label>
             <label for="seatNumberStart" class="sr-only">Seat Number Start</label>
-            <input matInput id="seatNumberStart" type="number" class="text-right"/>
+            <input matInput id="seatNumberStart" formControlName="seatNumberStart" type="number" class="text-right"
+                   aria-labelledby="seat number start"/>
           </mat-form-field>
           <mat-form-field appearance="standard" class="col-5 pl-0">
             <span matPrefix class="pr-3">&ndash;</span>
             <label for="seatNumberEnd" class="sr-only">Seat Number End</label>
-            <input matInput id="seatNumberEnd" type="number" class="text-left"/>
+            <input matInput id="seatNumberEnd" formControlName="seatNumberEnd" type="number" class="text-left"
+                   aria-labelledby="seat number end"/>
           </mat-form-field>
         </div>
         <div class="col-6 mt-1">
-          <button mat-raised-button color="primary" class="mr-2 mt-3 inputButton">Add Seats</button>
-          <button mat-raised-button color="warn" class="mt-3 inputButton">Delete Seats</button>
+          <button mat-raised-button color="primary" class="mr-2 mt-3 inputButton" (click)="addSeats()">Add Seats</button>
+          <button mat-raised-button color="warn" class="mt-3 inputButton" (click)="deleteSeats()">Delete Seats</button>
         </div>
       </div>
     </form>
-    <form>
+    <form *ngSwitchCase="'sectors'" [formGroup]="addSectorsForm" (ngSubmit)="addSectors()">
       <div class="row">
         <div class="row col-6">
           <mat-form-field appearance="standard" class="col-7 pr-0">
             <mat-label>Sector Numbers</mat-label>
             <label for="sectorNumberStart" class="sr-only">Sector Number Start</label>
-            <input matInput id="sectorNumberStart" type="number" class="text-right"/>
+            <input matInput id="sectorNumberStart" formControlName="sectorNumberStart" type="number"
+                   class="text-right" aria-labelledby="sector number start"/>
           </mat-form-field>
           <mat-form-field appearance="standard" class="col-5 pl-0">
             <span matPrefix class="pr-3">&ndash;</span>
             <label for="sectorNumberEnd" class="sr-only">Sector Number End</label>
-            <input matInput id="sectorNumberEnd" type="number" class="text-left"/>
+            <input matInput id="sectorNumberEnd" formControlName="sectorNumberEnd" type="number" class="text-left"
+                   aria-labelledby="sector number end"/>
           </mat-form-field>
         </div>
         <div class="row col-6">
           <mat-form-field appearance="standard">
             <label for="sectorPrice" class="sr-only">Sector Price</label>
-            <select matNativeControl id="sectorPrice">
+            <select matNativeControl id="sectorPrice" formControlName="sectorPrice" aria-labelledby="sector price">
               <option *ngFor="let price of priceCategories">{{price}}</option>
             </select>
           </mat-form-field>
@@ -67,37 +73,54 @@
       </div>
       <div class="row">
         <div class="col-6 h-100 mt-1">
-          <button mat-raised-button color="primary" class="mr-2 mt-3 inputButton">Add Sectors</button>
-          <button mat-raised-button color="warn" class="mt-3 inputButton">Delete Sectors</button>
+          <button mat-raised-button color="primary" class="mr-2 mt-3 inputButton" (click)="addSectors()">Add Sectors</button>
+          <button mat-raised-button color="warn" class="mt-3 inputButton" (click)="deleteSectors()">Delete Sectors</button>
         </div>
       </div>
     </form>
   </div>
   <div class="col-6">
-    <form class="text-right">
+    <form class="text-right" [formGroup]="createHallForm" (ngSubmit)="postHall()">
       <div>
         <mat-form-field appearance="outline" class="col-6">
           <mat-label>Location</mat-label>
           <label for="locationSelection" class="sr-only">Location Selection</label>
-          <select matNativeControl id="locationSelection">
-            <option>Option 1</option>
+          <select matNativeControl id="locationSelection" formControlName="locationSelection"
+                  aria-labelledby="location selection">
+            <option [ngValue]="null"></option>
+            <option *ngFor="let location of locations" [ngValue]="location">{{displayLocation(location)}}</option>
+            -->
           </select>
         </mat-form-field>
         <mat-form-field appearance="outline" class="col-6">
           <mat-label>Hall</mat-label>
           <label for="hallSelection" class="sr-only">Hall Selection</label>
-          <select matNativeControl id="hallSelection">
-            <option>Option 1</option>
+          <select matNativeControl id="hallSelection" formControlName="hallSelection" aria-labelledby="hall selection">
+            <option [ngValue]="newHall">{{newHall.name}}</option>
+            <option *ngFor="let hall of halls" [ngValue]="hall">{{hall.name}}</option>
           </select>
         </mat-form-field>
       </div>
       <div class="row">
-        <div class="col-12 mt-1 text-right">
-          <button mat-raised-button color="primary" class="mr-3 mt-3 inputButton">Save Hall</button>
+        <mat-radio-group formControlName="hallType" class="col-6 d-flex align-items-end justify-content-center"
+                         aria-labelledby="hall seats or sectors">
+          <mat-radio-button value="seats" color="primary" class="mx-2" aria-labelledby="hall with seats">Seats
+          </mat-radio-button>
+          <mat-radio-button value="sectors" color="primary" class="mx-2" aria-labelledby="hall with sectors">Sectors
+          </mat-radio-button>
+        </mat-radio-group>
+        <div class="col-6 mt-1 text-right">
+          <button mat-raised-button color="primary" class="mr-3 mt-3 inputButton" (click)="postHall()">Save Hall</button>
         </div>
       </div>
     </form>
   </div>
+</div>
+<div [ngSwitch]="createHallForm.get('hallType').value">
+  <app-floorplan-svg *ngSwitchCase="'seats'"
+                     [seats]="getSelectedHall().seats"></app-floorplan-svg>
+  <app-floorplan-svg *ngSwitchCase="'sectors'"
+                     [sectors]="getSelectedHall().sectors"></app-floorplan-svg>
 </div>
 
 <!--  &lt;!&ndash; createHallForm allows creating new Halls or selecting old ones to view their floorplan &ndash;&gt;-->
@@ -141,9 +164,6 @@
 <!--  </form>-->
 <!--</div>-->
 <!--<hr/>-->
-
-
-<hr/>
 
 <!--<div class="col-12 row">-->
 <!--  <div class="col-7">-->

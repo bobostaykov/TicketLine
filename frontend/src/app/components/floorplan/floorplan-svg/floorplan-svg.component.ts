@@ -4,7 +4,7 @@ import {Sector} from '../../../dtos/sector';
 import {PriceCategory} from '../../../dtos/priceCategory';
 
 @Component({
-  selector: 'app-floorplan',
+  selector: 'app-floorplan-svg',
   templateUrl: './floorplan-svg.component.html',
   styleUrls: ['./floorplan-svg.component.scss']
 })
