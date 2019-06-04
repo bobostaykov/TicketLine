@@ -6,10 +6,12 @@ import at.ac.tuwien.sepm.groupphase.backend.service.TicketService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
+import jdk.jfr.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.spring.web.json.Json;
 
 import java.util.List;
 
@@ -37,26 +39,35 @@ public class TicketEndpoint {
         return ticketService.findAll();
     }
 
-    @RequestMapping(value = "/{reservationNumber}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Delete a ticket", authorizations = {@Authorization(value = "apiKey")})
-    public TicketDTO deleteByReservationNumber(@PathVariable Long reservationNumber) {
-        LOGGER.info("Delete Ticket with id " + reservationNumber);
-        return ticketService.deleteOne(reservationNumber);
+    public TicketDTO deleteById(@PathVariable Long id) {
+        LOGGER.info("Delete Ticket with id " + id);
+        return ticketService.deleteOne(id);
     }
 
-    @RequestMapping(value = "/{reservationNumber}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ApiOperation(value = "Find Ticket", authorizations = {@Authorization(value = "apiKey")})
-    public TicketDTO findByReservationNumber(@PathVariable Long reservationNumber) {
-        LOGGER.info("Find Ticket with id " + reservationNumber);
-        return ticketService.findOne(reservationNumber);
+    public TicketDTO findById(@PathVariable Long id) {
+        LOGGER.info("Find Ticket with id " + id);
+        return ticketService.findOne(id);
     }
 
-    @RequestMapping(value = "/reservated/{reservationNumber}", method = RequestMethod.GET)
-    @ApiOperation(value = "Find Ticket", authorizations = {@Authorization(value = "apiKey")})
-    public TicketDTO findReservatedByReservationNumber(@PathVariable Long reservationNumber) {
-        LOGGER.info("Find Ticket with id " + reservationNumber);
-        return ticketService.findOneReservated(reservationNumber);
+    @RequestMapping(value = "/buy/{id}", method = RequestMethod.PUT, produces = "application/json")
+    @ApiOperation(value = "Buy reservated Ticket", authorizations = {@Authorization(value = "apiKey")})
+    public TicketDTO buyReservatedTicket(@PathVariable Long id) {
+        LOGGER.info("Buy Ticket with id " + id);
+        //return ticketService.changeStatusToSold(id);
+        TicketDTO ticket = ticketService.changeStatusToSold(id);
+        return ticket;
+    }
+
+    @RequestMapping(value = "/reservated/{id}", method = RequestMethod.GET)
+    @ApiOperation(value = "Find reservated Ticket", authorizations = {@Authorization(value = "apiKey")})
+    public TicketDTO findReservatedById(@PathVariable Long id) {
+        LOGGER.info("Find reservated Ticket with id " + id);
+        return ticketService.findOneReservated(id);
     }
 
     @RequestMapping(value = "/name", method = RequestMethod.GET)

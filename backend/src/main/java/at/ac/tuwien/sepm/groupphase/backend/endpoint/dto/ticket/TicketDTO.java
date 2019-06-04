@@ -34,8 +34,8 @@ public class TicketDTO {
     @ApiModelProperty(name = "Status of the ticket (RESERVATED, SOLD)")
     private TicketStatus status;
 
-    public void setId(Long reservationNumber) {
-        this.id = reservationNumber;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Long getId() {
@@ -164,8 +164,8 @@ public class TicketDTO {
         private Integer sectorNumber;
         private TicketStatus status;
 
-        public TicketDTOBuilder id(Long reservationNumber) {
-            this.id = reservationNumber;
+        public TicketDTOBuilder id(Long id) {
+            this.id = id;
             return this;
         }
 

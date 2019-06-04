@@ -61,6 +61,13 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
+    public TicketDTO changeStatusToSold(Long id) {
+        TicketDTO ticket = this.findOneReservated(id);
+        ticket.setStatus(TicketStatus.SOLD);
+        return ticketMapper.ticketToTicketDTO(ticketRepository.save(ticketMapper.ticketDTOToTicket(ticket)));
+    }
+
+    @Override
     public TicketDTO findOneReservated(Long id) {
         return ticketMapper.ticketToTicketDTO(ticketRepository.findOneByIdAndStatus(id, TicketStatus.RESERVATED).orElseThrow(NotFoundException::new));
     }

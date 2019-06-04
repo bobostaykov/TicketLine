@@ -41,6 +41,14 @@ public interface TicketService {
     TicketDTO findOne(Long id);
 
     /**
+     * Find one ticket by the given reservation number (id) with status RESERVATED and change it to SOLD
+     *
+     * @param id reservation number of the ticket
+     * @return changed ticket
+     */
+    TicketDTO changeStatusToSold(Long id);
+
+    /**
      * Find one ticket with status rservated by the given reservation number (id)
      *
      * @param id reservation number of the ticket

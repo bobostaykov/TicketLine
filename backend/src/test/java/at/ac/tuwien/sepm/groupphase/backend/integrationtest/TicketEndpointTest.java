@@ -7,8 +7,11 @@ import at.ac.tuwien.sepm.groupphase.backend.integrationtest.base.BaseIntegration
 import at.ac.tuwien.sepm.groupphase.backend.repository.TicketRepository;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import io.restassured.parsing.Parser;
 import io.restassured.response.Response;
+import io.restassured.response.ResponseBody;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.BDDMockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -23,6 +26,7 @@ public class TicketEndpointTest extends BaseIntegrationTest {
 
     private static final String TICKET_ENDPOINT = "/tickets";
     private static final String RESERVATED_TICKET = "/reservated";
+    private static final String BUY_TICKET = "/buy";
     private static final String SPECIFIC_TICKET_PATH = "/{id}";
 
     private static final long TEST_TICKET_ID = 1L;
@@ -30,6 +34,11 @@ public class TicketEndpointTest extends BaseIntegrationTest {
 
     @MockBean
     private TicketRepository ticketRepository;
+
+    @Before
+    public void init() {
+        RestAssured.defaultParser = Parser.JSON;
+    }
 
     @Test
     public void deleteTicketUnauthorizedAsAnonymous() {
@@ -176,6 +185,59 @@ public class TicketEndpointTest extends BaseIntegrationTest {
         Assert.assertThat(response.as(TicketDTO.class), is(TicketDTO.builder()
             .id(TEST_TICKET_ID)
             .status(TEST_TICKET_STATUS)
+            .build()));
+    }
+
+    @Test
+    public void buySpecificReservatedTicketUnauthorizedAsAnonymous() {
+        Response response = RestAssured
+            .given()
+            .contentType(ContentType.JSON)
+            .when().put(TICKET_ENDPOINT + BUY_TICKET + SPECIFIC_TICKET_PATH, TEST_TICKET_ID)
+            .then().extract().response();
+        Assert.assertThat(response.getStatusCode(), is(HttpStatus.UNAUTHORIZED.value()));
+    }
+
+    @Test
+    public void buySpecificReservatedTicketAsUser() {
+        BDDMockito.
+            given(ticketRepository.findOneByIdAndStatus(TEST_TICKET_ID, TEST_TICKET_STATUS)).
+            willReturn(Optional.of(Ticket.builder()
+                .id(TEST_TICKET_ID)
+                .status(TEST_TICKET_STATUS)
+                .build()));
+        Response response = RestAssured
+            .given()
+            .contentType(ContentType.JSON)
+            .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
+            .when().put(TICKET_ENDPOINT + BUY_TICKET + SPECIFIC_TICKET_PATH, TEST_TICKET_ID)
+            .then().extract().response();
+        Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
+        Assert.assertThat(response.as(TicketDTO.class), is(TicketDTO.builder()
+            .id(TEST_TICKET_ID)
+            .status(TicketStatus.SOLD)
+            .build()));
+    }
+
+    @Test
+    public void buySpecificReservatedTicketAsAdmin() {
+        BDDMockito.
+            given(ticketRepository.findOneByIdAndStatus(TEST_TICKET_ID, TEST_TICKET_STATUS)).
+            willReturn(Optional.of(Ticket.builder()
+                .id(TEST_TICKET_ID)
+                .status(TEST_TICKET_STATUS)
+                .build()));
+        Response response = RestAssured
+            .given()
+            .contentType(ContentType.JSON)
+            .header(HttpHeaders.AUTHORIZATION, validAdminTokenWithPrefix)
+            .when().put(TICKET_ENDPOINT + BUY_TICKET + SPECIFIC_TICKET_PATH, TEST_TICKET_ID)
+            .then().extract().response();
+        String body = response.getBody().print();
+        Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
+        Assert.assertThat(response.as(TicketDTO.class), is(TicketDTO.builder()
+            .id(TEST_TICKET_ID)
+            .status(TicketStatus.SOLD)
             .build()));
     }
 
