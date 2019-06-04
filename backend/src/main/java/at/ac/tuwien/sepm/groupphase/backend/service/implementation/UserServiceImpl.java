@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.implementation;
 
+import at.ac.tuwien.sepm.groupphase.backend.datatype.UserType;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.user.UserDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.LoginAttempts;
 import at.ac.tuwien.sepm.groupphase.backend.entity.User;
@@ -12,9 +13,13 @@ import at.ac.tuwien.sepm.groupphase.backend.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import javax.persistence.EntityManager;
 import java.util.List;
 import java.util.Optional;
@@ -22,6 +27,7 @@ import java.util.Optional;
 @Service
 public class UserServiceImpl implements UserService {
 
+    private final Integer MAX_NUMBER_OF_ATTEMPTS = 4;
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
@@ -59,19 +65,11 @@ public class UserServiceImpl implements UserService {
                 return userMapper.userToUserDTO(userRepository.createUser(userMapper.userDTOToUser(userDTO)));
             }
         }catch (DataIntegrityViolationException e) {
-            //LOGGER.error("Problems while creating user" + userDTO.toString());
+            LOGGER.error("Problems while creating user" + userDTO.toString());
             throw new ServiceException(e.getMessage(), e);
         }
         return null;
     }
-/*
-    private void initAttemptsTable (UserDTO userDTO){
-        loginAttemptsRepository.merge(LoginAttempts.builder()
-            .setUser(userMapper.userDTOToUser(userDTO))
-            .setBlocked(false)
-            .setAttempts(0)
-            .build());
-    }*/
 
     public UserDTO findUserByName(String userName) throws NotFoundException{
         LOGGER.info("finding user with username: " + userName);
@@ -102,6 +100,7 @@ public class UserServiceImpl implements UserService {
             LoginAttempts loginAttempts = attemptsFound.get();
             loginAttempts.setNumberOfAttempts(0);
             loginAttempts.setBlocked(false);
+            loginAttempts.setNumberOfAttempts(0);
             loginAttemptsRepository.save(loginAttempts);
             LOGGER.info("unblocked User with id: " + userId);
             return true;
@@ -111,12 +110,31 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDTO> findAllBlockedUsers() {
-        /*List<UserDTO> userList = userMapper.userToUserDTO(userRepository.findAll());
-        userList.stream().filter(userDTO -> {userDTO})
-         */
-        return userMapper.userToUserDTO(userRepository.findAllBlockedUsers());
+    public boolean blockUser(Long userId) throws ServiceException {
+        LOGGER.info("Blocking user with id: " + userId);
+        Optional<LoginAttempts> loginAttemptsFound = loginAttemptsRepository.findById(userId);
+        if(loginAttemptsFound.isPresent()){
+            if(loginAttemptsFound.get().getUser().getType().equals(UserType.ADMIN)){
+                throw new ServiceException("admin cant be blocked");
+            }
+            LoginAttempts loginAttempts = loginAttemptsFound.get();
+            loginAttempts.setBlocked(true);
+            loginAttemptsRepository.save(loginAttempts);
+            LOGGER.info("blocked user with id: " + userId);
+            return true;
+        }else
+            throw new NotFoundException("could not find user with id "+ userId);
     }
 
-
+    @Override
+    public List<UserDTO> getAllBlockedUsers() {
+        LOGGER.info("getting all blocked users");
+        List<LoginAttempts> blockedUserAttempts = loginAttemptsRepository.getAllByBlockedTrue();
+        List<UserDTO> users = new ArrayList<>();
+        Comparator<LoginAttempts> comparator = Comparator.comparing(la -> la.getUser().getId());
+        blockedUserAttempts.stream()
+            .sorted(comparator)
+            .forEach(loginAttempts -> users.add(userMapper.userToUserDTO(loginAttempts.getUser())));
+        return users;
+    }
 }

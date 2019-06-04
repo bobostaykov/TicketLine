@@ -2,8 +2,13 @@ package at.ac.tuwien.sepm.groupphase.backend.service.implementation;
 
 import at.ac.tuwien.sepm.groupphase.backend.datatype.UserType;
 import at.ac.tuwien.sepm.groupphase.backend.entity.User;
+import at.ac.tuwien.sepm.groupphase.backend.repository.LoginAttemptsRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.UserRepository;
+import at.ac.tuwien.sepm.groupphase.backend.service.LoginAttemptService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,6 +24,9 @@ import java.util.Optional;
 public class AppUserDetailsService implements org.springframework.security.core.userdetails.UserDetailsService {
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private LoginAttemptsRepository loginAttemptsRepository;
+    private static final Logger LOGGER = LoggerFactory.getLogger(LoginAttemptService.class);
 
 
     @Override
@@ -26,7 +34,13 @@ public class AppUserDetailsService implements org.springframework.security.core.
         Optional<User> optionalUser = userRepository.findOneByUsername(username);
         org.springframework.security.core.userdetails.User.UserBuilder builder = null;
         if(optionalUser.isPresent()){
+            LOGGER.info("Authenticating user: " + username);
             User user = optionalUser.get();
+            if(loginAttemptsRepository.findById(user.getId()).get().isBlocked()){
+                LOGGER.info("Authentication denied, user is blocked");
+                throw new BadCredentialsException("is blocked");
+            }
+
             builder = org.springframework.security.core.userdetails.User.withUsername(username);
             builder.password(user.getPassword());
             if(user.getType().equals(UserType.ADMIN)){
@@ -34,9 +48,11 @@ public class AppUserDetailsService implements org.springframework.security.core.
             }else{
                 builder.authorities("USER");
             }
+            LOGGER.info("Authentication Successful");
 
         }else{
-            throw new UsernameNotFoundException("The username"+ username + "doesn't exist");
+            LOGGER.info("Authentication Denied, user " + username + " does not exist");
+            throw new UsernameNotFoundException("The username"+ username + " doesn't exist");
         }
         return builder.build();
     }

@@ -1,7 +1,9 @@
 package at.ac.tuwien.sepm.groupphase.backend.integrationtest.base;
 
 import at.ac.tuwien.sepm.groupphase.backend.configuration.JacksonConfiguration;
+import at.ac.tuwien.sepm.groupphase.backend.repository.UserRepository;
 import at.ac.tuwien.sepm.groupphase.backend.security.AuthenticationConstants;
+import at.ac.tuwien.sepm.groupphase.backend.service.HeaderTokenAuthenticationService;
 import at.ac.tuwien.sepm.groupphase.backend.service.implementation.SimpleHeaderTokenAuthenticationService;
 import io.restassured.RestAssured;
 import io.restassured.config.ObjectMapperConfig;
@@ -30,11 +32,14 @@ public abstract class BaseIntegrationTest {
     @Value("${server.context-path}")
     private String contextPath;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @LocalServerPort
     private int port;
 
     @Autowired
-    private SimpleHeaderTokenAuthenticationService simpleHeaderTokenAuthenticationService;
+    private HeaderTokenAuthenticationService simpleHeaderTokenAuthenticationService;
 
     @Autowired
     private JacksonConfiguration jacksonConfiguration;

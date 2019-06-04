@@ -1,12 +1,10 @@
 package at.ac.tuwien.sepm.groupphase.backend.service;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.user.UserDTO;
-import at.ac.tuwien.sepm.groupphase.backend.entity.User;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface UserService {
 
@@ -25,7 +23,7 @@ public interface UserService {
      */
     UserDTO findOne(Long id);
 
-    UserDTO findUserByName (String name);
+    UserDTO findUserByName(String name);
 
     /**
      * Create a user
@@ -52,15 +50,20 @@ public interface UserService {
     UserDTO findOneByUsername(String username);
 
     /**
-     *
      * @param userId id of the user that is to be unblocked
      * @return boolean if the operation was successful
      */
     boolean unblockUser(Long userId);
 
     /**
-     *
-     * @return a list of all users that are currently blocked
+     * @param userId
+     * @return
      */
-    List<UserDTO> findAllBlockedUsers();
+    boolean blockUser(Long userId) throws ServiceException;
+
+
+    /**
+     * @return
+     */
+    List<UserDTO> getAllBlockedUsers();
 }

@@ -11,10 +11,13 @@ import org.hibernate.JDBCException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.persistence.PersistenceException;
+import java.net.http.HttpClient;
 import java.util.List;
 
 @RestController
@@ -67,17 +70,31 @@ public class UserEndpoint {
         userService.deleteUser(id);
     }
 
-    @RequestMapping(value = "/blocked", method = RequestMethod.GET)
+    @RequestMapping(value = "/blocked/{id}" ,method = RequestMethod.PUT)
     @PreAuthorize("hasRole('ADMIN')")
-    @ApiOperation(value = "Get all blocked Users", authorizations = {@Authorization(value = "apiKey")})
-    public List<UserDTO> findAllBlockedUsers (){
-        return userService.findAllBlockedUsers();
+    @ApiOperation(value = "block user by id", authorizations = {@Authorization(value = "apiKey")})
+    public boolean blockUser(@PathVariable Long id){
+        LOGGER.info("blocking user with id" + id);
+        try {
+            return userService.blockUser(id);
+        } catch (ServiceException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "error during blocking user with id: " + id +" "+ e.getMessage());
+        }
     }
-
-    @RequestMapping(value = "/blocked/{id}",method = RequestMethod.PUT)
+    @RequestMapping(value = "blocked/unblock/{id}", method = RequestMethod.PUT)
     @PreAuthorize("hasRole('ADMIN')")
-    @ApiOperation(value = "Get all blocked Users", authorizations = {@Authorization(value = "apiKey")})
+    @ApiOperation(value = "unblock user by id", authorizations = {@Authorization(value = "apiKey")})
     public boolean unblockUser(@PathVariable Long id){
+        LOGGER.info("unblocking user with id: " + id);
         return userService.unblockUser(id);
     }
+
+    @RequestMapping(value = "/blocked", method = RequestMethod.GET)
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "get all blocked users", authorizations = {@Authorization(value = "apiKey")})
+    public List<UserDTO> getAllBlockedUsers(){
+        return userService.getAllBlockedUsers();
+    }
+
+
 }

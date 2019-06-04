@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.implementation;
 
+import at.ac.tuwien.sepm.groupphase.backend.datatype.UserType;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.user.UserDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.LoginAttempts;
 import at.ac.tuwien.sepm.groupphase.backend.entity.User;
@@ -35,15 +36,18 @@ public class LoginAttemptServiceImpl implements LoginAttemptService {
     public void failedLogin(String username) throws NotFoundException {
 
             Optional<User> found = userRepository.findOneByUsername(username);
-            if (found.isPresent() && !found.get().getType().equals("ADMIN")){
-                User user = found.get();
-                LoginAttempts attempts = loginAttemptsRepository.getByUser(user);
-                LOGGER.info("Failed Login Attempt number: "+ attempts +"by user: "+ user.getUsername());
-                attempts.setNumberOfAttempts(attempts.getNumberOfAttempts() + 1);
-                if(attempts.getNumberOfAttempts() > MAX_NUMBER_OF_ATTEMPTS){
-                    attempts.setBlocked(true);
+            if (found.isPresent()){
+                if(!found.get().getType().equals(UserType.ADMIN)){
+                    User user = found.get();
+                    LoginAttempts attempts = loginAttemptsRepository.getByUser(user);
+                    LOGGER.info("Failed Login Attempt number: "+ attempts +"by user: "+ user.getUsername());
+                    attempts.setNumberOfAttempts(attempts.getNumberOfAttempts() + 1);
+                    if(attempts.getNumberOfAttempts() > MAX_NUMBER_OF_ATTEMPTS){
+                        attempts.setBlocked(true);
+                    }
+                    loginAttemptsRepository.save(attempts);
                 }
-                loginAttemptsRepository.save(attempts);
+
             }else{
                 throw new NotFoundException("could not find user with username: " + username);
             }
@@ -55,8 +59,8 @@ public class LoginAttemptServiceImpl implements LoginAttemptService {
         Optional<User> opt = userRepository.findOneByUsername(username);
         if (opt.isPresent()) {
             UserDTO user = userMapper.userToUserDTO(opt.get());
-            if (!user.getType().equals("ADMIN")){
-                LoginAttempts attempts = loginAttemptsRepository.getByUser(userMapper.userDTOToUser(user));
+            if (!user.getType().equals(UserType.ADMIN)){
+                LoginAttempts attempts = loginAttemptsRepository.getLoginAttemptsById(user.getId());
                 attempts.setNumberOfAttempts(0);
                 loginAttemptsRepository.save(attempts);
             }
