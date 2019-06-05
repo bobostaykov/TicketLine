@@ -1,4 +1,4 @@
-package at.ac.tuwien.sepm.groupphase.backend.mapper;
+package at.ac.tuwien.sepm.groupphase.backend.unit.mapper;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.DetailedNewsDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.SimpleNewsDTO;

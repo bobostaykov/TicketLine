@@ -37,16 +37,16 @@ public class HallEndpoint {
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.CREATED)
-    @ApiOperation(value = "Add a new Hall with seats or sectors", authorizations = {@Authorization(value = "apiKey")})
+    @ApiOperation(value = "Add a new hall with seats or sectors", authorizations = {@Authorization(value = "apiKey")})
     public HallDTO postHall(@RequestBody HallDTO hallDto) {
         LOGGER.info("POST Halls: " + hallDto.toString());
         try {
             return hallService.addHall(hallDto);
         } catch (ServiceException e) {
-            LOGGER.error("Hall " + hallDto.toString() + " could not be added to the system");
+            LOGGER.error("hall " + hallDto.toString() + " could not be added to the system");
             throw new ResponseStatusException(
                 HttpStatus.BAD_REQUEST,
-                "Hall " + hallDto.toString() + " could not be added to the system",
+                "hall " + hallDto.toString() + " could not be added to the system",
                 e
             );
         }

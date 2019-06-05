@@ -19,26 +19,7 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
      */
     List<Ticket> findAllByOrderByIdAsc();
 
-
-    /**
-     * Find tickets that are issued for the given customer name and show name.
-     *
-     * @param customers list of customers to search for
-     * @param shows list of shows to search for
-     * @return List of found tickets
-     */
-    // NOT WOKRING
-    /*
-    @Query("SELECT t from Ticket t " +
-        "WHERE (customer_id in :customers)" +
-        "JOIN Customer c ON t.customer = c " +
-        "JOIN Show s ON t.show = s " +
-        "JOIN Event e ON e = s.event " +
-        "WHERE (c.name LIKE CONCAT('%',:customerName,'%') OR :customerName IS NULL) " +
-        "AND (e.name LIKE CONCAT('%',:showName,'%') OR :showName IS NULL)")
-    List<Ticket> findAllFilteredByCustomerAndEvent(@Param("customers") List<Customer> customers, @Param("shows") List<Show> shows);
-     */
-
+    // PINOS IMPLEMENTATION
     /**
      * Find tickets that are issued for the given customer name and show name with status RESERVATED.
      *
@@ -46,7 +27,9 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
      * @param show show to search for
      * @return List of found tickets
      */
+    /*
     List<Ticket> findAllByCustomerAndShowWithStatusReservated(Customer customer, Show show);
+    */
 
     /**
      * Find ticket by given reservation number
@@ -54,7 +37,23 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
      * @param id of Ticket to be found
      * @return found ticket
      */
-     Optional<Ticket> findOneById(Long id);
+    Optional<Ticket> findOneById(Long id);
+
+    /**
+     * Find tickets for customers given by a list of customers.
+     *
+     * @param customers list of customers
+     * @return found tickets
+     */
+    List<Ticket> findAllByCustomer(List<Customer> customers);
+
+    /**
+     * Find tickets for show given by a list of shows.
+     *
+     * @param shows list of shows
+     * @return found tickets
+     */
+    List<Ticket> findAllByShow(List<Show> shows);
 
     /**
      * Find ticket by given reservation number
@@ -71,14 +70,5 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
      * @param id of Ticket to be deleted
      */
     void deleteById(Long id);
-
-    /**
-     * Find tickets for the given customer name and show name.
-     *
-     * @param customer customer the ticket was issued for
-     * @param show the ticket was issued for
-     * @return List of found tickets
-     */
-    List<Ticket> findAllByCustomerAndShow(Customer customer, Show show);
 
 }

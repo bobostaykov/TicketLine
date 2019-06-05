@@ -2,17 +2,20 @@ package at.ac.tuwien.sepm.groupphase.backend.integrationtest;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.location.LocationDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Location;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.integrationtest.base.BaseIntegrationTest;
 import at.ac.tuwien.sepm.groupphase.backend.repository.LocationRepository;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
+import org.assertj.core.condition.Not;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.BDDMockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -205,21 +208,18 @@ public class LocationEndpointTest extends BaseIntegrationTest {
                 .description(DESCRIPTION)
                 .build())));
     }
-    /*
-    // TODO fix the test
+
     @Test
-    public void findSpecificNonExistingLocationNotFoundAsUser() {
+    public void findSpecificNonExistingLocationNotFoundAsUser(){
         BDDMockito.
-            given(locationRepository.findLocationsFiltered("Austria", "Innsbruck", null, null, null)).
-            willReturn(Arrays.asList());
+            given(locationRepository.findLocationsFiltered("Austria", "Innsbruck", null, null, null))
+            .willThrow(NotFoundException.class);
         Response response = RestAssured
             .given()
             .contentType(ContentType.JSON)
             .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
             .when().get(LOCATION_FILTERED_COUNTRY_AND_CITY_NOT_FOUND)
             .then().extract().response();
-        System.out.println(response);
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.NOT_FOUND.value()));
     }
-    */
 }

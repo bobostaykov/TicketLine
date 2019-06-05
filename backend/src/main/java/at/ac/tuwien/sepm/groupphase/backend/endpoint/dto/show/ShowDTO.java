@@ -2,9 +2,12 @@ package at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.show;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.event.EventDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.hall.HallDTO;
+import at.ac.tuwien.sepm.groupphase.backend.entity.PricePattern;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -19,9 +22,11 @@ public class ShowDTO {
     @ApiModelProperty(name = "The event to which the show belongs")
     private EventDTO event;
 
+    @Positive
     @ApiModelProperty(name = "The duration in minutes")
     private Integer durationInMinutes;
 
+    @PositiveOrZero
     @ApiModelProperty(name = "The number of tickets sold for that show")
     private Long ticketsSold;
 
@@ -36,6 +41,9 @@ public class ShowDTO {
 
     @ApiModelProperty(name = "A description of the show")
     private String description;
+
+    @ApiModelProperty(name = "The Pattern of the prices")
+    private PricePattern pricePattern;
 
 
 
@@ -90,20 +98,20 @@ public class ShowDTO {
         this.description = description;
     }
 
-    public Integer getDurationInMinutes() {
-        return durationInMinutes;
-    }
-
-    public void setDurationInMinutes(Integer durationInMinutes) {
-        this.durationInMinutes = durationInMinutes;
-    }
-
     public Long getTicketsSold() {
         return ticketsSold;
     }
 
     public void setTicketsSold(Long ticketsSold) {
         this.ticketsSold = ticketsSold;
+    }
+
+    public PricePattern getPricePattern() {
+        return pricePattern;
+    }
+
+    public void setPricePattern(PricePattern pricePattern) {
+        this.pricePattern = pricePattern;
     }
 
     public static ShowDTOBuilder builder() { return new ShowDTOBuilder(); }
@@ -115,30 +123,30 @@ public class ShowDTO {
         ShowDTO showDTO = (ShowDTO) o;
         return Objects.equals(id, showDTO.id) &&
             Objects.equals(event, showDTO.event) &&
-            Objects.equals(durationInMinutes, showDTO.durationInMinutes) &&
             Objects.equals(ticketsSold, showDTO.ticketsSold) &&
             Objects.equals(date, showDTO.date) &&
             Objects.equals(time, showDTO.time) &&
             Objects.equals(hall, showDTO.hall) &&
-            Objects.equals(description, showDTO.description);
+            Objects.equals(description, showDTO.description) &&
+            Objects.equals(pricePattern, showDTO.pricePattern);
 
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, event, durationInMinutes, ticketsSold, date, time, hall, description);
+        return Objects.hash(id, event, ticketsSold, date, time, hall, description);
     }
 
     public static final class ShowDTOBuilder {
 
         private Long id;
         private EventDTO event;
-        private Integer durationInMinutes;
         private Long ticketsSold;
         private LocalDate date;
         private HallDTO hall;
         private String description;
         private LocalTime time;
+        private PricePattern pricePattern;
 
 
         private ShowDTOBuilder() {}
@@ -150,11 +158,6 @@ public class ShowDTO {
 
         public ShowDTOBuilder event(EventDTO event) {
             this.event = event;
-            return this;
-        }
-
-        public ShowDTOBuilder durationInMinutes(Integer durationInMinutes) {
-            this.durationInMinutes = durationInMinutes;
             return this;
         }
 
@@ -182,6 +185,10 @@ public class ShowDTO {
             this.description = description;
             return this;
         }
+        public ShowDTOBuilder pricePattern(PricePattern pricePattern){
+            this.pricePattern = pricePattern;
+            return this;
+        }
 
 
 
@@ -189,12 +196,12 @@ public class ShowDTO {
             ShowDTO showDTO = new ShowDTO();
             showDTO.setId(id);
             showDTO.setEvent(event);
-            showDTO.setDurationInMinutes(durationInMinutes);
             showDTO.setTicketsSold(ticketsSold);
             showDTO.setDate(date);
             showDTO.setTime(time);
             showDTO.setHall(hall);
             showDTO.setDescription(description);
+            showDTO.setPricePattern(pricePattern);
             return showDTO;
         }
     }

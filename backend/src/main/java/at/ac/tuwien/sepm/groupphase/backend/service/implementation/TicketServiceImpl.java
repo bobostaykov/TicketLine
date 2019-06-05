@@ -4,6 +4,9 @@ import at.ac.tuwien.sepm.groupphase.backend.datatype.TicketStatus;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.customer.CustomerDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.show.ShowDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.ticket.TicketDTO;
+import at.ac.tuwien.sepm.groupphase.backend.entity.Customer;
+import at.ac.tuwien.sepm.groupphase.backend.entity.Event;
+import at.ac.tuwien.sepm.groupphase.backend.entity.Show;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Ticket;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.customer.CustomerMapper;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.show.ShowMapper;
@@ -11,6 +14,7 @@ import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.ticket.TicketMapper;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.CustomerRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.EventRepository;
+import at.ac.tuwien.sepm.groupphase.backend.repository.ShowRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.TicketRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.CustomerService;
 import at.ac.tuwien.sepm.groupphase.backend.service.TicketService;
@@ -26,6 +30,7 @@ public class TicketServiceImpl implements TicketService {
     private final TicketRepository ticketRepository;
     private final CustomerRepository customerRepository;
     private final EventRepository eventRepository;
+    private final ShowRepository showRepository;
     private final TicketMapper ticketMapper;
     private final ShowMapper showMapper;
     private final CustomerMapper customerMapper;
@@ -33,7 +38,8 @@ public class TicketServiceImpl implements TicketService {
 
     public TicketServiceImpl(TicketRepository ticketRepository, CustomerRepository customerRepository,
                              EventRepository eventRepository, TicketMapper ticketMapper, ShowMapper showMapper,
-                             CustomerMapper customerMapper, CustomerService customerService) {
+                             CustomerMapper customerMapper, CustomerService customerService,
+                             ShowRepository showRepository) {
         this.ticketRepository = ticketRepository;
         this.customerRepository = customerRepository;
         this.eventRepository = eventRepository;
@@ -41,6 +47,8 @@ public class TicketServiceImpl implements TicketService {
         this.showMapper = showMapper;
         this.customerMapper = customerMapper;
         this.customerService = customerService;
+        this.showRepository = showRepository;
+
     }
 
     @Override
@@ -83,6 +91,41 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
+    public List<TicketDTO> findAllFilteredByCustomerAndEvent(String customerName, String eventName) {
+        List<Customer> customers = customerRepository.findAllByName(customerName);
+        List<Event> events =  eventRepository.findAllByName(eventName);
+        List<Show> shows = showRepository.findAllByEvent(events);
+        List<Ticket> result1 = new ArrayList<>();
+        List<Ticket> result2 = new ArrayList<>();
+        if (customerName != null) {
+            result1 = ticketRepository.findAllByCustomer(customers);
+        }
+        if (eventName != null) {
+            result2 = ticketRepository.findAllByShow(shows);
+        }
+        return ticketMapper.ticketToTicketDTO(this.difference(result1, result2));
+    }
+
+    /**
+     * Get the conjunction of tickets in list 1 and list 2
+     *
+     * @param list1 list of tickets
+     * @param list2 list of tickets
+     * @return conjunction of list1 and list2
+     */
+    private List<Ticket> difference(List<Ticket> list1, List<Ticket> list2) {
+        List<Ticket> result = new ArrayList<>();
+        for (Ticket ticket : list1) {
+            if(list2.contains(ticket)) {
+                result.add(ticket);
+            }
+        }
+        return result;
+    }
+
+    // PINOS IMPLEMENTATION
+    /*
+    @Override
     public List<TicketDTO> findByCustomerNameAndShowWithStatusReservated(String surname, String firstname, ShowDTO showDTO) {
         List<CustomerDTO> customers = customerService.findCustomersFiltered(null, surname, firstname, null, null);
         if (customers.isEmpty())
@@ -96,5 +139,6 @@ public class TicketServiceImpl implements TicketService {
         }
         return tickets;
     }
+    */
 
 }

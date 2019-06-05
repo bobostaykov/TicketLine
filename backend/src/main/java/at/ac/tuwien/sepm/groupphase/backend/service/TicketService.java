@@ -56,6 +56,16 @@ public interface TicketService {
     TicketDTO deleteOne(Long id);
 
     /**
+     * Get all ticket entries filtered by the corresponsing customer and/or event name
+     *
+     * @param customerName name of customer the ticket was issued for
+     * @param eventName name of event the ticket was issued for
+     * @return list of found customers
+     */
+    List<TicketDTO> findAllFilteredByCustomerAndEvent(String customerName, String eventName);
+
+    // PINOS IMPLEMENTATION
+    /**
      * Get all reservated tickets filtered by customer and show
      *
      * @param surname surname of customer the ticket was issued for
@@ -63,5 +73,5 @@ public interface TicketService {
      * @param show show the ticket was issued for
      * @return list of found tickets
      */
-    List<TicketDTO> findByCustomerNameAndShowWithStatusReservated(String surname, String firstname, ShowDTO show);
+    //List<TicketDTO> findByCustomerNameAndShowWithStatusReservated(String surname, String firstname, ShowDTO show);
 }

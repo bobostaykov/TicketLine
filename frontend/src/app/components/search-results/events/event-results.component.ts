@@ -47,7 +47,6 @@ export class EventResultsComponent implements OnInit {
     }
   }
 
-  // OK
   private loadEventsFilteredByArtist(id) {
     console.log('Component Event-Results: loadEventsFilteredByArtist');
     this.eventResultsService.findEventsFilteredByArtistID(id).subscribe(
@@ -57,7 +56,6 @@ export class EventResultsComponent implements OnInit {
     );
   }
 
-  // OK
   private loadEventsFilteredByAttributes(eventName, eventType, content, description) {
     console.log('Component Event-Results: loadEventsFilteredByAttributes');
     this.eventResultsService.findEventsFilteredByAttributes(eventName, eventType, content, description).subscribe(

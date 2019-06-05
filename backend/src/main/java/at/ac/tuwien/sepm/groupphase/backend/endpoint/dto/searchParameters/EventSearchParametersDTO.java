@@ -2,13 +2,21 @@ package at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.searchParameters;
 
 import at.ac.tuwien.sepm.groupphase.backend.datatype.EventType;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Positive;
 import java.util.Objects;
 
 public class EventSearchParametersDTO {
+    @NotBlank
     private String name;
+    @Positive
     private Integer durationInMinutes;
+    @NotEmpty
     private String content;
+    @NotBlank
     private String artistName;
+    @NotBlank
     private String description;
     private EventType eventType;
 

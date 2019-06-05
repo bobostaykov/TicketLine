@@ -1,4 +1,4 @@
-package at.ac.tuwien.sepm.groupphase.backend.mapper;
+package at.ac.tuwien.sepm.groupphase.backend.unit.mapper;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.customer.CustomerDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Customer;
@@ -10,9 +10,9 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import java.time.LocalDate;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 public class CustomerMapperTest {

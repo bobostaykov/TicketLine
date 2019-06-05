@@ -1,7 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.seat;
 
 import at.ac.tuwien.sepm.groupphase.backend.datatype.PriceCategory;
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.hall.HallDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -13,13 +12,13 @@ public class SeatDTO {
     @ApiModelProperty(name = "The automatically generated database id of the seat")
     private Long id;
 
-    @ApiModelProperty(name = "The seat number")
+    @ApiModelProperty(name = "The seat number", required = true)
     private Integer seatNumber;
 
-    @ApiModelProperty(name = "The seat row")
+    @ApiModelProperty(name = "The seat row", required = true)
     private Integer seatRow;
 
-    @ApiModelProperty(name = "The seat's price category. Either cheap, average or expensive.")
+    @ApiModelProperty(name = "The seat's price category. Either cheap, average or expensive.", required = true)
     private PriceCategory priceCategory;
 
     public Long getId() {
@@ -64,7 +63,7 @@ public class SeatDTO {
             "id=" + id +
             ", seatNumber=" + seatNumber +
             ", seatRow=" + seatRow +
-            ", priceCategory='" + priceCategory + "\'" +
+            ", priceCategory=" + priceCategory +
             '}';
     }
 
