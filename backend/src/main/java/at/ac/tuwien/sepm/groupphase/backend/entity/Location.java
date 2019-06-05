@@ -12,7 +12,7 @@ public class Location {
     @SequenceGenerator(name = "seq_location_id", sequenceName = "seq_location_id")
     private Long id;
 
-    @Column(nullable = false, name = "locatioName")
+    @Column(nullable = false, name = "locationName")
     @Size(max = 64)
     private String locationName;
 
