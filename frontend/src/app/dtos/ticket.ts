@@ -1,7 +1,5 @@
 import {Show} from './show';
 import {Customer} from './customer';
-import {Seat} from './seat';
-import {Sector} from './sector';
 
 export class Ticket {
   constructor(
@@ -9,8 +7,9 @@ export class Ticket {
     public show: Show,
     public customer: Customer,
     public price: number,
-    public seat: Seat,
-    public sector: Sector,
+    public seatNumber: number,
+    public rowNumber: number,
+    public sectorNumber: number,
     public status: string) {
   }
 }
