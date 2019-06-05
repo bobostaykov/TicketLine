@@ -17,7 +17,7 @@ export class UserComponent implements OnInit {
   userForm: FormGroup;
   submitted: boolean = false;
   usernameError: boolean = false;
-  headElements = ['Id', 'Name', 'Type', 'User Since', 'Last Login', 'Remove'];
+  headElements = ['Id', 'Name', 'Type', 'User Since', 'Last Login', 'Remove', 'Block'];
 
   constructor(private authService: AuthService, private userService: UserService, private formBuilder: FormBuilder) {
     this.userForm = this.formBuilder.group({
@@ -79,6 +79,18 @@ export class UserComponent implements OnInit {
     );
   }
 
+  /**
+   * blocks a user given by id
+   * @param userId the id of the user that is to be blocked
+   */
+  private blockUser(userId: number) {
+    this.userService.blockUser(userId).subscribe(
+      () => {},
+      err => { this.defaultServiceErrorHandling(err); },
+      () => { this.loadUsers(); }
+    );
+  }
+
   private deleteUser(userId: number) {
     this.userService.deleteUser(userId).subscribe(
       () => {},
@@ -99,8 +111,11 @@ export class UserComponent implements OnInit {
     this.error = true;
     if (error.error.news !== 'No message available') {
       this.errorMessage = error.error.news;
+    } else if (error.error.httpRequestStatusCode === 404) {
+      this.errorMessage = 'could not block user';
     } else {
       this.errorMessage = error.error.error;
+
     }
   }
 

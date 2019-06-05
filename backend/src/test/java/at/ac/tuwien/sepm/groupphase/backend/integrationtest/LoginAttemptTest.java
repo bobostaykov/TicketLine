@@ -55,7 +55,7 @@ public class LoginAttemptTest {
     LoginAttempts loginAttempts1;
     LoginAttempts loginAttempts2;
     boolean init = false;
-    Long userID1 = userMapper.userToUserDTO(userRepository.findOneByUsername("user").get()).getId();
+    Long userID1 = userMapper.userToUserDTO(userRepository.findOneByUsername("testUser1").get()).getId();
 
     @Before
     public void before() throws ServiceException {

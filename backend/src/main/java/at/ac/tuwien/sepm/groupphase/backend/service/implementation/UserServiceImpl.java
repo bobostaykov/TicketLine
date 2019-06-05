@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
 import java.util.List;
 import java.util.Optional;
@@ -32,15 +31,13 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
     private final LoginAttemptsRepository loginAttemptsRepository;
-    private final Logger LOGGER = LoggerFactory.getLogger(getClass());
-    private final EntityManager entityManager;
 
-    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper, PasswordEncoder passwordEncoder) {
+
+    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper, PasswordEncoder passwordEncoder, LoginAttemptsRepository loginAttemptsRepository) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
         this.loginAttemptsRepository = loginAttemptsRepository;
-        this.entityManager = entityManager;
     }
 
     @Override
@@ -54,7 +51,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO findOne(Long id) throws NotFoundException {
     public UserDTO findOne(Long id) throws NotFoundException {
         LOGGER.info("Find user with id " + id);
         return userMapper.userToUserDTO(userRepository.findById(id).orElseThrow(NotFoundException::new));

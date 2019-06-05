@@ -11,7 +11,6 @@ import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.BDDMockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -29,6 +28,9 @@ import static org.mockito.ArgumentMatchers.any;
 
 public class UserEndpointTest extends BaseIntegrationTest {
 
+    @MockBean
+    private UserRepository userRepository;
+
     private static final String USER_ENDPOINT = "/users";
     private static final String SPECIFIC_USER_PATH = "/{userId}";
 
@@ -40,9 +42,6 @@ public class UserEndpointTest extends BaseIntegrationTest {
     private static final LocalDateTime TEST_USER_LAST_LOGIN = LocalDateTime.of(2012, 12, 12, 12, 12, 12, 12);
     private static final List<News> TEST_READ_NEWS = new ArrayList<News>();
     private static final List<SimpleNewsDTO> TEST_READ_NEWS_DTO = new ArrayList<SimpleNewsDTO>();
-
-    @MockBean
-    private UserRepository userRepository;
 
 
     @Test

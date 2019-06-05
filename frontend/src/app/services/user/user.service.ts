@@ -11,6 +11,7 @@ export class UserService {
 
   private userBaseUri: string = this.globals.backendUri + '/users';
   private blockedUserBaseUri: string = this.userBaseUri + '/blocked';
+  private unblockUserBaseUri: string = this.blockedUserBaseUri + '/unblock'
 
   constructor(private httpClient: HttpClient, private globals: Globals) {}
 
@@ -29,8 +30,19 @@ export class UserService {
     return this.httpClient.get<User[]>(this.blockedUserBaseUri);
   }
 
-  unblockUser(user: User){
-    this.httpClient.put(this.blockedUserBaseUri + '/' + user.id, user);
+  /**
+   *
+   * @param unblocks the specified user
+   */
+  unblockUser(userId: number): Observable<{}> {
+    console.log('unblocking user with id ' + userId);
+    return this.httpClient.put(this.unblockUserBaseUri + '/' + userId, null);
+  }
+
+
+  blockUser(userId: number): Observable<{}> {
+    console.log('blocking user with id ' + userId)
+    return this.httpClient.put(this.blockedUserBaseUri + '/' + userId, null);
   }
 
 

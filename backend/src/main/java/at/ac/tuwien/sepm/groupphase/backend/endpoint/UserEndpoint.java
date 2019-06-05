@@ -27,7 +27,6 @@ public class UserEndpoint {
 
     private final UserService userService;
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
->>>>>>>>> Temporary merge branch 2
 
     public UserEndpoint(UserService userService) {
         this.userService = userService;
@@ -83,7 +82,6 @@ public class UserEndpoint {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
         LOGGER.info("\n\n\n" + id + "\n\n\n");
-        userService.deleteUser(id);
     }
 
     @RequestMapping(value = "/blocked/{id}" ,method = RequestMethod.PUT)
@@ -94,7 +92,7 @@ public class UserEndpoint {
         try {
             return userService.blockUser(id);
         } catch (ServiceException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "error during blocking user with id: " + id +" "+ e.getMessage());
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "error during blocking user with id: " + id +" "+ e.getMessage());
         }
     }
     @RequestMapping(value = "blocked/unblock/{id}", method = RequestMethod.PUT)
@@ -109,6 +107,7 @@ public class UserEndpoint {
     @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "get all blocked users", authorizations = {@Authorization(value = "apiKey")})
     public List<UserDTO> getAllBlockedUsers(){
+        LOGGER.info("get all blocked users");
         return userService.getAllBlockedUsers();
     }
 
