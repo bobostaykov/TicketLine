@@ -1,7 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.sector;
 
 import at.ac.tuwien.sepm.groupphase.backend.datatype.PriceCategory;
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.hall.HallDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -13,10 +12,10 @@ public class SectorDTO {
     @ApiModelProperty(name = "The automatically generated database id")
     private Long id;
 
-    @ApiModelProperty(name = "The sector number")
+    @ApiModelProperty(name = "The sector number", required = true)
     private Integer sectorNumber;
 
-    @ApiModelProperty(name = "The sector's price category. Either cheap, average or expensive")
+    @ApiModelProperty(name = "The sector's price category. Either cheap, average or expensive", required = true)
     private PriceCategory priceCategory;
 
     public Long getId() {
@@ -52,7 +51,7 @@ public class SectorDTO {
         return "SectorDTO{" +
             "id=" + id +
             ", sectorNumber=" + sectorNumber +
-            ", priceCategory='" + priceCategory + "\'" +
+            ", priceCategory=" + priceCategory +
             '}';
     }
 

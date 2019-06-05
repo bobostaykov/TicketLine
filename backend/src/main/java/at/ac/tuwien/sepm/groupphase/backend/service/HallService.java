@@ -1,9 +1,9 @@
 package at.ac.tuwien.sepm.groupphase.backend.service;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.hall.HallDTO;
+import at.ac.tuwien.sepm.groupphase.backend.exception.CustomValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 
-import javax.xml.bind.ValidationException;
 import java.util.List;
 
 public interface HallService {
@@ -15,10 +15,10 @@ public interface HallService {
     List<HallDTO> findAllHalls();
 
     /**
-     * Adds Hall to the system
+     * Adds hall to the system
      * @param hallDTO dto of entity to be added
      * @return created hall als dto
      * @throws ServiceException if something goes wrong during data processing
      */
-    HallDTO addHall(HallDTO hallDTO) throws ServiceException;
+    HallDTO addHall(HallDTO hallDTO) throws ServiceException, CustomValidationException;
 }

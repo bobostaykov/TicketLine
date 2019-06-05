@@ -4,8 +4,8 @@ import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.hall.HallDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Hall;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Seat;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Sector;
-import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.Hall.HallMapper;
-import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
+import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.hall.HallMapper;
+import at.ac.tuwien.sepm.groupphase.backend.exception.CustomValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.HallRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.HallService;
 import org.slf4j.Logger;
@@ -23,7 +23,6 @@ public class HallServiceImpl implements HallService {
     private final HallMapper hallMapper;
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
-    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     public HallServiceImpl(HallRepository hallRepository, HallMapper hallMapper) {
         this.hallMapper = hallMapper;
         this.hallRepository = hallRepository;
@@ -36,13 +35,13 @@ public class HallServiceImpl implements HallService {
     }
 
     @Override
-    public HallDTO addHall(HallDTO hallDTO) throws ServiceException {
+    public HallDTO addHall(HallDTO hallDTO) throws CustomValidationException {
         LOGGER.info("Validating and adding hall: " + hallDTO.toString());
         //validate hallDTO
         validateHallDTO(hallDTO);
         // map hall dto to entity
         Hall hall = hallMapper.hallDTOToHall(hallDTO);
-        // set child column in ManyToOne relationship and validate seats/sectors;
+        //sets child column in ManyToOne relationship and validate seats/sectors;
         if (!isEmpty(hall.getSeats())) {
             for(Seat seat : hall.getSeats()){
                 validateSeat(seat);
@@ -58,42 +57,54 @@ public class HallServiceImpl implements HallService {
     }
 
     //helper method to validate hall dto and improve code readability
-    private void validateHallDTO(HallDTO hallDTO) throws ServiceException {
+    private void validateHallDTO(HallDTO hallDTO) throws CustomValidationException {
         if (hallDTO.getName() == null || hallDTO.getName().isBlank()) {
-            LOGGER.error("Hall " + hallDTO.toString() + " could not be added: Name was empty");
-            throw new ServiceException("Hall " + hallDTO.toString() + " could not be added: Name must not be empty");
+            LOGGER.error("hall " + hallDTO.toString() + " could not be added: Name was empty");
+            throw new CustomValidationException("hall " + hallDTO.toString() + " could not be added: Name must not be empty");
         }
         if (hallDTO.getLocation() == null) {
-            LOGGER.error("Hall " + hallDTO.toString() + " could not be added: Hall Location was not set");
-            throw new ServiceException("Hall " + hallDTO.toString() + " could not be added: Hall Location must be set");
+            LOGGER.error("hall " + hallDTO.toString() + " could not be added: hall Location was not set");
+            throw new CustomValidationException("hall " + hallDTO.toString() + " could not be added: hall Location must be set");
         }
         if (!isEmpty(hallDTO.getSeats()) && !isEmpty(hallDTO.getSectors())) {
-            LOGGER.error("Hall " + hallDTO.toString() + " could not be added because it contains both seats and sectors");
-            throw new ServiceException("Hall " + hallDTO.toString() + " could not be added: Hall cannot contain both seats and sectors");
+            LOGGER.error("hall " + hallDTO.toString() + " could not be added because it contains both seats and sectors");
+            throw new CustomValidationException("hall " + hallDTO.toString() + " could not be added: hall cannot contain both seats and sectors");
+        }
+        if(isEmpty(hallDTO.getSeats()) && isEmpty(hallDTO.getSectors())){
+            LOGGER.error("hall " + hallDTO.toString() + " could not be added because it does not contain seats or sectors");
+            throw new CustomValidationException("hall " + hallDTO.toString() + " could not be added: hall contains no seats or sectors");
         }
     }
     //helper method to validate seat and improve code readability
-    private void validateSeat(Seat seat) throws ServiceException {
+    private void validateSeat(Seat seat) throws CustomValidationException {
         if (seat.getSeatNumber() == null || seat.getSeatNumber() < 1) {
-            LOGGER.error("Hall could not be added due to seat " + seat.toString() +
+            LOGGER.error("hall could not be added due to seat " + seat.toString() +
                 ". Seat Number was " + (seat.getSeatNumber() == null ? "not set." : "less than 1."));
-            throw new ServiceException("Hall could not be added due to seat " + seat.toString() +
+            throw new CustomValidationException("hall could not be added due to seat " + seat.toString() +
                 ". Seat Number must be set and greater than 0");
         }
         if(seat.getSeatRow() == null || seat.getSeatRow() < 1){
-            LOGGER.error("Hall could not be added due to seat " + seat.toString() +
+            LOGGER.error("hall could not be added due to seat " + seat.toString() +
                 ". Seat Row was " + (seat.getSeatRow() == null ? "not set." : "less than 1."));
-            throw new ServiceException("Hall could not be added due to seat " + seat.toString() +
+            throw new CustomValidationException("hall could not be added due to seat " + seat.toString() +
                 ". Seat Row must be set and greater than 0");
+        }
+        if(seat.getPriceCategory() == null){
+            LOGGER.error("hall could not be added because no price category was set for seat " + seat.toString());
+            throw new CustomValidationException("hall could not be added because no price category was set for seat " + seat.toString());
         }
     }
     //helper method to validate sector and improve code readability
-    private void validateSector(Sector sector) throws ServiceException{
+    private void validateSector(Sector sector) throws CustomValidationException {
         if(sector.getSectorNumber() == null || sector.getSectorNumber() < 1){
-            LOGGER.error("Hall could not be added due to sector " + sector.toString()
+            LOGGER.error("hall could not be added due to sector " + sector.toString()
                 + ". Sector number was " + (sector.getSectorNumber() == null ? "not set-" : "less than 1."));
-            throw new ServiceException("Hall could not be added due to sector " + sector.toString()
-                + ". Sector number must be set and greater than 0");
+            throw new CustomValidationException(("hall could not be added due to sector " + sector.toString()
+                + ". Sector number must be set and greater than 0"));
+        }
+        if(sector.getPriceCategory() == null){
+            LOGGER.error("hall could not be added because no price category was set for sector " + sector.toString());
+            throw new CustomValidationException("hall could not be added because no price category was set for sector " + sector.toString());
         }
     }
 }

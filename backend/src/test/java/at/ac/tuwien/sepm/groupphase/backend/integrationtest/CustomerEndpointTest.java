@@ -14,13 +14,12 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 
-import static org.hamcrest.core.Is.is;
-
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
 
+import static org.hamcrest.core.Is.is;
 import static org.mockito.Matchers.any;
 
 public class CustomerEndpointTest extends BaseIntegrationTest {
@@ -255,6 +254,39 @@ public class CustomerEndpointTest extends BaseIntegrationTest {
                 .birthday(TEST_CUSTOMER_BIRTHDATE)
                 .build())
             .when().post(CUSTOMER_ENDPOINT)
+            .then().extract().response();
+        Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
+        Assert.assertThat(response.as(CustomerDTO.class), is(CustomerDTO.builder()
+            .id(TEST_CUSTOMER_ID)
+            .name(TEST_CUSTOMER_NAME)
+            .firstname(TEST_CUSTOMER_FIRSTNAME)
+            .email(TEST_CUSTOMER_EMAIL)
+            .birthday(TEST_CUSTOMER_BIRTHDATE)
+            .build()));
+    }
+
+    @Test
+    public void changeUserThenHTTPResponseOKAndChangedCustomerIsReturned() {
+        BDDMockito.
+            given(customerRepository.save(any(Customer.class))).
+            willReturn(Customer.builder()
+                .id(TEST_CUSTOMER_ID)
+                .name(TEST_CUSTOMER_NAME)
+                .firstname(TEST_CUSTOMER_FIRSTNAME)
+                .email(TEST_CUSTOMER_EMAIL)
+                .birthday(TEST_CUSTOMER_BIRTHDATE)
+                .build());
+        Response response = RestAssured
+            .given()
+            .contentType(ContentType.JSON)
+            .header(HttpHeaders.AUTHORIZATION, validAdminTokenWithPrefix)
+            .body(CustomerDTO.builder()
+                .name(TEST_CUSTOMER_NAME)
+                .firstname(TEST_CUSTOMER_FIRSTNAME)
+                .email(TEST_CUSTOMER_EMAIL)
+                .birthday(TEST_CUSTOMER_BIRTHDATE)
+                .build())
+            .when().put(CUSTOMER_ENDPOINT + SPECIFIC_CUSTOMER_PATH, TEST_CUSTOMER_ID)
             .then().extract().response();
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
         Assert.assertThat(response.as(CustomerDTO.class), is(CustomerDTO.builder()

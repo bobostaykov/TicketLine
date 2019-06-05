@@ -50,7 +50,7 @@ public class SimpleNewsService implements NewsService {
         if (!found.isEmpty()) {
             User user = found.get();
             List<News> readNews = user.getReadNews();
-            List<News> allNews = newsRepository.findAll();
+            List<News> allNews = newsRepository.findAllByOrderByPublishedAtDesc();
             return newsMapper.newsToSimpleNewsDTO(difference(allNews, readNews));
         } else {
             return newsMapper.newsToSimpleNewsDTO(newsRepository.findAllByOrderByPublishedAtDesc());

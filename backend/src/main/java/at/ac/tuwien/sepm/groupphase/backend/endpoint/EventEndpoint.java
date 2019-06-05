@@ -4,7 +4,6 @@ import at.ac.tuwien.sepm.groupphase.backend.datatype.EventType;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.event.EventDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.event.EventTicketsDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.searchParameters.EventSearchParametersDTO;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Event;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.event.EventTicketsMapper;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.service.EventService;
@@ -13,14 +12,8 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
@@ -57,24 +50,16 @@ public class EventEndpoint {
         }
     }
 
+
     @RequestMapping(method = RequestMethod.GET)
     @ApiOperation(value = "Get all events", authorizations = {@Authorization(value = "apiKey")})
-    public List<EventDTO> findAll() {
-        LOGGER.info("Get all events");
-        try {
-            return eventService.findAll();
-        } catch (ServiceException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        }
-    }
-
     public List<EventDTO> findEventsFilteredByAttributes(@RequestParam(value = "eventName", required = false) String eventName,
                                                          @RequestParam(value = "eventType", required = false) String eventType,
                                                          @RequestParam(value = "content", required = false) String content,
                                                          @RequestParam(value = "description", required = false) String description,
                                                          @RequestParam(value = "duration", required = false) Integer duration,
                                                          @RequestParam(value = "artistName", required = false) String artistName) {
-        if (eventName == null && eventType == null && content == null && description == null && duration == null) {
+        if (eventName == null && eventType == null && content == null && description == null && duration == null && artistName == null) {
             LOGGER.info("Event Endpoint: findAll");
             try {
                 return eventService.findAll();
@@ -83,9 +68,6 @@ public class EventEndpoint {
             }
         } else {
             LOGGER.info("Event Endpoint: findEventsFilteredByAttributes");
-            LOGGER.debug(eventName);
-            LOGGER.debug(content);
-            LOGGER.debug(description);
             EventType eventTypeConv = null;
             if (eventType != null) {
                 for (EventType type : EventType.values()
@@ -104,6 +86,7 @@ public class EventEndpoint {
                 .setDescription(description)
                 .setEventType(eventTypeConv)
                 .build();
+            LOGGER.info("Event Endpoint: findEventsFilteredByAttributes" + parameters.toString() );
             return eventService.findAllFiltered(parameters);
         }
     }

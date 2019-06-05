@@ -20,7 +20,7 @@ export class EventService {
   /**
    * Get top ten events from backend
    */
-  getTopTenEvents(monthsArray: string[], categoriesArray: string[]): Observable<EventTickets[]> {
+  public getTopTenEvents(monthsArray: string[], categoriesArray: string[]): Observable<EventTickets[]> {
     console.log('Get top 10 events');
     return this.httpClient.get<EventTickets[]>(this.eventBaseUri + '/topten',
       {params: { months: monthsArray.join(','), categories: categoriesArray.join(',') }});

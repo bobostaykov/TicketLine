@@ -4,7 +4,6 @@ import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.util.Objects;
 
-//TODO put nullable = false in some class attributes
 @Entity
 public class Location {
 
@@ -12,6 +11,10 @@ public class Location {
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "seq_location_id")
     @SequenceGenerator(name = "seq_location_id", sequenceName = "seq_location_id")
     private Long id;
+
+    @Column(nullable = false, name = "locatioName")
+    @Size(max = 64)
+    private String locationName;
 
     @Column(nullable = false, name = "country")
     @Size(max = 64)
@@ -81,32 +84,23 @@ public class Location {
         this.description = description;
     }
 
+    public String getLocationName() {
+        return locationName;
+    }
+
+    public void setLocationName(String locationName) {
+        this.locationName = locationName;
+    }
+
     public static LocationBuilder builder() {
         return new LocationBuilder();
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Location location = (Location) o;
-        return id.equals(location.id) &&
-            country.equals(location.country) &&
-            city.equals(location.city) &&
-            postalCode.equals(location.postalCode) &&
-            street.equals(location.street) &&
-            Objects.equals(description, location.description);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, country, city, postalCode, street, description);
     }
 
     @Override
     public String toString() {
         return "Location{" +
             "id=" + id +
+            ", locationName='" + locationName + '\'' +
             ", country='" + country + '\'' +
             ", city='" + city + '\'' +
             ", postalCode='" + postalCode + '\'' +
@@ -115,18 +109,44 @@ public class Location {
             '}';
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Location location = (Location) o;
+        return Objects.equals(id, location.id) &&
+            Objects.equals(locationName, location.locationName) &&
+            Objects.equals(country, location.country) &&
+            Objects.equals(city, location.city) &&
+            Objects.equals(postalCode, location.postalCode) &&
+            Objects.equals(street, location.street) &&
+            Objects.equals(description, location.description);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, locationName, country, city, postalCode, street, description);
+    }
+
     public static final class LocationBuilder {
         private Long id;
+        private String locationName;
         private String country;
         private String city;
         private String postalCode;
         private String street;
         private String description;
 
+
         private LocationBuilder() {}
 
         public LocationBuilder id(Long id) {
             this.id = id;
+            return this;
+        }
+
+        public LocationBuilder locationName(String locationName){
+            this.locationName = locationName;
             return this;
         }
 
@@ -158,6 +178,7 @@ public class Location {
         public Location build() {
             Location location = new Location();
             location.setId(id);
+            location.setLocationName(locationName);
             location.setCountry(country);
             location.setCity(city);
             location.setPostalCode(postalCode);

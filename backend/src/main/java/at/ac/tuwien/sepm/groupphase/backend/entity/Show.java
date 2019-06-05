@@ -17,7 +17,7 @@ public class Show {
     private Long id;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "event_id")
+    @JoinColumn(nullable = false, name = "event_id")
     private Event event;
 
     @Column(nullable = false, name = "time")
@@ -28,7 +28,7 @@ public class Show {
 
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "hall_id")
+    @JoinColumn(nullable = false, name = "hall_id")
     private Hall hall;
 
     @Column(name = "description")
@@ -38,6 +38,10 @@ public class Show {
     @Column(nullable = false, name = "tickets_sold")
     @PositiveOrZero
     private Long ticketsSold;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "pricePatter_id")
+    private PricePattern pricePattern;
 
     public Long getId() {
         return id;
@@ -89,6 +93,14 @@ public class Show {
         this.ticketsSold = ticketsSold;
     }
 
+    public PricePattern getPricePattern() {
+        return pricePattern;
+    }
+
+    public void setPricePattern(PricePattern pricePattern) {
+        this.pricePattern = pricePattern;
+    }
+
     public static ShowBuilder builder() {
         return new ShowBuilder();
     }
@@ -121,8 +133,14 @@ public class Show {
         private Hall hall;
         private String description;
         private Long ticketsSold;
+        private PricePattern pricePattern;
 
         private ShowBuilder() {}
+
+        public ShowBuilder pricePattern(PricePattern pricePattern){
+            this.pricePattern = pricePattern;
+            return this;
+        }
 
         public ShowBuilder id(Long id) {
             this.id = id;
@@ -169,6 +187,7 @@ public class Show {
             show.setHall(hall);
             show.setDescription(description);
             show.setTicketsSold(ticketsSold);
+            show.setPricePattern(pricePattern);
             return show;
         }
     }

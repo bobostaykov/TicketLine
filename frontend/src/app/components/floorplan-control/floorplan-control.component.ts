@@ -240,7 +240,7 @@ export class FloorplanControlComponent implements OnInit {
    */
   private updateSeat() {
     const values = this.updateSeatForm.value;
-    if (!this.getSelectedHall().seats.some(seat => seat !== this.selectedSeat && seat.seatNumber === this.selectedSeat.seatNumber &&
+    if (!this.getSelectedHall().seats.some(seat => seat !== this.selectedSeat && seat.seatNumber === values.seatNumber &&
       seat.seatRow === values.seatRow)) {
       this.selectedSeat.seatNumber = values.seatNumber;
       this.selectedSeat.seatRow = values.seatRow;

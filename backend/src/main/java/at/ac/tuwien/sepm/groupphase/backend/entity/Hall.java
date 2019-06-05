@@ -138,7 +138,7 @@ public class Hall {
 
         @Override
         public String toString() {
-            return "Hall{" +
+            return "hall{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", location=" + location +

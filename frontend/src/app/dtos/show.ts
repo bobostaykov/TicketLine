@@ -5,7 +5,8 @@ export class Show {
   constructor(
     public id: number,
     public event: Event,
-    public dateTime: string,
+    public time: string,
+    public date: string,
     public hall: Hall,
     public description: string,
     public ticketsSold: number

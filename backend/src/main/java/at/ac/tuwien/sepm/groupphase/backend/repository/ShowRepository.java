@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.repository;
 
+import at.ac.tuwien.sepm.groupphase.backend.entity.Event;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Show;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -20,6 +21,15 @@ public interface ShowRepository extends JpaRepository<Show, Long>, ShowRepositor
      */
     @Query(value = "SELECT s FROM Show s JOIN Event e WHERE e.name = :eventName")
     List<Show> findAllShowsFilteredByEventName(@Param("eventName") String eventName);
+
+    /**
+     * Find all shows filtered by event
+     *
+     * @param events list of events
+     * @return found shows
+     */
+    List<Show> findAllByEvent(List<Event> events);
+
 
     /*
      * Finds all shows filtered by location id

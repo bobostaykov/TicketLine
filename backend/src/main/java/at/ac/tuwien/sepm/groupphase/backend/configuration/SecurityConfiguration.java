@@ -92,6 +92,7 @@ public class SecurityConfiguration {
         protected void configure(HttpSecurity http) throws Exception {
 
             http
+                
                 .csrf().disable()
                 .headers().frameOptions().sameOrigin().and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()

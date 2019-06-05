@@ -3,6 +3,7 @@ package at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.location;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import javax.validation.constraints.Size;
 import java.util.Objects;
 
 @ApiModel(value = "LocationDTO")
@@ -10,6 +11,9 @@ public class LocationDTO {
 
     @ApiModelProperty(name = "The automatically generated database id")
     private Long id;
+
+    @ApiModelProperty(name = "Locations's name")
+    private String locationName;
 
     @ApiModelProperty(name = "Location's country")
     private String country;
@@ -26,12 +30,21 @@ public class LocationDTO {
     @ApiModelProperty(name = "Location's description")
     private String description;
 
+
     public Long getId() {
         return id;
     }
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getLocationName() {
+        return locationName;
+    }
+
+    public void setLocationName(String locationName) {
+        this.locationName = locationName;
     }
 
     public String getCountry() {
@@ -81,22 +94,25 @@ public class LocationDTO {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         LocationDTO that = (LocationDTO) o;
-        return Objects.equals(getId(), that.getId()) &&
-            Objects.equals(getCountry(), that.getCountry()) &&
-            Objects.equals(getCity(), that.getCity()) &&
-            Objects.equals(getPostalCode(), that.getPostalCode()) &&
-            Objects.equals(getStreet(), that.getStreet()) &&
-            Objects.equals(getDescription(), that.getDescription());
+        return Objects.equals(id, that.id) &&
+            Objects.equals(locationName, that.locationName) &&
+            Objects.equals(country, that.country) &&
+            Objects.equals(city, that.city) &&
+            Objects.equals(postalCode, that.postalCode) &&
+            Objects.equals(street, that.street) &&
+            Objects.equals(description, that.description);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getCountry(), getCity(), getPostalCode(), getStreet(), getDescription());
+        return Objects.hash(id, locationName, country, city, postalCode, street, description);
     }
+
     @Override
     public String toString() {
         return "LocationDTO{" +
             "id=" + id +
+            ", locationName='" + locationName + '\'' +
             ", country='" + country + '\'' +
             ", city='" + city + '\'' +
             ", postalCode='" + postalCode + '\'' +
@@ -107,16 +123,23 @@ public class LocationDTO {
 
     public static final class LocationDTOBuilder {
         private Long id;
+        private String locationName;
         private String country;
         private String city;
         private String postalCode;
         private String street;
         private String description;
 
+
         private LocationDTOBuilder() {}
 
         public LocationDTOBuilder id(Long id) {
             this.id = id;
+            return this;
+        }
+
+        public LocationDTOBuilder locationName(String locationName){
+            this.locationName = locationName;
             return this;
         }
 
@@ -148,6 +171,7 @@ public class LocationDTO {
         public LocationDTO build() {
             LocationDTO locationDTO = new LocationDTO();
             locationDTO.setId(id);
+            locationDTO.setLocationName(locationName);
             locationDTO.setCountry(country);
             locationDTO.setCity(city);
             locationDTO.setPostalCode(postalCode);
