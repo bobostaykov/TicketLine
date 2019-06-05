@@ -20,5 +20,5 @@ public interface HallService {
      * @return created hall als dto
      * @throws ServiceException if something goes wrong during data processing
      */
-    HallDTO addHall(HallDTO hallDTO) throws ServiceException;
+    HallDTO addHall(HallDTO hallDTO) throws ServiceException, at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
 }
