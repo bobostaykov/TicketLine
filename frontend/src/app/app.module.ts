@@ -52,10 +52,9 @@ import {TicketComponent} from './components/ticket/ticket.component';
     FloorplanControlComponent,
     FloorplanComponent,
     CustomerComponent,
+    CustomerDialogComponent,
     TicketComponent,
-    CustomerDialogComponent,
-    CustomerDialogComponent,
-    CustomerDialogComponent,
+    TicketComponent,
     BlockedUsersComponent,
     TicketCheckReservationComponent
   ],
