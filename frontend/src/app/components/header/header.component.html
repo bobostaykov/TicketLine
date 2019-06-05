@@ -26,6 +26,10 @@
       <li class="nav-item">
         <a class="nav-link" *ngIf="authService.isLoggedIn()" routerLink="/floorplan" routerLinkActive="active">FloorPlan</a>
       </li>
+
+      <li class="nav-item">
+        <a class="nav-link" *ngIf="authService.isLoggedIn()" routerLink="/ticket" routerLinkActive="active">Ticket</a>
+      </li>
     </ul>
     <ul class="navbar-nav mr-5">
       <a class="nav-link" *ngIf="!authService.isLoggedIn()" routerLink="/login" routerLinkActive="active">Login</a>
