@@ -3,6 +3,7 @@ package at.ac.tuwien.sepm.groupphase.backend.repository.implementation;
 import at.ac.tuwien.sepm.groupphase.backend.datatype.EventType;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.searchParameters.EventSearchParametersDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.*;
+
 import at.ac.tuwien.sepm.groupphase.backend.repository.EventRepositoryCustom;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +35,7 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
         LOGGER.info("Find Events filtered by: " + parameters.toString());
         CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
         List<Predicate> predicates = new ArrayList<>();
+        em.getMetamodel();
         CriteriaQuery<Event> query = criteriaBuilder.createQuery(Event.class);
         Root<Event> eventRoot = query.from(Event.class);
         if(parameters.getName() != null){
@@ -57,7 +59,8 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
             predicates.add(criteriaBuilder.like(criteriaBuilder.lower(eventRoot.get(Event_.description)), "%" + parameters.getDescription().toLowerCase() + "%"));
         }
         if(parameters.getEventType() != null){
-            predicates.add(criteriaBuilder.equal(eventRoot.get(Event_.EVENT_TYPE), parameters.getEventType()));
+            //predicates.add(criteriaBuilder.equal(eventRoot.get(Event_.eventType), parameters.getEventType()));
+            predicates.add(criteriaBuilder.equal(eventRoot.get(Event_.eventType), parameters.getEventType()));
         }
 
 

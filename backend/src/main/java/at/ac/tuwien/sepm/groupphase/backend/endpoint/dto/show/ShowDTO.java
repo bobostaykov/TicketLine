@@ -2,9 +2,12 @@ package at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.show;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.event.EventDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.hall.HallDTO;
+import at.ac.tuwien.sepm.groupphase.backend.entity.PricePattern;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -19,6 +22,11 @@ public class ShowDTO {
     @ApiModelProperty(name = "The event to which the show belongs")
     private EventDTO event;
 
+    @Positive
+    @ApiModelProperty(name = "The duration in minutes")
+    private Integer durationInMinutes;
+
+    @PositiveOrZero
     @ApiModelProperty(name = "The number of tickets sold for that show")
     private Long ticketsSold;
 
@@ -33,6 +41,11 @@ public class ShowDTO {
 
     @ApiModelProperty(name = "A description of the show")
     private String description;
+
+    @ApiModelProperty(name = "The Pattern of the prices")
+    private PricePattern pricePattern;
+
+
 
     public Long getId() {
         return id;
@@ -93,6 +106,14 @@ public class ShowDTO {
         this.ticketsSold = ticketsSold;
     }
 
+    public PricePattern getPricePattern() {
+        return pricePattern;
+    }
+
+    public void setPricePattern(PricePattern pricePattern) {
+        this.pricePattern = pricePattern;
+    }
+
     public static ShowDTOBuilder builder() { return new ShowDTOBuilder(); }
 
     @Override
@@ -106,7 +127,8 @@ public class ShowDTO {
             Objects.equals(date, showDTO.date) &&
             Objects.equals(time, showDTO.time) &&
             Objects.equals(hall, showDTO.hall) &&
-            Objects.equals(description, showDTO.description);
+            Objects.equals(description, showDTO.description) &&
+            Objects.equals(pricePattern, showDTO.pricePattern);
 
     }
 
@@ -124,6 +146,7 @@ public class ShowDTO {
         private HallDTO hall;
         private String description;
         private LocalTime time;
+        private PricePattern pricePattern;
 
 
         private ShowDTOBuilder() {}
@@ -162,6 +185,10 @@ public class ShowDTO {
             this.description = description;
             return this;
         }
+        public ShowDTOBuilder pricePattern(PricePattern pricePattern){
+            this.pricePattern = pricePattern;
+            return this;
+        }
 
 
 
@@ -174,6 +201,7 @@ public class ShowDTO {
             showDTO.setTime(time);
             showDTO.setHall(hall);
             showDTO.setDescription(description);
+            showDTO.setPricePattern(pricePattern);
             return showDTO;
         }
     }

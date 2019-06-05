@@ -35,6 +35,7 @@ public class EventRepositoryTest {
     private Event event1 = Event.builder().name("Birthday").eventType(EventType.FESTIVAL).content("feiern").description("Its my Birthday").artist(artist1).durationInMinutes(180).build();
     private  Event event2 = Event.builder().name("NoFind").eventType(EventType.CONCERT).content("feiern und warten").description("nicht da").artist(artist1).durationInMinutes(400).build();
     private  Event event3 = Event.builder().name("Birthday").eventType(EventType.FESTIVAL).content("feiern").description("Its my Birthday").artist(artist2).durationInMinutes(400).build();
+    private  Event eventTheatre = Event.builder().name("NOTAASDLKSAKDJl").eventType(EventType.THEATRE).content("SAÖLDKASKDAÖLSKD").description("SADKÖSADKLASJDKL").artist(artist2).durationInMinutes(5000).build();
 
     @Before
     public void before(){
@@ -44,10 +45,13 @@ public class EventRepositoryTest {
             event1.setArtist(artist1);
             event2.setArtist(artist1);
             event3.setArtist(artist2);
+            eventTheatre.setArtist(artist2);
             event1 = eventRepository.save(event1);
             event2 = eventRepository.save(event2);
             event3 = eventRepository.save(event3);
+            eventTheatre = eventRepository.save(eventTheatre);
             initiated = true;
+
         }
     }
 
@@ -63,7 +67,7 @@ public class EventRepositoryTest {
     }
 
     @Test
-    public void searchByEventName(){
+    public void searchByEventName_FindsCorrectAmountOfShows_AndResultsMatchExpected(){
         EventSearchParametersDTO parameters = EventSearchParametersDTO.builder().setName("Birthday").build();
         eventList = eventRepository.findAllEventsFiltered(parameters);
         Assert.assertEquals(2, eventList.size());
@@ -74,7 +78,7 @@ public class EventRepositoryTest {
     }
 
     @Test
-    public void searchByContent(){
+    public void searchByContent_FindsCorrectAmountOfShows_AndResultsMatchExpected(){
         EventSearchParametersDTO parameters = EventSearchParametersDTO.builder().setContent("feiern").build();
         eventList = eventRepository.findAllEventsFiltered(parameters);
         Assert.assertEquals(3, eventList.size());
@@ -85,7 +89,7 @@ public class EventRepositoryTest {
         Assert.assertTrue(eventList.contains(event2));
     }
     @Test
-    public void searchByDuration(){
+    public void searchByDuration_FindsCorrectAmountOfShows_AndResultsMatchExpected(){
         EventSearchParametersDTO parameters = EventSearchParametersDTO.builder().setDurationInMinutes(420).build();
         eventList = eventRepository.findAllEventsFiltered(parameters);
         Assert.assertEquals(2, eventList.size());
@@ -97,7 +101,7 @@ public class EventRepositoryTest {
         Assert.assertTrue(eventList.contains(event1));
     }
     @Test
-    public void searchByArtist(){
+    public void searchByArtist_FindsCorrectAmountOfShows_AndResultsMatchExpected(){
         EventSearchParametersDTO parameters = EventSearchParametersDTO.builder().setArtistName(artist1.getName()).build();
         eventList = eventRepository.findAllEventsFiltered(parameters);
         Assert.assertEquals(2, eventList.size());
@@ -105,9 +109,23 @@ public class EventRepositoryTest {
         Assert.assertTrue(eventList.contains(event2));
         parameters = EventSearchParametersDTO.builder().setArtistName(artist2.getName()).build();
         eventList = eventRepository.findAllEventsFiltered(parameters);
-        Assert.assertEquals(1, eventList.size());
+        Assert.assertEquals(2, eventList.size());
         Assert.assertTrue(eventList.contains(event3));
     }
+
+    @Test
+    public void searchByEventType_FindsCorrectAmountOfShows_AndResultsMatchExpected(){
+        EventSearchParametersDTO parameters = EventSearchParametersDTO.builder().setEventType(event3.getEventType()).build();
+        eventList = eventRepository.findAllEventsFiltered(parameters);
+        Assert.assertEquals(2, eventList.size());
+        Assert.assertTrue(eventList.contains(event1));
+        Assert.assertTrue(eventList.contains(event3));
+        parameters = EventSearchParametersDTO.builder().setEventType(eventTheatre.getEventType()).build();
+        eventList = eventRepository.findAllEventsFiltered(parameters);
+        Assert.assertEquals(1, eventList.size());
+        Assert.assertTrue(eventList.contains(eventTheatre));
+    }
+
 
 
 }

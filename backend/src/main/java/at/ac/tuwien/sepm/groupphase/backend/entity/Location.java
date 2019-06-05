@@ -12,6 +12,10 @@ public class Location {
     @SequenceGenerator(name = "seq_location_id", sequenceName = "seq_location_id")
     private Long id;
 
+    @Column(nullable = false, name = "locatioName")
+    @Size(max = 64)
+    private String locationName;
+
     @Column(nullable = false, name = "country")
     @Size(max = 64)
     private String country;
@@ -27,6 +31,9 @@ public class Location {
     @Column(nullable = false, name = "street")
     @Size(max = 64)
     private String street;
+
+    @Column(nullable = false, name = "houseNr")
+    private Integer houseNr;
 
     @Column(name = "description")
     @Size(max = 128)
@@ -80,8 +87,37 @@ public class Location {
         this.description = description;
     }
 
+    public String getLocationName() {
+        return locationName;
+    }
+    public void setLocationName(String locationName) {
+        this.locationName = locationName;
+    }
+
+    public Integer getHouseNr() {
+        return houseNr;
+    }
+
+    public void setHouseNr(Integer houseNr) {
+        this.houseNr = houseNr;
+    }
+
     public static LocationBuilder builder() {
         return new LocationBuilder();
+    }
+
+    @Override
+    public String toString() {
+        return "Location{" +
+            "id=" + id +
+            ", locationName='" + locationName + '\'' +
+            ", country='" + country + '\'' +
+            ", city='" + city + '\'' +
+            ", postalCode='" + postalCode + '\'' +
+            ", street='" + street + '\'' +
+            ", houseNr=" + houseNr +
+            ", description='" + description + '\'' +
+            '}';
     }
 
     @Override
@@ -89,43 +125,41 @@ public class Location {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Location location = (Location) o;
-        return id.equals(location.id) &&
-            country.equals(location.country) &&
-            city.equals(location.city) &&
-            postalCode.equals(location.postalCode) &&
-            street.equals(location.street) &&
+        return Objects.equals(id, location.id) &&
+            Objects.equals(locationName, location.locationName) &&
+            Objects.equals(country, location.country) &&
+            Objects.equals(city, location.city) &&
+            Objects.equals(postalCode, location.postalCode) &&
+            Objects.equals(street, location.street) &&
+            Objects.equals(houseNr, location.houseNr) &&
             Objects.equals(description, location.description);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, country, city, postalCode, street, description);
-    }
-
-    @Override
-    public String toString() {
-        return "Location{" +
-            "id=" + id +
-            ", country='" + country + '\'' +
-            ", city='" + city + '\'' +
-            ", postalCode='" + postalCode + '\'' +
-            ", street='" + street + '\'' +
-            ", description='" + description + '\'' +
-            '}';
+        return Objects.hash(id, locationName, country, city, postalCode, street, houseNr, description);
     }
 
     public static final class LocationBuilder {
         private Long id;
+        private String locationName;
         private String country;
         private String city;
         private String postalCode;
         private String street;
+        private Integer houseNr;
         private String description;
+
 
         private LocationBuilder() {}
 
         public LocationBuilder id(Long id) {
             this.id = id;
+            return this;
+        }
+
+        public LocationBuilder locationName(String locationName){
+            this.locationName = locationName;
             return this;
         }
 
@@ -148,6 +182,10 @@ public class Location {
             this.street = street;
             return this;
         }
+        public LocationBuilder houseNr (Integer houseNr){
+            this.houseNr = houseNr;
+            return this;
+        }
 
         public LocationBuilder description(String description) {
             this.description = description;
@@ -157,10 +195,12 @@ public class Location {
         public Location build() {
             Location location = new Location();
             location.setId(id);
+            location.setLocationName(locationName);
             location.setCountry(country);
             location.setCity(city);
             location.setPostalCode(postalCode);
             location.setStreet(street);
+            location.setHouseNr(houseNr);
             location.setDescription(description);
             return location;
         }
