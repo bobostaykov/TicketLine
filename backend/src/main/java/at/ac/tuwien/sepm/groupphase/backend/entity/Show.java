@@ -26,7 +26,6 @@ public class Show {
     @Column(nullable = false, name = "date")
     private LocalDate date;
 
-
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "hall_id")
     private Hall hall;

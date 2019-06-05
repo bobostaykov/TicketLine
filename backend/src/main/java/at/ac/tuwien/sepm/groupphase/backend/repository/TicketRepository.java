@@ -40,6 +40,15 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
      */
 
     /**
+     * Find tickets that are issued for the given customer name and show name with status RESERVATED.
+     *
+     * @param customer customer to search for
+     * @param show show to search for
+     * @return List of found tickets
+     */
+    List<Ticket> findAllByCustomerAndShowWithStatusReservated(Customer customer, Show show);
+
+    /**
      * Find ticket by given reservation number
      *
      * @param id of Ticket to be found

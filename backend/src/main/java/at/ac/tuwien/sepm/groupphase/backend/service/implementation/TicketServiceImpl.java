@@ -1,9 +1,11 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.implementation;
 
 import at.ac.tuwien.sepm.groupphase.backend.datatype.TicketStatus;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.customer.CustomerDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.show.ShowDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.ticket.TicketDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Ticket;
+import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.customer.CustomerMapper;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.show.ShowMapper;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.ticket.TicketMapper;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
@@ -14,6 +16,7 @@ import at.ac.tuwien.sepm.groupphase.backend.service.TicketService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,14 +27,17 @@ public class TicketServiceImpl implements TicketService {
     private final EventRepository eventRepository;
     private final TicketMapper ticketMapper;
     private final ShowMapper showMapper;
+    private final CustomerMapper customerMapper;
 
     public TicketServiceImpl(TicketRepository ticketRepository, CustomerRepository customerRepository,
-                             EventRepository eventRepository, TicketMapper ticketMapper, ShowMapper showMapper) {
+                             EventRepository eventRepository, TicketMapper ticketMapper, ShowMapper showMapper,
+                             CustomerMapper customerMapper) {
         this.ticketRepository = ticketRepository;
         this.customerRepository = customerRepository;
         this.eventRepository = eventRepository;
         this.ticketMapper = ticketMapper;
         this.showMapper = showMapper;
+        this.customerMapper = customerMapper;
     }
 
     @Override
@@ -85,20 +91,18 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public List<TicketDTO> findByCustomerNameAndShow(String customerName, ShowDTO showDTO) {
-        /*
-        List<Customer> customers = customerRepository.findAllByName(customerName);
-        List<Ticket> tickets = new ArrayList<>();
-        Show show = showMapper.showDTOToShow(showDTO);
-        for (Customer c: customers) {
-            List<Ticket> ticketsTemp = ticketRepository.findAllByCustomerAndShow(c, show);
+    public List<TicketDTO> findByCustomerNameAndShowWithStatusReservated(String customerName, ShowDTO showDTO) {
+        List<CustomerDTO> customers = customerMapper.customerToCustomerDTO(customerRepository.findAllByName(customerName));
+        if (customers.isEmpty())
+            throw new NotFoundException("No Customer with name " + customerName + " found.");
+        List<TicketDTO> tickets = new ArrayList<>();
+        for (CustomerDTO c: customers) {
+            List<Ticket> ticketsTemp = ticketRepository.findAllByCustomerAndShowWithStatusReservated(customerMapper.customerDTOToCustomer(c), showMapper.showDTOToShow(showDTO));
             for (Ticket t: ticketsTemp) {
-                tickets.add(t);
+                tickets.add(ticketMapper.ticketToTicketDTO(t));
             }
         }
-        return ticketMapper.ticketToTicketDTO(tickets);
-         */
-        return null;
+        return tickets;
     }
 
 }

@@ -65,11 +65,11 @@ public interface TicketService {
     TicketDTO deleteOne(Long id);
 
     /**
-     * Get all tickets filtered by customer and show
+     * Get all reservated tickets filtered by customer and show
      *
      * @param customerName name of customer the ticket was issued for
      * @param show show the ticket was issued for
      * @return list of found tickets
      */
-    List<TicketDTO> findByCustomerNameAndShow(String customerName, ShowDTO show);
+    List<TicketDTO> findByCustomerNameAndShowWithStatusReservated(String customerName, ShowDTO show);
 }

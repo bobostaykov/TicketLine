@@ -6,12 +6,10 @@ import at.ac.tuwien.sepm.groupphase.backend.service.TicketService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
-import jdk.jfr.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.spring.web.json.Json;
 
 import java.util.List;
 
@@ -71,10 +69,10 @@ public class TicketEndpoint {
     }
 
     @RequestMapping(value = "/name", method = RequestMethod.GET)
-    @ApiOperation(value = "Get Tickets by customer name and show", authorizations = {@Authorization(value = "apiKey")})
-    public List<TicketDTO> findByCustomerNameAndShow(@RequestParam(name = "customerName") String customerName, @RequestBody ShowDTO showDTO) {
-        LOGGER.info("Find Tickets for customer " + customerName + " and show id " + showDTO.getId());
-        return ticketService.findByCustomerNameAndShow(customerName, showDTO);
+    @ApiOperation(value = "Get reservated Tickets by customer name and show", authorizations = {@Authorization(value = "apiKey")})
+    public List<TicketDTO> findByCustomerNameAndShowWithStatusReservated(@RequestParam(name = "customerName") String customerName, @RequestBody ShowDTO showDTO) {
+        LOGGER.info("Find reservated Tickets for customer " + customerName + " and show id " + showDTO.getId());
+        return ticketService.findByCustomerNameAndShowWithStatusReservated(customerName, showDTO);
     }
 
 }
