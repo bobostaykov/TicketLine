@@ -6,6 +6,7 @@ import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.user.UserDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.News;
 import at.ac.tuwien.sepm.groupphase.backend.entity.User;
 import at.ac.tuwien.sepm.groupphase.backend.integrationtest.base.BaseIntegrationTest;
+import at.ac.tuwien.sepm.groupphase.backend.integrationtest.base.BaseIntegrationTestWithMockedUserCredentials;
 import at.ac.tuwien.sepm.groupphase.backend.repository.UserRepository;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -26,7 +27,7 @@ import java.util.Optional;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.ArgumentMatchers.any;
 
-public class UserEndpointTest extends BaseIntegrationTest {
+public class UserEndpointTest extends BaseIntegrationTestWithMockedUserCredentials {
 
     @MockBean
     private UserRepository userRepository;
@@ -179,6 +180,7 @@ public class UserEndpointTest extends BaseIntegrationTest {
             .when().post(USER_ENDPOINT)
             .then().extract().response();
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
+        UserDTO dto = response.as(UserDTO.class);
         Assert.assertThat(response.as(UserDTO.class), is(UserDTO.builder()
             .id(TEST_USER_ID)
             .username(TEST_USER_NAME)
