@@ -15,6 +15,7 @@ import {EventResultsComponent} from './components/search-results/events/event-re
 import {FloorplanControlComponent} from './components/floorplan-control/floorplan-control.component';
 import {CustomerComponent} from './components/customer/customer.component';
 import {TicketComponent} from './components/ticket/ticket.component';
+import {TicketComponent} from './components/ticket/ticket.component';
 import {TicketCheckReservationComponent} from './components/ticket/ticket-check-reservation/ticket-check-reservation.component';
 import {BlockedUsersComponent} from './components/blocked-users/blocked-users.component';
 
@@ -34,9 +35,7 @@ const routes: Routes = [
   {path: 'events/search/results/events', canActivate: [AuthGuard], component: EventResultsComponent},
   {path: 'ticket', canActivate: [AuthGuard], component: TicketComponent},
   {path: 'ticket-check-reservation', canActivate: [AuthGuard], component: TicketCheckReservationComponent},
-  {path: 'ticket', canActivate: [AuthGuard], component: TicketComponent},
   {path: 'floorplan', canActivate: [AuthGuard], component: FloorplanControlComponent},
-  {path: 'ticket-check-reservation', canActivate: [AuthGuard], component: TicketCheckReservationComponent},
   {path: 'blocked', canActivate: [AuthGuard], component: BlockedUsersComponent}
 ];
 
