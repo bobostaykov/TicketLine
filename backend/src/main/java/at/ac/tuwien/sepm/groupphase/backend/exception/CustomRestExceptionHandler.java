@@ -3,13 +3,15 @@ package at.ac.tuwien.sepm.groupphase.backend.exception;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.nio.file.AccessDeniedException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,17 +41,25 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
     }
     @ExceptionHandler({AccessDeniedException.class})
-    private ResponseEntity<Object> handleAccessDeniedException(AccessDeniedException ex, WebRequest request){
+    private ResponseEntity<Object> handleAccessDeniedException(org.springframework.security.access.AccessDeniedException ex, WebRequest request){
         String error = "Access denied: Error = " + ex.getMessage();
         ApiError apiError = new ApiError(
             HttpStatus.FORBIDDEN,ex.getLocalizedMessage(), error);
         return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
     }
-    @ExceptionHandler({ValidationException.class})
-    private ResponseEntity<Object> handleValidationException(ValidationException ex, WebRequest request){
-        String error = "Access denied: Error = " + ex.getMessage();
+    @ExceptionHandler({CustomValidationException.class})
+    private ResponseEntity<Object> handleValidationException(CustomValidationException ex, WebRequest request){
+        String error = "Validation Error: Error = " + ex.getMessage();
         ApiError apiError = new ApiError(
             HttpStatus.BAD_REQUEST,ex.getLocalizedMessage(), error);
+        return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
+    }
+    //to catch custom handled exceptions
+    @ExceptionHandler({ResponseStatusException.class})
+    private ResponseEntity<Object> handleResponseStatusException(ResponseStatusException ex, WebRequest request){
+        String error = ex.getMessage();
+        ApiError apiError = new ApiError(
+            ex.getStatus(),ex.getLocalizedMessage(), error);
         return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
     }
     /*
@@ -61,13 +71,16 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
             HttpStatus.BAD_REQUEST,ex.getLocalizedMessage(), error);
         return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
     }
+    */
     // default implementation
+
     @ExceptionHandler({Exception.class})
     protected ResponseEntity<Object> defaultExceptionHandler(Exception ex, WebRequest request) {
         ApiError apiError = new ApiError(
             HttpStatus.INTERNAL_SERVER_ERROR, ex.getLocalizedMessage(), "Error occured");
         return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
     }
-   */
+
+
 
 }

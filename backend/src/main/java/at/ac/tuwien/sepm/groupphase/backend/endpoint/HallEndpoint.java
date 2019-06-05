@@ -2,7 +2,7 @@ package at.ac.tuwien.sepm.groupphase.backend.endpoint;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.hall.HallDTO;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
-import at.ac.tuwien.sepm.groupphase.backend.exception.ValidationException;
+import at.ac.tuwien.sepm.groupphase.backend.exception.CustomValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.service.HallService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -39,17 +39,10 @@ public class HallEndpoint {
     @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(value = "Add a new hall with seats or sectors", authorizations = {@Authorization(value = "apiKey")})
-    public HallDTO postHall(@RequestBody HallDTO hallDto) {
+    public HallDTO postHall(@RequestBody HallDTO hallDto) throws ServiceException, CustomValidationException {
         LOGGER.info("POST Halls: " + hallDto.toString());
-        try {
-            return hallService.addHall(hallDto);
-        } catch (ServiceException | ValidationException e) {
-            LOGGER.error("hall " + hallDto.toString() + " could not be added to the system");
-            throw new ResponseStatusException(
-                HttpStatus.BAD_REQUEST,
-                "hall " + hallDto.toString() + " could not be added to the system",
-                e
-            );
-        }
+        return hallService.addHall(hallDto);
+
+
     }
 }
