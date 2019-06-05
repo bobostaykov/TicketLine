@@ -44,10 +44,6 @@ public class PricePattern {
         this.priceMapping = priceMapping;
     }
 
-    public PricePattern(String name, Map<PriceCategory, Double> priceMapping) {
-        this.name = name;
-        this.priceMapping = priceMapping;
-    }
     public static PricePatternBuilder builder(){
         return new PricePatternBuilder();
     }
@@ -69,7 +65,10 @@ public class PricePattern {
         }
 
         public PricePattern createPricePattern() {
-            return new PricePattern(name, priceMapping);
+            PricePattern pricePattern = new PricePattern();
+            pricePattern.setPriceMapping(priceMapping);
+            pricePattern.setName(name);
+            return pricePattern;
         }
     }
 }

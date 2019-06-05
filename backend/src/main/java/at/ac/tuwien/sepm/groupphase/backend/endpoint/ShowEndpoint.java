@@ -11,6 +11,7 @@ import org.hibernate.service.spi.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -118,21 +119,24 @@ public class ShowEndpoint {
                     .priceInEuroTo(maxPrice)
                     .eventName(eventName)
                     .hallName(hallName)
-                    .dateFrom(dateFrom.equals("null") ? null : LocalDate.parse(dateFrom, dateFormatter))
-                    .dateTo(dateTo.equals("null") ? null : LocalDate.parse(dateTo, dateFormatter))
-                    .timeFrom(timeFrom.equals("null") ? null : LocalTime.parse(timeFrom, timeFormatter))
-                    .timeTo(timeTo.equals("null") ? null : LocalTime.parse(timeTo, timeFormatter))
+                    .dateFrom(dateFrom == null ? null : LocalDate.parse(dateFrom, dateFormatter))
+                    .dateTo(dateTo == null ? null : LocalDate.parse(dateTo, dateFormatter))
+                    .timeFrom(timeFrom == null ? null : LocalTime.parse(timeFrom, timeFormatter))
+                    .timeTo(timeTo == null ? null : LocalTime.parse(timeTo, timeFormatter))
                     .durationInMinutes(duration)
+                    .locationName(locationName)
                     .country(country)
                     .city(city)
                     .street(street)
+                    .houseNr(houseNr)
                     .postalcode(postalCode)
                     .build();
 
                 LOGGER.info("Get all shows filtered by specified attributes: " + parameters.toString());
 
-                return showService.findAllShowsFiltered(parameters);
-                //}
+                List<ShowDTO> shows = showService.findAllShowsFiltered(parameters);
+
+                return shows;
             }
         }catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error while looking for shows with those parameters: " + e.getMessage(), e);

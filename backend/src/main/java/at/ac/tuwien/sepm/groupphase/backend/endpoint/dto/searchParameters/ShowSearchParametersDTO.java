@@ -129,7 +129,7 @@ public class ShowSearchParametersDTO {
         this.hallName = hallName;
     }
 
-    public builder builder(){return new builder();}
+    public static builder builder(){return new builder();}
 
     public Integer getDurationInMinutes() {
         return durationInMinutes;
