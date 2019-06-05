@@ -5,7 +5,6 @@ import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface UserService {
 

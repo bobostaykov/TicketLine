@@ -57,6 +57,7 @@ export class UserComponent implements OnInit {
         this.userForm.controls.password.value,
         this.userForm.controls.type.value,
         new Date().toISOString(),
+        null,
         null
       );
       this.createUser(user);
