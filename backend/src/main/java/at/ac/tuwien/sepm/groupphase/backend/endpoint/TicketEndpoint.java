@@ -13,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -82,13 +81,8 @@ public class TicketEndpoint {
     }
      */
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    @ApiOperation(value = "Get ticket by id", authorizations = {@Authorization(value = "apiKey")})
-    public TicketDTO findOne(@PathVariable Long id) {
-        return ticketService.findOne(id);
-    }
-
-    @RequestMapping(method = RequestMethod.GET)
+    // PINO: added value = "filter" to avoid GET method crash with findAll()
+    @RequestMapping(value = "/filter", method = RequestMethod.GET)
     @ApiOperation(value = "Get all tickets filtered", authorizations = {@Authorization(value = "apiKey")})
     public List<TicketDTO> findTicketFilteredByCustomerAndEvent(@RequestParam(value = "customerName", required = false) String customerName,
                                                                 @RequestParam(value = "eventName", required = false) String eventName) {

@@ -252,17 +252,17 @@ public class ShowSearchParametersDTO {
             return this;
         }
 
-        public builder city (String city){
+        public builder city(String city){
             this.city = city;
             return this;
         }
 
-        public builder postalcode (String postalCode){
+        public builder postalcode(String postalCode){
             this.postalCode = postalCode;
             return this;
         }
 
-        public builder street (String street){
+        public builder street(String street){
             this.street = street;
             return this;
         }

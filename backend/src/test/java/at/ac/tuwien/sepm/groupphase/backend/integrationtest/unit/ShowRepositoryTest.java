@@ -36,7 +36,7 @@ public class ShowRepositoryTest {
 
 
 
-    private  Location location1 = Location.builder().id(1L).country("Austria").city("Vienna").postalCode("1090").street("Tendlergasse 12").build();
+    private  Location location1 = Location.builder().id(1L).locationName("Stadthalle").country("Austria").city("Vienna").postalCode("1090").street("Tendlergasse 12").build();
     private  Hall hall1 = Hall.builder().id(1L).name("TopLocation").location(location1).build();
     private  Artist artist1 = Artist.builder().id(1L).name("Zara Holland").build();
     private  Event event1 = Event.builder()
@@ -57,16 +57,16 @@ public class ShowRepositoryTest {
     private  Show show3 = Show.builder().id(3L).ticketsSold(10000L).date(LocalDate.parse("15-10-2020", dateFormatter)).time(LocalTime.parse( "16:30", timeFormatter)).description("description").event(event2).hall(hall1).build();
 
     private ShowSearchParametersDTO DETAILED_PARAMETERS = new ShowSearchParametersDTO.builder()
-        .setDateFrom(LocalDate.parse("16-03-2020", dateFormatter))
-        .setDateTo(LocalDate.parse("18-03-2020", dateFormatter))
-        .setEventName(event1.getName())
-        .setHallName(hall1.getName())
-        .setTimeFrom(LocalTime.parse("18:00",timeFormatter))
-        .setTimeTo(LocalTime.parse("22:00",timeFormatter)).build();
+        .dateFrom(LocalDate.parse("16-03-2020", dateFormatter))
+        .dateTo(LocalDate.parse("18-03-2020", dateFormatter))
+        .eventName(event1.getName())
+        .hallName(hall1.getName())
+        .timeFrom(LocalTime.parse("18:00",timeFormatter))
+        .timeTo(LocalTime.parse("22:00",timeFormatter)).build();
     private final ShowSearchParametersDTO NAME_ONLY_PARAMETERS = new ShowSearchParametersDTO.builder()
-        .setEventName("irthday").build();
+        .eventName("irthday").build();
     private final ShowSearchParametersDTO FROMDATE_ONLY_PARAMETERS = new ShowSearchParametersDTO.builder()
-        .setDateFrom(LocalDate.parse("16-03-2020", dateFormatter)).build();
+        .dateFrom(LocalDate.parse("16-03-2020", dateFormatter)).build();
     private boolean init = false;
     @Before
     public void  before(){
@@ -90,9 +90,6 @@ public class ShowRepositoryTest {
 
     }
 
-
-
-
     @Test
     public void findShowsByStartDate(){
         List<Show> shows = showRepository.findAllShowsFiltered(FROMDATE_ONLY_PARAMETERS);
@@ -108,7 +105,7 @@ public class ShowRepositoryTest {
 
     @Test
     public void findShowsByStartDate_NoValidStartDate(){
-        ShowSearchParametersDTO PARAMETER_LATE_STARTDATE = new ShowSearchParametersDTO.builder().setEventName(null).setHallName(null).setDateFrom(LocalDate.parse("16-03-2022", dateFormatter)).setDateTo(null).setPriceInEuroFrom(null).setPriceInEuroTo(null).setTimeTo(null).setTimeFrom(null).build();
+        ShowSearchParametersDTO PARAMETER_LATE_STARTDATE = new ShowSearchParametersDTO.builder().eventName(null).hallName(null).dateFrom(LocalDate.parse("16-03-2022", dateFormatter)).dateTo(null).priceInEuroFrom(null).priceInEuroTo(null).timeTo(null).timeFrom(null).build();
         List<Show> shows = showRepository.findAllShowsFiltered(PARAMETER_LATE_STARTDATE);
         Assert.assertTrue(shows.isEmpty());
 
@@ -123,14 +120,14 @@ public class ShowRepositoryTest {
 
     @Test
     public void findShowByMaxDate(){
-        ShowSearchParametersDTO parameters = new ShowSearchParametersDTO.builder().setDateTo(LocalDate.parse("18-03-2020", dateFormatter)).build();
+        ShowSearchParametersDTO parameters = new ShowSearchParametersDTO.builder().dateTo(LocalDate.parse("18-03-2020", dateFormatter)).build();
         List<Show> shows = showRepository.findAllShowsFiltered(parameters);
         Assert.assertTrue(shows.contains(show1));
         Assert.assertEquals(1, shows.size());
     }
     @Test
     public void findShowByMinDate(){
-        ShowSearchParametersDTO parameters = new ShowSearchParametersDTO.builder().setDateFrom(LocalDate.parse("16-03-2020", dateFormatter)).build();
+        ShowSearchParametersDTO parameters = new ShowSearchParametersDTO.builder().dateFrom(LocalDate.parse("16-03-2020", dateFormatter)).build();
         List<Show> shows = showRepository.findAllShowsFiltered(parameters);
         Assert.assertEquals(3, shows.size());
         parameters.setDateFrom(LocalDate.parse("29-03-2020", dateFormatter));
@@ -144,8 +141,8 @@ public class ShowRepositoryTest {
 
     @Test
     public void findShowByHallName(){
-        ShowSearchParametersDTO SuccessParameters = new ShowSearchParametersDTO.builder().setHallName(hall1.getName()).build();
-        ShowSearchParametersDTO FailureParameters = new ShowSearchParametersDTO.builder().setHallName("not contained").build();
+        ShowSearchParametersDTO SuccessParameters = new ShowSearchParametersDTO.builder().hallName(hall1.getName()).build();
+        ShowSearchParametersDTO FailureParameters = new ShowSearchParametersDTO.builder().hallName("not contained").build();
         List<Show> shows = showRepository.findAllShowsFiltered(SuccessParameters);
         Assert.assertEquals(3, shows.size());
         shows = showRepository.findAllShowsFiltered(FailureParameters);
@@ -153,8 +150,8 @@ public class ShowRepositoryTest {
     }
     @Test
     public void findShowByDuration(){
-        ShowSearchParametersDTO SuccessParameters = new ShowSearchParametersDTO.builder().setDurationInMinutes(190).build();
-        ShowSearchParametersDTO FailureParameters = new ShowSearchParametersDTO.builder().setDurationInMinutes(400).build();
+        ShowSearchParametersDTO SuccessParameters = new ShowSearchParametersDTO.builder().durationInMinutes(190).build();
+        ShowSearchParametersDTO FailureParameters = new ShowSearchParametersDTO.builder().durationInMinutes(400).build();
         List<Show> shows = showRepository.findAllShowsFiltered(SuccessParameters);
         Assert.assertEquals(2, shows.size());
         shows = showRepository.findAllShowsFiltered(FailureParameters);

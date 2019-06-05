@@ -248,7 +248,16 @@ public class ShowRepositoryTest {
         shows = showRepository.findAllShowsFiltered(FailureParameters);
         Assert.assertEquals(0, shows.size());
     }
-
+    @Test
+    public void findShowByHouseNumber(){
+        ShowSearchParametersDTO SuccessParameters = new ShowSearchParametersDTO.builder().build();
+        ShowSearchParametersDTO FailureParameters = new ShowSearchParametersDTO.builder().build();
+        List<Show> shows = showRepository.findAllShowsFiltered(SuccessParameters);
+        Assert.assertEquals(1, shows.size());
+        Assert.assertTrue(shows.contains(show4));
+        shows = showRepository.findAllShowsFiltered(FailureParameters);
+        Assert.assertEquals(0, shows.size());
+    }
     @Test
     public void findShowsByEventId(){
         ShowSearchParametersDTO SuccessParameters = new ShowSearchParametersDTO.builder().eventId(event1.getId()).build();
