@@ -14,6 +14,7 @@ import {LocationResultsComponent} from './components/search-results/locations/lo
 import {EventResultsComponent} from './components/search-results/events/event-results.component';
 import {FloorplanControlComponent} from './components/floorplan-control/floorplan-control.component';
 import {CustomerComponent} from './components/customer/customer.component';
+import {TicketComponent} from './components/ticket/ticket.component';
 import {BlockedUsersComponent} from './components/blocked-users/blocked-users.component';
 import {ContentManagerComponent} from './components/content-manager/content-manager.component';
 
@@ -31,6 +32,8 @@ const routes: Routes = [
   {path: 'events/search/results/locations', canActivate: [AuthGuard], component: LocationResultsComponent},
   {path: 'events/search/results/events', canActivate: [AuthGuard], component: EventResultsComponent},
   {path: 'floorplan', canActivate: [AuthGuard], component: FloorplanControlComponent},
+  {path: 'ticket', canActivate: [AuthGuard], component: TicketComponent},
+  {path: 'blocked', canActivate: [AuthGuard], component: BlockedUsersComponent},
   {path: 'blocked', canActivate: [AuthGuard], component: BlockedUsersComponent},
   {path: 'manager', canActivate: [AuthGuard], component: ContentManagerComponent}
 ];

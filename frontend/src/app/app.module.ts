@@ -29,6 +29,7 @@ import {FloorplanControlComponent} from './components/floorplan-control/floorpla
 import {FloorplanComponent} from './components/floorplan/floorplan.component';
 import {CustomerComponent} from './components/customer/customer.component';
 import {CustomerDialogComponent} from './components/customer-dialog/customer-dialog.component';
+import {TicketComponent} from './components/ticket/ticket.component';
 import { BlockedUsersComponent } from './components/blocked-users/blocked-users.component';
 import { ContentManagerComponent } from './components/content-manager/content-manager.component';
 import { SelectDropDownModule } from 'ngx-select-dropdown'
@@ -53,6 +54,7 @@ import { SelectDropDownModule } from 'ngx-select-dropdown'
     FloorplanComponent,
     CustomerComponent,
     CustomerDialogComponent,
+    TicketComponent,
     BlockedUsersComponent,
     ContentManagerComponent
   ],
