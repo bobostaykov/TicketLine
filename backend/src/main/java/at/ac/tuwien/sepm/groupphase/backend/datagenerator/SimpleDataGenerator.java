@@ -43,6 +43,7 @@ public class SimpleDataGenerator {
 
     //@PostConstruct
     public void generateData() {
+        /*
         if (eventRepository.count() > 0 || showRepository.count() > 0 || artistRepository.count() > 0) {
             LOGGER.info("Data already generated");
         } else {
@@ -166,6 +167,7 @@ public class SimpleDataGenerator {
                 add(event37);
             }});
             */
+        /*
             event1.setArtist(artist1);
             event3.setArtist(artist1);
             event4.setArtist(artist1);
@@ -367,22 +369,23 @@ public class SimpleDataGenerator {
                 add(show23);
             }});
             */
+            /*
 
-            Hall hall1 = Hall.builder().id(1L).name("Hall1").build();
-            Hall hall2 = Hall.builder().id(2L).name("Hall2").build();
-            Hall hall3 = Hall.builder().id(3L).name("Hall3").build();
-            Hall hall4 = Hall.builder().id(4L).name("Hall4").build();
-            Hall hall5 = Hall.builder().id(5L).name("Hall5").build();
-            Hall hall6 = Hall.builder().id(6L).name("Hall6").build();
-            Hall hall7 = Hall.builder().id(7L).name("Hall7").build();
-            Hall hall8 = Hall.builder().id(8L).name("Hall8").build();
-            Hall hall9 = Hall.builder().id(9L).name("Hall9").build();
-            Hall hall10 = Hall.builder().id(10L).name("Hall10").build();
-            Hall hall11 = Hall.builder().id(11L).name("Hall11").build();
-            Hall hall12 = Hall.builder().id(12L).name("Hall12").build();
-            Hall hall13 = Hall.builder().id(13L).name("Hall13").build();
-            Hall hall14 = Hall.builder().id(14L).name("Hall14").build();
-            Hall hall15 = Hall.builder().id(15L).name("Hall15").build();
+            hall hall1 = hall.builder().id(1L).name("Hall1").build();
+            hall hall2 = hall.builder().id(2L).name("Hall2").build();
+            hall hall3 = hall.builder().id(3L).name("Hall3").build();
+            hall hall4 = hall.builder().id(4L).name("Hall4").build();
+            hall hall5 = hall.builder().id(5L).name("Hall5").build();
+            hall hall6 = hall.builder().id(6L).name("Hall6").build();
+            hall hall7 = hall.builder().id(7L).name("Hall7").build();
+            hall hall8 = hall.builder().id(8L).name("Hall8").build();
+            hall hall9 = hall.builder().id(9L).name("Hall9").build();
+            hall hall10 = hall.builder().id(10L).name("Hall10").build();
+            hall hall11 = hall.builder().id(11L).name("Hall11").build();
+            hall hall12 = hall.builder().id(12L).name("Hall12").build();
+            hall hall13 = hall.builder().id(13L).name("Hall13").build();
+            hall hall14 = hall.builder().id(14L).name("Hall14").build();
+            hall hall15 = hall.builder().id(15L).name("Hall15").build();
 
             show1.setHall(hall1);
             show2.setHall(hall2);
@@ -467,7 +470,8 @@ public class SimpleDataGenerator {
             locationRepository.saveAll(Arrays.asList(location1, location2, location3, location4, location5, location6, location7, location8, location9, location10));
             hallRepository.saveAll(Arrays.asList(hall1, hall2, hall3, hall4, hall5, hall6, hall7, hall8, hall9, hall10, hall11, hall12, hall13, hall14, hall15));
             showRepository.saveAll(Arrays.asList(show1, show2, show3, show4, show5, show6, show7, show8, show9, show10, show11, show12, show13, show14, show15, show16, show17, show18, show19, show20, show21, show22, show23, show24, show25, show26, show27, show28, show29, show30, show31, show32, show33, show34, show35, show36, show37, show38, show39, show40, show41, show42, show43, show44, show45, show46, show47, show48, show49, show50));
-        }
+
+        }*/
     }
 
 }

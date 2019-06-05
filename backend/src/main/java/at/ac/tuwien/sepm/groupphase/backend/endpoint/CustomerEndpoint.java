@@ -47,11 +47,11 @@ public class CustomerEndpoint {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-    public void adaptCustomer(@RequestBody CustomerDTO customerDTO, @PathVariable("id") Long id) {
+    public CustomerDTO adaptCustomer(@RequestBody CustomerDTO customerDTO, @PathVariable("id") Long id) {
         LOGGER.info("Adapt customer " + customerDTO.toString());
         customerDTO.setId(id);
         try {
-            customerService.adaptCustomer(customerDTO);
+            return customerService.adaptCustomer(customerDTO);
         } catch (ServiceException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error during updating customer: " + e.getMessage(), e);
         } catch (NotFoundException e) {

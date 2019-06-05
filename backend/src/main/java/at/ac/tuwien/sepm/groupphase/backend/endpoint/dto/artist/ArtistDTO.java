@@ -1,11 +1,8 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.artist;
 
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.event.EventDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-import java.util.HashSet;
-import java.util.List;
 import java.util.Objects;
 
 

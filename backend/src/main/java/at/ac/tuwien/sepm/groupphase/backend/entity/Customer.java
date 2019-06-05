@@ -70,7 +70,7 @@ public class Customer {
     public String toString() {
         String customer  = "Customer{" +
             "id=" + id +
-            ", name='" + name + '\'' +
+            ", username='" + name + '\'' +
             ", firstname=" + firstname +
             ", e-mail=" + email;
         if (birthday != null)

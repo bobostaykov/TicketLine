@@ -13,7 +13,7 @@ public interface UserService {
      *
      * @return all users
      */
-    List<UserDTO> findAll();
+    List<UserDTO> findAll() throws ServiceException;
 
     /**
      * Find a single user entry by id.
@@ -21,7 +21,7 @@ public interface UserService {
      * @param id the is of the user entry
      * @return the user entry
      */
-    UserDTO findOne(Long id);
+    UserDTO findOne(Long id) throws NotFoundException;
 
     UserDTO findUserByName(String name);
 
@@ -39,7 +39,7 @@ public interface UserService {
      *
      * @param userId id of user to delete
      */
-    void deleteUser(Long userId);
+    void deleteUser(Long userId) throws ServiceException;
 
     /**
      * Find user by username.

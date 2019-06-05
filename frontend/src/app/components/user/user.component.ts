@@ -48,6 +48,7 @@ export class UserComponent implements OnInit {
    */
   private async addUser() {
     this.submitted = true;
+    this.usernameError = false;
     if (this.userForm.valid
       && (this.userForm.controls.type.value === 'ADMIN' || this.userForm.controls.type.value === 'SELLER')
       && this.userForm.controls.rePassword.value === this.userForm.controls.password.value) {
@@ -58,9 +59,8 @@ export class UserComponent implements OnInit {
         new Date().toISOString(),
         null
       );
-      this.usernameError = false;
       this.createUser(user);
-      await this.delay(500);
+      await this.delay(300);
       if (this.usernameError) {
         console.log('User with the same username already exists');
         return;

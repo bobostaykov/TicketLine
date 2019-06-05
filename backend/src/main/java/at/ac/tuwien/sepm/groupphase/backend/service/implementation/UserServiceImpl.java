@@ -13,14 +13,13 @@ import at.ac.tuwien.sepm.groupphase.backend.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceException;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,12 +30,12 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
+    private final Logger LOGGER = LoggerFactory.getLogger(getClass());
     private final LoginAttemptsRepository loginAttemptsRepository;
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
     private final EntityManager entityManager;
 
-
-    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper, PasswordEncoder passwordEncoder, LoginAttemptsRepository loginAttemptsRepository, EntityManager entityManager) {
+    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
@@ -45,12 +44,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDTO> findAll() {
-        return userMapper.userToUserDTO(userRepository.findAll());
+    public List<UserDTO> findAll() throws ServiceException {
+        LOGGER.info("Find all users");
+        try {
+            return userMapper.userToUserDTO(userRepository.findAll());
+        } catch (PersistenceException e) {
+            throw new ServiceException(e.getMessage());
+        }
     }
 
     @Override
     public UserDTO findOne(Long id) throws NotFoundException {
+    public UserDTO findOne(Long id) throws NotFoundException {
+        LOGGER.info("Find user with id " + id);
         return userMapper.userToUserDTO(userRepository.findById(id).orElseThrow(NotFoundException::new));
     }
 
@@ -59,7 +65,7 @@ public class UserServiceImpl implements UserService {
         try {
 
             if(!userRepository.findOneByUsername(userDTO.getUsername()).isPresent()){
-            LOGGER.info("creating user with name: " + userDTO.getUsername());
+            LOGGER.info("Create user with name: " + userDTO.getUsername());
                 userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword()));
                 LOGGER.info("Setting password");
                 return userMapper.userToUserDTO(userRepository.createUser(userMapper.userDTOToUser(userDTO)));
@@ -83,8 +89,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteUser(Long userId) {
-        userRepository.deleteById(userId);
+    public void deleteUser(Long id) throws ServiceException {
+        LOGGER.info("Remove user with id " + id);
+        try {
+            userRepository.deleteById(id);
+        } catch (PersistenceException e) {
+            throw new ServiceException(e.getMessage());
+        }
     }
 
     @Override

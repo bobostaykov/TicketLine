@@ -9,7 +9,7 @@
     </tr>
   </thead>
   <tbody>
-    <tr routerLink="/shows" [queryParams]="{results_for: 'EVENT', name: event.name}" *ngFor="let event of events | slice: (page - 1) * pageSize : page * pageSize">
+    <tr *ngFor="let event of events | slice: (page - 1) * pageSize : page * pageSize" routerLink="/events/search/results/shows" [queryParams]="{resultsFor: 'EVENT', name: event.name}">
       <td>{{event.name}}</td>
       <td *ngIf="event.eventType">{{event.eventType.toString().toLowerCase()}}</td>
       <td *ngIf="event.artist">{{event.artist.name}}</td>

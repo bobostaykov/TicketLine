@@ -18,4 +18,14 @@ public interface LocationService {
      * @return a list of LocationDTOs
      */
     List<LocationDTO> findLocationsFiltered(String country, String city, String street, String postalCode, String description) throws ServiceException;
+
+    /** gets a list of all locations saved in the backend
+     * @return a list of all locations
+     */
+    List<LocationDTO>  findAll();
+
+    /**
+     * @return a list of all countries in the data base
+     */
+    List<String> getCountriesOrderedByName() throws ServiceException;
 }

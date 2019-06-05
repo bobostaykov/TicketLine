@@ -18,6 +18,7 @@ export class UserService {
    * Loads all users from the backend
    */
   getAllUsers(): Observable<User[]> {
+    console.log('Get all users');
     return this.httpClient.get<User[]>(this.userBaseUri);
   }
 
