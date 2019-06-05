@@ -30,7 +30,6 @@ public class FileServiceImpl implements FileService {
     public Long storeFile(MultipartFile file) throws ServiceException{
         // Normalize file username
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
-
         try {
             // Check if the file's username contains invalid characters
             if(fileName.contains("..")) {

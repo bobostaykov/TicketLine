@@ -32,27 +32,26 @@ public class LocationRepositoryImpl implements LocationRepositoryCustom {
     @Override
     public List<Location> findLocationsFiltered(String country, String city, String street, String postalCode, String description) {
 
-        LOGGER.info("Location Criteria Builder: findLocationsFiltered");
-
+        LOGGER.info("Location Repository Impl: findLocationsFiltered");
         CriteriaBuilder cBuilder = entityManager.getCriteriaBuilder();
         List<Predicate> predicates = new ArrayList<>();
         CriteriaQuery<Location> criteriaQuery = cBuilder.createQuery(Location.class);
         Root<Location> location = criteriaQuery.from(Location.class);
 
-        if(country != null){
-            predicates.add(cBuilder.equal(location.get(Location_.country), country));
+        if (country != null) {
+            predicates.add(cBuilder.like(cBuilder.lower(location.get(Location_.country)), "%" + country.toLowerCase() + "%"));
         }
-        if(city != null){
-            predicates.add(cBuilder.like(cBuilder.lower(location.get(Location_.city)), city.toLowerCase()));
+        if (city != null) {
+            predicates.add(cBuilder.like(cBuilder.lower(location.get(Location_.city)), "%" + city.toLowerCase() + "%"));
         }
-        if(street != null){
-            predicates.add(cBuilder.like(cBuilder.lower(location.get(Location_.street)), "%" + street + "%".toLowerCase()));
+        if (street != null) {
+            predicates.add(cBuilder.like(cBuilder.lower(location.get(Location_.street)), "%" + street.toLowerCase() + "%"));
         }
-        if(postalCode != null){
-            predicates.add(cBuilder.equal(cBuilder.lower(location.get(Location_.postalCode)), postalCode));
+        if (postalCode != null) {
+            predicates.add(cBuilder.like(cBuilder.lower(location.get(Location_.postalCode)), "%" + postalCode.toLowerCase() + "%"));
         }
-        if(description != null){
-            predicates.add(cBuilder.like(cBuilder.lower(location.get(Location_.description)), "%" + description + "%"));
+        if (description != null) {
+            predicates.add(cBuilder.like(cBuilder.lower(location.get(Location_.description)), "%" + description.toLowerCase() + "%"));
         }
 
         criteriaQuery.select(location).where(predicates.toArray(new Predicate[predicates.size()]));
@@ -60,10 +59,21 @@ public class LocationRepositoryImpl implements LocationRepositoryCustom {
 
         LOGGER.debug(typedQuery.unwrap(org.hibernate.Query.class).getQueryString());
         List<Location> results = typedQuery.getResultList();
-        if(results.isEmpty()) {
+        if (results.isEmpty()) {
             throw new NotFoundException("No locations are found with those parameters");
         }
 
         return results;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<String> getCountriesOrderedByName() throws NotFoundException {
+        LOGGER.info("Location Repository Impl: getCountriesOrderedByName");
+        List<String> countries = (List<String>) entityManager.createNativeQuery("SELECT DISTINCT l.country FROM Location l ORDER BY l.country").getResultList();
+        if (countries == null) {
+            throw new NotFoundException("Could not find locations to get countries");
         }
+        return countries;
+    }
 }

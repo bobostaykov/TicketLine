@@ -67,10 +67,7 @@ public class EventEndpoint {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
             }
         } else {
-
-            LOGGER.debug(eventName);
-            LOGGER.debug(content);
-            LOGGER.debug(description);
+            LOGGER.info("Event Endpoint: findEventsFilteredByAttributes");
             EventType eventTypeConv = null;
             if (eventType != null) {
                 for (EventType type : EventType.values()

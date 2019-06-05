@@ -15,7 +15,7 @@ public interface HallService {
     List<HallDTO> findAllHalls();
 
     /**
-     * Adds Hall to the system
+     * Adds hall to the system
      * @param hallDTO dto of entity to be added
      * @return created hall als dto
      * @throws ServiceException if something goes wrong during data processing

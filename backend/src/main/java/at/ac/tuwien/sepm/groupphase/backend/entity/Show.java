@@ -17,7 +17,7 @@ public class Show {
     private Long id;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "event_id")
+    @JoinColumn(nullable = false, name = "event_id")
     private Event event;
 
     @Column(nullable = false, name = "time")
@@ -28,7 +28,7 @@ public class Show {
 
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(referencedColumnName = "id")
+    @JoinColumn(nullable = false, name = "hall_id")
     private Hall hall;
 
     @Column(name = "description")

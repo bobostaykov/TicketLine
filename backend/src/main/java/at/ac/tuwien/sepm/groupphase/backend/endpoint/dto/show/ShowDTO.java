@@ -98,14 +98,6 @@ public class ShowDTO {
         this.description = description;
     }
 
-    public Integer getDurationInMinutes() {
-        return durationInMinutes;
-    }
-
-    public void setDurationInMinutes(Integer durationInMinutes) {
-        this.durationInMinutes = durationInMinutes;
-    }
-
     public Long getTicketsSold() {
         return ticketsSold;
     }
@@ -131,7 +123,6 @@ public class ShowDTO {
         ShowDTO showDTO = (ShowDTO) o;
         return Objects.equals(id, showDTO.id) &&
             Objects.equals(event, showDTO.event) &&
-            Objects.equals(durationInMinutes, showDTO.durationInMinutes) &&
             Objects.equals(ticketsSold, showDTO.ticketsSold) &&
             Objects.equals(date, showDTO.date) &&
             Objects.equals(time, showDTO.time) &&
@@ -143,14 +134,13 @@ public class ShowDTO {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, event, durationInMinutes, ticketsSold, date, time, hall, description);
+        return Objects.hash(id, event, ticketsSold, date, time, hall, description);
     }
 
     public static final class ShowDTOBuilder {
 
         private Long id;
         private EventDTO event;
-        private Integer durationInMinutes;
         private Long ticketsSold;
         private LocalDate date;
         private HallDTO hall;
@@ -168,11 +158,6 @@ public class ShowDTO {
 
         public ShowDTOBuilder event(EventDTO event) {
             this.event = event;
-            return this;
-        }
-
-        public ShowDTOBuilder durationInMinutes(Integer durationInMinutes) {
-            this.durationInMinutes = durationInMinutes;
             return this;
         }
 
@@ -211,7 +196,6 @@ public class ShowDTO {
             ShowDTO showDTO = new ShowDTO();
             showDTO.setId(id);
             showDTO.setEvent(event);
-            showDTO.setDurationInMinutes(durationInMinutes);
             showDTO.setTicketsSold(ticketsSold);
             showDTO.setDate(date);
             showDTO.setTime(time);

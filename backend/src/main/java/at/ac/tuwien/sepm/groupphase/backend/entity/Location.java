@@ -4,7 +4,6 @@ import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.util.Objects;
 
-//TODO put nullable = false in some class attributes
 @Entity
 public class Location {
 
