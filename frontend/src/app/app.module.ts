@@ -53,6 +53,7 @@ import { BlockedUsersComponent } from './components/blocked-users/blocked-users.
     FloorplanComponent,
     CustomerComponent,
     CustomerDialogComponent,
+    CustomerDialogComponent,
     TicketComponent,
     CustomerDialogComponent,
     BlockedUsersComponent,
