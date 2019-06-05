@@ -80,7 +80,7 @@ public class ShowEndpoint {
                                                                                                                                         @RequestParam(value="maxPrice", required = false) Integer maxPrice,
                                                                                                                                         @RequestParam(value="dateFrom", required = false) String dateFrom,
                                                                                                                                         @RequestParam(value="dateTo", required = false) String dateTo,
-                                                                                                                                        @RequestParam(value="timeFrom", required = false) String timeFrom, @RequestParam(value="timeTo", required = false) String timeTo, @RequestParam(value="duration", required = false) Integer duration, @RequestParam(value = "locationName", required = false) String locationName, @RequestParam(value = "country", required = false) String country, @RequestParam(value = "city", required = false) String city, @RequestParam(value = "postalCode", required = false) String postalCode, @RequestParam(value = "street", required = false) String street, @RequestParam(value = "houseNr", required = false) Integer houseNr)
+                                                                                                                                        @RequestParam(value="timeFrom", required = false) String timeFrom, @RequestParam(value="timeTo", required = false) String timeTo, @RequestParam(value="duration", required = false) Integer duration, @RequestParam(value = "locationName", required = false) String locationName, @RequestParam(value = "country", required = false) String country, @RequestParam(value = "city", required = false) String city, @RequestParam(value = "postalCode", required = false) String postalCode, @RequestParam(value = "street", required = false) String street)
     {
         try {
             LOGGER.debug("\neventName: " + eventName + "\nhallName: " + hallName + "\nminPrice: " + minPrice + "\nmaxPrice: " + maxPrice +
@@ -100,7 +100,6 @@ public class ShowEndpoint {
                     .country(country)
                     .city(city)
                     .street(street)
-                    .houseNr(houseNr)
                     .locationName(locationName)
                     .eventId(eventId)
                     .postalcode(postalCode)

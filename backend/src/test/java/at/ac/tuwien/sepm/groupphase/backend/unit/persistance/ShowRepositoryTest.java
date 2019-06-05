@@ -42,8 +42,8 @@ public class ShowRepositoryTest {
 
 
 
-    private Location locationAustria = Location.builder().id(1L).country("Austria").city("Vienna").postalCode("1090").street("Tendlergasse ").houseNr(66).locationName("Stadthalle").build();
-    private Location locationGermany = Location.builder().country("Germany").city("Bonn").postalCode("53129").street("Ermekeilstrasse").houseNr(17).locationName("chez Horst").build();
+    private Location locationAustria = Location.builder().id(1L).country("Austria").city("Vienna").postalCode("1090").street("Tendlergasse ").locationName("Stadthalle").build();
+    private Location locationGermany = Location.builder().country("Germany").city("Bonn").postalCode("53129").street("Ermekeilstrasse").locationName("chez Horst").build();
     private Hall hall1 = Hall.builder().id(1L).name("TopLocation").location(locationAustria).build();
     private Hall hall2 = Hall.builder().id(2L).name("Konzertsaal").location(locationGermany).build();
     private  Artist artist1 = Artist.builder().id(1L).name("Zara Holland").build();
@@ -248,16 +248,7 @@ public class ShowRepositoryTest {
         shows = showRepository.findAllShowsFiltered(FailureParameters);
         Assert.assertEquals(0, shows.size());
     }
-    @Test
-    public void findShowByHouseNumber(){
-        ShowSearchParametersDTO SuccessParameters = new ShowSearchParametersDTO.builder().houseNr(17).build();
-        ShowSearchParametersDTO FailureParameters = new ShowSearchParametersDTO.builder().houseNr(99).build();
-        List<Show> shows = showRepository.findAllShowsFiltered(SuccessParameters);
-        Assert.assertEquals(1, shows.size());
-        Assert.assertTrue(shows.contains(show4));
-        shows = showRepository.findAllShowsFiltered(FailureParameters);
-        Assert.assertEquals(0, shows.size());
-    }
+
     @Test
     public void findShowsByEventId(){
         ShowSearchParametersDTO SuccessParameters = new ShowSearchParametersDTO.builder().eventId(event1.getId()).build();

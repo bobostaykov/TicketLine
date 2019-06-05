@@ -86,7 +86,6 @@ public class ShowRepositoryImpl implements ShowRepositoryCustom {
             || parameters.getCountry() != null
             || parameters.getPostalCode() != null
             || parameters.getStreet() != null
-            || parameters.getHouseNr() != null
             || (parameters.getHallName() != null && !parameters.getHallName().isBlank())
             || (parameters.getLocationName() != null && !parameters.getLocationName().isBlank())) {
 
@@ -101,7 +100,6 @@ public class ShowRepositoryImpl implements ShowRepositoryCustom {
                 || parameters.getCountry() != null
                 || parameters.getPostalCode() != null
                 || parameters.getStreet() != null
-                || parameters.getHouseNr() != null
                 || (parameters.getLocationName() != null && !parameters.getLocationName().isBlank())) {
 
                 Join<Hall, Location> showLocationJoin = showHallJoin.join(Hall_.location);
@@ -120,9 +118,6 @@ public class ShowRepositoryImpl implements ShowRepositoryCustom {
                 }
                 if (parameters.getLocationName() != null && !parameters.getLocationName().isBlank()) {
                     predicates.add(cBuilder.like(cBuilder.lower(showLocationJoin.get(Location_.locationName)), "%" + parameters.getLocationName().toLowerCase() + "%"));
-                }
-                if (parameters.getHouseNr() != null) {
-                    predicates.add(cBuilder.equal(showLocationJoin.get(Location_.houseNr), parameters.getHouseNr()));
                 }
             }
         }
