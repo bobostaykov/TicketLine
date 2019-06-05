@@ -54,9 +54,9 @@ import { SelectDropDownModule } from 'ngx-select-dropdown'
     FloorplanControlComponent,
     FloorplanComponent,
     CustomerComponent,
+    TicketComponent,
     CustomerDialogComponent,
     BlockedUsersComponent,
-    TicketComponent,
     TicketCheckReservationComponent,
     ContentManagerComponent
   ],
