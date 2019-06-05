@@ -295,15 +295,14 @@ public class TicketEndpointTest extends BaseIntegrationTest {
                 .status(TEST_TICKET_STATUS)
                 .build()));
         BDDMockito.
-            given(customerRepository.findAllByName(TEST_CUSTOMER_NAME)).
+            given(customerRepository.findCustomersFiltered(null, TEST_CUSTOMER_NAME, TEST_CUSTOMER_FIRSTNAME, null, null)).
             willReturn(Collections.singletonList(
                 Customer.builder()
-                .id(TEST_CUSTOMER_ID)
-                .name(TEST_CUSTOMER_NAME)
-                .firstname(TEST_CUSTOMER_FIRSTNAME)
-                .email(TEST_CUSTOMER_EMAIL)
-                .birthday(TEST_CUSTOMER_BIRTHDATE)
-                .build()));
+                    .id(TEST_CUSTOMER_ID)
+                    .name(TEST_CUSTOMER_NAME)
+                    .firstname(TEST_CUSTOMER_FIRSTNAME)
+                    .email(TEST_CUSTOMER_EMAIL)
+                    .build()));
         Response response = RestAssured
             .given()
             .contentType(ContentType.JSON)
@@ -311,7 +310,8 @@ public class TicketEndpointTest extends BaseIntegrationTest {
             .body(ShowDTO.builder()
             .id(TEST_SHOW_ID)
             .build())
-            .param("customerName", TEST_CUSTOMER_NAME)
+            .param("surname", TEST_CUSTOMER_NAME)
+            .param("firstname", TEST_CUSTOMER_FIRSTNAME)
             .when().get(TICKET_ENDPOINT + FIND_BY_NAME)
             .then().extract().response();
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
@@ -332,14 +332,13 @@ public class TicketEndpointTest extends BaseIntegrationTest {
                     .status(TEST_TICKET_STATUS)
                     .build()));
         BDDMockito.
-            given(customerRepository.findAllByName(TEST_CUSTOMER_NAME)).
+            given(customerRepository.findCustomersFiltered(null, TEST_CUSTOMER_NAME, TEST_CUSTOMER_FIRSTNAME, null, null)).
             willReturn(Collections.singletonList(
                 Customer.builder()
                     .id(TEST_CUSTOMER_ID)
                     .name(TEST_CUSTOMER_NAME)
                     .firstname(TEST_CUSTOMER_FIRSTNAME)
                     .email(TEST_CUSTOMER_EMAIL)
-                    .birthday(TEST_CUSTOMER_BIRTHDATE)
                     .build()));
         Response response = RestAssured
             .given()
@@ -348,7 +347,8 @@ public class TicketEndpointTest extends BaseIntegrationTest {
             .body(ShowDTO.builder()
                 .id(TEST_SHOW_ID)
                 .build())
-            .param("customerName", TEST_CUSTOMER_NAME)
+            .param("surname", TEST_CUSTOMER_NAME)
+            .param("firstname", TEST_CUSTOMER_FIRSTNAME)
             .when().get(TICKET_ENDPOINT + FIND_BY_NAME)
             .then().extract().response();
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));

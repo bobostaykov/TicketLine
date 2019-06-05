@@ -12,6 +12,7 @@ import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.CustomerRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.EventRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.TicketRepository;
+import at.ac.tuwien.sepm.groupphase.backend.service.CustomerService;
 import at.ac.tuwien.sepm.groupphase.backend.service.TicketService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,16 +29,18 @@ public class TicketServiceImpl implements TicketService {
     private final TicketMapper ticketMapper;
     private final ShowMapper showMapper;
     private final CustomerMapper customerMapper;
+    private final CustomerService customerService;
 
     public TicketServiceImpl(TicketRepository ticketRepository, CustomerRepository customerRepository,
                              EventRepository eventRepository, TicketMapper ticketMapper, ShowMapper showMapper,
-                             CustomerMapper customerMapper) {
+                             CustomerMapper customerMapper, CustomerService customerService) {
         this.ticketRepository = ticketRepository;
         this.customerRepository = customerRepository;
         this.eventRepository = eventRepository;
         this.ticketMapper = ticketMapper;
         this.showMapper = showMapper;
         this.customerMapper = customerMapper;
+        this.customerService = customerService;
     }
 
     @Override
@@ -48,17 +51,6 @@ public class TicketServiceImpl implements TicketService {
     @Override
     public List<TicketDTO> findAll() {
         return ticketMapper.ticketToTicketDTO(ticketRepository.findAllByOrderByIdAsc());
-    }
-
-    //NOT WORKING
-    @Override
-    public List<TicketDTO> findAllFilteredByCustomerAndEvent(String customerName, String eventName) {
-        /*
-        List<Customer> customers = customerRepository.findAllByName(customerName);
-        List<Event> events =  eventRepository.findAllByName(eventName);
-        return ticketRepository.findAllFilteredByCustomerAndEvent(customers, events);
-        */
-        return null;
     }
 
     @Override
@@ -91,10 +83,10 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public List<TicketDTO> findByCustomerNameAndShowWithStatusReservated(String customerName, ShowDTO showDTO) {
-        List<CustomerDTO> customers = customerMapper.customerToCustomerDTO(customerRepository.findAllByName(customerName));
+    public List<TicketDTO> findByCustomerNameAndShowWithStatusReservated(String surname, String firstname, ShowDTO showDTO) {
+        List<CustomerDTO> customers = customerService.findCustomersFiltered(null, surname, firstname, null, null);
         if (customers.isEmpty())
-            throw new NotFoundException("No Customer with name " + customerName + " found.");
+            throw new NotFoundException("No Customer with name " + firstname + surname + " found.");
         List<TicketDTO> tickets = new ArrayList<>();
         for (CustomerDTO c: customers) {
             List<Ticket> ticketsTemp = ticketRepository.findAllByCustomerAndShowWithStatusReservated(customerMapper.customerDTOToCustomer(c), showMapper.showDTOToShow(showDTO));

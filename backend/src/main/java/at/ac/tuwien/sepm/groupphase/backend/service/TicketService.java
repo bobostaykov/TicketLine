@@ -24,15 +24,6 @@ public interface TicketService {
     List<TicketDTO> findAll();
 
     /**
-     * Get all ticket entries filtered by the corresponsing customer and/or event name
-     *
-     * @param customerName name of customer the ticket was issued for
-     * @param eventName name of event the ticket was issued for
-     * @return list of found customers
-     */
-    List<TicketDTO> findAllFilteredByCustomerAndEvent(String customerName, String eventName);
-
-    /**
      * Find one ticket by the given reservation number (id)
      *
      * @param id reservation number of the ticket
@@ -67,9 +58,10 @@ public interface TicketService {
     /**
      * Get all reservated tickets filtered by customer and show
      *
-     * @param customerName name of customer the ticket was issued for
+     * @param surname surname of customer the ticket was issued for
+     * @param firstname firstname of customer the ticket was issued for
      * @param show show the ticket was issued for
      * @return list of found tickets
      */
-    List<TicketDTO> findByCustomerNameAndShowWithStatusReservated(String customerName, ShowDTO show);
+    List<TicketDTO> findByCustomerNameAndShowWithStatusReservated(String surname, String firstname, ShowDTO show);
 }
