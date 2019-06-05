@@ -29,6 +29,7 @@ import {FloorplanControlComponent} from './components/floorplan-control/floorpla
 import {FloorplanComponent} from './components/floorplan/floorplan.component';
 import {CustomerComponent} from './components/customer/customer.component';
 import {CustomerDialogComponent} from './components/customer-dialog/customer-dialog.component';
+import {TicketComponent} from './components/ticket/ticket.component';
 import { BlockedUsersComponent } from './components/blocked-users/blocked-users.component';
 
 @NgModule({
@@ -50,6 +51,8 @@ import { BlockedUsersComponent } from './components/blocked-users/blocked-users.
     FloorplanControlComponent,
     FloorplanComponent,
     CustomerComponent,
+    CustomerDialogComponent,
+    TicketComponent,
     CustomerDialogComponent,
     BlockedUsersComponent
   ],
