@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.datagenerator;
 
 import at.ac.tuwien.sepm.groupphase.backend.datatype.UserType;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.user.UserDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.User;
 import at.ac.tuwien.sepm.groupphase.backend.repository.UserRepository;
 import com.github.javafaker.Faker;
@@ -25,7 +26,6 @@ public class UserDataGenerator implements DataGenerator {
     Faker faker = new Faker();
 
     private final UserRepository userRepository;
-
     public UserDataGenerator(UserRepository userRepository){
         this.userRepository = userRepository;
     }
@@ -40,8 +40,8 @@ public class UserDataGenerator implements DataGenerator {
             User user = User.builder().username(USER_NAME).password(USER_PASSWORD).type(UserType.SELLER).userSince(LocalDateTime.now()).build();
             User admin = User.builder().username(ADMIN_NAME).password(ADMIN_PASSWORD).type(UserType.ADMIN).userSince(LocalDateTime.now()).build();
 
-
-            userRepository.saveAll(Arrays.asList(user, admin));
+            userRepository.createUser(user);
+            userRepository.createUser(admin);
         }
     }
 }

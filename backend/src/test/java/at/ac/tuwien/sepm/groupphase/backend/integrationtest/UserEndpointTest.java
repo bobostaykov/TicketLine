@@ -158,7 +158,7 @@ public class UserEndpointTest extends BaseIntegrationTestWithMockedUserCredentia
     @Test
     public void createUserAsAdmin() {
         BDDMockito.
-            given(userRepository.save(any(User.class))).
+            given(userRepository.createUser(any(User.class))).
             willReturn(User.builder()
                 .id(TEST_USER_ID)
                 .username(TEST_USER_NAME)

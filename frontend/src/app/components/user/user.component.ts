@@ -86,7 +86,7 @@ export class UserComponent implements OnInit {
   private blockUser(userId: number) {
     this.userService.blockUser(userId).subscribe(
       () => {},
-      err => { this.defaultServiceErrorHandling(err); },
+      err => { this.errorMessage = 'cant block admin'},
       () => { this.loadUsers(); }
     );
   }

@@ -92,7 +92,7 @@ public class UserEndpoint {
         try {
             return userService.blockUser(id);
         } catch (ServiceException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "error during blocking user with id: " + id +" "+ e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "error during blocking user with id: " + id +" "+ e.getMessage());
         }
     }
     @RequestMapping(value = "blocked/unblock/{id}", method = RequestMethod.PUT)

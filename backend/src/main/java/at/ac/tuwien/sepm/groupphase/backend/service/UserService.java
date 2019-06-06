@@ -56,14 +56,15 @@ public interface UserService {
     boolean unblockUser(Long userId);
 
     /**
-     * @param userId
-     * @return
+     * @param userId the id of the user that is to be blocked
+     * @return boolean of the success of the operation
      */
     boolean blockUser(Long userId) throws ServiceException;
 
 
     /**
-     * @return
+     * Get all users
+     * @return a List with users that are currently blocked
      */
     List<UserDTO> getAllBlockedUsers();
 }

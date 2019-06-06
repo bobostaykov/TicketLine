@@ -64,13 +64,15 @@ public class UserServiceImpl implements UserService {
             LOGGER.info("Create user with name: " + userDTO.getUsername());
                 userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword()));
                 LOGGER.info("Setting password");
-                return userMapper.userToUserDTO(userRepository.createUser(userMapper.userDTOToUser(userDTO)));
+                UserDTO dto =  userMapper.userToUserDTO(userRepository.createUser(userMapper.userDTOToUser(userDTO)));
+                return dto;
+            }else {
+                return UserDTO.builder().id(-1L).build();
             }
         }catch (DataIntegrityViolationException e) {
             LOGGER.error("Problems while creating user" + userDTO.toString());
             throw new ServiceException(e.getMessage(), e);
         }
-        return null;
     }
 
     public UserDTO findUserByName(String userName) throws NotFoundException{

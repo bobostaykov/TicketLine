@@ -18,11 +18,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Component
-public class DemoData {
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private LoginAttemptsRepository loginAttemptsRepository;
+public class PostConstructBasicUsersGenerator {
     @Autowired
     private UserService userService;
 
@@ -30,12 +26,11 @@ public class DemoData {
 
     @PostConstruct
     public void run() throws Exception {
-        LOGGER.info("Admin created");
+        //user service checks if already existing
+        LOGGER.info("initializing basic users");
         userService.createUser(UserDTO.builder().type(UserType.ADMIN).password("password").username("admin").userSince(LocalDateTime.now()).build());
-
-
         userService.createUser(UserDTO.builder().type(UserType.SELLER).password("password").username("user").lastLogin(LocalDateTime.now()).userSince(LocalDateTime.now()).build());
-        LOGGER.info("User created");
+
 
     }
 }
