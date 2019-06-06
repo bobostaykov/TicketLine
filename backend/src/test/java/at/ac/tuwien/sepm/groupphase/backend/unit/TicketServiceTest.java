@@ -2,6 +2,7 @@ package at.ac.tuwien.sepm.groupphase.backend.unit;
 
 import at.ac.tuwien.sepm.groupphase.backend.datatype.EventType;
 import at.ac.tuwien.sepm.groupphase.backend.datatype.PriceCategory;
+import at.ac.tuwien.sepm.groupphase.backend.datatype.TicketStatus;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.ticket.TicketDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.*;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.ticket.TicketMapper;
@@ -10,10 +11,12 @@ import at.ac.tuwien.sepm.groupphase.backend.repository.CustomerRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.EventRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.ShowRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.TicketRepository;
+import at.ac.tuwien.sepm.groupphase.backend.service.TicketService;
 import at.ac.tuwien.sepm.groupphase.backend.service.implementation.TicketServiceImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -110,12 +113,12 @@ public class TicketServiceTest {
     private Double TEST_TICKET_PRICE1 = 143.99;
     private Integer TEST_TICKET_SEAT_NO1 = 44;
     private Integer TEST_TICKET_ROW_NO1 = 25;
-    private String TEST_TICKET_STATUS1 = "sold";
+    private TicketStatus TEST_TICKET_STATUS1 = TicketStatus.SOLD;
 
     private Long TEST_TICKET_ID2 = 12L;
     private Double TEST_TICKET_PRICE2 = 15.50;
     private Integer TEST_TICKET_SECTOR2 = 1;
-    private String TEST_TICKET_STATUS2 = "reservation";
+    private TicketStatus TEST_TICKET_STATUS2 = TicketStatus.RESERVATED;
 
     @Before
     public void before() {
@@ -124,7 +127,14 @@ public class TicketServiceTest {
         this.showRepository = Mockito.mock(ShowRepository.class);
         this.ticketRepository = Mockito.mock(TicketRepository.class);
 
-        this.ticketService = new TicketServiceImpl(this.ticketRepository, this.customerRepository, this.eventRepository, this.showRepository, this.ticketMapper);
+        this.ticketService = new TicketServiceImpl(this.ticketRepository, this.customerRepository, this.eventRepository, this.ticketMapper, null, null, null,  this.showRepository);
+
+        /*
+        public TicketServiceImpl(TicketRepository ticketRepository, CustomerRepository customerRepository,
+                             EventRepository eventRepository, TicketMapper ticketMapper, ShowMapper showMapper,
+                             CustomerMapper customerMapper, CustomerService customerService,
+                             ShowRepository showRepository) {
+         */
 
         TEST_ARTIST = Artist.builder()
             .id(TEST_ARTIST_ID)

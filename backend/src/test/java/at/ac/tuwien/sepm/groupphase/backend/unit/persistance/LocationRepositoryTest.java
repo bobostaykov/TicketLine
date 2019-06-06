@@ -19,9 +19,9 @@ import java.util.List;
 public class LocationRepositoryTest {
 
     private List<Location> locationList = new ArrayList<>();
-    private Location location1 = Location.builder().id(1L).locationName("A").country("Austria").city("Vienna").street("NoStreet 100").postalCode("2000").description("Description").houseNr(3).build();
-    private Location location2 = Location.builder().id(2L).locationName("B").country("Bulgaria").city("Sofia").street("DummyStreet 5").postalCode("5555").description("Oww").houseNr(2).build();
-    private Location location3 = Location.builder().id(3L).locationName("C").country("Austria").city("Graz").street("BrodaFromAnathaMada 0").postalCode("7777").houseNr(1).build();
+    private Location location1 = Location.builder().id(1L).locationName("Burgtheater").country("Austria").city("Vienna").street("NoStreet 100").postalCode("2000").description("Description").build();
+    private Location location2 = Location.builder().id(2L).locationName("Royal Palace").country("Bulgaria").city("Sofia").street("DummyStreet 5").postalCode("5555").description("Oww").build();
+    private Location location3 = Location.builder().id(3L).locationName("Steyrian Palace").country("Austria").city("Graz").street("BrodaFromAnathaMada 0").postalCode("7777").build();
     private boolean init = false;
 
     @Autowired

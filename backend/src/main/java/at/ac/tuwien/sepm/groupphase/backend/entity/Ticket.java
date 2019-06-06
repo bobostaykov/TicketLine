@@ -1,5 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.entity;
 
+import at.ac.tuwien.sepm.groupphase.backend.datatype.TicketStatus;
+
 import javax.persistence.*;
 
 @Entity
@@ -31,10 +33,10 @@ public class Ticket {
     private Integer sectorNumber;
 
     @Column(nullable = false)
-    private String status;
+    private TicketStatus status;
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setId(Long reservationNumber) {
+        this.id = reservationNumber;
     }
 
     public Long getId() {
@@ -89,11 +91,11 @@ public class Ticket {
         return sectorNumber;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(TicketStatus status) {
         this.status = status;
     }
 
-    public String getStatus() {
+    public TicketStatus getStatus() {
         return status;
     }
 
@@ -161,10 +163,10 @@ public class Ticket {
         private Integer seatNumber;
         private Integer rowNumber;
         private Integer sectorNumber;
-        private String status;
+        private TicketStatus status;
 
-        public TicketBuilder id(Long id) {
-            this.id = id;
+        public TicketBuilder id(Long reservationNumber) {
+            this.id = reservationNumber;
             return this;
         }
 
@@ -197,7 +199,7 @@ public class Ticket {
             return this;
         }
 
-        public TicketBuilder status(String status) {
+        public TicketBuilder status(TicketStatus status) {
             this.status = status;
             return this;
         }

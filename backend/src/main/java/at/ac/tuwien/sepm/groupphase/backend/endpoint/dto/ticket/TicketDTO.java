@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.ticket;
 
+import at.ac.tuwien.sepm.groupphase.backend.datatype.TicketStatus;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.customer.CustomerDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.show.ShowDTO;
 import io.swagger.annotations.ApiModel;
@@ -30,8 +31,8 @@ public class TicketDTO {
     @ApiModelProperty(name = "The sector number of this ticket")
     private Integer sectorNumber;
 
-    @ApiModelProperty(name = "Status of the ticket (reservation/sold)")
-    private String status;
+    @ApiModelProperty(name = "Status of the ticket (RESERVATED, SOLD)")
+    private TicketStatus status;
 
     public void setId(Long id) {
         this.id = id;
@@ -89,11 +90,11 @@ public class TicketDTO {
         return sectorNumber;
     }
 
-    public String getStatus() {
+    public TicketStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(TicketStatus status) {
         this.status = status;
     }
 
@@ -161,7 +162,7 @@ public class TicketDTO {
         private Integer seatNumber;
         private Integer rowNumber;
         private Integer sectorNumber;
-        private String status;
+        private TicketStatus status;
 
         public TicketDTOBuilder id(Long id) {
             this.id = id;
@@ -197,7 +198,7 @@ public class TicketDTO {
             return this;
         }
 
-        public TicketDTOBuilder status(String status) {
+        public TicketDTOBuilder status(TicketStatus status) {
             this.status = status;
             return this;
         }

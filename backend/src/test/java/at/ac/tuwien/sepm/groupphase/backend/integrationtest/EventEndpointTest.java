@@ -98,6 +98,7 @@ public class EventEndpointTest extends BaseIntegrationTest {
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.UNAUTHORIZED.value()));
     }
 
+    // TODO 2 Tests are failing
     @Test
     public void findAllEventsAsUser() {
         BDDMockito

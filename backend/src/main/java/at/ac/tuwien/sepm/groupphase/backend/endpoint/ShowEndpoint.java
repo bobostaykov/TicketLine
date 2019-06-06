@@ -72,22 +72,21 @@ public class ShowEndpoint {
 
     @RequestMapping(value = "/filter", method = RequestMethod.GET)
     @ApiOperation(value = "Get all shows filtered by specified attributes", authorizations = {@Authorization(value = "apiKey")})
-    public List<ShowDTO> findShowsFilteredByShowAttributes(
-        @RequestParam(value = "eventId", required = false) Long eventId,
-        @RequestParam(value = "eventName", required = false) String eventName,
-        @RequestParam(value = "hallName", required = false) String hallName,
-        @RequestParam(value="minPrice", required = false) Integer minPrice,
-        @RequestParam(value="maxPrice", required = false) Integer maxPrice,
-        @RequestParam(value="dateFrom", required = false) String dateFrom,
-        @RequestParam(value="dateTo", required = false) String dateTo,
-        @RequestParam(value="timeFrom", required = false) String timeFrom,
-        @RequestParam(value="timeTo", required = false) String timeTo,
-        @RequestParam(value="duration", required = false) Integer duration,
-        @RequestParam(value = "locationName", required = false) String locationName,
-        @RequestParam(value = "country", required = false) String country,
-        @RequestParam(value = "city", required = false) String city,
-        @RequestParam(value = "postalCode", required = false) String postalCode,
-        @RequestParam(value = "street", required = false) String street, @RequestParam(value = "houseNr", required = false) Integer houseNr)
+    public List<ShowDTO> findShowsFilteredByShowAttributes(@RequestParam(value = "eventId", required = false) Long eventId,
+                                                           @RequestParam(value = "eventName", required = false) String eventName,
+                                                           @RequestParam(value = "hallName", required = false) String hallName,
+                                                           @RequestParam(value="minPrice", required = false) Integer minPrice,
+                                                           @RequestParam(value="maxPrice", required = false) Integer maxPrice,
+                                                           @RequestParam(value="dateFrom", required = false) String dateFrom,
+                                                           @RequestParam(value="dateTo", required = false) String dateTo,
+                                                           @RequestParam(value="timeFrom", required = false) String timeFrom,
+                                                           @RequestParam(value="timeTo", required = false) String timeTo,
+                                                           @RequestParam(value="duration", required = false) Integer duration,
+                                                           @RequestParam(value = "locationName", required = false) String locationName,
+                                                           @RequestParam(value = "country", required = false) String country,
+                                                           @RequestParam(value = "city", required = false) String city,
+                                                           @RequestParam(value = "postalCode", required = false) String postalCode,
+                                                           @RequestParam(value = "street", required = false) String street)
     {
         try {
             LOGGER.debug("\neventName: " + eventName + "\nhallName: " + hallName + "\nminPrice: " + minPrice + "\nmaxPrice: " + maxPrice +
@@ -107,7 +106,6 @@ public class ShowEndpoint {
                     .country(country)
                     .city(city)
                     .street(street)
-                    .houseNr(houseNr)
                     .locationName(locationName)
                     .eventId(eventId)
                     .postalcode(postalCode)

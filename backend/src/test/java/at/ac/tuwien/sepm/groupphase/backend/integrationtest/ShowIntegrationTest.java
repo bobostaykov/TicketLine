@@ -146,8 +146,8 @@ public class ShowIntegrationTest extends BaseIntegrationTest {
             pricePattern1 = pricePatternRepository.save(PricePattern.builder().setName(PRICE_PATTERN_NAME_1).setPriceMapping(priceMap1).createPricePattern());
             priceMap2.put(PriceCategory.CHEAP, 10.0); priceMap2.put(PriceCategory.AVERAGE, 15.0); priceMap2.put(PriceCategory.EXPENSIVE, 20.0);
             pricePattern2 = pricePatternRepository.save(PricePattern.builder().setName(PRICE_PATTERN_NAME_2).setPriceMapping(priceMap2).createPricePattern());
-            locationAustria = locationRepository.save(Location.builder().locationName(LOCATION_NAME_1).city(LOCATION_CITY_1).country(LOCATION_COUNTRY_1).postalCode(LOCATION_POSTALCODE_1).street(LOCATION_STREET_1).houseNr(LOCATION_HOUSENR_1).postalCode(LOCATION_POSTALCODE_1).build());
-            locationGermany = locationRepository.save(Location.builder().locationName(LOCATION_NAME_2).city(LOCATION_CITY_2).country(LOCATION_COUNTRY_2).postalCode(LOCATION_POSTALCODE_2).street(LOCATION_STREET_2).houseNr(LOCATION_HOUSENR_2).postalCode(LOCATION_POSTALCODE_2).build());
+            locationAustria = locationRepository.save(Location.builder().locationName(LOCATION_NAME_1).city(LOCATION_CITY_1).country(LOCATION_COUNTRY_1).postalCode(LOCATION_POSTALCODE_1).street(LOCATION_STREET_1).postalCode(LOCATION_POSTALCODE_1).build());
+            locationGermany = locationRepository.save(Location.builder().locationName(LOCATION_NAME_2).city(LOCATION_CITY_2).country(LOCATION_COUNTRY_2).postalCode(LOCATION_POSTALCODE_2).street(LOCATION_STREET_2).postalCode(LOCATION_POSTALCODE_2).build());
             artist1 = artistRepository.save(Artist.builder().name(ARTIST_NAME_1).build());
             artist2 = artistRepository.save(Artist.builder().name(ARTIST_NAME_2).build());
             hall1 = hallRepository.save(Hall.builder().name(HALL_NAME_1).location(locationAustria).build());
@@ -272,7 +272,7 @@ public class ShowIntegrationTest extends BaseIntegrationTest {
             .given()
             .contentType(ContentType.JSON)
             .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
-            .when().get(SHOWS_SEARCH_ENDPOINT + SEARCH_STREET_QUERY + locationAustria.getStreet())
+            .when().get(SHOWS_SEARCH_ENDPOINT + SEARCH_STREET_QUERY + LOCATION_STREET_2)
             .then().extract().response();
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
         List<Show> shows = response.jsonPath().getList("$");
@@ -292,13 +292,12 @@ public class ShowIntegrationTest extends BaseIntegrationTest {
         Assert.assertTrue(shows.size() == 1);
     }
     @Test
-    @Ignore
     public void searchShowsByCountry_returnsCorrectNumberOfShows(){
         Response response = RestAssured
             .given()
             .contentType(ContentType.JSON)
             .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
-            .when().get(SHOWS_SEARCH_ENDPOINT + SEARCH_COUNTRY_QUERY + locationGermany.getCountry())
+            .when().get(SHOWS_SEARCH_ENDPOINT + SEARCH_COUNTRY_QUERY + LOCATION_COUNTRY_2)
             .then().extract().response();
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
         List<Show> shows = response.jsonPath().getList("$");
@@ -317,19 +316,7 @@ public class ShowIntegrationTest extends BaseIntegrationTest {
         List<Show> shows = response.jsonPath().getList("$");
         Assert.assertTrue(shows.size() == 2);
     }
-    @Test
-    @Ignore
-    public void searchShowsByHouseNr_returnsCorrectNumberOfShows(){
-        Response response = RestAssured
-            .given()
-            .contentType(ContentType.JSON)
-            .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
-            .when().get(SHOWS_SEARCH_ENDPOINT + SEARCH_HOUSENR_QUERY + locationGermany.getHouseNr())
-            .then().extract().response();
-        Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
-        List<Show> shows = response.jsonPath().getList("$");
-        Assert.assertTrue(shows.size() == 1);
-    }
+
     @Test
     @Ignore
     public void searchShowsByMinPrice_returnsCorrectNumberOfShows(){
