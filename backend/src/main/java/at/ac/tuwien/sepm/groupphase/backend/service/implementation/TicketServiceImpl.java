@@ -18,12 +18,21 @@ import at.ac.tuwien.sepm.groupphase.backend.repository.ShowRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.TicketRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.CustomerService;
 import at.ac.tuwien.sepm.groupphase.backend.service.TicketService;
+import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 @Service
 public class TicketServiceImpl implements TicketService {
@@ -104,6 +113,84 @@ public class TicketServiceImpl implements TicketService {
             result2 = ticketRepository.findAllByShow(shows);
         }
         return ticketMapper.ticketToTicketDTO(this.difference(result1, result2));
+    }
+
+    @Override
+    public MultipartFile getReceipt(List<String> ticketIDs) throws Exception {
+        List<TicketDTO> tickets = new ArrayList<>();
+        for (String id:ticketIDs) {
+            tickets.add(ticketMapper.ticketToTicketDTO(ticketRepository.findOneById(Long.parseLong(id)).orElseThrow(NotFoundException::new)));
+        }
+        return this.generateReceipt(tickets);
+    }
+
+    /**
+     * Generates receipt PDF from List of TicketDTOs
+     *
+     * @param tickets List of Ticket DTOs
+     * @return receipt PDF as MultipartFile
+     */
+    private MultipartFile generateReceipt(List<TicketDTO> tickets) throws FileNotFoundException, DocumentException {
+        int numberOfTickets = tickets.size();
+        Double sum = 0.0;
+        Document receipt = new Document();
+        String fileName = "receipt_" + LocalDateTime.now().toString() + ".pdf";
+        PdfWriter.getInstance(receipt, new FileOutputStream(fileName));
+
+        receipt.open();
+        Font headlineFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 18, BaseColor.BLACK);
+        Font font = FontFactory.getFont(FontFactory.HELVETICA, 12, BaseColor.BLACK);
+        Font fontBold = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12, BaseColor.BLACK);
+        Chunk headline = new Chunk("TICKETLINE RECHNUNG", headlineFont);
+        receipt.add(headline);
+
+        PdfPTable table = new PdfPTable(2);
+
+        PdfPCell itemTitle = new PdfPCell();
+        itemTitle.setPhrase(new Phrase("Position", fontBold));
+        table.addCell(itemTitle);
+        PdfPCell priceTitle = new PdfPCell();
+        priceTitle.setPhrase(new Phrase("Preis", fontBold));
+        table.addCell(priceTitle);
+
+        for (TicketDTO t:tickets) {
+            PdfPCell item = new PdfPCell();
+            item.setPhrase(new Phrase(t.getShow().getEvent().getName(), font));
+            table.addCell(item);
+            PdfPCell price = new PdfPCell();
+            price.setPhrase(new Phrase(this.print(t.getPrice()), font));
+            sum += t.getPrice();
+            table.addCell(price);
+        }
+
+        PdfPCell sumText = new PdfPCell();
+        sumText.setPhrase(new Phrase("Summe", fontBold));
+        table.addCell(sumText);
+        PdfPCell sumValue = new PdfPCell();
+        sumValue.setPhrase(new Phrase(this.print(sum), fontBold));
+        table.addCell(sumValue);
+        PdfPCell taxText = new PdfPCell();
+        taxText.setPhrase(new Phrase("Steuersatz", fontBold));
+        table.addCell(taxText);
+        PdfPCell taxValue = new PdfPCell();
+        taxValue.setPhrase(new Phrase("13%", fontBold));
+        table.addCell(taxValue);
+
+        receipt.add(table);
+        receipt.close();
+        return null;
+    }
+
+    /**
+     * Generates Currency (€) String from Double
+     *
+     * @param price as Double
+     * @return String representation as €
+     */
+    private String print(Double price) {
+        long eurocents = Math.round(price * 100);
+        String centsStr = Long.toString(100 + eurocents%100).substring(1);
+        return eurocents / 100 + "," + centsStr + " €";
     }
 
     /**

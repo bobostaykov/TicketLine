@@ -3,6 +3,7 @@ package at.ac.tuwien.sepm.groupphase.backend.service;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.show.ShowDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.ticket.TicketDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Ticket;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -74,4 +75,12 @@ public interface TicketService {
      * @return list of found tickets
      */
     //List<TicketDTO> findByCustomerNameAndShowWithStatusReservated(String surname, String firstname, ShowDTO show);
+
+    /**
+     * Get one receipt PDF for the list of ticket IDs
+     *
+     * @param ticketIDs String List containg ticket IDs
+     * @return receipt PDF
+     */
+    MultipartFile getReceipt(List<String> ticketIDs) throws Exception;
 }
