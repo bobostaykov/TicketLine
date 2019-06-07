@@ -55,6 +55,7 @@ import { BlockedUsersComponent } from './components/blocked-users/blocked-users.
     CustomerDialogComponent,
     TicketComponent,
     CustomerDialogComponent,
+    TicketComponent,
     BlockedUsersComponent,
     TicketCheckReservationComponent
   ],
