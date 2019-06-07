@@ -35,6 +35,8 @@ const routes: Routes = [
   {path: 'floorplan', canActivate: [AuthGuard], component: FloorplanControlComponent},
   {path: 'ticket-check-reservation', canActivate: [AuthGuard], component: TicketCheckReservationComponent},
   {path: 'ticket', canActivate: [AuthGuard], component: TicketComponent},
+  {path: 'ticket-check-reservation', canActivate: [AuthGuard], component: TicketCheckReservationComponent},
+  {path: 'ticket', canActivate: [AuthGuard], component: TicketComponent},
   {path: 'floorplan', canActivate: [AuthGuard], component: FloorplanControlComponent},
   {path: 'blocked', canActivate: [AuthGuard], component: BlockedUsersComponent}
 ];

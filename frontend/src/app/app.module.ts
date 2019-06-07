@@ -54,7 +54,7 @@ import {TicketComponent} from './components/ticket/ticket.component';
     CustomerComponent,
     CustomerDialogComponent,
     TicketComponent,
-    TicketComponent,
+    CustomerDialogComponent,
     BlockedUsersComponent,
     TicketCheckReservationComponent
   ],
