@@ -42,8 +42,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-// TODO: Exception Handling for receipt creation
-
 @Service
 @ConfigurationProperties("receipt")
 public class TicketServiceImpl implements TicketService {
