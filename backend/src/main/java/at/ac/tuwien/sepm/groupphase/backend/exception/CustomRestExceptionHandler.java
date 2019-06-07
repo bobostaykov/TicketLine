@@ -1,17 +1,31 @@
 package at.ac.tuwien.sepm.groupphase.backend.exception;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import javax.validation.ConstraintViolationException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @ControllerAdvice
 public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CustomRestExceptionHandler.class);
 
     @ExceptionHandler({NotFoundException.class})
     protected ResponseEntity<Object> handleNotFound(NotFoundException ex, WebRequest request){
@@ -44,6 +58,34 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
     }
     @ExceptionHandler({CustomValidationException.class})
     private ResponseEntity<Object> handleValidationException(CustomValidationException ex, WebRequest request){
+        String error = "Validation Error: Error = " + ex.getMessage();
+        ApiError apiError = new ApiError(
+            HttpStatus.BAD_REQUEST,ex.getLocalizedMessage(), error);
+        return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
+    }
+    // MethodArgumentNotValidException gets thrown by JavaX Validation of request bodies. Override to get error messages
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(
+        MethodArgumentNotValidException ex,
+        HttpHeaders headers,
+        HttpStatus status,
+        WebRequest request) {
+        List<String> errors = new ArrayList<String>();
+        for (FieldError error : ex.getBindingResult().getFieldErrors()) {
+            errors.add(error.getField() + ": " + error.getDefaultMessage());
+        }
+        for (ObjectError error : ex.getBindingResult().getGlobalErrors()) {
+            errors.add(error.getObjectName() + ": " + error.getDefaultMessage());
+        }
+
+        ApiError apiError =
+            new ApiError(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage(), errors);
+        return handleExceptionInternal(
+            ex, apiError, headers, apiError.getStatus(), request);
+    }
+    // Validation throws ConstraintViolationException if not applied on request body, but we still want a HTTP Bad_REQUEST here
+    @ExceptionHandler({ConstraintViolationException.class})
+    private ResponseEntity<Object> handleConstraintViolationException(ConstraintViolationException ex, WebRequest request){
         String error = "Validation Error: Error = " + ex.getMessage();
         ApiError apiError = new ApiError(
             HttpStatus.BAD_REQUEST,ex.getLocalizedMessage(), error);
