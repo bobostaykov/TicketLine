@@ -7,8 +7,11 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -87,5 +90,18 @@ public class TicketEndpoint {
         } else {
             return ticketService.findAllFilteredByCustomerAndEvent(customerName, eventName);
         }
+    }
+
+    @RequestMapping(value = "/receipt", method = RequestMethod.GET)
+    @ApiOperation(value = "Get receipt PDF for list of tickets", authorizations = {@Authorization(value = "apiKey")})
+    public ResponseEntity<Resource> getReceiptPDF(@RequestParam List<String> tickets) {
+        try {
+            ticketService.getReceipt(tickets);
+        }
+        catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        throw new ResponseStatusException(HttpStatus.OK);
+        //return null;
     }
 }
