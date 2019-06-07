@@ -33,6 +33,8 @@ const routes: Routes = [
   {path: 'events/search/results/locations', canActivate: [AuthGuard], component: LocationResultsComponent},
   {path: 'events/search/results/events', canActivate: [AuthGuard], component: EventResultsComponent},
   {path: 'ticket', canActivate: [AuthGuard], component: TicketComponent},
+  {path: 'ticket-check-reservation', canActivate: [AuthGuard], component: TicketCheckReservationComponent},
+  {path: 'ticket', canActivate: [AuthGuard], component: TicketComponent},
   {path: 'floorplan', canActivate: [AuthGuard], component: FloorplanControlComponent},
   {path: 'manager', canActivate: [AuthGuard], component: ContentManagerComponent},
   {path: 'ticket-check-reservation', canActivate: [AuthGuard], component: TicketCheckReservationComponent},
