@@ -1,51 +1,85 @@
-<h1 class="mt-5 mb-4 left">Tickets - Check Reservation</h1>
+<div *ngIf="error" class="alert alert-danger alert-dismissible fade show" role="alert">
+  <strong>Error! </strong> {{ errorMessage }}
+  <button type="button" (click)="vanishError()" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
 
 
-<font size="5">
-<table class="table table-borderless" bgcolor="#2E2E2E">
-  <tr>
-    <td scope="col"><font color="#848484">Name</font></td>
-    <td scope="col">{{customer.firstname}} {{customer.name}}</td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-  <tr>
-    <td scope="col"><font color="#848484">E-Mail</font></td>
-    <td scope="col">{{customer.email}}</td>
-  </tr>
-  <tr>
-    <td scope="col"><font color="#848484">Event</font></td>
-    <td scope="col">{{show.event.artist.name}} - {{show.event.name}}</td>
-  </tr>
-  <tr>
-    <td scope="col"><font color="#848484">Date</font></td>
-    <td scope="col">{{show.date}}</td>
-  </tr>
-  <tr>
-    <td scope="col"><font color="#848484">Location</font></td>
-    <td scope="col">{{show.hall.name}}, {{show.hall.location.street}}, {{show.hall.location.postalCode}} -
-      {{show.hall.location.city}}, {{show.hall.location.country}}</td>
-  </tr>
-  <tr>
-    <td scope="col"><font color="#848484">Amount of Tickets</font></td>
-    <td scope="col">{{amtTickets}}</td>
-  </tr>
-  <tr>
-    <td scope="col"><font color="#848484">Seats</font></td>
-  </tr>
-  <tr *ngFor="let seat of ticket_seats">
-    <td scope="col">  </td>
-    <td scope="col">Seat: {{seat.seatNumber}}, Row: {{seat.seatRow}}</td>
-  </tr>
-  <tr>
-    <td scope="col"><font color="#848484">Price Total</font></td>
-    <td scope="col">{{priceTotal}}</td>
-  </tr>
-</table>
-</font>
+<div class="mt-4 container">
+  <div class="row p-2 mb-4">
+    <div class="modal fade ticket-check-info-modal" tabindex="-1" role="dialog" aria-labelledby="Ticket - Check Infos" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Ticket - Check Information</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form class="form" [formGroup]="ticketForm" (ngSubmit)="addTicket()">
+              <h3> Name: {{ticket.customer.name}}</h3>
 
-<button type="button" class="btn btn-success col-2 mr-2 mb-4 float-right" >Confirm</button>
-<button type="button" class="btn btn-secondary col-2 mr-2 mb-4 float-left">Change</button>
+              <button type="button" (click)="addTicket()" class="btn btn-success float-right">Add ticket</button>
+
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="row">
+
+    <div class="col-xl-3 col-lg-4 p-2" *ngFor="let ticket of getTicket()">
+
+      <div class="card">
+
+        <div class="card-body">
+          <h5 class="card-title">{{ticket.title}}</h5>
+          <h6 class="card-subtitle mb-2 text-muted">{{ticket.publishedAt | date}}</h6>
+          <p class="card-text">{{ticket.summary}}</p>
+          <button (click)="getTicketDetails(ticket.id)" type="button" class="btn btn-primary" data-toggle="modal"
+                  [attr.data-target]="'.ticket-modal-'+ticket.id">
+            Details
+          </button>
+        </div>
+
+        <div [ngClass]="['modal', 'fade', 'ticket-modal-'+ticket.id]" tabindex="-1" role="dialog"
+             aria-labelledby="Ticket details modal"
+             aria-hidden="true">
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">{{ticket.title}}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <p class="lead"><span class="font-italic">{{ticket.publishedAt | date}}</span> {{ticket.summary}}</p>
+                <div class ="" *ngIf="ticket.imageURL != null">
+                  <img [src]="ticket.imageURL" class = "img-responsive" width = "75%">
+                </div>
+                <p class="mt-2"> {{ticket.text}} </p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" (click)="loadTicket()" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+

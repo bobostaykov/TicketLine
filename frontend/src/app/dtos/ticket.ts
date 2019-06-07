@@ -2,7 +2,6 @@ import {Show} from './show';
 import {Customer} from './customer';
 import {Seat} from './seat';
 import {Sector} from './sector';
-import {TicketStatus} from '../datatype/ticket_status';
 
 export class Ticket {
   constructor(
@@ -12,6 +11,6 @@ export class Ticket {
     public price: number,
     public seat: Seat,
     public sector: Sector,
-    public status: TicketStatus) {
+    public status: string) {
   }
 }

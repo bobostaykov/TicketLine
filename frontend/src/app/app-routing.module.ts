@@ -34,9 +34,10 @@ const routes: Routes = [
   {path: 'events/search/results/events', canActivate: [AuthGuard], component: EventResultsComponent},
   {path: 'floorplan', canActivate: [AuthGuard], component: FloorplanControlComponent},
   {path: 'ticket', canActivate: [AuthGuard], component: TicketComponent},
+  {path: 'manager', canActivate: [AuthGuard], component: ContentManagerComponent},
   {path: 'ticket-check-reservation', canActivate: [AuthGuard], component: TicketCheckReservationComponent},
-  {path: 'blocked', canActivate: [AuthGuard], component: BlockedUsersComponent},
-  {path: 'manager', canActivate: [AuthGuard], component: ContentManagerComponent}
+  {path: 'floorplan', canActivate: [AuthGuard], component: FloorplanControlComponent},
+  {path: 'blocked', canActivate: [AuthGuard], component: BlockedUsersComponent}
 ];
 
 @NgModule({
