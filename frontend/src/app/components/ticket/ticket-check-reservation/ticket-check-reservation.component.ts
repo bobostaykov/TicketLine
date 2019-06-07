@@ -1,5 +1,6 @@
 import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {NgbPaginationConfig} from '@ng-bootstrap/ng-bootstrap';
+import {FormBuilder, FormGroup} from '@angular/forms';
 import {AuthService} from '../../../services/auth/auth.service';
 
 import {Customer} from '../../../dtos/customer';
@@ -14,8 +15,6 @@ import {Hall} from '../../../dtos/hall';
 import {Location} from '../../../dtos/location';
 import {Ticket} from '../../../dtos/ticket';
 import {TicketService} from '../../../services/ticket/ticket.service';
-import {TicketStatus} from '../../../datatype/ticket_status';
-import {TicketPost} from '../../../dtos/ticket-post';
 
 @Component({
   selector: 'app-ticket-check-reservation',
@@ -26,22 +25,12 @@ export class TicketCheckReservationComponent implements OnInit {
 
   error: boolean = false;
   errorMessage: string = '';
+  ticketCheckReservationForm: FormGroup;
   submitted: boolean = false;
-
-  private price: number[] = [];
-  private priceTotal: number;
+  private ticket: Ticket;
   private show: Show;
   private customer: Customer;
-  private ticket_seats: Seat[] = [];
-  private ticket_sectors: Sector[] = [];
-  private tickets: TicketPost[] = [];
-  private amtTickets: number;
-  private seatsStr: String[] = [];
-  private rowStr: String[] = [];
-  private idxPrice: number;
-  private ticketExistsError: boolean = false;
-
-  // TODO: delete default objects
+  private seat: Seat;
   private sector: Sector;
   private event: Event;
   private hall: Hall;
@@ -49,75 +38,23 @@ export class TicketCheckReservationComponent implements OnInit {
   private location: Location;
   private seats: Seat[];
   private sectors: Sector[];
-  // TODO: End of default objects
 
-  constructor(private ticketService: TicketService, private ngbPaginationConfig: NgbPaginationConfig,
+  constructor(private ticketService: TicketService, private ngbPaginationConfig: NgbPaginationConfig, private formBuilder: FormBuilder,
               private cd: ChangeDetectorRef, private authService: AuthService) {}
 
   ngOnInit() {
     // TODO: delete default objects
-    this.location = new Location(9, 'Austria', 'Vienna', '1150', 'Roland-Rainer-Platz 1',
+    this.location = new Location(9, 'Austria', 'Vienna', '1180', 'testStreet',
       'description for lcoation default test');
-    this.artist = new Artist(8, 'Cher');
-    this.hall = new Hall(7, 'Stadthalle A', this.location, this.seats, this.sectors);
-    this.event = new Event(6, 'Here we go again', EventType.CONCERT, 'description for this default test event',
-      'content for this default test event', this.artist);
+    this.artist = new Artist(8, 'ArtistTestName');
+    this.hall = new Hall(7, 'HallTestName', this.location, this.seats, this.sectors);
+    this.event = new Event(6, 'eventTestName', EventType.CONCERT, 'description for this default test event',
+      'content for thie default test event', this.artist);
     this.sector = new Sector(5, 2, PriceCategory.Average);
-    this.customer = new Customer(3, 'Müller', 'Petra', 'petra.mueller@email.com', '05.05.2005');
+    this.seat = new Seat(4, 15, 33, PriceCategory.Average);
+    this.customer = new Customer(3, 'TestName', 'TestFirstName', 'Test@email.com', '05.05.2005');
     this.show = new Show(2, this.event, '20:20', '12.05.2019', this.hall, 'description for this default test show', 44);
-    this.ticket_seats.push(new Seat(10, 14, 22, PriceCategory.Average));
-    this.ticket_seats.push(new Seat(10, 15, 22, PriceCategory.Average));
-    this.price.push(35.99);
-    this.price.push(35.99);
-    // TODO: End of default objects
-
-    this.idxPrice = 0;
-    this.priceTotal = 0;
-
-    if (this.ticket_seats.length > 0) {
-      this.amtTickets = this.ticket_seats.length;
-      for (const entry of this.ticket_seats) {
-        this.seatsStr.push(entry.seatNumber.toString());
-        this.rowStr.push(entry.seatRow.toString());
-        const currentTicket = new TicketPost(null, 4, 7, 44.56, 8, null, TicketStatus.RESERVATED);
-        this.createTicket(currentTicket);
-      }
-    }
-
-    if (this.ticket_sectors.length > 0) {
-      this.amtTickets = this.ticket_sectors.length;
-      for (const entry of this.ticket_sectors) {
-        const currentTicket = new TicketPost(null, 4, 7, this.price.pop(), null, 8, TicketStatus.RESERVATED);
-        this.createTicket(currentTicket);
-      }
-    }
-  }
-
-  createTicket(currentTicket: TicketPost) {
-    this.tickets.push(currentTicket);
-    this.ticketExistsError = false;
-    this.addTicket(currentTicket);
-    this.idxPrice += 1;
-    this.priceTotal += this.price.pop();
-    if (this.ticketExistsError) {
-      console.log('Reservation already exists');
-      return;
-    } else {
-      this.submitted = true;
-    }
-  }
-
-  /**
-   * Sends news creation request
-   * @param news the news which should be created
-   */
-  addTicket(ticket: TicketPost) {
-    this.ticketService.createTicket(ticket).subscribe(
-      (newTicket: TicketPost) => {if (newTicket.id === -1) {this.ticketExistsError = true; }},
-      error => {
-        this.defaultServiceErrorHandling(error);
-      }
-    );
+    this.ticket = new Ticket(1, this.show, this.customer, 22.22, this.seat, this.sector, 'reservation');
   }
 
   /**
@@ -143,4 +80,10 @@ export class TicketCheckReservationComponent implements OnInit {
   vanishError() {
     this.error = false;
   }
+
+  private clearForm() {
+    this.ticketCheckReservationForm.reset();
+    this.submitted = false;
+  }
+
 }
