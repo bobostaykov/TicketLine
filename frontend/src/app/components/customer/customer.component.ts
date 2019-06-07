@@ -86,13 +86,14 @@ export class CustomerComponent implements OnInit {
    * activates error flag and sets error message to display to user
    * @param error that was encountered, includes error message
    */
+  /* PINO: extended if clause in order to get into else if no error.error.news is available*/
   private defaultServiceErrorHandling(error: any) {
     console.log(error);
     this.error = true;
-    if (error.error.news !== 'No message available') {
+    if (error.error.news !== 'No message available' && error.error.news !== '' && error.error.news) {
       this.errorMessage = error.error.news;
     } else {
-      this.errorMessage = error.error.error;
+      this.errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
     }
   }
 

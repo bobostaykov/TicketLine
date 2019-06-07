@@ -17,15 +17,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
 @RequestMapping(value = "/news")
+@Validated
 @Api(value = "news")
 public class NewsEndpoint {
 
@@ -68,7 +71,7 @@ public class NewsEndpoint {
     @RequestMapping(method = RequestMethod.POST)
     @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "Publish a new news entry", authorizations = {@Authorization(value = "apiKey")})
-    public DetailedNewsDTO publishNews(@RequestBody DetailedNewsDTO detailedNewsDTO) {
+    public DetailedNewsDTO publishNews(@Valid @RequestBody DetailedNewsDTO detailedNewsDTO) {
         return newsService.publishNews(detailedNewsDTO);
     }
 
