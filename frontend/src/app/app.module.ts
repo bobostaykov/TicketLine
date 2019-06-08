@@ -52,6 +52,7 @@ import { BlockedUsersComponent } from './components/blocked-users/blocked-users.
     FloorplanSvgComponent,
     CustomerComponent,
     CustomerDialogComponent,
+    FloorplanSvgComponent,
     FloorplanTicketComponent,
     BlockedUsersComponent
   ],
