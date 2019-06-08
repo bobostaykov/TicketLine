@@ -20,10 +20,12 @@ export class FloorplanControlComponent implements OnInit {
   // contains names and id of all Halls
   private allHalls: Hall[];
   // contains names of specific halls that show up after selecting a specific location
+  // noinspection JSMismatchedCollectionQueryUpdate
   private halls: Hall[];
   // contains all locations
   private locations: Location[];
   // list of priceCategories to loop through in select fields
+  // noinspection JSMismatchedCollectionQueryUpdate
   private priceCategories: string[] = Object.keys(PriceCategory);
   // form groups to add seats/sectors and persist new halls to backend
   private addSeatsForm: FormGroup;
@@ -188,7 +190,7 @@ export class FloorplanControlComponent implements OnInit {
       error => console.log(error)
     );
     this.createHallForm.reset({
-      'hallSelection': this.newHall = new Hall(null, 'New SectorPlan', null, [], []),
+      'hallSelection': this.newHall = new Hall(null, 'New Hall', null, [], []),
       'hallType': 'seats'
     });
   }
@@ -369,7 +371,6 @@ export class FloorplanControlComponent implements OnInit {
       hallTypeSelection.enable();
     }
   }
-
 
   // /**
   //  * helper method
