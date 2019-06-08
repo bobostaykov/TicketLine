@@ -29,9 +29,9 @@ import {FloorplanControlComponent} from './components/floorplan-control/floorpla
 import {FloorplanComponent} from './components/floorplan/floorplan.component';
 import {CustomerComponent} from './components/customer/customer.component';
 import {CustomerDialogComponent} from './components/customer-dialog/customer-dialog.component';
-import {TicketComponent} from './components/ticket/ticket.component';
 import {TicketCheckReservationComponent} from './components/ticket/ticket-check-reservation/ticket-check-reservation.component';
 import { BlockedUsersComponent } from './components/blocked-users/blocked-users.component';
+import {TicketComponent} from './components/ticket/ticket.component';
 
 @NgModule({
   declarations: [
@@ -52,9 +52,6 @@ import { BlockedUsersComponent } from './components/blocked-users/blocked-users.
     FloorplanControlComponent,
     FloorplanComponent,
     CustomerComponent,
-    CustomerDialogComponent,
-    CustomerDialogComponent,
-    TicketComponent,
     CustomerDialogComponent,
     TicketComponent,
     BlockedUsersComponent,
