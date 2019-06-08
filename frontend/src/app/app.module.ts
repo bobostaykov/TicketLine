@@ -29,7 +29,6 @@ import {FloorplanControlComponent} from './components/floorplan/floorplan-contro
 import {FloorplanSvgComponent} from './components/floorplan/floorplan-svg/floorplan-svg.component';
 import {CustomerComponent} from './components/customer/customer.component';
 import {CustomerDialogComponent} from './components/customer-dialog/customer-dialog.component';
-import { FloorplanUpdateComponent } from './components/floorplan/floorplan-update/floorplan-update.component';
 import { FloorplanTicketComponent } from './components/floorplan/floorplan-ticket/floorplan-ticket.component';
 
 @NgModule({
@@ -52,7 +51,6 @@ import { FloorplanTicketComponent } from './components/floorplan/floorplan-ticke
     FloorplanSvgComponent,
     CustomerComponent,
     CustomerDialogComponent,
-    FloorplanUpdateComponent,
     FloorplanSvgComponent,
     FloorplanTicketComponent
   ],
