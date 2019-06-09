@@ -1,6 +1,6 @@
-<!-- draws a floor plan with seats -->
-<div *ngIf="seats !== undefined">
-  <svg id="floorplan"
+<div class="svg-container">
+  <!-- draws a floor plan with seats -->
+  <svg id="floorplan" *ngIf="seats !== undefined"
        [attr.viewBox]="this.viewbox"
        preserveAspectRatio="xMinYMin slice"
        (click)="onSvgClick($event)">
@@ -10,11 +10,10 @@
           (click)="displayUpdateForm(seat)"
           (contextmenu)="displayContext(seat, $event)"></path>
   </svg>
-</div>
-<!-- draws a floor plan with sectors -->
-<div *ngIf="sectors !== undefined">
-  <svg id="floorplan"
+  <!-- draws a floor plan with sectors -->
+  <svg id="floorplan" *ngIf="sectors !== undefined"
        [attr.viewBox]="this.viewbox"
+       (click)="onSvgClick($event)"
        preserveAspectRatio="xMinYMin slice">
     <path *ngFor="let sector of sectors"
           [attr.d]="getSectorPath(sector)"
@@ -22,46 +21,56 @@
           (click)="displayUpdateForm(sector)"
           (contextmenu)="displayContext(sector, $event)"></path>
   </svg>
-</div>
 
-<!-- div containing form to update selected seat or sector -->
-<div id="updateForm">
-  <form #updateForm="ngForm" (ngSubmit)="updateForm.valid && updateSelectedElement()">
-    <div class="row mx-2">
-      <mat-form-field appearance="standard" class="col-6">
-        <mat-label class="pr-4">Row</mat-label>
-        <label for="seatRow" class="sr-only">Seat Row</label>
-        <input matInput id="seatRow" type="number" aria-labelledby="Seat Row" class="text-right"
-               name="seatRow" [(ngModel)]="updateElementModel.seatRow" required/>
-        <mat-error>Row must be set!</mat-error>
-      </mat-form-field>
-      <mat-form-field appearance="standard" class="col-6">
-        <mat-label class="pr-4">Number</mat-label>
-        <label for="seatNumber" class="sr-only">Number</label>
-        <input matInput id="seatNumber" type="number" aria-labelledby="Seat Number" class="text-right"
-               name="seatNumber" [(ngModel)]="updateElementModel.seatNumber" required/>
-        <mat-error>Number must be set!</mat-error>
-      </mat-form-field>
-    </div>
-    <div class="row mx-2">
-      <mat-form-field appearance="standard" class="col-6">
-        <label for="priceCategory" class="sr-only">Price Category</label>
-        <select matNativeControl id="priceCategory" aria-labelledby="Price Category"
-                name="seatPrice" [(ngModel)]="updateElementModel.priceCategory" required>
-          <option *ngFor="let price of priceCategories">{{price}}</option>
-        </select>
-        <mat-error>Price Category is required!</mat-error>
-      </mat-form-field>
-      <div class="col-6 d-flex align-items-end">
-        <button mat-raised-button color="primary">Update</button>
+  <!-- div containing form to update selected seat or sector -->
+  <div id="updateForm">
+    <form #updateForm="ngForm" (ngSubmit)="updateForm.valid && updateSelectedElement()">
+      <div class="row mx-2" *ngIf="seats !== undefined">
+        <mat-form-field appearance="standard" class="col-6">
+          <mat-label class="pr-4">Row</mat-label>
+          <label for="seatRow" class="sr-only">Seat Row</label>
+          <input matInput id="seatRow" type="number" aria-labelledby="Seat Row" class="text-right"
+                 name="seatRow" [(ngModel)]="updateElementModel.seatRow" required/>
+          <mat-error>Row must be set!</mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="standard" class="col-6">
+          <mat-label class="pr-4">Number</mat-label>
+          <label for="seatNumber" class="sr-only">Number</label>
+          <input matInput id="seatNumber" type="number" aria-labelledby="Seat Number" class="text-right"
+                 name="seatNumber" [(ngModel)]="updateElementModel.seatNumber" required/>
+          <mat-error>Number must be set!</mat-error>
+        </mat-form-field>
       </div>
-    </div>
-  </form>
-</div>
+      <div class="row mx-2" *ngIf="sectors !== undefined">
+        <mat-form-field appearance="standard" class="col-12">
+          <mat-label class="pr-4" matPrefix>Sector Number</mat-label>
+          <label for="sectorNumber" class="sr-only">Sector Number</label>
+          <input matInput id="sectorNumber" type="number" aria-labelledby="Sector Number" class="text-right"
+                 name="sectorNumber" [(ngModel)]="updateElementModel.sectorNumber" required/>
+          <mat-error>Sector number must be set!</mat-error>
+        </mat-form-field>
+      </div>
+      <div class="row mx-2">
+        <mat-form-field appearance="standard" class="col-6">
+          <label for="priceCategory" class="sr-only">Price Category</label>
+          <select matNativeControl id="priceCategory" aria-labelledby="Price Category"
+                  name="seatPrice" [(ngModel)]="updateElementModel.priceCategory" required>
+            <option *ngFor="let price of priceCategories">{{price}}</option>
+          </select>
+          <mat-error>Price Category is required!</mat-error>
+        </mat-form-field>
+        <div class="col-6 d-flex align-items-end">
+          <button mat-raised-button color="primary">Update</button>
+        </div>
+      </div>
+    </form>
+  </div>
 
-<!-- div containing context menu for delete, ticket, update operations -->
-<div id="contextmenu" class="dropdown-menu shadow-sm">
-  <button class="btn dropdown-item" (click)="displayUpdateForm(selectedElement)">Update</button>
-  <button class="btn dropdown-item" (click)="deleteSelectedElement()">Delete</button>
-  <button class="btn dropdown-item" (click)="addToTicket()">Add To Ticket</button>
+  <!-- div containing context menu for delete, ticket, update operations -->
+  <div id="contextmenu" class="dropdown-menu shadow-sm">
+    <button class="btn dropdown-item" (click)="displayUpdateForm(selectedElement)">Update</button>
+    <button class="btn dropdown-item" (click)="deleteSelectedElement()">Delete</button>
+    <button class="btn dropdown-item" (click)="addToTicket()">Add To Ticket</button>
+  </div>
+
 </div>

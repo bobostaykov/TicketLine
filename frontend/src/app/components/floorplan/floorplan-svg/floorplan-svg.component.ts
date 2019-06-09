@@ -30,7 +30,8 @@ export class FloorplanSvgComponent implements OnInit {
    * @param seat for which to return path attribute
    */
   private getSeatPath(seat: Seat): string {
-    return 'M' + this.getSeatXPos(seat) + ' ' + this.getSeatYPos(seat) + 'h 10 v 10 h -10 Z';
+    return 'M' + this.getSeatXPos(seat) + ' ' + this.getSeatYPos(seat) +
+      'h ' + this.getSeatWidth() + ' v ' + this.getSeatWidth() + ' h ' + -this.getSeatWidth() + ' Z';
   }
 
   /**
@@ -38,8 +39,8 @@ export class FloorplanSvgComponent implements OnInit {
    * @param sector for which to return path attribute
    */
   private getSectorPath(sector: Sector): string {
-    const width = this.viewboxWidth / 3.2;
-    return 'M' + this.getSectorXPos(sector) + ' ' + this.getSectorYPos(sector) + 'h ' + width + ' v 50 h ' + (-width) + ' Z';
+    return 'M' + this.getSectorXPos(sector) + ' ' + this.getSectorYPos(sector) + 'h ' +
+      this.getSectorWidth() + ' v ' + this.getSectorHeight() + ' h ' + (-this.getSectorWidth()) + ' Z';
   }
 
   /**
@@ -60,8 +61,8 @@ export class FloorplanSvgComponent implements OnInit {
       const rectForm = updateForm.getBoundingClientRect();
       const rectSvg = svg.getBoundingClientRect();
       const svgpx = svg.getCTM().a;
-      const elementHeight = 10 * svgpx;
-      const elementWidth = 10 * svgpx;
+      const elementHeight = element instanceof Seat ? this.getSeatWidth() * svgpx : this.getSectorHeight() * svgpx;
+      const elementWidth = element instanceof Seat ? this.getSeatWidth() * svgpx : this.getSectorWidth() * svgpx;
       const xPos = element instanceof Seat ? this.getSeatXPos(element) : this.getSectorXPos(element);
       const yPos = element instanceof Seat ? this.getSeatYPos(element) : this.getSectorYPos(element);
       updateForm.style.left = rectSvg.left + svgpx * xPos - rectForm.width / 2 + elementWidth / 2 + 'px';
@@ -75,41 +76,36 @@ export class FloorplanSvgComponent implements OnInit {
     document.getElementById('updateForm').style.display = 'none';
   }
 
-
-  /**
-   * allows users to zoom in by adjusting svg viewbox
-   * @param event mousewheel event used to zoom
-   */
-
-  /*private zoom(event) {
-    event.preventDefault();
-    this.viewboxWidth = event.deltaY > 0 ? this.viewboxWidth * 1.05 : this.viewboxWidth / 1.05;
-    this.viewboxWidth = this.viewboxWidth < 300 ? 300 : (this.viewboxWidth > 1310 ? 1310 : this.viewboxWidth);
-    const rect = document.getElementById('floorplan').getBoundingClientRect();
-    this.viewboxPosX = event.pageX - rect.left - this.viewboxWidth / 2;
-    this.viewboxPosY = event.pageY - rect.top - this.viewboxWidth / 2;
-    this.viewboxPosX = this.viewboxPosX < 0 ? 0 : this.viewboxPosX;
-    this.viewboxPosY = this.viewboxPosY < 0 ? 0 : this.viewboxPosX;
-    this.viewbox = this.viewboxPosX + ' ' + this.viewboxPosY + ' ' + this.viewboxWidth + ' ' + this.viewboxWidth;
-  }*/
-
   private getSeatXPos(seat: Seat): number {
     return (seat.seatNumber - 1) * 1.2 * 10 + Math.floor(seat.seatNumber / 15) * 10;
   }
 
   private getSeatYPos(seat: Seat): number {
-    return seat.seatRow * 1.2 * 10 + Math.floor(seat.seatRow / 10) * 10;
+    return (seat.seatRow - 1) * 1.2 * 10 + Math.floor(seat.seatRow / 10) * 10;
   }
 
   private getSectorXPos(sector: Sector): number {
-    const width = this.viewboxWidth / 3.2;
-    const gap = this.viewboxWidth / 32;
-    return ((sector.sectorNumber - 1) % 3) * (width + gap);
+    return ((sector.sectorNumber - 1) % 3) * (this.getSectorWidth() + this.getSectorGap());
   }
 
   private getSectorYPos(sector: Sector): number {
-    const gap = this.viewboxWidth / 32;
-    return Math.floor((sector.sectorNumber - 1) / 3) * (50 + gap);
+    return Math.floor((sector.sectorNumber - 1) / 3) * (this.getSectorHeight() + this.getSectorGap());
+  }
+
+  private getSeatWidth(): number {
+    return 10;
+  }
+
+  private getSectorHeight(): number {
+    return 50;
+  }
+
+  private getSectorWidth(): number {
+    return this.viewboxWidth / 3.2;
+  }
+
+  private getSectorGap(): number {
+    return this.viewboxWidth / 32;
   }
 
   ngOnInit() {
@@ -142,8 +138,10 @@ export class FloorplanSvgComponent implements OnInit {
   private deleteSelectedElement(): void {
     if (this.selectedElement instanceof Seat) {
       this.seats.splice(this.seats.indexOf(this.selectedElement), 1);
-      this.closeContext();
+    } else {
+      this.sectors.splice(this.sectors.indexOf(this.selectedElement), 1);
     }
+    this.closeContext();
   }
 
   private addToTicket(): void {
@@ -153,4 +151,21 @@ export class FloorplanSvgComponent implements OnInit {
     Object.assign(this.selectedElement, this.updateElementModel);
     this.displayUpdateForm(this.selectedElement);
   }
+
+  /**
+   * allows users to zoom in by adjusting svg viewbox
+   * @param event mousewheel event used to zoom
+   */
+
+  /*private zoom(event) {
+    event.preventDefault();
+    this.viewboxWidth = event.deltaY > 0 ? this.viewboxWidth * 1.05 : this.viewboxWidth / 1.05;
+    this.viewboxWidth = this.viewboxWidth < 300 ? 300 : (this.viewboxWidth > 1310 ? 1310 : this.viewboxWidth);
+    const rect = document.getElementById('floorplan').getBoundingClientRect();
+    this.viewboxPosX = event.pageX - rect.left - this.viewboxWidth / 2;
+    this.viewboxPosY = event.pageY - rect.top - this.viewboxWidth / 2;
+    this.viewboxPosX = this.viewboxPosX < 0 ? 0 : this.viewboxPosX;
+    this.viewboxPosY = this.viewboxPosY < 0 ? 0 : this.viewboxPosX;
+    this.viewbox = this.viewboxPosX + ' ' + this.viewboxPosY + ' ' + this.viewboxWidth + ' ' + this.viewboxWidth;
+  }*/
 }
