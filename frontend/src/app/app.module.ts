@@ -30,6 +30,7 @@ import {FloorplanSvgComponent} from './components/floorplan/floorplan-svg/floorp
 import {CustomerComponent} from './components/customer/customer.component';
 import {CustomerDialogComponent} from './components/customer-dialog/customer-dialog.component';
 import { FloorplanTicketComponent } from './components/floorplan/floorplan-ticket/floorplan-ticket.component';
+import { MinDirective } from './directives/min.directive';
 
 @NgModule({
   declarations: [
@@ -52,7 +53,8 @@ import { FloorplanTicketComponent } from './components/floorplan/floorplan-ticke
     CustomerComponent,
     CustomerDialogComponent,
     FloorplanSvgComponent,
-    FloorplanTicketComponent
+    FloorplanTicketComponent,
+    MinDirective
   ],
   imports: [
     BrowserModule,

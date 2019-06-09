@@ -20,7 +20,8 @@ export class FloorplanSvgComponent implements OnInit {
   private priceCategories: string[] = Object.keys(PriceCategory);
   private selectedElement: Seat | Sector;
   private updateElementModel: Seat | Sector = this.seats ? new Seat(null, null, null, null) : new Sector(null, null, null);
-
+  private updateSubmissionError: boolean = false;
+  private updateSubmissionMessage: string = '';
 
   constructor() {
   }
@@ -66,9 +67,9 @@ export class FloorplanSvgComponent implements OnInit {
       const xPos = element instanceof Seat ? this.getSeatXPos(element) : this.getSectorXPos(element);
       const yPos = element instanceof Seat ? this.getSeatYPos(element) : this.getSectorYPos(element);
       updateForm.style.left = rectSvg.left + svgpx * xPos - rectForm.width / 2 + elementWidth / 2 + 'px';
-      updateForm.style.top = rectSvg.top + svgpx * yPos + elementHeight + 20 + 'px';
+      updateForm.style.top = rectSvg.top + svgpx * yPos + elementHeight + 20 + window.scrollY + 'px';
       this.selectedElement = element;
-      Object.assign(this.updateElementModel, this.selectedElement);
+      this.updateElementModel = {...this.selectedElement};
     }
   }
 
@@ -148,8 +149,31 @@ export class FloorplanSvgComponent implements OnInit {
   }
 
   private updateSelectedElement(): void {
-    Object.assign(this.selectedElement, this.updateElementModel);
-    this.displayUpdateForm(this.selectedElement);
+    if (this.selectedElement instanceof Seat) {
+      if (this.seats.some(seat => seat !== this.selectedElement &&
+        seat.seatNumber === (this.updateElementModel as Seat).seatNumber &&
+        seat.seatRow === (this.updateElementModel as Seat).seatRow)) {
+        this.updateSubmissionError = true;
+        this.updateSubmissionMessage = 'A Seat with row ' + (this.updateElementModel as Seat).seatRow +
+          ' and number ' + (this.updateElementModel as Seat).seatNumber  + ' already exists!';
+      } else {
+        Object.assign(this.selectedElement, this.updateElementModel as Seat);
+        this.updateSubmissionError = false;
+        this.displayUpdateForm(this.selectedElement);
+      }
+    } else {
+      if (this.sectors.some(sector => sector !== this.selectedElement &&
+        sector.sectorNumber === (this.updateElementModel as Sector).sectorNumber)) {
+        this.updateSubmissionError = true;
+        this.updateSubmissionMessage = 'A Sector with number ' + (this.updateElementModel as Sector).sectorNumber +
+          ' already exists!';
+      } else {
+        Object.assign(this.selectedElement, this.updateElementModel as Sector);
+        this.updateSubmissionError = false;
+        this.displayUpdateForm(this.selectedElement);
+      }
+    }
+
   }
 
   /**
