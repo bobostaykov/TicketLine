@@ -31,6 +31,7 @@ import {CustomerComponent} from './components/customer/customer.component';
 import {CustomerDialogComponent} from './components/customer-dialog/customer-dialog.component';
 import { FloorplanTicketComponent } from './components/floorplan/floorplan-ticket/floorplan-ticket.component';
 import { BlockedUsersComponent } from './components/blocked-users/blocked-users.component';
+import { MinDirective } from './directives/min.directive';
 
 @NgModule({
   declarations: [
@@ -54,6 +55,7 @@ import { BlockedUsersComponent } from './components/blocked-users/blocked-users.
     CustomerDialogComponent,
     FloorplanSvgComponent,
     FloorplanTicketComponent,
+    MinDirective,
     BlockedUsersComponent
   ],
   imports: [
