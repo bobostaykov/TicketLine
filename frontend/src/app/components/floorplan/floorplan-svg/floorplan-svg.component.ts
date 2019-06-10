@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Seat} from '../../../dtos/seat';
 import {Sector} from '../../../dtos/sector';
 import {PriceCategory} from '../../../dtos/priceCategory';
@@ -11,9 +11,10 @@ import {PriceCategory} from '../../../dtos/priceCategory';
 export class FloorplanSvgComponent implements OnInit {
   @Input() private seats?: Seat[];
   @Input() private sectors?: Sector[];
+  @Output() private addTicket: EventEmitter<Seat | Sector> = new EventEmitter<Seat | Sector>();
   private viewboxPosX: number = 0;
   private viewboxPosY: number = 0;
-  private viewboxWidth: number = 500;
+  private viewboxWidth: number = 300;
   private viewbox: string = this.viewboxPosX + ' ' + this.viewboxPosY + ' ' + this.viewboxWidth + ' ' + this.viewboxWidth;
   // list of priceCategories to loop through in select fields
   // noinspection JSMismatchedCollectionQueryUpdate
@@ -22,6 +23,8 @@ export class FloorplanSvgComponent implements OnInit {
   private updateElementModel: Seat | Sector = this.seats ? new Seat(null, null, null, null) : new Sector(null, null, null);
   private updateSubmissionError: boolean = false;
   private updateSubmissionMessage: string = '';
+  private _svgDrag = this.svgDrag.bind(this);
+  private _svgDragExit = this.svgDragExit.bind(this);
 
   constructor() {
   }
@@ -66,8 +69,8 @@ export class FloorplanSvgComponent implements OnInit {
       const elementWidth = element instanceof Seat ? this.getSeatWidth() * svgpx : this.getSectorWidth() * svgpx;
       const xPos = element instanceof Seat ? this.getSeatXPos(element) : this.getSectorXPos(element);
       const yPos = element instanceof Seat ? this.getSeatYPos(element) : this.getSectorYPos(element);
-      updateForm.style.left = rectSvg.left + svgpx * xPos - rectForm.width / 2 + elementWidth / 2 + 'px';
-      updateForm.style.top = rectSvg.top + svgpx * yPos + elementHeight + 20 + window.scrollY + 'px';
+      updateForm.style.left = rectSvg.left + svgpx * (xPos - this.viewboxPosX) - rectForm.width / 2 + elementWidth / 2 + 'px';
+      updateForm.style.top = rectSvg.top + svgpx * (yPos - this.viewboxPosY) + elementHeight + 20 + window.scrollY + 'px';
       this.selectedElement = element;
       this.updateElementModel = {...this.selectedElement};
     }
@@ -110,6 +113,8 @@ export class FloorplanSvgComponent implements OnInit {
   }
 
   ngOnInit() {
+    console.log(this.viewboxPosX);
+    console.log(this.viewboxPosY);
   }
 
   private displayContext(element: Seat | Sector, event: MouseEvent): void {
@@ -146,6 +151,7 @@ export class FloorplanSvgComponent implements OnInit {
   }
 
   private addToTicket(): void {
+    this.addTicket.emit(this.selectedElement);
   }
 
   private updateSelectedElement(): void {
@@ -155,7 +161,7 @@ export class FloorplanSvgComponent implements OnInit {
         seat.seatRow === (this.updateElementModel as Seat).seatRow)) {
         this.updateSubmissionError = true;
         this.updateSubmissionMessage = 'A Seat with row ' + (this.updateElementModel as Seat).seatRow +
-          ' and number ' + (this.updateElementModel as Seat).seatNumber  + ' already exists!';
+          ' and number ' + (this.updateElementModel as Seat).seatNumber + ' already exists!';
       } else {
         Object.assign(this.selectedElement, this.updateElementModel as Seat);
         this.updateSubmissionError = false;
@@ -180,16 +186,31 @@ export class FloorplanSvgComponent implements OnInit {
    * allows users to zoom in by adjusting svg viewbox
    * @param event mousewheel event used to zoom
    */
-
-  /*private zoom(event) {
+  private zoom(event) {
     event.preventDefault();
     this.viewboxWidth = event.deltaY > 0 ? this.viewboxWidth * 1.05 : this.viewboxWidth / 1.05;
     this.viewboxWidth = this.viewboxWidth < 300 ? 300 : (this.viewboxWidth > 1310 ? 1310 : this.viewboxWidth);
-    const rect = document.getElementById('floorplan').getBoundingClientRect();
-    this.viewboxPosX = event.pageX - rect.left - this.viewboxWidth / 2;
-    this.viewboxPosY = event.pageY - rect.top - this.viewboxWidth / 2;
-    this.viewboxPosX = this.viewboxPosX < 0 ? 0 : this.viewboxPosX;
-    this.viewboxPosY = this.viewboxPosY < 0 ? 0 : this.viewboxPosX;
     this.viewbox = this.viewboxPosX + ' ' + this.viewboxPosY + ' ' + this.viewboxWidth + ' ' + this.viewboxWidth;
-  }*/
+  }
+
+  private svgDrag(event: MouseEvent): void {
+    this.viewboxPosX -= event.movementX / 2;
+    this.viewboxPosY -= event.movementY / 2;
+    this.viewboxPosX = this.viewboxPosX < 0 ? 0 : this.viewboxPosX;
+    this.viewboxPosY = this.viewboxPosY < 0 ? 0 : this.viewboxPosY;
+    this.viewbox = this.viewboxPosX + ' ' + this.viewboxPosY + ' ' + this.viewboxWidth + ' ' + this.viewboxWidth;
+  }
+
+  private svgDragInit(): void {
+    const svg = document.getElementsByTagName('svg')[0];
+    svg.addEventListener('mousemove', this._svgDrag);
+    document.addEventListener('mouseup', this._svgDragExit);
+    svg.classList.add('grabbing');
+  }
+
+  private svgDragExit(): void {
+    const svg = document.getElementsByTagName('svg')[0];
+    svg.removeEventListener('mousemove', this._svgDrag);
+    svg.classList.remove('grabbing');
+  }
 }
