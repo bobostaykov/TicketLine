@@ -43,6 +43,8 @@ public class TicketEndpointTest extends BaseIntegrationTestWithMockedUserCredent
     private static final String TICKET_ENDPOINT = "/tickets";
     private static final String RESERVATED_TICKET = "/reservated";
     private static final String FIND_BY_NAME = "/name";
+    private static final String RECEIPT = "/receipt";
+    private static final String STORNO = "/storno";
     private static final String BUY_TICKET = "/buy";
     private static final String SPECIFIC_TICKET_PATH = "/{id}";
 
@@ -705,6 +707,37 @@ public class TicketEndpointTest extends BaseIntegrationTestWithMockedUserCredent
             .status(TicketStatus.SOLD)
             .build()));
     }
+
+    @Test
+    public void getReceiptForListOfTickets() {
+        // TODO: Mock repo or create test test data
+        Response response = RestAssured
+            .given()
+            .contentType(ContentType.JSON)
+            .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
+            .params("tickets", TEST_TICKET_ID1)
+            .params("tickets", TEST_TICKET_ID2)
+            .when().get(TICKET_ENDPOINT + RECEIPT)
+            .then().extract().response();
+        Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
+        Assert.assertThat(response.contentType(), is("application/octet-stream" ));
+    }
+
+    @Test
+    public void deleteTicketsAndReceiveReceipt() {
+        Response response = RestAssured
+            .given()
+            .contentType(ContentType.JSON)
+            .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
+            .params("tickets", TEST_TICKET_ID1)
+            .params("tickets", TEST_TICKET_ID2)
+            .when().delete(TICKET_ENDPOINT + STORNO)
+            .then().extract().response();
+        Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
+        Assert.assertThat(response.contentType(), is("application/octet-stream" ));
+    }
+
+
 
     // TESTS FOR PINOS IMPLEMENTATION
     /*
