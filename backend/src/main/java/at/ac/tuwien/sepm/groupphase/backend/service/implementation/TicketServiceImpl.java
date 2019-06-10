@@ -10,6 +10,7 @@ import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.customer.CustomerMappe
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.show.ShowMapper;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.ticket.TicketMapper;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
+import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.CustomerRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.EventRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.ShowRepository;
@@ -31,12 +32,17 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
+
+// TODO: Exception Handling for receipt creation
 
 @Service
 @ConfigurationProperties("receipt")
@@ -127,11 +133,32 @@ public class TicketServiceImpl implements TicketService {
 
     @Override
     public MultipartFile getReceipt(List<String> ticketIDs) throws Exception {
-        List<TicketDTO> tickets = new ArrayList<>();
-        for (String id:ticketIDs) {
-            tickets.add(ticketMapper.ticketToTicketDTO(ticketRepository.findOneById(Long.parseLong(id)).orElseThrow(NotFoundException::new)));
-        }
+        List<TicketDTO> tickets = ticketMapper.ticketToTicketDTO(ticketRepository.findByIdIn(this.parseListOfIds(ticketIDs)));
         return this.generateReceipt(tickets, false);
+    }
+
+    @Override
+    @Transactional
+    public MultipartFile deleteAndGetStornoReceipt(List<String> ticketIDs) throws Exception{
+        List<TicketDTO> tickets = ticketMapper.ticketToTicketDTO(ticketRepository.findByIdIn(this.parseListOfIds(ticketIDs)));
+        ticketRepository.deleteByIdIn(this.parseListOfIds(ticketIDs));
+        MultipartFile receipt = generateReceipt(tickets, true);
+        return receipt;
+    }
+
+    /**
+     * Parse a list of ids
+     *
+     * @param stringIds List of ticket ids as strings
+     * @return a list ticket ids as Long
+     */
+    private List<Long> parseListOfIds(List<String> stringIds) {
+        List<Long> ids = new ArrayList<>();
+        for (String i:
+            stringIds) {
+            ids.add(Long.parseLong(i));
+        }
+        return ids;
     }
 
     /**
@@ -140,13 +167,30 @@ public class TicketServiceImpl implements TicketService {
      * @param tickets List of Ticket DTOs
      * @return receipt PDF as MultipartFile
      */
-    private MultipartFile generateReceipt(List<TicketDTO> tickets, Boolean storno) throws FileNotFoundException, DocumentException, IOException {
+    private MultipartFile generateReceipt(List<TicketDTO> tickets, Boolean storno) throws Exception, ServiceException {
+        if (tickets.size() < 1)
+            throw new ServiceException("Cannot create receipt for empty list of Tickets.");
         int numberOfTickets = tickets.size();
+        Double returnSum;
         Double sum = 0.0;
         Document receipt = new Document();
-        // TODO: generate "receipt" folder if not present
-        String fileName = RECEIPT_PATH + "receipt_" + LocalDateTime.now().toString() + ".pdf";
+        String fileName;
+        if (storno)
+            fileName = RECEIPT_PATH + "storno-receipt_" + LocalDateTime.now().toString() + ".pdf";
+        else
+            fileName = RECEIPT_PATH + "receipt_" + LocalDateTime.now().toString() + ".pdf";
+
+        Path path = Paths.get(RECEIPT_PATH);
+        //if directory exists?
+        if (!Files.exists(path))
+            Files.createDirectories(path);
         PdfWriter.getInstance(receipt, new FileOutputStream(fileName));
+
+        receipt.addTitle("Ticketline" + (storno ? " storno" : "") + " receipt");
+        receipt.addAuthor("Ticketline");
+        receipt.addSubject("Ticketline" + (storno ? " storno" : "") + " receipt");
+        receipt.addKeywords("Ticketline");
+        receipt.addCreator("Ticketline");
 
         receipt.open();
         Font headlineFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 24, BaseColor.BLACK);
@@ -160,15 +204,15 @@ public class TicketServiceImpl implements TicketService {
             headline = new Paragraph("TICKETLINE RECHNUNG", headlineFont);
         receipt.add(headline);
         receipt.add(Chunk.NEWLINE);
-        // TODO: search for propper date format
-        Paragraph date = new Paragraph("Rechnungsdatum: " + LocalDateTime.now().format(DateTimeFormatter.ISO_DATE), font);
+        Paragraph date = new Paragraph("Rechnungsdatum: " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("DD.MM.YYYY")), font);
         receipt.add(date);
         receipt.add(Chunk.NEWLINE);
         receipt.add(Chunk.NEWLINE);
 
+        int[] widths = {3, 6, 2};
         PdfPTable table = new PdfPTable(3);
+        table.setWidths(widths);
 
-        // TODO: set column width to minimum (to fit "Position")
         PdfPCell itemNumber = new PdfPCell();
         itemNumber.setPhrase(new Phrase("Position", fontBold));
         table.addCell(itemNumber);
@@ -196,6 +240,18 @@ public class TicketServiceImpl implements TicketService {
 
         PdfPCell blank = new PdfPCell();
         blank.setPhrase(new Phrase(" ", font));
+
+        if (storno) {
+            returnSum = - sum;
+            sum = 0.0;
+            table.addCell(blank);
+            PdfPCell sumText = new PdfPCell();
+            sumText.setPhrase(new Phrase("Rückgegeben in Bar", fontBold));
+            table.addCell(sumText);
+            PdfPCell sumValue = new PdfPCell();
+            sumValue.setPhrase(new Phrase(this.print(returnSum), fontBold));
+            table.addCell(sumValue);
+        }
         table.addCell(blank);
         PdfPCell sumText = new PdfPCell();
         sumText.setPhrase(new Phrase("Summe", fontBold));
@@ -203,9 +259,7 @@ public class TicketServiceImpl implements TicketService {
         PdfPCell sumValue = new PdfPCell();
         sumValue.setPhrase(new Phrase(this.print(sum), fontBold));
         table.addCell(sumValue);
-        PdfPCell blank2 = new PdfPCell();
-        blank2.setPhrase(new Phrase(" ", font));
-        table.addCell(blank2);
+        table.addCell(blank);
         PdfPCell taxText = new PdfPCell();
         taxText.setPhrase(new Phrase("Steuersatz", fontBold));
         table.addCell(taxText);
@@ -219,7 +273,7 @@ public class TicketServiceImpl implements TicketService {
         receipt.add(Chunk.NEWLINE);
 
 
-        // TODO: USe TICKETLINE_ADDRESS from application.yml here
+        // TODO: Use TICKETLINE_ADDRESS from application.yml here
         Paragraph address = new Paragraph("Ticketline-Gasse 1a, 1010 Wien", font);
         receipt.add(address);
 
@@ -232,7 +286,6 @@ public class TicketServiceImpl implements TicketService {
             pdf.getName(), "text/plain", IOUtils.toByteArray(input));
         return multipartPDF;
         // TODO: delete file afterwards (or persist it?)
-        // TODO: set pdf author etc. parameters
     }
 
     /**
@@ -242,9 +295,14 @@ public class TicketServiceImpl implements TicketService {
      * @return String representation as €
      */
     private String print(Double price) {
+        String plusMinus = "";
+        if (price < 0.0) {
+            price = -price;
+            plusMinus = "- ";
+        }
         long eurocents = Math.round(price * 100);
         String centsStr = Long.toString(100 + eurocents%100).substring(1);
-        return eurocents / 100 + "," + centsStr + " €";
+        return plusMinus + eurocents / 100 + "," + centsStr + " €";
     }
 
     /**

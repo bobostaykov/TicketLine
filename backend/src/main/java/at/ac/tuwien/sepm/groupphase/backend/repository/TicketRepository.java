@@ -6,6 +6,7 @@ import at.ac.tuwien.sepm.groupphase.backend.entity.Show;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Ticket;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -70,5 +71,20 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
      * @param id of Ticket to be deleted
      */
     void deleteById(Long id);
+
+    /**
+     * Finds a list of tickets with the given list of ids
+     *
+     * @param id list of ids of Tickets to find
+     * @return a list of the found tickets
+     */
+    List<Ticket> findByIdIn(List<Long> id);
+
+    /**
+     * Delete a list of tickets with the given list of ids
+     *
+     * @param id list of ids of Tickets to delete
+     */
+    void deleteByIdIn(List<Long> id);
 
 }

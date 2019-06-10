@@ -19,9 +19,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 
@@ -55,6 +52,30 @@ public class TicketEndpoint {
     public TicketDTO deleteById(@PathVariable Long id) {
         LOGGER.info("Delete Ticket with id " + id);
         return ticketService.deleteOne(id);
+    }
+
+    @RequestMapping(value = "/storno", method = RequestMethod.DELETE)
+    @ApiOperation(value = "Delete Tickets by id and receive storno receipt", authorizations = {@Authorization(value = "apiKey")})
+    public ResponseEntity<Resource> deleteAndGetStornoReceipt(@RequestParam List<String> tickets) {
+        LOGGER.info("Delete Ticket(s) with id(s)" + tickets.toString() + " and receive storno receipt");
+        MultipartFile pdf;
+        try {
+            pdf = ticketService.deleteAndGetStornoReceipt(tickets);
+        } catch (Exception e) {
+            LOGGER.info(e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        try {
+            return ResponseEntity
+                .ok()
+                .contentLength(pdf.getSize())
+                .contentType(
+                    MediaType.parseMediaType("application/octet-stream"))
+                .body(new InputStreamResource(pdf.getInputStream()));
+        } catch (IOException e) {
+            LOGGER.info(e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
@@ -109,6 +130,7 @@ public class TicketEndpoint {
         try {
             pdf = ticketService.getReceipt(tickets);
         } catch (Exception e) {
+            LOGGER.info(e.getMessage());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         try {
@@ -118,8 +140,8 @@ public class TicketEndpoint {
                 .contentType(
                     MediaType.parseMediaType("application/octet-stream"))
                 .body(new InputStreamResource(pdf.getInputStream()));
-        } catch (IOException ex) {
-            LOGGER.info(ex.getMessage());
+        } catch (IOException e) {
+            LOGGER.info(e.getMessage());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
