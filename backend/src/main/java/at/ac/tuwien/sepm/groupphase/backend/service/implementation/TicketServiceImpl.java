@@ -22,19 +22,26 @@ import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import org.apache.commons.io.IOUtils;
+import org.apache.tomcat.util.http.fileupload.FileItem;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+import java.io.*;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
 @Service
+@ConfigurationProperties("receipt")
 public class TicketServiceImpl implements TicketService {
     private final TicketRepository ticketRepository;
     private final CustomerRepository customerRepository;
@@ -44,6 +51,11 @@ public class TicketServiceImpl implements TicketService {
     private final ShowMapper showMapper;
     private final CustomerMapper customerMapper;
     private final CustomerService customerService;
+
+    private static final String RECEIPT_PATH = "receipt/";
+
+    @Value("${receipt.address}")
+    private static String TICKETLINE_ADDRESS;
 
     public TicketServiceImpl(TicketRepository ticketRepository, CustomerRepository customerRepository,
                              EventRepository eventRepository, TicketMapper ticketMapper, ShowMapper showMapper,
@@ -121,7 +133,7 @@ public class TicketServiceImpl implements TicketService {
         for (String id:ticketIDs) {
             tickets.add(ticketMapper.ticketToTicketDTO(ticketRepository.findOneById(Long.parseLong(id)).orElseThrow(NotFoundException::new)));
         }
-        return this.generateReceipt(tickets);
+        return this.generateReceipt(tickets, false);
     }
 
     /**
@@ -130,30 +142,50 @@ public class TicketServiceImpl implements TicketService {
      * @param tickets List of Ticket DTOs
      * @return receipt PDF as MultipartFile
      */
-    private MultipartFile generateReceipt(List<TicketDTO> tickets) throws FileNotFoundException, DocumentException {
+    private MultipartFile generateReceipt(List<TicketDTO> tickets, Boolean storno) throws FileNotFoundException, DocumentException, IOException {
         int numberOfTickets = tickets.size();
         Double sum = 0.0;
         Document receipt = new Document();
-        String fileName = "receipt_" + LocalDateTime.now().toString() + ".pdf";
+        // TODO: generate "receipt" folder if not present
+        String fileName = RECEIPT_PATH + "receipt_" + LocalDateTime.now().toString() + ".pdf";
         PdfWriter.getInstance(receipt, new FileOutputStream(fileName));
 
         receipt.open();
-        Font headlineFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 18, BaseColor.BLACK);
-        Font font = FontFactory.getFont(FontFactory.HELVETICA, 12, BaseColor.BLACK);
-        Font fontBold = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12, BaseColor.BLACK);
-        Chunk headline = new Chunk("TICKETLINE RECHNUNG", headlineFont);
+        Font headlineFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 24, BaseColor.BLACK);
+        Font font = FontFactory.getFont(FontFactory.HELVETICA, 16, BaseColor.BLACK);
+        Font fontBold = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 16, BaseColor.BLACK);
+        Paragraph headline;
+        if (storno)
+            headline = new Paragraph("TICKETLINE STORNO-RECHNUNG", headlineFont);
+
+        else
+            headline = new Paragraph("TICKETLINE RECHNUNG", headlineFont);
         receipt.add(headline);
+        receipt.add(Chunk.NEWLINE);
+        // TODO: search for propper date format
+        Paragraph date = new Paragraph("Rechnungsdatum: " + LocalDateTime.now().format(DateTimeFormatter.ISO_DATE), font);
+        receipt.add(date);
+        receipt.add(Chunk.NEWLINE);
+        receipt.add(Chunk.NEWLINE);
 
-        PdfPTable table = new PdfPTable(2);
+        PdfPTable table = new PdfPTable(3);
 
+        // TODO: set column width to minimum (to fit "Position")
+        PdfPCell itemNumber = new PdfPCell();
+        itemNumber.setPhrase(new Phrase("Position", fontBold));
+        table.addCell(itemNumber);
         PdfPCell itemTitle = new PdfPCell();
-        itemTitle.setPhrase(new Phrase("Position", fontBold));
+        itemTitle.setPhrase(new Phrase("Bezeichnung", fontBold));
         table.addCell(itemTitle);
         PdfPCell priceTitle = new PdfPCell();
         priceTitle.setPhrase(new Phrase("Preis", fontBold));
         table.addCell(priceTitle);
 
+        Integer i = 1;
         for (TicketDTO t:tickets) {
+            PdfPCell number = new PdfPCell();
+            number.setPhrase(new Phrase(i.toString(), font));
+            table.addCell(number);
             PdfPCell item = new PdfPCell();
             item.setPhrase(new Phrase(t.getShow().getEvent().getName(), font));
             table.addCell(item);
@@ -161,14 +193,21 @@ public class TicketServiceImpl implements TicketService {
             price.setPhrase(new Phrase(this.print(t.getPrice()), font));
             sum += t.getPrice();
             table.addCell(price);
+            i++;
         }
 
+        PdfPCell blank = new PdfPCell();
+        blank.setPhrase(new Phrase(" ", font));
+        table.addCell(blank);
         PdfPCell sumText = new PdfPCell();
         sumText.setPhrase(new Phrase("Summe", fontBold));
         table.addCell(sumText);
         PdfPCell sumValue = new PdfPCell();
         sumValue.setPhrase(new Phrase(this.print(sum), fontBold));
         table.addCell(sumValue);
+        PdfPCell blank2 = new PdfPCell();
+        blank2.setPhrase(new Phrase(" ", font));
+        table.addCell(blank2);
         PdfPCell taxText = new PdfPCell();
         taxText.setPhrase(new Phrase("Steuersatz", fontBold));
         table.addCell(taxText);
@@ -177,8 +216,25 @@ public class TicketServiceImpl implements TicketService {
         table.addCell(taxValue);
 
         receipt.add(table);
+
+        receipt.add(Chunk.NEWLINE);
+        receipt.add(Chunk.NEWLINE);
+
+
+        // TODO: USe TICKETLINE_ADDRESS from application.yml here
+        Paragraph address = new Paragraph("Ticketline-Gasse 1a, 1010 Wien", font);
+        receipt.add(address);
+
         receipt.close();
-        return null;
+        //return new File(fileName);
+
+        File pdf = new File(fileName);
+        FileInputStream input = new FileInputStream(pdf);
+        MultipartFile multipartPDF = new MockMultipartFile("file",
+            pdf.getName(), "text/plain", IOUtils.toByteArray(input));
+        return multipartPDF;
+        // TODO: delete file afterwards (or persist it?)
+        // TODO: set pdf author etc. parameters
     }
 
     /**
