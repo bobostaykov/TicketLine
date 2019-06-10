@@ -7,12 +7,22 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -95,13 +105,22 @@ public class TicketEndpoint {
     @RequestMapping(value = "/receipt", method = RequestMethod.GET)
     @ApiOperation(value = "Get receipt PDF for list of tickets", authorizations = {@Authorization(value = "apiKey")})
     public ResponseEntity<Resource> getReceiptPDF(@RequestParam List<String> tickets) {
+        MultipartFile pdf;
         try {
-            ticketService.getReceipt(tickets);
-        }
-        catch (Exception e) {
+            pdf = ticketService.getReceipt(tickets);
+        } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        throw new ResponseStatusException(HttpStatus.OK);
-        //return null;
+        try {
+            return ResponseEntity
+                .ok()
+                .contentLength(pdf.getSize())
+                .contentType(
+                    MediaType.parseMediaType("application/octet-stream"))
+                .body(new InputStreamResource(pdf.getInputStream()));
+        } catch (IOException ex) {
+            LOGGER.info(ex.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
