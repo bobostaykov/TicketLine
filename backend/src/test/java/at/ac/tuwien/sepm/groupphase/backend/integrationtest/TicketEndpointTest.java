@@ -1,14 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.integrationtest;
 
-import at.ac.tuwien.sepm.groupphase.backend.datatype.EventType;
-import at.ac.tuwien.sepm.groupphase.backend.datatype.PriceCategory;
 import at.ac.tuwien.sepm.groupphase.backend.datatype.TicketStatus;
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.artist.ArtistDTO;
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.customer.CustomerDTO;
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.event.EventDTO;
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.hall.HallDTO;
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.location.LocationDTO;
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.seat.SeatDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.show.ShowDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.ticket.TicketDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.*;
