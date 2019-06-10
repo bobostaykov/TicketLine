@@ -16,6 +16,7 @@
 //import org.springframework.beans.factory.annotation.Autowired;
 //import static org.hamcrest.core.Is.is;
 //import org.junit.Assert;
+//import org.springframework.data.domain.Page;
 //import org.springframework.http.HttpHeaders;
 //import org.springframework.http.HttpStatus;
 //
@@ -93,20 +94,21 @@
 //    private final LocalTime SHOW_TIME_4 = LocalTime.parse( "10:30", timeFormatter);
 //    private static final String SHOW_DESCRIPTION_1_3 = "description";
 //    private static final String SHOW_DESCRIPTION_4 = "Top-Abend";
-//    Location locationAustria;
-//    Location locationGermany;
-//    Artist artist1;
-//    Artist artist2;
-//    Hall hall1;
-//    Hall hall2;
-//    Event event1;
-//    Event event2;
-//    Show show1;
-//    Show show2;
-//    Show show3;
-//    Show show4;
-//    PricePattern pricePattern1;
-//    PricePattern pricePattern2;
+//
+//    private Location locationAustria;
+//    private Location locationGermany;
+//    private Artist artist1;
+//    private Artist artist2;
+//    private Hall hall1;
+//    private Hall hall2;
+//    private Event event1;
+//    private Event event2;
+//    private Show show1;
+//    private Show show2;
+//    private Show show3;
+//    private Show show4;
+//    private PricePattern pricePattern1;
+//    private PricePattern pricePattern2;
 //
 //    private static final String SEARCH_DATEFROM_QUERY = "dateFrom=";
 //    private static final String SEARCH_DATETO_QUERY = "dateTo=";
@@ -168,16 +170,17 @@
 //
 //    @Test
 //    public void findShowsByStartDate_findsCorrectNumberOfFittingEvents(){
-//        String query = SHOWS_SEARCH_ENDPOINT+ SEARCH_DATEFROM_QUERY + DATE_1;
+//        String query = SHOWS_SEARCH_ENDPOINT + SEARCH_DATEFROM_QUERY + DATE_1;
 //            Response response = RestAssured
 //                .given()
 //                .contentType(ContentType.JSON)
 //                .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
 //                .when().get(SHOWS_SEARCH_ENDPOINT + SEARCH_DATEFROM_QUERY + DATE_1)
 //                .then().extract().response();
+//            response.print();
 //        Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
-//        List<Show> shows = response.jsonPath().getList("$");
-//        Assert.assertTrue(shows.size() == 3);
+//        //List<Show> shows = response.jsonPath().getList("$['content']");
+//        //Assert.assertEquals(shows.size(), 2);
 //    }
 //
 //
@@ -199,9 +202,9 @@
 //    @Test
 //    public void repositoryTest(){
 //        ShowSearchParametersDTO parametersDTO = ShowSearchParametersDTO.builder().eventName("irthday").build();
-//        List<Show> shows = showRepository.findAllShowsFiltered(ShowSearchParametersDTO.builder().eventName("irthday").build());
+//        Page<Show> showPage = showRepository.findAllShowsFiltered(ShowSearchParametersDTO.builder().eventName("irthday").build(),0);
 //        System.out.println("fu");
-//        Assert.assertTrue(!shows.isEmpty());
+//        Assert.assertTrue(showPage.hasContent());
 //    }
 //
 //    @Test
@@ -343,9 +346,6 @@
 //        List<Show> shows = response.jsonPath().getList("$");
 //        Assert.assertTrue(shows.size() == 3);
 //    }
-//
-//
-//
 //}
 //
 //
