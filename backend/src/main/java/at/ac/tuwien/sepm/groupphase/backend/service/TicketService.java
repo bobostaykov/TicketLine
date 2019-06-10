@@ -84,4 +84,12 @@ public interface TicketService {
      * @return receipt PDF
      */
     MultipartFile getReceipt(List<String> ticketIDs) throws Exception;
+
+    /**
+     * Delete ticket(s) by id and receive storno receipt
+     *
+     * @param tickets list of ticket ids
+     * @return Storno receipt for deleted tickets as MultipartFile
+     */
+    MultipartFile deleteAndGetStornoReceipt(List<String> tickets) throws Exception;
 }
