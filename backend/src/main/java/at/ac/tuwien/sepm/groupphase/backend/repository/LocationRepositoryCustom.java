@@ -2,21 +2,24 @@ package at.ac.tuwien.sepm.groupphase.backend.repository;
 
 import at.ac.tuwien.sepm.groupphase.backend.entity.Location;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
 public interface LocationRepositoryCustom {
 
     /**
+     * Find locations filtered by attributes
      *
-     * @param country country of the location
-     * @param city city of the location
-     * @param street street of the location
-     * @param postalCode postalcode of the location
-     * @param description description of the location
-     * @return
+     * @param country of the location
+     * @param city of the location
+     * @param street of the location
+     * @param postalCode of the location
+     * @param description of the location
+     * @param page the number of the page to return
+     * @return a page of the found locations
      */
-    List<Location> findLocationsFiltered(String country, String city, String street, String postalCode, String description);
+    Page<Location> findLocationsFiltered(String country, String city, String street, String postalCode, String description, Integer page);
 
     /**
      * @return a list of the names of all countries ordered alphabetically

@@ -4,14 +4,20 @@ import at.ac.tuwien.sepm.groupphase.backend.datatype.EventType;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.searchParameters.EventSearchParametersDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.*;
 
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.EventRepositoryCustom;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,9 +36,10 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
 
     @Override
 
-    public List<Event> findAllEventsFiltered(EventSearchParametersDTO parameters) throws PersistenceException {
+    public Page<Event> findAllEventsFiltered(EventSearchParametersDTO parameters, Integer page) throws PersistenceException {
 
         LOGGER.info("Find Events filtered by: " + parameters.toString());
+
         CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
         List<Predicate> predicates = new ArrayList<>();
         em.getMetamodel();
@@ -66,8 +73,17 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
 
         query.select(eventRoot).where(predicates.toArray(new Predicate[predicates.size()]));
         query.orderBy(criteriaBuilder.asc(eventRoot.get(Event_.eventType))).orderBy(criteriaBuilder.asc(eventRoot.get(Event_.name)));
-        List results = em.createQuery(query).getResultList();
-        return results;
+
+        TypedQuery typedQuery = em.createQuery(query);
+        List<Event> eventList = typedQuery.getResultList();
+        if (eventList.isEmpty()) {
+            throw new NotFoundException("No events are found with those parameters");
+        }
+        int pageSize = 10;
+        int totalElements = eventList.size();
+        Pageable pageable = PageRequest.of(page, pageSize);
+
+        return new PageImpl<>(eventList, pageable, totalElements);
     }
     /*
     @Query("SELECT e.name, SUM(s.ticketsSold) FROM Show s, Event e WHERE s.event = e.id AND MONTHNAME(s.date) IN :monthsSet AND e.eventType IN :categoriesSet GROUP BY s.event ORDER BY SUM(s.ticketsSold) DESC")

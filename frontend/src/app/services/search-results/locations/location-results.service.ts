@@ -13,7 +13,7 @@ export class LocationResultsService {
 
   constructor(private httpClient: HttpClient, private globals: Globals) { }
 
-  public findLocationsFiltered(country, city, street, postalCode, description): Observable<Location[]> {
+  public findLocationsFiltered(country, city, street, postalCode, description, page): Observable<Location[]> {
     console.log('Location Service: findLocationsFiltered');
     let parameters = new HttpParams();
     parameters = country ? parameters.append('country', country) : parameters;
@@ -21,6 +21,7 @@ export class LocationResultsService {
     parameters = street ? parameters.append('street', street) : parameters;
     parameters = postalCode ? parameters.append('postalCode', postalCode) : parameters;
     parameters = description ? parameters.append('postalCode', description) : parameters;
+    parameters = parameters.append('page', page);
     return this.httpClient.get<Location[]>(this.locationsBaseUri, {params: parameters});
   }
 

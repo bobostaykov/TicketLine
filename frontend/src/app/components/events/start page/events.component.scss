@@ -10,3 +10,24 @@
 .left {
   float: left;
 }
+
+ul {
+  border-radius: 10px;
+  border: 1px solid lightblue;
+}
+
+li {
+  border-left: 1px solid lightblue;
+}
+
+li:first-child {
+  border: none;
+}
+
+a:first-child {
+  padding: 4px 16px; font-size: 20px;
+}
+
+a:last-child {
+  padding: 4px 16px; font-size: 20px;
+}

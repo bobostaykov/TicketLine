@@ -8,7 +8,7 @@
   </tr>
   </thead>
   <tbody>
-  <tr *ngFor="let location of locations | slice: (page - 1) * pageSize : page * pageSize" routerLink="/events/search/results/shows" [queryParams]="{resultsFor: 'LOCATION', id: location.id}">
+  <tr *ngFor="let location of locations" routerLink="/events/search/results/shows" [queryParams]="{resultsFor: 'LOCATION', id: location.id}">
     <td class="align-middle">{{location.country}}</td>
     <td class="align-middle">{{location.city}}</td>
     <td class="align-middle">{{location.postalCode}}</td>
@@ -18,10 +18,15 @@
   </tbody>
 </table>
 <div class="justify-content-center">
-  <ngb-pagination
-    [(page)]="page"
-    [pageSize]="pageSize"
-    [collectionSize]="locations.length"
-    *ngIf="dataReady">
-  </ngb-pagination>
+  <ul class ="nav nav-pills">
+    <li class="nav-item">
+      <a class="nav-link" href="" (click)="previousPage($event)">«</a>
+    </li>
+    <li class="nav-item" *ngFor="let p of pages; let i = index">
+      <a class="nav-link" href="" (click)="setPage(i, $event)" [ngClass]="{'active': i == page}">{{i}}</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="" (click)="nextPage($event)">»</a>
+    </li>
+  </ul>
 </div>

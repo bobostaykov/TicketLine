@@ -40,9 +40,9 @@ export class EventService {
   /**
    * Get all events from backend
    */
-  public getAllEvents(): Observable<Event[]> {
+  public getAllEvents(page: number): Observable<Event[]> {
     console.log('Get all events');
-    return this.httpClient.get<Event[]>(this.eventBaseUri);
+    return this.httpClient.get<Event[]>(this.eventBaseUri + '/?page=' + page);
   }
 
 }

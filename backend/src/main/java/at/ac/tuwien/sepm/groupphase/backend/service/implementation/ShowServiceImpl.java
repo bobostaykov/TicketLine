@@ -11,6 +11,9 @@ import org.hibernate.service.spi.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.PersistenceException;
@@ -37,63 +40,74 @@ public class ShowServiceImpl implements ShowService {
     }
     public ShowServiceImpl(){}
 
-
+    /*
     @Override
-    public List<ShowDTO> findAllShows() throws at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException {
-        return showMapper.showToShowDTO(showRepository.findAll());
-    }
-
-    @Override
-    public List<ShowDTO> findAllShowsFilteredByEventName(String eventName) {
+    public Page<ShowDTO> findAllShowsFilteredByEventName(String eventName, Integer page) {
         LOGGER.info("Find all shows filtered by event id");
         try {
-            return showMapper.showToShowDTO(showRepository.findAllShowsFilteredByEventName(eventName));
+            int pageSize = 10;
+            if(page < 0) {
+                throw new IllegalArgumentException("Not a valid page.");
+            }
+            Pageable pageable = PageRequest.of(page, pageSize);
+            Page<Show> page1 = showRepository.findAllShowsFilteredByEventName(eventName, pageable);
+            LOGGER.debug("PageToString: " + page1.toString());
+            LOGGER.debug("TotalElements: " + page1.getTotalElements());
+            LOGGER.debug("TotalPages: " + page1.getTotalPages());
+            LOGGER.debug("Content: " + page1.getContent());
+            LOGGER.debug("Size: " + page1.getContent().size());
+            return page1.map(showMapper::showToShowDTO);
         } catch (PersistenceException e) {
             throw new ServiceException(e.getMessage(), e);
         }
     }
+    */
 
     @Override
-    public List<ShowDTO> findAll() {
+    public Page<ShowDTO> findAll(Integer page) throws ServiceException {
         LOGGER.info("Show Service: Find all shows");
-        try{
-            return showMapper.showToShowDTO(showRepository.findAll());
-        } catch (PersistenceException e) {
-            throw new ServiceException(e.getMessage(), e);
-        }
-    }
-/*
-    @Override
-    public List<Show> findAllShowsFilteredByLocationID(Integer locationID) {
-        LOGGER.info("Find all shows filtered by location id");
         try {
-            if (locationID < 0) throw new IllegalArgumentException("The location id is negative");
-            return showRepository.findAllByLocationID(locationID);
+            int pageSize = 10;
+            if(page < 0) {
+                throw new IllegalArgumentException("Not a valid page.");
+            }
+            Pageable pageable = PageRequest.of(page, pageSize);
+            return showRepository.findAll(pageable).map(showMapper::showToShowDTO);
         } catch (PersistenceException e) {
-            throw new ServiceException(e.getMessage(), e);
+            throw new ServiceException(e.getMessage());
         }
     }
-*/
+
     @Override
-    public List<ShowDTO> findAllShowsFiltered(ShowSearchParametersDTO parameters) throws ServiceException {
+    public Page<ShowDTO> findAllShowsFiltered(ShowSearchParametersDTO parameters, Integer page) throws ServiceException {
         try{
-            LOGGER.info("Find all shows filtered by :" + parameters.toString());
-
-            List<ShowDTO> showList = showMapper.showToShowDTO(showRepository.findAllShowsFiltered(parameters));
-            return showList;
-
+            LOGGER.info("Show Service: Find all shows filtered by :" + parameters.toString());
+            if(page < 0) {
+                throw new IllegalArgumentException("Not a valid page.");
+            }
+            return showRepository.findAllShowsFiltered(parameters, page).map(showMapper::showToShowDTO);
         }catch (PersistenceException e){
             throw new ServiceException(e.getMessage(), e);
         }
 
     }
 
-
     @Override
-    public List<ShowDTO> findAllShowsFilteredByLocation(String country, String city, String postalcode, String street) {
-        LOGGER.info("Find all shows filtered by location");
-        return null;
+    public Page<ShowDTO> findAllShowsFilteredByLocationID(Long locationID, Integer page) {
+        LOGGER.info("Show Service: Find all shows filtered by location id");
+        try {
+            if (locationID < 0) throw new IllegalArgumentException("The location id is negative");
+            int pageSize = 10;
+            if (page < 0) {
+                throw new IllegalArgumentException("Not a valid page.");
+            }
+            Pageable pageable = PageRequest.of(page, pageSize);
+            return showRepository.findAllByHall_Location_Id(locationID, pageable).map(showMapper::showToShowDTO);
+        } catch (PersistenceException e) {
+            throw new ServiceException(e.getMessage(), e);
+        }
     }
+
     /*
     private static Predicate<ShowDTO> compareMinPrice(Double minPrice){
         return show -> show.getPricePattern()

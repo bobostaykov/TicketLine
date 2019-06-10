@@ -14,19 +14,18 @@ export class ShowResultsService {
 
   constructor(private httpClient: HttpClient, private globals: Globals) { }
 
-  public findShowsFilteredByEventName(eventName): Observable<Show[]> {
+  public findShowsFilteredByEventName(eventName, page): Observable<Show[]> {
     console.log('ShowResultsService: findShowsFilteredByEventName');
-    return this.httpClient.get<Show[]>(this.showBaseUri + '/event', {params: {eventName: eventName}});
+    return this.httpClient.get<Show[]>(this.showBaseUri + '/filter', {params: {eventName: eventName, page: page}});
   }
 
-  public findShowsFilteredByLocationID(id): Observable<Show[]> {
+  public findShowsFilteredByLocationID(id, page): Observable<Show[]> {
     console.log('ShowResultsService: findShowsFilteredByLocationID');
-    return this.httpClient.get<Show[]>(this.showBaseUri + '/location/' + id);
+    return this.httpClient.get<Show[]>(this.showBaseUri + '/location/' + id, {params: {page: page}});
   }
 
-  // TODO sending DataTypes instead of strings?
   public findShowsFilteredByShowAttributes(eventName, hallName, dateFrom, dateTo, timeFrom, timeTo, minPrice, maxPrice,
-                                           duration, country, city, street, postalCode) {
+                                           duration, country, city, street, postalCode, page) {
     console.log('ShowResultsService: findShowsFilteredByShowAttributes');
     let parameters = new HttpParams();
     parameters = eventName ? parameters.append('eventName', eventName) : parameters;
@@ -42,6 +41,7 @@ export class ShowResultsService {
     parameters = city ? parameters.append('city', city) : parameters;
     parameters = street ? parameters.append('street', street) : parameters;
     parameters = postalCode ? parameters.append('postalCode', postalCode) : parameters;
+    parameters = parameters.append('page', page);
     return this.httpClient.get<Show[]>(this.showBaseUri + '/filter', { params: parameters });
   }
 }

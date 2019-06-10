@@ -7,14 +7,14 @@ import at.ac.tuwien.sepm.groupphase.backend.repository.ShowRepositoryCustom;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Repository
@@ -30,9 +30,10 @@ public class ShowRepositoryImpl implements ShowRepositoryCustom {
 
 
     @Override
-    public List<Show> findAllShowsFiltered(ShowSearchParametersDTO parameters) {
+    public Page<Show> findAllShowsFiltered(ShowSearchParametersDTO parameters, Integer page) {
 
-        LOGGER.info("find shows filtered by " + parameters.toString());
+        LOGGER.info("Find shows filtered by " + parameters.toString());
+
         CriteriaBuilder cBuilder = em.getCriteriaBuilder();
         //Sammlung der Bedingungen
         List<Predicate> predicates = new ArrayList<>();
@@ -40,15 +41,13 @@ public class ShowRepositoryImpl implements ShowRepositoryCustom {
         CriteriaQuery<Show> criteriaQuery = cBuilder.createQuery(Show.class);
         Root<Show> show = criteriaQuery.from(Show.class);
 
-        // with poissibility to default to today to show only coming events
+        // with possibility to default to today to show only coming events
         if (parameters.getDateFrom() != null) {
             predicates.add(cBuilder.greaterThanOrEqualTo(show.get(Show_.date), parameters.getDateFrom()));
         }
-        /*}else{
-            predicates.add(cBuilder.greaterThanOrEqualTo(show.get(Show_.date), LocalDate.now()));
-        }
-
-         */
+        //}else{
+        //   predicates.add(cBuilder.greaterThanOrEqualTo(show.get(Show_.date), LocalDate.now()));
+        //}
 
         if (parameters.getDateTo() != null) {
             predicates.add(cBuilder.lessThanOrEqualTo(show.get(Show_.date), parameters.getDateTo()));
@@ -137,27 +136,37 @@ public class ShowRepositoryImpl implements ShowRepositoryCustom {
 
         //Übergabe der Predicates
         criteriaQuery.select(show).where(predicates.toArray(new Predicate[predicates.size()]));
-        List<Show> results = em.createQuery(criteriaQuery).getResultList();
+        TypedQuery<Show> typedQuery = em.createQuery(criteriaQuery);
+        List<Show> showList = typedQuery.getResultList();
+
         //Filtern nach Preisen
-        if ((parameters.getPriceInEuroFrom() != null || parameters.getPriceInEuroTo() != null) && !results.isEmpty()) {
+        if ((parameters.getPriceInEuroFrom() != null || parameters.getPriceInEuroTo() != null) && !showList.isEmpty()) {
             if (parameters.getPriceInEuroFrom() != null) {
-                results = results.stream()
+                showList = showList.stream()
                     .filter(compareMinPrice(parameters.getPriceInEuroFrom().doubleValue()))
                     .collect(Collectors.toList());
             }
             if (parameters.getPriceInEuroTo() != null) {
-                results = results.stream()
+                showList = showList.stream()
                     .filter(compareMaxPrice(parameters.getPriceInEuroTo().doubleValue()))
                     .collect(Collectors.toList());
             }
         }
+
         //Sortieren
         Comparator<Show> byDate = Comparator.comparing(s -> s.getDate() );
         Comparator<Show> byTime = Comparator.comparing(s -> s.getTime());
         Comparator<Show> byId = Comparator.comparing(s -> s.getId());
-        results = results.stream()
+        showList = showList.stream()
             .sorted(byDate.thenComparing(byTime).thenComparing(byId)).collect(Collectors.toList());
-        return results;
+
+
+        // Filters from the result only the wanted page
+        int pageSize = 10;
+        int totalElements = showList.size();
+        Pageable pageable = PageRequest.of(page, pageSize);
+
+        return new PageImpl<>(showList, pageable, totalElements);
     }
 
     private static java.util.function.Predicate<Show> compareMaxPrice(Double maxPrice){
