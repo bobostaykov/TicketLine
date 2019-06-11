@@ -52,6 +52,8 @@ import {TicketComponent} from './components/ticket/ticket.component';
     FloorplanControlComponent,
     FloorplanComponent,
     CustomerComponent,
+    TicketComponent,
+    CustomerDialogComponent,
     CustomerDialogComponent,
     TicketComponent,
     BlockedUsersComponent,
