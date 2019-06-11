@@ -1,3 +1,25 @@
-<p>
-  floorplan-ticket works!
-</p>
+<div id="ticket-container">
+  <h3 class="text-center bg-secondary py-2">Tickets</h3>
+  <div class="ticket-list">
+    <div *ngFor="let ticket of tickets" class="ticket" (contextmenu)="displayContextmenu(ticket, $event)"
+         (click)="displayContextmenu(ticket, $event)">
+      <div class="ticketContent">
+        <div class="showtitle">
+          <p>Show Name</p>
+        </div>
+        <div class="ticketInfo">
+          <div *ngIf="ticket.seatNumber">Seat<p>{{ticket.seatNumber}}</p></div>
+          <div *ngIf="ticket.seatRow">Row<p>{{ticket.seatRow}}</p></div>
+          <div *ngIf="ticket.sectorNumber">Sector Number<p>{{ticket.sectorNumber}}</p></div>
+          <div>Price<p>{{ticket.priceCategory}}</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <a mat-raised-button color="primary">Buy Tickets</a>
+</div>
+
+<!-- div containing context menu for deleting tickets -->
+<div id="contextmenuTicket" class="dropdown-menu shadow-sm">
+  <button class="btn dropdown-item" (click)="deleteSelectedTicket()">Delete Ticket</button>
+</div>
