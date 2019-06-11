@@ -1,7 +1,5 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.event;
 
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.user.UserDTO;
-
 import java.util.List;
 import java.util.Objects;
 

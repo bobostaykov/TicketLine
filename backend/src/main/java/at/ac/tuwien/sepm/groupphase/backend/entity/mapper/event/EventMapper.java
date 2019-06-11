@@ -3,7 +3,6 @@ package at.ac.tuwien.sepm.groupphase.backend.entity.mapper.event;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.event.EventDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Event;
 import org.mapstruct.Mapper;
-import org.springframework.data.domain.Page;
 
 import java.util.List;
 

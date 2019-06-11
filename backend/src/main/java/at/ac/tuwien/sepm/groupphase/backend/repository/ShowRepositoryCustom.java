@@ -5,8 +5,6 @@ import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.searchParameters.ShowSe
 import at.ac.tuwien.sepm.groupphase.backend.entity.Show;
 import org.springframework.data.domain.Page;
 
-import java.util.List;
-
 public interface ShowRepositoryCustom {
 
     /**

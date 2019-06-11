@@ -61,6 +61,7 @@ export class UserComponent implements OnInit {
         this.userForm.controls.password.value,
         UserType[this.selectedUserType.toUpperCase()],
         new Date().toISOString(),
+        null,
         null
       );
       this.createUser(user);

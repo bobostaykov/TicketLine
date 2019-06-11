@@ -16,9 +16,9 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.PersistenceException;
 import java.util.ArrayList;
 import java.util.Comparator;
-import javax.persistence.PersistenceException;
 import java.util.List;
 import java.util.Optional;
 

@@ -4,7 +4,6 @@ import at.ac.tuwien.sepm.groupphase.backend.configuration.JacksonConfiguration;
 import at.ac.tuwien.sepm.groupphase.backend.security.AuthenticationConstants;
 import at.ac.tuwien.sepm.groupphase.backend.security.AuthenticationEventListener;
 import at.ac.tuwien.sepm.groupphase.backend.service.HeaderTokenAuthenticationService;
-import at.ac.tuwien.sepm.groupphase.backend.service.UserService;
 import at.ac.tuwien.sepm.groupphase.backend.service.implementation.AppUserDetailsService;
 import io.restassured.RestAssured;
 import io.restassured.config.ObjectMapperConfig;

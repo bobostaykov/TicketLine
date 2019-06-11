@@ -5,7 +5,6 @@ import at.ac.tuwien.sepm.groupphase.backend.entity.LoginAttempts_;
 import at.ac.tuwien.sepm.groupphase.backend.entity.User;
 import at.ac.tuwien.sepm.groupphase.backend.entity.User_;
 import at.ac.tuwien.sepm.groupphase.backend.repository.UserRepositoryCustom;
-import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,6 +1,5 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.event;
 
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.user.UserDTO;
 import io.swagger.annotations.ApiModel;
 
 import java.util.Objects;
