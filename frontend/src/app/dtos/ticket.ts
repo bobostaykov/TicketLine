@@ -11,6 +11,6 @@ export class Ticket {
     public price: number,
     public seat: Seat,
     public sector: Sector,
-    public status: string) {
+    public status: TicketType) {
   }
 }
