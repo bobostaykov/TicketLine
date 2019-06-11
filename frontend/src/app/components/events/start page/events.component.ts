@@ -15,11 +15,11 @@ export class EventsComponent implements OnInit {
   private error: boolean = false;
   private errorMessage: string = '';
   private events: Event[];
-  private headers: string[] = [
-    'Name',
-    'Type',
-    'Artist'
-  ];
+  private headers: Map<string, string> = new Map([
+    ['Name', '45%'],
+    ['Type', '25%'],
+    ['Artist', '30%']
+  ]);
 
   constructor(private eventService: EventService) { }
 

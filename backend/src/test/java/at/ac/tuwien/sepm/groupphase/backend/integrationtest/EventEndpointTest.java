@@ -3,6 +3,7 @@ package at.ac.tuwien.sepm.groupphase.backend.integrationtest;
 import at.ac.tuwien.sepm.groupphase.backend.datatype.EventType;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.event.EventDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.event.EventTicketsDTO;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.event.TopTenDetailsDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Event;
 import at.ac.tuwien.sepm.groupphase.backend.integrationtest.base.BaseIntegrationTest;
 import at.ac.tuwien.sepm.groupphase.backend.repository.EventRepository;
@@ -16,10 +17,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import javax.persistence.Tuple;
+import javax.persistence.TupleElement;
+import java.util.*;
 
 import static org.hamcrest.core.Is.is;
 
@@ -34,7 +34,9 @@ public class EventEndpointTest extends BaseIntegrationTest {
     private static final EventType TEST_EVENT_TYPE = EventType.FESTIVAL;
     private static final Long TEST_TICKETS_SOLD = 10000L;
     private static Set<String> monthsSet = new HashSet<>(Arrays.asList(MONTHS.split(",")));
+    private static List<String> monthsList = Arrays.asList(MONTHS.split(","));
     private static Set<EventType> categoriesSet = new HashSet<>(Arrays.asList(EventType.valueOf("OPERA"), EventType.valueOf("FESTIVAL"), EventType.valueOf("THEATRE")));
+    private static List<String> categoriesList = Arrays.asList(CATEGORIES.split(","));
 
     @MockBean
     private EventRepository eventRepository;
@@ -44,7 +46,7 @@ public class EventEndpointTest extends BaseIntegrationTest {
         Response response = RestAssured
             .given()
             .contentType(ContentType.JSON)
-            .when().get(EVENT_ENDPOINT + TOP_TEN_EVENTS_PATH)
+            .when().post(EVENT_ENDPOINT + TOP_TEN_EVENTS_PATH)
             .then().extract().response();
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.UNAUTHORIZED.value()));
     }
@@ -53,12 +55,54 @@ public class EventEndpointTest extends BaseIntegrationTest {
     public void findTopTenEventsAsUser() {
         BDDMockito
             .given(eventRepository.findTopTenEvents(monthsSet, categoriesSet))
-            .willReturn(Collections.singletonList(new Object[]{TEST_EVENT_NAME, TEST_TICKETS_SOLD}));
+            .willReturn(Collections.singletonList(new Tuple() {
+                @Override
+                public <X> X get(TupleElement<X> tupleElement) {
+                    return null;
+                }
+
+                @Override
+                public <X> X get(String s, Class<X> aClass) {
+                    return null;
+                }
+
+                @Override
+                public Object get(String s) {
+                    return null;
+                }
+
+                @Override
+                public <X> X get(int i, Class<X> aClass) {
+                    return null;
+                }
+
+                @Override
+                public Object get(int i) {
+                    List<Object> list = new ArrayList<>(){};
+                    list.add(TEST_EVENT_NAME);
+                    list.add(TEST_TICKETS_SOLD);
+                    return list.get(i);
+                }
+
+                @Override
+                public Object[] toArray() {
+                    return new Object[0];
+                }
+
+                @Override
+                public List<TupleElement<?>> getElements() {
+                    return null;
+                }
+            }));
         Response response = RestAssured
             .given()
             .contentType(ContentType.JSON)
+            .body(TopTenDetailsDTO.builder()
+                .months(monthsList)
+                .categories(categoriesList)
+                .build())
             .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
-            .when().get(EVENT_ENDPOINT + TOP_TEN_EVENTS_PATH + "?months=" + MONTHS + "&categories=" + CATEGORIES)
+            .when().post(EVENT_ENDPOINT + TOP_TEN_EVENTS_PATH)
             .then().extract().response();
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
         Assert.assertThat(Arrays.asList(response.as(EventTicketsDTO[].class)), is(Collections.singletonList(
@@ -72,12 +116,54 @@ public class EventEndpointTest extends BaseIntegrationTest {
     public void findTopTenEventsAsAdmin() {
         BDDMockito
             .given(eventRepository.findTopTenEvents(monthsSet, categoriesSet))
-            .willReturn(Collections.singletonList(new Object[]{TEST_EVENT_NAME, TEST_TICKETS_SOLD}));
+            .willReturn(Collections.singletonList(new Tuple() {
+                @Override
+                public <X> X get(TupleElement<X> tupleElement) {
+                    return null;
+                }
+
+                @Override
+                public <X> X get(String s, Class<X> aClass) {
+                    return null;
+                }
+
+                @Override
+                public Object get(String s) {
+                    return null;
+                }
+
+                @Override
+                public <X> X get(int i, Class<X> aClass) {
+                    return null;
+                }
+
+                @Override
+                public Object get(int i) {
+                    List<Object> list = new ArrayList<>(){};
+                    list.add(TEST_EVENT_NAME);
+                    list.add(TEST_TICKETS_SOLD);
+                    return list.get(i);
+                }
+
+                @Override
+                public Object[] toArray() {
+                    return new Object[0];
+                }
+
+                @Override
+                public List<TupleElement<?>> getElements() {
+                    return null;
+                }
+            }));
         Response response = RestAssured
             .given()
             .contentType(ContentType.JSON)
+            .body(TopTenDetailsDTO.builder()
+                .months(monthsList)
+                .categories(categoriesList)
+                .build())
             .header(HttpHeaders.AUTHORIZATION, validAdminTokenWithPrefix)
-            .when().get(EVENT_ENDPOINT + TOP_TEN_EVENTS_PATH + "?months=" + MONTHS + "&categories=" + CATEGORIES)
+            .when().post(EVENT_ENDPOINT + TOP_TEN_EVENTS_PATH)
             .then().extract().response();
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
         Assert.assertThat(Arrays.asList(response.as(EventTicketsDTO[].class)), is(Collections.singletonList(

@@ -4,7 +4,6 @@ import at.ac.tuwien.sepm.groupphase.backend.datatype.EventType;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.event.EventDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.event.EventTicketsDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.searchParameters.EventSearchParametersDTO;
-import at.ac.tuwien.sepm.groupphase.backend.entity.EventTickets;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 
 import java.util.List;

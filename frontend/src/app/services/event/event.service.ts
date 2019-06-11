@@ -5,6 +5,7 @@ import {Observable} from 'rxjs';
 import {EventTickets} from '../../dtos/event_tickets';
 import {ResultsFor} from '../../datatype/results_for';
 import {Event} from '../../dtos/event';
+import {TopTenDetails} from '../../dtos/top-ten-details';
 
 // TODO public or default methods
 
@@ -20,10 +21,9 @@ export class EventService {
   /**
    * Get top ten events from backend
    */
-  public getTopTenEvents(monthsArray: string[], categoriesArray: string[]): Observable<EventTickets[]> {
+  public getTopTenEvents(monthsCats: TopTenDetails): Observable<EventTickets[]> {
     console.log('Get top 10 events');
-    return this.httpClient.get<EventTickets[]>(this.eventBaseUri + '/topten',
-      {params: { months: monthsArray.join(','), categories: categoriesArray.join(',') }});
+    return this.httpClient.post<EventTickets[]>(this.eventBaseUri + '/topten', monthsCats);
   }
 
   /**

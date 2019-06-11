@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.Tuple;
 import java.util.List;
 import java.util.Set;
 
@@ -19,7 +20,7 @@ public interface EventRepository extends JpaRepository<Event, Long>, EventReposi
      * @return ordered list of top 10 events
     */
     @Query("SELECT e.name, SUM(s.ticketsSold) FROM Show s, Event e WHERE s.event = e.id AND MONTHNAME(s.date) IN :monthsSet AND e.eventType IN :categoriesSet GROUP BY s.event ORDER BY SUM(s.ticketsSold) DESC")
-    List<Object[]> findTopTenEvents(@Param("monthsSet") Set<String> monthsSet, @Param("categoriesSet") Set<EventType> categoriesSet);
+    List<Tuple> findTopTenEvents(@Param("monthsSet") Set<String> monthsSet, @Param("categoriesSet") Set<EventType> categoriesSet);
 
     /**
      * Get all events by name.

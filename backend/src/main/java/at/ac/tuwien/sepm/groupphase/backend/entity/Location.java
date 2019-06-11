@@ -32,7 +32,7 @@ public class Location {
     @Size(max = 64)
     private String street;
 
-    @Column(nullable = false, name = "houseNr")
+    @Column(name = "houseNr")
     private Integer houseNr;
 
     @Column(name = "description")

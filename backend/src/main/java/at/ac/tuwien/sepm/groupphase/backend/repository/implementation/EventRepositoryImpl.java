@@ -2,8 +2,10 @@ package at.ac.tuwien.sepm.groupphase.backend.repository.implementation;
 
 import at.ac.tuwien.sepm.groupphase.backend.datatype.EventType;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.searchParameters.EventSearchParametersDTO;
-import at.ac.tuwien.sepm.groupphase.backend.entity.*;
-
+import at.ac.tuwien.sepm.groupphase.backend.entity.Artist;
+import at.ac.tuwien.sepm.groupphase.backend.entity.Artist_;
+import at.ac.tuwien.sepm.groupphase.backend.entity.Event;
+import at.ac.tuwien.sepm.groupphase.backend.entity.Event_;
 import at.ac.tuwien.sepm.groupphase.backend.repository.EventRepositoryCustom;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

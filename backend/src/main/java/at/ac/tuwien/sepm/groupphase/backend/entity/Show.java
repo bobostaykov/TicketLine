@@ -1,7 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.entity;
 
 import javax.persistence.*;
-import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;

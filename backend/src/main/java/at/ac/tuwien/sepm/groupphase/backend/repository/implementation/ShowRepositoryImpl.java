@@ -1,7 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.repository.implementation;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.searchParameters.ShowSearchParametersDTO;
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.show.ShowDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.*;
 import at.ac.tuwien.sepm.groupphase.backend.repository.ShowRepositoryCustom;
 import org.slf4j.Logger;
@@ -14,7 +13,6 @@ import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Repository

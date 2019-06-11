@@ -8,14 +8,12 @@ import at.ac.tuwien.sepm.groupphase.backend.repository.LocationRepository;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
-import org.assertj.core.condition.Not;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.BDDMockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.Arrays;
 import java.util.Collections;

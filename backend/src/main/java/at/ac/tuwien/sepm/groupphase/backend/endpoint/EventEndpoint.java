@@ -3,8 +3,8 @@ package at.ac.tuwien.sepm.groupphase.backend.endpoint;
 import at.ac.tuwien.sepm.groupphase.backend.datatype.EventType;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.event.EventDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.event.EventTicketsDTO;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.event.TopTenDetailsDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.searchParameters.EventSearchParametersDTO;
-import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.event.EventTicketsMapper;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.service.EventService;
 import io.swagger.annotations.Api;
@@ -25,24 +25,22 @@ public class EventEndpoint {
 
     private final EventService eventService;
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
-    private final EventTicketsMapper eventTicketsMapper;
 
-    public EventEndpoint(EventService eventService, EventTicketsMapper eventTicketsMapper) {
+    public EventEndpoint(EventService eventService) {
         this.eventService = eventService;
-        this.eventTicketsMapper = eventTicketsMapper;
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/topten")
+    @RequestMapping(method = RequestMethod.POST, value = "/topten")
     @ApiOperation(value = "Get top 10 events", authorizations = {@Authorization(value = "apiKey")})
-    public List<EventTicketsDTO> findTopTenEvents(@RequestParam(value = "months") String months, @RequestParam(value = "categories") String categories) {
+    public List<EventTicketsDTO> findTopTenEvents(@RequestBody TopTenDetailsDTO details) {
         LOGGER.info("Event Endpoint: findTopTenEvents");
-        Set<String> monthsSet = new HashSet<>(Arrays.asList(months.split(",")));
+        Set<String> monthsSet = new HashSet<>(details.getMonths());
         Set<EventType> categoriesSet = new HashSet<>();
-        List<EventTicketsDTO> topTen = new ArrayList<>();
 
-        for (String s: categories.split(",")) {
+        for (String s: details.getCategories()) {
             categoriesSet.add(EventType.valueOf(s));
         }
+
         try {
             return new ArrayList<>(eventService.findTopTenEvents(monthsSet, categoriesSet));
         } catch (ServiceException e) {
