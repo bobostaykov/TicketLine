@@ -15,6 +15,7 @@ import {Hall} from '../../../dtos/hall';
 import {Location} from '../../../dtos/location';
 import {Ticket} from '../../../dtos/ticket';
 import {TicketService} from '../../../services/ticket/ticket.service';
+import {TicketType} from '../../../datatype/ticket_type';
 
 @Component({
   selector: 'app-ticket-check-reservation',
@@ -75,7 +76,7 @@ export class TicketCheckReservationComponent implements OnInit {
       for (const entry of this.ticket_seats) {
         this.seatsStr.push(entry.seatNumber.toString());
         this.rowStr.push(entry.seatRow.toString());
-        this.tickets.push(new Ticket(null, this.show, this.customer, this.price[this.idxPrice], entry, null, 'reservation'));
+        this.tickets.push(new Ticket(null, this.show, this.customer, this.price[this.idxPrice], entry, null, TicketType.RESERVATED));
         this.idxPrice += 1;
         this.priceTotal += this.price.pop();
       }
@@ -84,7 +85,7 @@ export class TicketCheckReservationComponent implements OnInit {
     if (this.ticket_sectors.length > 0) {
       this.amtTickets = this.ticket_sectors.length;
       for (const entry of this.ticket_sectors) {
-        this.tickets.push(new Ticket(null, this.show, this.customer, this.price[this.idxPrice], null, entry, 'reservation'));
+        this.tickets.push(new Ticket(null, this.show, this.customer, this.price[this.idxPrice], null, entry, TicketType.RESERVATED));
         this.idxPrice += 1;
         this.priceTotal += this.price.pop();
       }
