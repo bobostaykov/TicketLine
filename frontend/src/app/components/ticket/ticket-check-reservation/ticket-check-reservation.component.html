@@ -1,7 +1,51 @@
 <h1 class="mt-5 mb-4 left">Tickets - Check Reservation</h1>
 
-<h3  class="mt-5 mb-4 left"> Name: {{ticket.customer.name}}</h3>
 
+<font size="5">
+<table class="table table-borderless" bgcolor="#2E2E2E">
+  <tr>
+    <td scope="col"><font color="#848484">Name</font></td>
+    <td scope="col">{{customer.firstname}} {{customer.name}}</td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td scope="col"><font color="#848484">E-Mail</font></td>
+    <td scope="col">{{customer.email}}</td>
+  </tr>
+  <tr>
+    <td scope="col"><font color="#848484">Event</font></td>
+    <td scope="col">{{show.event.artist.name}} - {{show.event.name}}</td>
+  </tr>
+  <tr>
+    <td scope="col"><font color="#848484">Date</font></td>
+    <td scope="col">{{show.date}}</td>
+  </tr>
+  <tr>
+    <td scope="col"><font color="#848484">Location</font></td>
+    <td scope="col">{{show.hall.name}}, {{show.hall.location.street}}, {{show.hall.location.postalCode}} -
+      {{show.hall.location.city}}, {{show.hall.location.country}}</td>
+  </tr>
+  <tr>
+    <td scope="col"><font color="#848484">Amount of Tickets</font></td>
+    <td scope="col">{{amtTickets}}</td>
+  </tr>
+  <tr>
+    <td scope="col"><font color="#848484">Seats</font></td>
+  </tr>
+  <tr *ngFor="let seat of ticket_seats">
+    <td scope="col">  </td>
+    <td scope="col">Seat: {{seat.seatNumber}}, Row: {{seat.seatRow}}</td>
+  </tr>
+  <tr>
+    <td scope="col"><font color="#848484">Price Total</font></td>
+    <td scope="col">{{priceTotal}}</td>
+  </tr>
+</table>
+</font>
 
-
-<button mat-raised-button routerLink="/events/search" id="search" color="primary" class="mr-3 mt-5 mb-4 right">Search</button>
+<button type="button" class="btn btn-success col-2 mr-2 mb-4 float-right" (click)="createTicket()">Confirm</button>
+<button type="button" class="btn btn-secondary col-2 mr-2 mb-4 float-left">Change</button>
