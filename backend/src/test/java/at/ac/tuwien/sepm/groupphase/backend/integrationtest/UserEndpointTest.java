@@ -5,7 +5,7 @@ import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.SimpleNewsDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.user.UserDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.News;
 import at.ac.tuwien.sepm.groupphase.backend.entity.User;
-import at.ac.tuwien.sepm.groupphase.backend.integrationtest.base.BaseIntegrationTest;
+import at.ac.tuwien.sepm.groupphase.backend.integrationtest.base.BaseIntegrationTestWithMockedUserCredentials;
 import at.ac.tuwien.sepm.groupphase.backend.repository.UserRepository;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -26,7 +26,10 @@ import java.util.*;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.ArgumentMatchers.any;
 
-public class UserEndpointTest extends BaseIntegrationTest {
+public class UserEndpointTest extends BaseIntegrationTestWithMockedUserCredentials {
+
+    @MockBean
+    private UserRepository userRepository;
 
     private static final String USER_ENDPOINT = "/users";
     private static final String SPECIFIC_USER_PATH = "/{userId}";
@@ -41,8 +44,6 @@ public class UserEndpointTest extends BaseIntegrationTest {
     private static final List<News> TEST_READ_NEWS = new ArrayList<News>();
     private static final List<SimpleNewsDTO> TEST_READ_NEWS_DTO = new ArrayList<SimpleNewsDTO>();
 
-    @MockBean
-    private UserRepository userRepository;
 
     @Test
     public void findAllUsersUnauthorizedAsAnonymous() {
@@ -190,7 +191,7 @@ public class UserEndpointTest extends BaseIntegrationTest {
     @Test
     public void createUserAsAdmin() {
         BDDMockito.
-            given(userRepository.save(any(User.class))).
+            given(userRepository.createUser(any(User.class))).
             willReturn(User.builder()
                 .id(TEST_USER_ID)
                 .username(TEST_USER_NAME)
@@ -212,6 +213,7 @@ public class UserEndpointTest extends BaseIntegrationTest {
             .when().post(USER_ENDPOINT)
             .then().extract().response();
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.CREATED.value()));
+        UserDTO dto = response.as(UserDTO.class);
         Assert.assertThat(response.as(UserDTO.class), is(UserDTO.builder()
             .id(TEST_USER_ID)
             .username(TEST_USER_NAME)

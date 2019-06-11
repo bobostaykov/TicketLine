@@ -54,6 +54,7 @@ public class UserEndpoint {
     }
 
     @RequestMapping(method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "Create a user", authorizations = {@Authorization(value = "apiKey")})
     public UserDTO create(@RequestBody UserDTO userDTO) {
@@ -78,6 +79,35 @@ public class UserEndpoint {
         } catch (ServiceException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
+        LOGGER.info("\n\n\n" + id + "\n\n\n");
     }
+
+    @RequestMapping(value = "/blocked/{id}" ,method = RequestMethod.PUT)
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "block user by id", authorizations = {@Authorization(value = "apiKey")})
+    public boolean blockUser(@PathVariable Long id){
+        LOGGER.info("blocking user with id" + id);
+        try {
+            return userService.blockUser(id);
+        } catch (ServiceException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "error during blocking user with id: " + id +" "+ e.getMessage());
+        }
+    }
+    @RequestMapping(value = "blocked/unblock/{id}", method = RequestMethod.PUT)
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "unblock user by id", authorizations = {@Authorization(value = "apiKey")})
+    public boolean unblockUser(@PathVariable Long id){
+        LOGGER.info("unblocking user with id: " + id);
+        return userService.unblockUser(id);
+    }
+
+    @RequestMapping(value = "/blocked", method = RequestMethod.GET)
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "get all blocked users", authorizations = {@Authorization(value = "apiKey")})
+    public List<UserDTO> getAllBlockedUsers(){
+        LOGGER.info("get all blocked users");
+        return userService.getAllBlockedUsers();
+    }
+
 
 }

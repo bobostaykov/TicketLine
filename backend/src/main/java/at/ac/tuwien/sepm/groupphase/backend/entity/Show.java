@@ -124,6 +124,20 @@ public class Show {
         return Objects.hash(id, event, time, date, hall, description, ticketsSold);
     }
 
+    @Override
+    public String toString() {
+        return "Show{" +
+            "id=" + id +
+            ", event=" + event +
+            ", time=" + time +
+            ", date=" + date +
+            ", hall=" + hall +
+            ", description='" + description + '\'' +
+            ", ticketsSold=" + ticketsSold +
+            ", pricePattern=" + pricePattern +
+            '}';
+    }
+
     public static final class ShowBuilder {
         private Long id;
         private Event event;

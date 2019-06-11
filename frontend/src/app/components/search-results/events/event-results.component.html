@@ -8,7 +8,7 @@
   </tr>
   </thead>
   <tbody>
-  <tr *ngFor="let event of events | slice: (page - 1) * pageSize : page * pageSize" routerLink="/events/search/results/shows" [queryParams]="{resultsFor: 'EVENT', name: event.name}" >
+  <tr *ngFor="let event of events" routerLink="/events/search/results/shows" [queryParams]="{resultsFor: 'EVENT', name: event.name}" >
     <td class="align-middle">{{event.name}}</td>
     <td class="align-middle">{{event.eventType}}</td>
     <td class="align-middle" *ngIf="event.artist !== undefined">{{event.artist.name}}</td>
@@ -19,9 +19,15 @@
   </tbody>
 </table>
 <div class="justify-content-center">
-  <ngb-pagination
-    [(page)]="page"
-    [pageSize]="pageSize"
-    [collectionSize]="events.length"
-    *ngIf="dataReady"></ngb-pagination>
+  <ul class ="nav nav-pills">
+    <li class="nav-item">
+      <a class="nav-link" href="" (click)="previousPage($event)">«</a>
+    </li>
+    <li class="nav-item" *ngFor="let p of pages; let i = index">
+      <a class="nav-link" href="" (click)="setPage(i, $event)" [ngClass]="{'active': i == page}">{{i}}</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="" (click)="nextPage($event)">»</a>
+    </li>
+  </ul>
 </div>

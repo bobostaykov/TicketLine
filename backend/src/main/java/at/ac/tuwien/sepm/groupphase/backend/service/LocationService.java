@@ -2,6 +2,7 @@ package at.ac.tuwien.sepm.groupphase.backend.service;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.location.LocationDTO;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -15,14 +16,19 @@ public interface LocationService {
      * @param street of the location
      * @param postalCode of the location
      * @param description of the location
-     * @return a list of LocationDTOs
+     * @param page the number of the particular page to return
+     * @return a page of the found locations
+     * @throws ServiceException
      */
-    List<LocationDTO> findLocationsFiltered(String country, String city, String street, String postalCode, String description) throws ServiceException;
+    Page<LocationDTO> findLocationsFiltered(String country, String city, String street, String postalCode, String description, Integer page) throws ServiceException;
 
-    /** gets a list of all locations saved in the backend
-     * @return a list of all locations
+    /**
+     * Finds all locations filtered by the given attributes
+     *
+     * @param page the number of the particular page to return
+     * @return a page of all locations that fit in it
      */
-    List<LocationDTO>  findAll();
+    Page<LocationDTO>  findAll(Integer page);
 
     /**
      * @return a list of all countries in the data base

@@ -9,9 +9,10 @@ import {Event} from '../../../dtos/event';
 })
 export class EventsComponent implements OnInit {
 
-  private page: number = 1;
-  private pageSize: number = 10;
+  private page: number = 0;
+  private pages: Array<number>;
   private dataReady: boolean = false;
+
   private error: boolean = false;
   private errorMessage: string = '';
   private events: Event[];
@@ -28,13 +29,37 @@ export class EventsComponent implements OnInit {
   }
 
   private loadEvents() {
-    this.eventService.getAllEvents().subscribe(
-      (events: Event[]) => { this.events = events; },
+    this.eventService.getAllEvents(this.page).subscribe(
+      result => {
+        this.events = result['content'];
+        this.pages = new Array(result['totalPages']);
+        },
       error => { this.defaultServiceErrorHandling(error); },
       () => { this.dataReady = true; }
     );
   }
 
+  private setPage(i, event: any) {
+    event.preventDefault();
+    this.page = i;
+    this.loadEvents();
+  }
+
+  private previousPage(event: any) {
+    event.preventDefault();
+    if (this.page > 0 ) {
+      this.page--;
+      this.loadEvents();
+    }
+  }
+
+  private nextPage(event: any) {
+    event.preventDefault();
+    if (this.page < this.pages.length - 1) {
+      this.page++;
+      this.loadEvents();
+    }
+  }
 
   private defaultServiceErrorHandling(error: any) {
     console.log(error);

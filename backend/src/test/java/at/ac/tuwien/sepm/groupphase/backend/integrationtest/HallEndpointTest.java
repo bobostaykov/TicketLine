@@ -10,6 +10,7 @@ import at.ac.tuwien.sepm.groupphase.backend.entity.Location;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Seat;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Sector;
 import at.ac.tuwien.sepm.groupphase.backend.integrationtest.base.BaseIntegrationTest;
+import at.ac.tuwien.sepm.groupphase.backend.integrationtest.base.BaseIntegrationTestWithMockedUserCredentials;
 import at.ac.tuwien.sepm.groupphase.backend.repository.HallRepository;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -28,7 +29,7 @@ import java.util.Collections;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.BDDMockito.any;
 
-public class HallEndpointTest extends BaseIntegrationTest {
+public class HallEndpointTest extends BaseIntegrationTestWithMockedUserCredentials {
 
     private static final String HALL_ENDPOINT = "/halls";
     private static final Long HALL_ID = 1L;

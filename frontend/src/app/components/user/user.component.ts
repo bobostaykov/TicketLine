@@ -83,6 +83,18 @@ export class UserComponent implements OnInit {
     );
   }
 
+  /**
+   * blocks a user given by id
+   * @param userId the id of the user that is to be blocked
+   */
+  private blockUser(userId: number) {
+    this.userService.blockUser(userId).subscribe(
+      () => {},
+      err => { this.errorMessage = 'cant block admin'},
+      () => { this.loadUsers(); }
+    );
+  }
+
   private deleteUser(userId: number) {
     this.userToDelete = null;
     this.userService.deleteUser(userId).subscribe(
@@ -108,6 +120,8 @@ export class UserComponent implements OnInit {
     this.error = true;
     if (error.error.news !== 'No message available') {
       this.errorMessage = error.error.news;
+    } else if (error.error.httpRequestStatusCode === 404) {
+      this.errorMessage = 'could not block user';
     } else {
       this.errorMessage = error.error.error;
     }

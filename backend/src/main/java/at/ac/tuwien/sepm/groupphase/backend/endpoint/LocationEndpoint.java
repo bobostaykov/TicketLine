@@ -9,6 +9,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -39,22 +40,21 @@ public class LocationEndpoint {
 
     @RequestMapping(method = RequestMethod.GET)
     @ApiOperation(value = "Get all shows filtered by location", authorizations = {@Authorization(value = "apiKey")})
-    public List<LocationDTO> findLocationsFiltered(
+    public Page<LocationDTO> findLocationsFiltered(
         @RequestParam(value = "country", required = false) String country,
         @RequestParam(value = "city", required = false) String city,
         @RequestParam(value = "street", required = false) String street,
         @RequestParam(value = "postalCode", required = false) String postalCode,
-        @RequestParam(value = "description", required = false) String description
+        @RequestParam(value = "description", required = false) String description,
+        @RequestParam(value = "page", required = false) Integer page
     ) {
-        boolean filterData = country == null && city == null && postalCode == null && street == null && description == null;
         try {
-            if (filterData) {
-                //TODO: maybe change this back at some point but need a method to get all locations
+            if (page != null && country == null && city == null && postalCode == null && street == null && description == null) {
                 LOGGER.info("Location Endpoint: Get all locations");
-                return locationService.findAll();
+                return locationService.findAll(page);
             } else {
                 LOGGER.info("Location Endpoint: Get all locations filtered by some parameters");
-                return locationService.findLocationsFiltered(country, city, street, postalCode, description);
+                return locationService.findLocationsFiltered(country, city, street, postalCode, description, page);
             }
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error while looking for locations with those parameters: " + e.getMessage(), e);

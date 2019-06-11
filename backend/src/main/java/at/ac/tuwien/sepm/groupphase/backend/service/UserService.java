@@ -5,7 +5,6 @@ import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface UserService {
 
@@ -24,6 +23,7 @@ public interface UserService {
      */
     UserDTO findOne(Long id) throws NotFoundException;
 
+    UserDTO findUserByName(String name);
 
     /**
      * Create a user
@@ -49,4 +49,22 @@ public interface UserService {
      */
     UserDTO findOneByUsername(String username);
 
+    /**
+     * @param userId id of the user that is to be unblocked
+     * @return boolean if the operation was successful
+     */
+    boolean unblockUser(Long userId);
+
+    /**
+     * @param userId the id of the user that is to be blocked
+     * @return boolean of the success of the operation
+     */
+    boolean blockUser(Long userId) throws ServiceException;
+
+
+    /**
+     * Get all users
+     * @return a List with users that are currently blocked
+     */
+    List<UserDTO> getAllBlockedUsers();
 }

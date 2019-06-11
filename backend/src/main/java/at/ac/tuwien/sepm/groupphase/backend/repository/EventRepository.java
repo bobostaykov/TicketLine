@@ -2,17 +2,20 @@ package at.ac.tuwien.sepm.groupphase.backend.repository;
 
 import at.ac.tuwien.sepm.groupphase.backend.datatype.EventType;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Event;
+import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.Tuple;
+import org.springframework.data.domain.Pageable;
 import java.util.List;
 import java.util.Set;
 
 @Repository
-public interface EventRepository extends JpaRepository<Event, Long>, EventRepositoryCustom {
+public interface EventRepository extends JpaRepository<Event, Long>, EventRepositoryCustom, PagingAndSortingRepository<Event, Long> {
 
     /**
      * Get top 10 events
@@ -31,14 +34,17 @@ public interface EventRepository extends JpaRepository<Event, Long>, EventReposi
     List<Event> findAllByName(String name);
 
     /**
-     * Get all events sorted by name
-     * @return a list with all events sorted by name
-    */
-    List<Event> findAllByOrderByNameAsc();
+     * Find all events ordered by name
+     *
+     * @param pageable special parameter to apply pagination
+     * @return a page of the found events
+     */
+    Page<Event> findAllByOrderByNameAsc(Pageable pageable);
 
     /**
      * @param id of the artist
+     * @param pageable special parameter to apply pagination
      * @return a list of events in which the artist participates or had participated
      */
-    List<Event> findAllByArtist_Id(@Param("id") Long id);
+    Page<Event> findAllByArtist_Id(Long id, Pageable pageable);
 }

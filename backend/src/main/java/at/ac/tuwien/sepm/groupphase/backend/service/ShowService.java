@@ -3,25 +3,27 @@ package at.ac.tuwien.sepm.groupphase.backend.service;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.searchParameters.ShowSearchParametersDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.show.ShowDTO;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
 public interface ShowService {
 
-    /**
-     * Finds all shows filtered by event id
-     *
-     * @param eventName name of event by which to filter the shows
-     * @return a list of found shows matching the criteria
+    /*
+     * inds all shows filtered by event name
+     * @param page the number of the page to return
+     * @param eventName eventName name of event by which to filter the shows
+     * @return a page of found shows matching the criteria
      */
-    List<ShowDTO> findAllShowsFilteredByEventName(String eventName);
+    //Page<ShowDTO> findAllShowsFilteredByEventName(String eventName, Integer page);
 
     /**
      * Finds all shows
-     *
-     * @return a list of all shows
+     * @param page number of the page to return, portion of all
+     * @return a page of shows
+     * @throws ServiceException is thrown if something went wrong in the process
      */
-    List<ShowDTO> findAll();
+    Page<ShowDTO> findAll(Integer page) throws ServiceException;
 
     /*
      * Finds all shows filtered by location id
@@ -47,28 +49,21 @@ public interface ShowService {
 
     /**
      *
-     * @param searchParameters: The parameter dto of criteria that can be searched for
+     * @param searchParameters The parameter dto of criteria that can be searched for
+     * @param page number of the particular page to return, portion of the result
      * @return a list of Shows that matches the specified criteria
      * @throws ServiceException is thrown if something went wrong in the process
      */
-    List<ShowDTO> findAllShowsFiltered(ShowSearchParametersDTO searchParameters) throws ServiceException;
+    Page<ShowDTO> findAllShowsFiltered(ShowSearchParametersDTO searchParameters, Integer page) throws ServiceException;
 
     /**
+     * Find all shows filtered by location id
      *
-     * @return a List of all shows(as a DTO) that are found in the database
+     * @param id of a location to search for
+     * @param page the number of the particular page to return
+     * @return a page of the found shows
      * @throws ServiceException is thrown if something went wrong in the process
      */
-    List<ShowDTO> findAllShows() throws ServiceException;
-
-    /**
-     * Finds all shows filtered by country, city , postal code and street
-     *
-     * @param country the name of the country in which the show takes place
-     * @param city the name of the city in which the show takes place
-     * @param postalcode the postal code of the city in which the show takes place
-     * @param street the street where the show takes place
-     * @return a list of found shows matching the criteria
-     */
-    List<ShowDTO> findAllShowsFilteredByLocation(String country, String city, String postalcode, String street);
+    Page<ShowDTO> findAllShowsFilteredByLocationID(Long id, Integer page) throws ServiceException;
 
 }

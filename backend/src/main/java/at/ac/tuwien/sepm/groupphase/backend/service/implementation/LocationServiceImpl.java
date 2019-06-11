@@ -7,6 +7,9 @@ import at.ac.tuwien.sepm.groupphase.backend.repository.LocationRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.LocationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.PersistenceException;
@@ -25,7 +28,7 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
-    public List<LocationDTO> findLocationsFiltered(String country, String city, String street, String postalCode, String description) throws ServiceException {
+    public Page<LocationDTO> findLocationsFiltered(String country, String city, String street, String postalCode, String description, Integer page) throws ServiceException {
         LOGGER.info("Location Service: findLocationsFiltered()");
         try {
             if (country != null && country.equals("")) country = null;
@@ -34,16 +37,24 @@ public class LocationServiceImpl implements LocationService {
             if (postalCode != null && postalCode.equals("")) postalCode = null;
             if (description != null && description.equals("")) description = null;
 
-            return locationMapper.locationToLocationDTO(locationRepository.findLocationsFiltered(country, city, street, postalCode, description));
+            if(page < 0) {
+                throw new IllegalArgumentException("Not a valid page.");
+            }
+            return locationRepository.findLocationsFiltered(country, city, street, postalCode, description, page).map(locationMapper::locationToLocationDTO);
         } catch (PersistenceException e) {
             throw new ServiceException(e.getMessage(), e);
         }
     }
 
     @Override
-    public List<LocationDTO> findAll() {
+    public Page<LocationDTO> findAll(Integer page) {
         LOGGER.info("Location Service: Retrieving a list of all locations from repository");
-        return locationMapper.locationToLocationDTO(locationRepository.findAll());
+        int pageSize = 10;
+        if(page < 0) {
+            throw new IllegalArgumentException("Not a valid page.");
+        }
+        Pageable pageable = PageRequest.of(page, pageSize);
+        return locationRepository.findAll(pageable).map(locationMapper::locationToLocationDTO);
     }
 
     @Override

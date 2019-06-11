@@ -26,9 +26,6 @@ public class LocationDTO {
     @ApiModelProperty(name = "Location's street")
     private String street;
 
-    @ApiModelProperty(name = "Locations houseNr")
-    private Integer houseNr;
-
     @ApiModelProperty(name = "Location's description")
     private String description;
 
@@ -81,15 +78,6 @@ public class LocationDTO {
         this.street = street;
     }
 
-    public Integer getHouseNr() {
-
-        return houseNr;
-    }
-
-    public void setHouseNr(Integer houseNr) {
-        this.houseNr = houseNr;
-    }
-
     public String getDescription() {
         return description;
     }
@@ -111,13 +99,12 @@ public class LocationDTO {
             Objects.equals(city, that.city) &&
             Objects.equals(postalCode, that.postalCode) &&
             Objects.equals(street, that.street) &&
-            Objects.equals(houseNr, that.houseNr) &&
             Objects.equals(description, that.description);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, locationName, country, city, postalCode, street, houseNr, description);
+        return Objects.hash(id, locationName, country, city, postalCode, street, description);
     }
 
     @Override
@@ -129,7 +116,6 @@ public class LocationDTO {
             ", city='" + city + '\'' +
             ", postalCode='" + postalCode + '\'' +
             ", street='" + street + '\'' +
-            ", houseNr=" + houseNr +
             ", description='" + description + '\'' +
             '}';
     }
@@ -141,7 +127,6 @@ public class LocationDTO {
         private String city;
         private String postalCode;
         private String street;
-        private Integer houseNr;
         private String description;
 
 
@@ -177,11 +162,6 @@ public class LocationDTO {
             return this;
         }
 
-        public LocationDTOBuilder houseNr(Integer houseNr){
-            this.houseNr = houseNr;
-            return this;
-        }
-
         public LocationDTOBuilder description(String description) {
             this.description = description;
             return this;
@@ -195,7 +175,6 @@ public class LocationDTO {
             locationDTO.setCity(city);
             locationDTO.setPostalCode(postalCode);
             locationDTO.setStreet(street);
-            locationDTO.setHouseNr(houseNr);
             locationDTO.setDescription(description);
             return locationDTO;
         }

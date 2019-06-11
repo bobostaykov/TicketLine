@@ -52,9 +52,6 @@ public class ShowSearchParametersDTO {
     @ApiModelProperty(name = "the street of the Location")
     @NotBlank
     private String street;
-    @ApiModelProperty(name = "the house number of the Location")
-    @NotBlank
-    private Integer houseNr;
 
 
     public Long getEventId() {
@@ -175,14 +172,6 @@ public class ShowSearchParametersDTO {
         this.street = street;
     }
 
-    public Integer getHouseNr() {
-        return houseNr;
-    }
-
-    public void setHouseNr(Integer houseNr) {
-        this.houseNr = houseNr;
-    }
-
     public void setDurationInMinutes(Integer durationInMinutes) {
         this.durationInMinutes = durationInMinutes;
     }
@@ -203,8 +192,6 @@ public class ShowSearchParametersDTO {
         private String city;
         private String postalCode;
         private String street;
-        private Integer houseNr;
-
         public builder(){}
 
         public builder dateFrom(LocalDate dateFrom) {
@@ -265,23 +252,18 @@ public class ShowSearchParametersDTO {
             return this;
         }
 
-        public builder city (String city){
+        public builder city(String city){
             this.city = city;
             return this;
         }
 
-        public builder postalcode (String postalCode){
+        public builder postalcode(String postalCode){
             this.postalCode = postalCode;
             return this;
         }
 
-        public builder street (String street){
+        public builder street(String street){
             this.street = street;
-            return this;
-        }
-
-        public builder houseNr(Integer houseNr){
-            this.houseNr = houseNr;
             return this;
         }
 
@@ -296,7 +278,6 @@ public class ShowSearchParametersDTO {
             parametersDTO.setTimeFrom(timeFrom);
             parametersDTO.setCountry(country);
             parametersDTO.setStreet(street);
-            parametersDTO.setHouseNr(houseNr);
             parametersDTO.setCity(city);
             parametersDTO.setPostalCode(postalCode);
             parametersDTO.setHallName(hallName);
@@ -326,7 +307,6 @@ public class ShowSearchParametersDTO {
             (city != null ? "city = " + city : "") +
             (postalCode != null ? "postalcode = " + postalCode : "") +
             (street != null ? "street = " + street : "") +
-            (houseNr != null ? "houseNumber = " + houseNr : "") +
             '}';
     }
 
@@ -349,13 +329,12 @@ public class ShowSearchParametersDTO {
             Objects.equals(country, that.country) &&
             Objects.equals(city, that.city) &&
             Objects.equals(postalCode, that.postalCode) &&
-            Objects.equals(street, that.street) &&
-            Objects.equals(houseNr, that.houseNr);
+            Objects.equals(street, that.street);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(eventId, dateFrom, dateTo, timeFrom, timeTo, priceInEuroFrom, priceInEuroTo, locationName, eventName, hallName, durationInMinutes, country, city, postalCode, street, houseNr);
+        return Objects.hash(eventId, dateFrom, dateTo, timeFrom, timeTo, priceInEuroFrom, priceInEuroTo, locationName, eventName, hallName, durationInMinutes, country, city, postalCode, street);
     }
 }
 

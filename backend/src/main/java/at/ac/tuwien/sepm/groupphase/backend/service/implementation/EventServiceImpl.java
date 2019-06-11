@@ -6,13 +6,14 @@ import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.event.EventTicketsDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.searchParameters.EventSearchParametersDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Event;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.event.EventMapper;
-import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.event.EventTicketsMapper;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.EventRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.EventService;
-import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.PersistenceException;
@@ -47,29 +48,50 @@ public class EventServiceImpl implements EventService {
         }
         return toReturn;
     }
-    public List<EventDTO> findAll() throws ServiceException {
+
+    @Override
+    public Page<EventDTO> findAll(Integer page) throws ServiceException {
         LOGGER.info("Find all events");
-        List<EventDTO> toReturn = new ArrayList<>();
         try {
-            for (Event event: eventRepository.findAllByOrderByNameAsc()) {
-                toReturn.add(eventMapper.eventToEventDTO(event));
+            int pageSize = 10;
+            if(page < 0) {
+                throw new ServiceException("Not a valid page.");
             }
+            Pageable pageable = PageRequest.of(page, pageSize);
+            return eventRepository.findAllByOrderByNameAsc(pageable).map(eventMapper::eventToEventDTO);
         } catch (PersistenceException e) {
             throw new ServiceException(e.getMessage());
         }
-        return toReturn;
     }
 
     @Override
-    public List<EventDTO> findAllFiltered(EventSearchParametersDTO parameters) {
-        return (eventMapper.eventToEventDTO(eventRepository.findAllEventsFiltered(parameters)));
+    public Page<EventDTO> findAllFiltered(EventSearchParametersDTO parameters, Integer page) throws ServiceException{
+        LOGGER.info("Find all events filtered by some attributes: " + parameters.toString());
+        try{
+            if(page < 0) {
+                throw new ServiceException("Not a valid page.");
+            }
+            Page<Event> page1 = eventRepository.findAllEventsFiltered(parameters, page);
+            LOGGER.debug("Event Service: " + page1.getContent().toString());
+            return page1.map(eventMapper::eventToEventDTO);
+        } catch (PersistenceException e) {
+            throw new ServiceException(e.getMessage());
+        }
     }
 
     @Override
-    public List<EventDTO> findEventsFilteredByArtistID(Long id) {
+    public Page<EventDTO> findEventsFilteredByArtistID(Long id, Integer page) throws ServiceException{
         LOGGER.info("Event Service: findEventsFilteredByArtistID");
-        return eventMapper.eventToEventDTO(eventRepository.findAllByArtist_Id(id));
+        try{
+            int pageSize = 10;
+            if(page < 0) {
+                throw new ServiceException("Not a valid page.");
+            }
+            Pageable pageable = PageRequest.of(page, pageSize);
+            return eventRepository.findAllByArtist_Id(id, pageable).map(eventMapper::eventToEventDTO);
+        } catch (PersistenceException e) {
+            throw new ServiceException(e.getMessage());
+        }
     }
-
 
 }

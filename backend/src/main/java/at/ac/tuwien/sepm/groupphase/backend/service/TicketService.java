@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.service;
 
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.show.ShowDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.ticket.TicketDTO;
 
 import java.util.List;
@@ -9,10 +10,10 @@ public interface TicketService {
     /**
      * Save a single ticket entry
      *
-     * @param ticket to be saved
+     * @param ticketDTO to be saved
      * @return saved ticket entry
      */
-    TicketDTO postTicket(TicketDTO ticket);
+    TicketDTO postTicket(TicketDTO ticketDTO);
 
     /**
      * Get all ticket entries
@@ -20,6 +21,38 @@ public interface TicketService {
      * @return list of all ticket entries
      */
     List<TicketDTO> findAll();
+
+    /**
+     * Find one ticket by the given reservation number (id)
+     *
+     * @param id reservation number of the ticket
+     * @return found ticket
+     */
+    TicketDTO findOne(Long id);
+
+    /**
+     * Find one ticket by the given reservation number (id) with status RESERVATED and change it to SOLD
+     *
+     * @param id reservation number of the ticket
+     * @return changed ticket
+     */
+    TicketDTO changeStatusToSold(Long id);
+
+    /**
+     * Find one ticket with status rservated by the given reservation number (id)
+     *
+     * @param id reservation number of the ticket
+     * @return found ticket
+     */
+    TicketDTO findOneReservated(Long id);
+
+    /**
+     * Delete one ticket by the given ticket/reservation number (id)
+     *
+     * @param id ticket/reservation number of the ticket
+     * @return deleted ticket
+     */
+    TicketDTO deleteOne(Long id);
 
     /**
      * Get all ticket entries filtered by the corresponsing customer and/or event name
@@ -30,11 +63,14 @@ public interface TicketService {
      */
     List<TicketDTO> findAllFilteredByCustomerAndEvent(String customerName, String eventName);
 
+    // PINOS IMPLEMENTATION
     /**
-     * Find one ticket by the given reservation number (id)
+     * Get all reservated tickets filtered by customer and show
      *
-     * @param id reservation number of the ticket
-     * @return found ticket
+     * @param surname surname of customer the ticket was issued for
+     * @param firstname firstname of customer the ticket was issued for
+     * @param show show the ticket was issued for
+     * @return list of found tickets
      */
-    TicketDTO findOne(Long id);
+    //List<TicketDTO> findByCustomerNameAndShowWithStatusReservated(String surname, String firstname, ShowDTO show);
 }
