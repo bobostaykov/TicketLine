@@ -7,6 +7,7 @@ import {Hall} from '../../../dtos/hall';
 import {Location} from '../../../dtos/location';
 import {HallService} from '../../../services/hall/hall.service';
 import {LocationService} from '../../../services/location/location.service';
+import {ShowResultsService} from '../../../services/search-results/shows/show-results.service';
 
 @Component({
   selector: 'app-floorplan-control',
@@ -31,8 +32,10 @@ export class FloorplanControlComponent implements OnInit {
   private addSeatsForm: FormGroup;
   private addSectorsForm: FormGroup;
   private createHallForm: FormGroup;
+  // list of seats and sectors tickets were selected fro
+  private tickets: Array<Seat | Sector> = [];
 
-  constructor(private hallService: HallService, private locationService: LocationService) {
+  constructor(private hallService: HallService, private locationService: LocationService, private showService: ShowResultsService) {
   }
 
   /**
@@ -292,6 +295,7 @@ export class FloorplanControlComponent implements OnInit {
   private buildHallForm() {
     this.createHallForm = new FormGroup({
       'hallSelection': new FormControl(this.newHall, [Validators.required]),
+      'showSelection': new FormControl(null, [Validators.required]),
       'locationSelection': new FormControl(null, [Validators.required]),
       'floorplanName': new FormControl(null, [Validators.required]),
       'hallType': new FormControl('seats', [Validators.required])
@@ -372,47 +376,7 @@ export class FloorplanControlComponent implements OnInit {
     }
   }
 
-  // /**
-  //  * helper method
-  //  * returns true if sectorNumberStart or sectorNumberEnd have been edited and are invalid
-  //  * called to determine if error message needs to be displayed
-  //  */
-  // private sectorNumberErrors(): boolean {
-  //   const sectorNumberStart = this.addSectorsForm.get('sectorNumberStart');
-  //   const sectorNumberEnd = this.addSectorsForm.get('sectorNumberEnd');
-  //   return (sectorNumberStart.dirty || sectorNumberEnd.dirty) && (sectorNumberStart.invalid || sectorNumberEnd.invalid);
-  // }
-  //
-  // /**
-  //  * returns true, if inputs seatRowStart or seatRowError have been edited and are invalid
-  //  * called to determine if error message needs to be displayed
-  //  */
-  // private seatRowErrors(): boolean {
-  //   const seatRowStart = this.addSeatsForm.get('seatRowStart');
-  //   const seatRowEnd = this.addSeatsForm.get('seatRowEnd');
-  //   return (seatRowStart.dirty || seatRowEnd.dirty) && (seatRowStart.invalid || seatRowEnd.invalid);
-  // }
-  //
-  // /**
-  //  * returns ture, if inputs seatNumberStart or seatNumberEnd have been edited and are invalid
-  //  * called to determine if error message needs to be displayed
-  //  */
-  // private seatNumberErrors(): boolean {
-  //   const seatNumberStart = this.addSeatsForm.get('seatNumberStart');
-  //   const seatNumberEnd = this.addSeatsForm.get('seatNumberEnd');
-  //   return (seatNumberStart.dirty || seatNumberEnd.dirty) && (seatNumberStart.invalid || seatNumberEnd.invalid);
-  // }
-
-  // /**
-  //  * event handler
-  //  * called if floorplan svg is clicked
-  //  * if click target was not a seat/sector svg update forms are disabled
-  //  * @param event click event
-  //  */
-  // private onSvgClick(event: Event) {
-  //   if ((<HTMLElement>event.target).tagName !== 'path') {
-  //     this.disableUpdateForms();
-  //   }
-  // }
-
+  private addToTickets(ticket: Seat | Sector): void {
+    this.tickets.push(ticket);
+  }
 }
