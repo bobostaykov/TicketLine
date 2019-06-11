@@ -1,5 +1,5 @@
 <div class="row mt-3 bottom-box-shadow pb-3 mb-3">
-  <div class="col-6" [ngSwitch]="createHallForm.get('hallType').value">
+  <div class="col-5" [ngSwitch]="createHallForm.get('hallType').value">
     <form *ngSwitchCase="'seats'" [formGroup]="addSeatsForm" (ngSubmit)="addSeats()">
       <div class="row">
         <div class="row col-6">
@@ -40,7 +40,7 @@
                    aria-labelledby="seat number end"/>
           </mat-form-field>
         </div>
-        <div class="col-6 mt-1">
+        <div class="col-6 mt-1 text-nowrap">
           <button mat-raised-button color="primary" class="mr-2 mt-3 inputButton" (click)="addSeats()">Add Seats
           </button>
           <button mat-raised-button color="warn" class="mt-3 inputButton" (click)="deleteSeats()">Delete Seats</button>
@@ -73,7 +73,7 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-6 h-100 mt-1">
+        <div class="col-12 h-100 mt-1">
           <button mat-raised-button color="primary" class="mr-2 mt-3 inputButton" (click)="addSectors()">Add Sectors
           </button>
           <button mat-raised-button color="warn" class="mt-3 inputButton" (click)="deleteSectors()">Delete Sectors
@@ -82,10 +82,19 @@
       </div>
     </form>
   </div>
-  <div class="col-6">
+  <div class="col-7">
     <form class="text-right" [formGroup]="createHallForm" (ngSubmit)="postHall()">
       <div>
-        <mat-form-field appearance="outline" class="col-6">
+        <mat-form-field appearance="outline" class="col-4">
+          <mat-label>Show</mat-label>
+          <label for="showSelection" class="sr-only">Show Selection</label>
+          <select matNativeControl id="showSelection" formControlName="showSelection"
+                  aria-labelledby="show selection">
+            <option [ngValue]="null"></option>
+            <option>Show1</option>
+          </select>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="col-4">
           <mat-label>Location</mat-label>
           <label for="locationSelection" class="sr-only">Location Selection</label>
           <select matNativeControl id="locationSelection" formControlName="locationSelection"
@@ -95,7 +104,7 @@
             -->
           </select>
         </mat-form-field>
-        <mat-form-field appearance="outline" class="col-6">
+        <mat-form-field appearance="outline" class="col-4">
           <mat-label>Hall</mat-label>
           <label for="hallSelection" class="sr-only">Hall Selection</label>
           <select matNativeControl id="hallSelection" formControlName="hallSelection" aria-labelledby="hall selection">
@@ -105,311 +114,27 @@
         </mat-form-field>
       </div>
       <div class="row">
-        <mat-radio-group formControlName="hallType" class="col-6 d-flex align-items-end justify-content-center"
+        <mat-radio-group formControlName="hallType" class="col-7 d-flex align-items-end justify-content-end"
                          aria-labelledby="hall seats or sectors">
-          <mat-radio-button value="seats" color="primary" class="mx-2" aria-labelledby="hall with seats">Seats
+          <mat-radio-button value="seats" color="primary" class="mx-3" aria-labelledby="hall with seats">Seats
           </mat-radio-button>
-          <mat-radio-button value="sectors" color="primary" class="mx-2" aria-labelledby="hall with sectors">Sectors
+          <mat-radio-button value="sectors" color="primary" class="mx-3" aria-labelledby="hall with sectors">Sectors
           </mat-radio-button>
         </mat-radio-group>
-        <div class="col-6 mt-1 text-right">
-          <button mat-raised-button color="primary" class="mr-3 mt-3 inputButton" (click)="postHall()">Save Hall
-          </button>
+        <div class="col-5 mt-1 text-right">
+          <button mat-raised-button color="primary" class="mr-3 mt-3 inputButton" (click)="postHall()">Save Hall</button>
+          <button mat-raised-button color="warn" class="mr-3 mt-3 inputButton">Delete Hall</button>
         </div>
       </div>
     </form>
   </div>
 </div>
-<div [ngSwitch]="createHallForm.get('hallType').value">
-  <app-floorplan-svg *ngSwitchCase="'seats'"
-                     [seats]="getSelectedHall().seats"></app-floorplan-svg>
-  <app-floorplan-svg *ngSwitchCase="'sectors'"
-                     [sectors]="getSelectedHall().sectors"></app-floorplan-svg>
+
+<div *ngIf="createHallForm.get('hallType').value === 'seats'" class="row">
+  <app-floorplan-svg class="floorplanSvg" [seats]="getSelectedHall().seats" (addTicket)="addToTickets($event)"></app-floorplan-svg>
+  <app-floorplan-ticket class="floorplanTickets" *ngIf="tickets && tickets.length" [tickets]="tickets"></app-floorplan-ticket>
 </div>
-
-<!--  &lt;!&ndash; createHallForm allows creating new Halls or selecting old ones to view their floorplan &ndash;&gt;-->
-<!--  <form [formGroup]="createHallForm" class="col-5">-->
-<!--    <div class="form-inline col-12 mt-3">-->
-<!--      &lt;!&ndash; locationSelection input allows selecting one of the locations saved in the database and sets hall parameters accordingly &ndash;&gt;-->
-<!--      <label for="locationSelection" class="col-3 input-group-text justify-content-start">Location</label>-->
-<!--      <select id="locationSelection" class="form-control col-9"-->
-<!--              formControlName="locationSelection"-->
-<!--              aria-labelledby="Location selection">-->
-<!--        <option [ngValue]="null"></option>-->
-<!--        <option *ngFor="let location of locations"-->
-<!--                [ngValue]="location">{{displayLocation(location)}}</option>-->
-<!--      </select>-->
-<!--    </div>-->
-<!--    &lt;!&ndash; hallSelection input allows selecting one of the halls saved in the database or a new seat/sector hall plan that may be created &ndash;&gt;-->
-<!--    <div class="form-inline col-12 mt-3">-->
-<!--      <label for="hallSelection" class="col-3 input-group-text justify-content-start">Hall</label>-->
-<!--      <select id="hallSelection" class="form-control col-9"-->
-<!--              formControlName="hallSelection"-->
-<!--              aria-labelledby="Hall">-->
-<!--        <option [ngValue]="newSeatPlan">{{newSeatPlan.name}}</option>-->
-<!--        <option [ngValue]="newSectorPlan">{{newSectorPlan.name}}</option>-->
-<!--        <option *ngFor="let hall of halls" [ngValue]="hall">{{hall.name}}</option>-->
-<!--      </select>-->
-<!--    </div>-->
-<!--    &lt;!&ndash;-->
-<!--    button to open bootstrap modal which allows submitting a newly created seat or sector plan-->
-<!--    Modal also asks users to enter name and location if locationSelection is currently invalid-->
-<!--          &ndash;&gt;-->
-<!--    <div class="form-inline col-12 mt-3">-->
-<!--      <button type="button" class="btn btn-success" data-toggle="modal" data-target="#enterName"-->
-<!--              [disabled]="getSelectedHall().seats.length < 1" *ngIf="getSelectedHall() === newSeatPlan">-->
-<!--        New SeatPlan-->
-<!--      </button>-->
-<!--      <button type="button" class="btn btn-success" data-toggle="modal" data-target="#enterName"-->
-<!--              [disabled]="getSelectedHall().sectors.length < 1" *ngIf="getSelectedHall() === newSectorPlan">-->
-<!--        New SectorPlan-->
-<!--      </button>-->
-<!--    </div>-->
-<!--  </form>-->
-<!--</div>-->
-<!--<hr/>-->
-
-<!--<div class="col-12 row">-->
-<!--  <div class="col-7">-->
-<!--    &lt;!&ndash; addSeatsForm: allows adding multiple seats at once to the floorplan &ndash;&gt;-->
-<!--    <form [hidden]="getSelectedHall() !== newSeatPlan" [formGroup]="addSeatsForm" (ngSubmit)="addSeats()">-->
-<!--      <div class="row col-12 mt-3">-->
-<!--        &lt;!&ndash; seat row input &ndash;&gt;-->
-<!--        <div class="row text-nowrap col-8 p-0">-->
-<!--          <div class="input-group">-->
-<!--            <div class="input-group-prepend col-5 p-0">-->
-<!--              <span class="input-group-text col-12">Seat Rows</span>-->
-<!--            </div>-->
-<!--            &lt;!&ndash; seat row start is the first row to which seats with selected numbers will be added &ndash;&gt;-->
-<!--            <label class="sr-only" for="seatRowStart">Seat Row Start</label>-->
-<!--            <input id="seatRowStart" type="number" formControlName="seatRowStart" class="form-control"-->
-<!--                   aria-labelledby="seat row start"/>-->
-<!--            <span class="input-group-text">-</span>-->
-<!--            &lt;!&ndash; seat row end is the last row to which seats with selected numbers will be added &ndash;&gt;-->
-<!--            <label class="sr-only" for="seatRowEnd">Seat Row End</label>-->
-<!--            <input id="seatRowEnd" type="number" formControlName="seatRowEnd" class="form-control"-->
-<!--                   aria-labelledby="seat row end"/>-->
-<!--          </div>-->
-<!--        </div>-->
-<!--        &lt;!&ndash; seat price input &ndash;&gt;-->
-<!--        <div class="col-4 px-4">-->
-<!--          <label for="seatPrice" class="sr-only">Seat Price</label>-->
-<!--          <select id="seatPrice" formControlName="seatPrice" class="form-control col-12">-->
-<!--            <option *ngFor="let price of priceCategories">{{price}}</option>-->
-<!--          </select>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--      &lt;!&ndash; seat row warning is displayed if seat row input is invalid &ndash;&gt;-->
-<!--      <div *ngIf="seatRowErrors()" class="row col-12">-->
-<!--        <small class="form-text text-warning text-left">-->
-<!--          A valid seat row number greater than or equal to 1 must be entered!-->
-<!--        </small>-->
-<!--      </div>-->
-<!--      &lt;!&ndash; price category warning is displayed if price input is invalid &ndash;&gt;-->
-<!--      <div *ngIf="addSeatsForm.get('seatPrice').errors" class="row col-12">-->
-<!--        <small class="form-text text-warning text-left">-->
-<!--          A price category must be chosen!-->
-<!--        </small>-->
-<!--      </div>-->
-<!--      &lt;!&ndash; seat number input &ndash;&gt;-->
-<!--      <div class="row col-12 mt-3">-->
-<!--        <div class="row text-nowrap col-8 p-0">-->
-<!--          <div class="input-group">-->
-<!--            <div class="input-group-prepend col-5 p-0">-->
-<!--              <span class="input-group-text col-12">Seat Number</span>-->
-<!--            </div>-->
-<!--            &lt;!&ndash; seat number start is the first number for which seats will be added to selected rows &ndash;&gt;-->
-<!--            <label class="sr-only" for="seatNumberStart">Seat Number Start</label>-->
-<!--            <input id="seatNumberStart" type="number" formControlName="seatNumberStart" class="form-control"-->
-<!--                   aria-labelledby="seat number start"/>-->
-<!--            <span class="input-group-text">-</span>-->
-<!--            &lt;!&ndash; seat number end is the last number for which seats will be added to selected rows &ndash;&gt;-->
-<!--            <label class="sr-only" for="seatNumberEnd">Seat Number End</label>-->
-<!--            <input id="seatNumberEnd" type="number" formControlName="seatNumberEnd" class="form-control"-->
-<!--                   aria-labelledby="seat number end"/>-->
-<!--          </div>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--      &lt;!&ndash; seat number warning is displayed if seat number input is invalid &ndash;&gt;-->
-<!--      <div *ngIf="seatNumberErrors()" class="row col-12">-->
-<!--        <small class="form-text text-warning text-left">-->
-<!--          A valid seat number greater than or equal to 1 must be entered!-->
-<!--        </small>-->
-<!--      </div>-->
-<!--      &lt;!&ndash; buttons to submit form and either add or delete seats &ndash;&gt;-->
-<!--      <div class="row col-12 mt-3">-->
-<!--        <div class="row text-nowrap col-12 p-0">-->
-<!--          <button type="button" class="btn btn-success col-3 mr-2" (click)="addSeats()" [disabled]="addSeatsForm.invalid">-->
-<!--            Add Seats-->
-<!--          </button>-->
-<!--          <button type="button" class="btn btn-danger col-3" (click)="deleteSeats()" [disabled]="addSeatsForm.invalid">-->
-<!--            Delete Seats-->
-<!--          </button>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--    </form>-->
-
-<!--    &lt;!&ndash; addSectorsForm: allows adding multiple sectors at once to the floorplan  &ndash;&gt;-->
-<!--    <form [hidden]="getSelectedHall() !== newSectorPlan" [formGroup]="addSectorsForm"-->
-<!--          (ngSubmit)="addSectors()">-->
-<!--      <div class="row col-12 mt-3">-->
-<!--        &lt;!&ndash; sector number input &ndash;&gt;-->
-<!--        <div class="row text-nowrap col-8 p-0">-->
-<!--          <div class="input-group">-->
-<!--            <div class="input-group-prepend col-5 p-0">-->
-<!--              <span class="input-group-text col-12">Sector Number</span>-->
-<!--            </div>-->
-<!--            &lt;!&ndash; sector number start is the first number for which new sectors will be added &ndash;&gt;-->
-<!--            <label class="sr-only" for="sectorNumberStart">Sector Number Start</label>-->
-<!--            <input id="sectorNumberStart" type="number" formControlName="sectorNumberStart" class="form-control"-->
-<!--                   aria-labelledby="sector number start"/>-->
-<!--            <span class="input-group-text">-</span>-->
-<!--            &lt;!&ndash; sector number end is the last number for which new sectors will be added &ndash;&gt;-->
-<!--            <label class="sr-only" for="sectorNumberEnd">Sector Number End</label>-->
-<!--            <input id="sectorNumberEnd" type="number" formControlName="sectorNumberEnd" class="form-control"-->
-<!--                   aria-labelledby="sector number end"/>-->
-<!--          </div>-->
-<!--        </div>-->
-<!--        &lt;!&ndash; sector price input &ndash;&gt;-->
-<!--        <div class="col-4 px-4 mr-0">-->
-<!--          <label for="sectorPrice" class="sr-only">Sector Price</label>-->
-<!--          <select id="sectorPrice" formControlName="sectorPrice" class="form-control col-12">-->
-<!--            <option *ngFor="let price of priceCategories">{{price}}</option>-->
-<!--          </select>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--      &lt;!&ndash; sector number warning is displayed if sector number input is invalid &ndash;&gt;-->
-<!--      <div *ngIf="sectorNumberErrors()" class="row col-12">-->
-<!--        <small class="form-text text-warning text-left">-->
-<!--          A valid sector number greater than or equal to 1 must be entered!-->
-<!--        </small>-->
-<!--      </div>-->
-<!--      &lt;!&ndash; sector price warning is displayed if sector price input is invalid &ndash;&gt;-->
-<!--      <div *ngIf="addSectorsForm.get('sectorPrice').errors" class="row col-12">-->
-<!--        <small class="form-text text-warning text-left">-->
-<!--          A valid price category must be chosen!-->
-<!--        </small>-->
-<!--      </div>-->
-<!--      &lt;!&ndash; buttons to submit form and either add or delete sectors according to input parameters &ndash;&gt;-->
-<!--      <div class="row col-12 mt-3">-->
-<!--        <div class="row text-nowrap col-12 p-0">-->
-<!--          <button type="submit" class="btn btn-success col-3 mr-2" [disabled]="addSectorsForm.invalid">Add Sectors</button>-->
-<!--          <button type="button" class="btn btn-danger col-3" (click)="deleteSectors()" [disabled]="addSectorsForm.invalid">Delete Sectors</button>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--    </form>-->
-<!--  </div>-->
-
-<!--  &lt;!&ndash; createHallForm allows creating new Halls or selecting old ones to view their floorplan &ndash;&gt;-->
-<!--  <form [formGroup]="createHallForm" class="col-5">-->
-<!--    <div class="form-inline col-12 mt-3">-->
-<!--      &lt;!&ndash; locationSelection input allows selecting one of the locations saved in the database and sets hall parameters accordingly &ndash;&gt;-->
-<!--      <label for="locationSelection" class="col-3 input-group-text justify-content-start">Location</label>-->
-<!--      <select id="locationSelection" class="form-control col-9"-->
-<!--              formControlName="locationSelection"-->
-<!--              aria-labelledby="Location selection">-->
-<!--        <option [ngValue]="null"></option>-->
-<!--        <option *ngFor="let location of locations"-->
-<!--                [ngValue]="location">{{displayLocation(location)}}</option>-->
-<!--      </select>-->
-<!--    </div>-->
-<!--    &lt;!&ndash; hallSelection input allows selecting one of the halls saved in the database or a new seat/sector hall plan that may be created &ndash;&gt;-->
-<!--    <div class="form-inline col-12 mt-3">-->
-<!--      <label for="hallSelection" class="col-3 input-group-text justify-content-start">Hall</label>-->
-<!--      <select id="hallSelection" class="form-control col-9"-->
-<!--              formControlName="hallSelection"-->
-<!--              aria-labelledby="Hall">-->
-<!--        <option [ngValue]="newSeatPlan">{{newSeatPlan.name}}</option>-->
-<!--        <option [ngValue]="newSectorPlan">{{newSectorPlan.name}}</option>-->
-<!--        <option *ngFor="let hall of halls" [ngValue]="hall">{{hall.name}}</option>-->
-<!--      </select>-->
-<!--    </div>-->
-<!--    &lt;!&ndash;-->
-<!--    button to open bootstrap modal which allows submitting a newly created seat or sector plan-->
-<!--    Modal also asks users to enter name and location if locationSelection is currently invalid-->
-<!--          &ndash;&gt;-->
-<!--    <div class="form-inline col-12 mt-3">-->
-<!--      <button type="button" class="btn btn-success" data-toggle="modal" data-target="#enterName"-->
-<!--              [disabled]="getSelectedHall().seats.length < 1" *ngIf="getSelectedHall() === newSeatPlan">-->
-<!--        New SeatPlan-->
-<!--      </button>-->
-<!--      <button type="button" class="btn btn-success" data-toggle="modal" data-target="#enterName"-->
-<!--              [disabled]="getSelectedHall().sectors.length < 1" *ngIf="getSelectedHall() === newSectorPlan">-->
-<!--        New SectorPlan-->
-<!--      </button>-->
-<!--    </div>-->
-<!--  </form>-->
-<!--</div>-->
-<!--<hr/>-->
-
-<!--&lt;!&ndash; Bootstrap modal dialog: Allows submitting new seat or sector plan. Asks user to enter plan name and location (if not yet selected) &ndash;&gt;-->
-<!--<div class="modal fade" id="enterName" tabindex="-1" role="dialog" aria-labelledby="Enter name for new floor plan"-->
-<!--     aria-hidden="true">-->
-<!--  <div class="modal-dialog modal-sm">-->
-<!--    <div class="modal-content">-->
-<!--      <div class="modal-header">-->
-<!--        <h5 class="modal-title">Please enter a name!</h5>-->
-<!--        &lt;!&ndash; close button for modal &ndash;&gt;-->
-<!--        <button type="button" class="close" data-dismiss="modal" aria-label="Close">-->
-<!--          <span aria-hidden="true">x</span>-->
-<!--        </button>-->
-<!--      </div>-->
-<!--      <div class="modal-body">-->
-<!--        &lt;!&ndash; form allows posting new Hall to backend &ndash;&gt;-->
-<!--        <form [formGroup]="createHallForm" (ngSubmit)="createFloorplan()">-->
-<!--          &lt;!&ndash; location input is only available if location has not yet been set &ndash;&gt;-->
-<!--          <div class="form-group" [hidden]="createHallForm.get('locationSelection').valid">-->
-<!--            <label for="locationSelectionModal">Location</label>-->
-<!--            <select id="locationSelectionModal" class="form-control"-->
-<!--                    formControlName="locationSelection"-->
-<!--                    aria-labelledby="Location selection">-->
-<!--              <option [ngValue]="null"></option>-->
-<!--              <option *ngFor="let location of locations"-->
-<!--                      [ngValue]="location">{{displayLocation(location)}}</option>-->
-<!--            </select>-->
-<!--          </div>-->
-<!--          &lt;!&ndash; locationSelection warning shows up if location input is currently invalid (and has already been changed at some point) &ndash;&gt;-->
-<!--          <div [hidden]="createHallForm.get('locationSelection').valid || createHallForm.get('locationSelection').pristine"-->
-<!--               class="form-inline col-12 mb-2">-->
-<!--            <small class="form-text text-danger">-->
-<!--              Please select a hall location!-->
-<!--            </small>-->
-<!--          </div>-->
-<!--          &lt;!&ndash; hall name input &ndash;&gt;-->
-<!--          <div class="form-group">-->
-<!--            <label for="floorplanName">Name</label>-->
-<!--            <input id="floorplanName" class="form-control" type="text" [formGroup]="createHallForm"-->
-<!--                   formControlName="floorplanName" aria-labelledby="hall name"/>-->
-<!--          </div>-->
-<!--          &lt;!&ndash; name warning only shows up if hall name input is invalid (and has already been changed at some point) &ndash;&gt;-->
-<!--          <div [hidden]="createHallForm.get('floorplanName').valid || createHallForm.get('floorplanName').pristine"-->
-<!--               class="form-inline col-12 mb-2">-->
-<!--            <small class="form-text text-danger">-->
-<!--              Please enter a name!-->
-<!--            </small>-->
-<!--          </div>-->
-<!--          &lt;!&ndash; button to postt newly created hall with its seats or sectors to backend &ndash;&gt;-->
-<!--          <div>-->
-<!--            <button type="submit" class="btn btn-success float-right" [disabled]="createHallForm.invalid"-->
-<!--                    (click)="createFloorplan()" data-dismiss="modal">Create Floor Plan-->
-<!--            </button>-->
-<!--          </div>-->
-<!--        </form>-->
-<!--      </div>-->
-<!--      <div class="modal-footer">-->
-<!--        &lt;!&ndash; close button for modal &ndash;&gt;-->
-<!--        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>-->
-<!--      </div>-->
-<!--    </div>-->
-<!--  </div>-->
-<!--</div>-->
-
-<!--&lt;!&ndash;&lt;!&ndash; Floorplan component draws floorplan as svg with either seats or sectors &ndash;&gt;&ndash;&gt;-->
-<!--&lt;!&ndash;<app-floorplan *ngIf="getSelectedHall().seats !== null && getSelectedHall().seats.length > 0"&ndash;&gt;-->
-<!--&lt;!&ndash;               [seats]="getSelectedHall().seats"&ndash;&gt;-->
-<!--&lt;!&ndash;               (selectedSeat)="displaySeatForm($event)"&ndash;&gt;-->
-<!--&lt;!&ndash;               (click)="onSvgClick($event)"></app-floorplan>&ndash;&gt;-->
-<!--&lt;!&ndash;<app-floorplan *ngIf="getSelectedHall().sectors !== null && getSelectedHall().sectors.length > 0"&ndash;&gt;-->
-<!--&lt;!&ndash;               [sectors]="getSelectedHall().sectors"&ndash;&gt;-->
-<!--&lt;!&ndash;               (selectedSector)="displaySectorForm($event)"&ndash;&gt;-->
-<!--&lt;!&ndash;               (click)="onSvgClick($event)"></app-floorplan>&ndash;&gt;-->
+<div *ngIf="createHallForm.get('hallType').value === 'sectors'" class="row">
+  <app-floorplan-svg class="floorplanSvg" [sectors]="getSelectedHall().sectors" (addTicket)="addToTickets($event)"></app-floorplan-svg>
+  <app-floorplan-ticket class="floorplanTickets" *ngIf="tickets && tickets.length" [tickets]="tickets"></app-floorplan-ticket>
+</div>
