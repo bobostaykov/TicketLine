@@ -4,6 +4,8 @@ import at.ac.tuwien.sepm.groupphase.backend.datatype.PriceCategory;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import java.util.Objects;
 
 @ApiModel(value = "SectorDTO", description = "A DTO for sector entities")
@@ -13,9 +15,12 @@ public class SectorDTO {
     private Long id;
 
     @ApiModelProperty(name = "The sector number", required = true)
+    @NotNull(message = "Sector number was not set")
+    @Positive(message = "Sector number was negative or zero")
     private Integer sectorNumber;
 
     @ApiModelProperty(name = "The sector's price category. Either cheap, average or expensive", required = true)
+    @NotNull(message = "Sector price category was not set")
     private PriceCategory priceCategory;
 
     public Long getId() {

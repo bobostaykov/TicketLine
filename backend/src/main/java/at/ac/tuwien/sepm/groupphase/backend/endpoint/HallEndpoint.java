@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -38,7 +39,7 @@ public class HallEndpoint {
     @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(value = "Add a new hall with seats or sectors", authorizations = {@Authorization(value = "apiKey")})
-    public HallDTO postHall(@RequestBody HallDTO hallDto) throws ServiceException, CustomValidationException {
+    public HallDTO postHall(@RequestBody @Valid HallDTO hallDto) throws ServiceException, CustomValidationException {
         LOGGER.info("POST Halls: " + hallDto.toString());
         return hallService.addHall(hallDto);
 

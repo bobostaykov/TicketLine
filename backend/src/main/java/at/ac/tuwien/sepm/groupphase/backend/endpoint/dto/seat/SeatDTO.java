@@ -3,22 +3,31 @@ package at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.seat;
 import at.ac.tuwien.sepm.groupphase.backend.datatype.PriceCategory;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import org.springframework.validation.annotation.Validated;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import java.util.Objects;
 
 @ApiModel(value = "SeatDTO", description = "DTO for seat entities")
+@Validated
 public class SeatDTO {
 
     @ApiModelProperty(name = "The automatically generated database id of the seat")
     private Long id;
 
     @ApiModelProperty(name = "The seat number", required = true)
+    @NotNull(message = "Seat Number was not set")
+    @Positive(message = "Seat Number was negative or 0")
     private Integer seatNumber;
 
     @ApiModelProperty(name = "The seat row", required = true)
+    @NotNull(message = "Seat Row was not set")
+    @Positive(message = "Seat Row was negative or 0")
     private Integer seatRow;
 
     @ApiModelProperty(name = "The seat's price category. Either cheap, average or expensive.", required = true)
+    @NotNull(message = "Seat Price Category was not set")
     private PriceCategory priceCategory;
 
     public Long getId() {
