@@ -63,7 +63,6 @@
   <!-- draws a floor plan with seats -->
   <svg id="floorplan" *ngIf="seats && seats.length"
        [attr.viewBox]="this.viewbox"
-       preserveAspectRatio="xMinYMin slice"
        (click)="onSvgClick($event)"
        (mousedown)="svgDragInit()"
        (mousewheel)="zoom($event)" >
@@ -77,7 +76,8 @@
   <svg id="floorplan" *ngIf="sectors && sectors.length"
        [attr.viewBox]="this.viewbox"
        (click)="onSvgClick($event)"
-       preserveAspectRatio="xMinYMin slice">
+       (mousedown)="svgDragInit()"
+       (mousewheel)="zoom($event)" >
     <path *ngFor="let sector of sectors"
           [attr.d]="getSectorPath(sector)"
           [attr.fill]="getColor(sector)"

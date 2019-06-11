@@ -113,8 +113,6 @@ export class FloorplanSvgComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log(this.viewboxPosX);
-    console.log(this.viewboxPosY);
   }
 
   private displayContext(element: Seat | Sector, event: MouseEvent): void {
