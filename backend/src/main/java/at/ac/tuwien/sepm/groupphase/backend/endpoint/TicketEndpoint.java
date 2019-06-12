@@ -2,7 +2,6 @@ package at.ac.tuwien.sepm.groupphase.backend.endpoint;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.ticket.TicketDTO;
 import at.ac.tuwien.sepm.groupphase.backend.service.TicketService;
-import com.itextpdf.text.DocumentException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
@@ -32,6 +31,7 @@ public class TicketEndpoint {
     public TicketEndpoint(TicketService ticketService) {
         this.ticketService = ticketService;
     }
+
 
     @RequestMapping(method = RequestMethod.POST)
     @ApiOperation(value = "Create a ticket", authorizations = {@Authorization(value = "apiKey")})
