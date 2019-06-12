@@ -2,6 +2,8 @@ package at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.ticket;
 
 import at.ac.tuwien.sepm.groupphase.backend.datatype.TicketStatus;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.customer.CustomerDTO;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.seat.SeatDTO;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.sector.SectorDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.show.ShowDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Seat;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Sector;
@@ -25,10 +27,10 @@ public class TicketDTO {
     private CustomerDTO customer;
 
     @ApiModelProperty(name = "The seat number of this ticket")
-    private Seat seat;
+    private SeatDTO seat;
 
     @ApiModelProperty(name = "The sector number of this ticket")
-    private Sector sector;
+    private SectorDTO sector;
 
     @ApiModelProperty(name = "Status of the ticket (RESERVATED, SOLD)")
     private TicketStatus status;
@@ -65,19 +67,19 @@ public class TicketDTO {
         return customer;
     }
 
-    public void setSeat(Seat seat) {
+    public void setSeat(SeatDTO seat) {
         this.seat = seat;
     }
 
-    public Seat getSeat() {
+    public SeatDTO getSeat() {
         return seat;
     }
 
-    public void setSector(Sector sector) {
+    public void setSector(SectorDTO sector) {
         this.sector = sector;
     }
 
-    public Sector getSector() {
+    public SectorDTO getSector() {
         return sector;
     }
 
@@ -148,8 +150,8 @@ public class TicketDTO {
         private ShowDTO show;
         private Double price;
         private CustomerDTO customer;
-        private Seat seat;
-        private Sector sector;
+        private SeatDTO seat;
+        private SectorDTO sector;
         private TicketStatus status;
 
         public TicketDTOBuilder id(Long id) {
@@ -171,12 +173,12 @@ public class TicketDTO {
             return this;
         }
 
-        public TicketDTOBuilder seat(Seat seat) {
+        public TicketDTOBuilder seat(SeatDTO seat) {
             this.seat = seat;
             return this;
         }
 
-        public TicketDTOBuilder sector(Sector sector) {
+        public TicketDTOBuilder sector(SectorDTO sector) {
             this.sector = sector;
             return this;
         }
