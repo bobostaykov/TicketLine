@@ -16,20 +16,20 @@ public class Ticket {
     @JoinColumn(nullable = false, name = "show_id")
     private Show show;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @Column(nullable = false)
+    private Double price;
+
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(nullable = false, name = "customer_id")
     private Customer customer;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = true, name = "seat_id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "seat_id")
     private Seat seat;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = true, name = "sector_id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "sector_id")
     private Sector sector;
-
-    @Column(nullable = false)
-    private Double price;
 
     @Column(nullable = false)
     private TicketStatus status;

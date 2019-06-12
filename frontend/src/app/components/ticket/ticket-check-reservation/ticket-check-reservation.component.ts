@@ -1,6 +1,5 @@
 import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {NgbPaginationConfig} from '@ng-bootstrap/ng-bootstrap';
-import {FormBuilder, FormGroup} from '@angular/forms';
 import {AuthService} from '../../../services/auth/auth.service';
 
 import {Customer} from '../../../dtos/customer';
@@ -15,7 +14,7 @@ import {Hall} from '../../../dtos/hall';
 import {Location} from '../../../dtos/location';
 import {Ticket} from '../../../dtos/ticket';
 import {TicketService} from '../../../services/ticket/ticket.service';
-import {TicketType} from '../../../datatype/ticket_type';
+import {TicketStatus} from '../../../datatype/ticket_status';
 
 @Component({
   selector: 'app-ticket-check-reservation',
@@ -26,17 +25,8 @@ export class TicketCheckReservationComponent implements OnInit {
 
   error: boolean = false;
   errorMessage: string = '';
-  ticketCheckReservationForm: FormGroup;
   submitted: boolean = false;
-  // TODO: delete default objects
-  private sector: Sector;
-  private event: Event;
-  private hall: Hall;
-  private artist: Artist;
-  private location: Location;
-  private seats: Seat[];
-  private sectors: Sector[];
-  // TODO: End of default objects
+
   private price: number[] = [];
   private priceTotal: number;
   private show: Show;
@@ -48,8 +38,19 @@ export class TicketCheckReservationComponent implements OnInit {
   private seatsStr: String[] = [];
   private rowStr: String[] = [];
   private idxPrice: number;
+  private ticketExistsError: boolean = false;
 
-  constructor(private ticketService: TicketService, private ngbPaginationConfig: NgbPaginationConfig, private formBuilder: FormBuilder,
+  // TODO: delete default objects
+  private sector: Sector;
+  private event: Event;
+  private hall: Hall;
+  private artist: Artist;
+  private location: Location;
+  private seats: Seat[];
+  private sectors: Sector[];
+  // TODO: End of default objects
+
+  constructor(private ticketService: TicketService, private ngbPaginationConfig: NgbPaginationConfig,
               private cd: ChangeDetectorRef, private authService: AuthService) {}
 
   ngOnInit() {
@@ -68,6 +69,7 @@ export class TicketCheckReservationComponent implements OnInit {
     this.price.push(35.99);
     this.price.push(35.99);
     // TODO: End of default objects
+
     this.idxPrice = 0;
     this.priceTotal = 0;
 
@@ -76,30 +78,31 @@ export class TicketCheckReservationComponent implements OnInit {
       for (const entry of this.ticket_seats) {
         this.seatsStr.push(entry.seatNumber.toString());
         this.rowStr.push(entry.seatRow.toString());
-        this.tickets.push(new Ticket(null, this.show, this.customer, this.price[this.idxPrice], entry, null, TicketType.RESERVATED));
-        this.idxPrice += 1;
-        this.priceTotal += this.price.pop();
+        const currentTicket = new Ticket(null, this.show, this.customer, this.price[this.idxPrice], entry, null, TicketStatus.RESERVATED);
+        this.createTicket(currentTicket);
       }
     }
 
     if (this.ticket_sectors.length > 0) {
       this.amtTickets = this.ticket_sectors.length;
       for (const entry of this.ticket_sectors) {
-        this.tickets.push(new Ticket(null, this.show, this.customer, this.price[this.idxPrice], null, entry, TicketType.RESERVATED));
-        this.idxPrice += 1;
-        this.priceTotal += this.price.pop();
+        const currentTicket = new Ticket(null, this.show, this.customer, this.price[this.idxPrice], null, entry, TicketStatus.RESERVATED);
+        this.createTicket(currentTicket);
       }
     }
   }
 
-  /**
-   * Starts form validation and builds a news dto for sending a creation request if the form is valid.
-   * If the procedure was successful, the form will be cleared.
-   */
-  createTicket() {
-    this.submitted = true;
-    for (const entry of this.tickets) {
-      this.addTicket(entry);
+  createTicket(currentTicket: Ticket) {
+    this.tickets.push(currentTicket);
+    this.ticketExistsError = false;
+    this.addTicket(currentTicket);
+    this.idxPrice += 1;
+    this.priceTotal += this.price.pop();
+    if (this.ticketExistsError) {
+      console.log('Reservation already exists');
+      return;
+    } else {
+      this.submitted = true;
     }
   }
 
@@ -109,7 +112,7 @@ export class TicketCheckReservationComponent implements OnInit {
    */
   addTicket(ticket: Ticket) {
     this.ticketService.createTicket(ticket).subscribe(
-      () => {},
+      (newTicket: Ticket) => {if (newTicket.id === -1) {this.ticketExistsError = true; }},
       error => {
         this.defaultServiceErrorHandling(error);
       }
@@ -139,10 +142,4 @@ export class TicketCheckReservationComponent implements OnInit {
   vanishError() {
     this.error = false;
   }
-
-  private clearForm() {
-    this.ticketCheckReservationForm.reset();
-    this.submitted = false;
-  }
-
 }

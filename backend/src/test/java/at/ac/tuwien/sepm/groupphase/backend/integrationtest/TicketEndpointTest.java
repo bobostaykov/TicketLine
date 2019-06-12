@@ -9,6 +9,7 @@ import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.event.EventDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.hall.HallDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.location.LocationDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.seat.SeatDTO;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.sector.SectorDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.show.ShowDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.ticket.TicketDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.*;
@@ -75,6 +76,9 @@ public class TicketEndpointTest extends BaseIntegrationTestWithMockedUserCredent
     private SeatDTO TEST_SEAT1_DTO;
     private SeatDTO TEST_SEAT2_DTO;
     private SeatDTO TEST_SEAT3_DTO;
+    private Seat TEST_SEAT;
+    private SectorDTO TEST_SECTOR_DTO;
+    private Sector TEST_SECTOR;
 
     private Artist TEST_ARTIST;
     private Event TEST_EVENT;
@@ -119,6 +123,7 @@ public class TicketEndpointTest extends BaseIntegrationTestWithMockedUserCredent
     private Long TEST_SEAT_ID_1 = 51L;
     private Long TEST_SEAT_ID_2 = 52L;
     private Long TEST_SEAT_ID_3 = 53L;
+    private Long TEST_SECTOR_ID = 54L;
     private Integer TEST_SEAT_SEAT_NO_1 = 43;
     private Integer TEST_SEAT_SEAT_NO_2 = 44;
     private Integer TEST_SEAT_SEAT_NO_3 = 45;
@@ -160,7 +165,7 @@ public class TicketEndpointTest extends BaseIntegrationTestWithMockedUserCredent
 
     private Long TEST_TICKET_ID2 = 12L;
     private Double TEST_TICKET_PRICE2 = 15.50;
-    private Integer TEST_TICKET_SECTOR2 = 1;
+    private Integer TEST_SECTOR_NUMBER = 1;
     private TicketStatus TEST_TICKET_STATUS2 = TicketStatus.RESERVATED;
 
     @MockBean
@@ -216,6 +221,22 @@ public class TicketEndpointTest extends BaseIntegrationTestWithMockedUserCredent
             .seatRow(TEST_SEAT_SEAT_ROW_3)
             .priceCategory(TEST_SEAT_PRICE_CATEGORY_3)
             .build();
+        TEST_SEAT = Seat.builder()
+            .id(TEST_SEAT_ID_1)
+            .seatNumber(TEST_SEAT_SEAT_NO_1)
+            .seatRow(TEST_SEAT_SEAT_ROW_1)
+            .priceCategory(TEST_SEAT_PRICE_CATEGORY_1)
+            .build();
+        TEST_SECTOR_DTO = SectorDTO.builder()
+            .id(TEST_SECTOR_ID)
+            .sectorNumber(TEST_SECTOR_NUMBER)
+            .priceCategory(PriceCategory.AVERAGE)
+            .build();
+        TEST_SECTOR = Sector.builder()
+            .id(TEST_SECTOR_ID)
+            .sectorNumber(TEST_SECTOR_NUMBER)
+            .priceCategory(PriceCategory.AVERAGE)
+            .build();
         TEST_HALL_SEATS_DTO.add(TEST_SEAT1_DTO);
         TEST_HALL_SEATS_DTO.add(TEST_SEAT2_DTO);
         TEST_HALL_SEATS_DTO.add(TEST_SEAT3_DTO);
@@ -253,8 +274,7 @@ public class TicketEndpointTest extends BaseIntegrationTestWithMockedUserCredent
             .show(TEST_SHOW_DTO)
             .customer(TEST_CUSTOMER1_DTO)
             .price(TEST_TICKET_PRICE1)
-            .seatNumber(TEST_TICKET_SEAT_NO1)
-            .rowNumber(TEST_TICKET_ROW_NO1)
+            .seat(TEST_SEAT1_DTO)
             .status(TEST_TICKET_STATUS1)
             .build();
         TEST_TICKET2_DTO = TicketDTO.builder()
@@ -262,7 +282,7 @@ public class TicketEndpointTest extends BaseIntegrationTestWithMockedUserCredent
             .show(TEST_SHOW_DTO)
             .customer(TEST_CUSTOMER2_DTO)
             .price(TEST_TICKET_PRICE2)
-            .sectorNumber(TEST_TICKET_SECTOR2)
+            .sector(TEST_SECTOR_DTO)
             .status(TEST_TICKET_STATUS2)
             .build();
         TEST_CUSTOMER1_LIST_DTO = new ArrayList<>();
@@ -359,8 +379,7 @@ public class TicketEndpointTest extends BaseIntegrationTestWithMockedUserCredent
             .show(TEST_SHOW)
             .customer(TEST_CUSTOMER1)
             .price(TEST_TICKET_PRICE1)
-            .seatNumber(TEST_TICKET_SEAT_NO1)
-            .rowNumber(TEST_TICKET_ROW_NO1)
+            .seat(TEST_SEAT1)
             .status(TEST_TICKET_STATUS1)
             .build();
         TEST_TICKET2 = Ticket.builder()
@@ -368,7 +387,7 @@ public class TicketEndpointTest extends BaseIntegrationTestWithMockedUserCredent
             .show(TEST_SHOW)
             .customer(TEST_CUSTOMER2)
             .price(TEST_TICKET_PRICE2)
-            .sectorNumber(TEST_TICKET_SECTOR2)
+            .sector(TEST_SECTOR)
             .status(TEST_TICKET_STATUS2)
             .build();
         TEST_CUSTOMER1_LIST = new ArrayList<>();
@@ -399,8 +418,7 @@ public class TicketEndpointTest extends BaseIntegrationTestWithMockedUserCredent
                     .show(TEST_SHOW)
                     .customer(TEST_CUSTOMER1)
                     .price(TEST_TICKET_PRICE1)
-                    .seatNumber(TEST_TICKET_SEAT_NO1)
-                    .rowNumber(TEST_TICKET_ROW_NO1)
+                    .seat(TEST_SEAT)
                     .status(TEST_TICKET_STATUS1)
                     .build()));
         Response response = RestAssured
@@ -416,8 +434,7 @@ public class TicketEndpointTest extends BaseIntegrationTestWithMockedUserCredent
                 .show(TEST_SHOW_DTO)
                 .customer(TEST_CUSTOMER1_DTO)
                 .price(TEST_TICKET_PRICE1)
-                .seatNumber(TEST_TICKET_SEAT_NO1)
-                .rowNumber(TEST_TICKET_ROW_NO1)
+                .seat(TEST_SEAT1_DTO)
                 .status(TEST_TICKET_STATUS1)
                 .build())));
     }
@@ -431,8 +448,7 @@ public class TicketEndpointTest extends BaseIntegrationTestWithMockedUserCredent
                 .show(TEST_SHOW)
                 .customer(TEST_CUSTOMER1)
                 .price(TEST_TICKET_PRICE1)
-                .seatNumber(TEST_TICKET_SEAT_NO1)
-                .rowNumber(TEST_TICKET_ROW_NO1)
+                .seat(TEST_SEAT)
                 .status(TEST_TICKET_STATUS1)
                 .build()));
         Response response = RestAssured
@@ -447,8 +463,7 @@ public class TicketEndpointTest extends BaseIntegrationTestWithMockedUserCredent
             .show(TEST_SHOW_DTO)
             .customer(TEST_CUSTOMER1_DTO)
             .price(TEST_TICKET_PRICE1)
-            .seatNumber(TEST_TICKET_SEAT_NO1)
-            .rowNumber(TEST_TICKET_ROW_NO1)
+            .seat(TEST_SEAT1_DTO)
             .status(TEST_TICKET_STATUS1)
             .build()));
     }
@@ -462,8 +477,7 @@ public class TicketEndpointTest extends BaseIntegrationTestWithMockedUserCredent
                 .show(TEST_SHOW)
                 .customer(TEST_CUSTOMER1)
                 .price(TEST_TICKET_PRICE1)
-                .seatNumber(TEST_TICKET_SEAT_NO1)
-                .rowNumber(TEST_TICKET_ROW_NO1)
+                .seat(TEST_SEAT)
                 .status(TEST_TICKET_STATUS1)
                 .build());
         Response response = RestAssured
@@ -474,8 +488,7 @@ public class TicketEndpointTest extends BaseIntegrationTestWithMockedUserCredent
                 .show(TEST_SHOW_DTO)
                 .customer(TEST_CUSTOMER1_DTO)
                 .price(TEST_TICKET_PRICE1)
-                .seatNumber(TEST_TICKET_SEAT_NO1)
-                .rowNumber(TEST_TICKET_ROW_NO1)
+                .seat(TEST_SEAT1_DTO)
                 .status(TEST_TICKET_STATUS1)
                 .build())
             .when().post(TEST_TICKET_ENDPOINT)
@@ -486,8 +499,7 @@ public class TicketEndpointTest extends BaseIntegrationTestWithMockedUserCredent
             .show(TEST_SHOW_DTO)
             .customer(TEST_CUSTOMER1_DTO)
             .price(TEST_TICKET_PRICE1)
-            .seatNumber(TEST_TICKET_SEAT_NO1)
-            .rowNumber(TEST_TICKET_ROW_NO1)
+            .seat(TEST_SEAT1_DTO)
             .status(TEST_TICKET_STATUS1)
             .build()));
     }
