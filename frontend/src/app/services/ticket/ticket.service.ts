@@ -35,7 +35,7 @@ export class TicketService {
    * Persists ticket to the backend
    * @param ticket to persist
    */
-  createTicket(ticket: Ticket) {
+  createTicket(ticket: Ticket): Observable<Ticket> {
     console.log('Create ticket');
     return this.httpClient.post<Ticket>(this.ticketBaseUri, ticket);
   }
