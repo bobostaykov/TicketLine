@@ -167,7 +167,11 @@ public class ShowRepositoryImpl implements ShowRepositoryCustom {
         // Filters from the result only the wanted page
         int pageSize = 10;
         int totalElements = showList.size();
+
+        typedQuery.setFirstResult(page * pageSize);
+        typedQuery.setMaxResults(pageSize);
         Pageable pageable = PageRequest.of(page, pageSize);
+        showList = typedQuery.getResultList();
 
         return new PageImpl<>(showList, pageable, totalElements);
     }
