@@ -7,9 +7,16 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -42,6 +49,30 @@ public class TicketEndpoint {
     public TicketDTO deleteById(@PathVariable Long id) {
         LOGGER.info("Delete Ticket with id " + id);
         return ticketService.deleteOne(id);
+    }
+
+    @RequestMapping(value = "/cancellation", method = RequestMethod.DELETE)
+    @ApiOperation(value = "Delete Tickets by id and receive storno receipt", authorizations = {@Authorization(value = "apiKey")})
+    public ResponseEntity<Resource> deleteAndGetStornoReceipt(@RequestParam List<String> tickets) {
+        LOGGER.info("Delete Ticket(s) with id(s)" + tickets.toString() + " and receive storno receipt");
+        MultipartFile pdf;
+        try {
+            pdf = ticketService.deleteAndGetCancellationReceipt(tickets);
+        } catch (Exception e) {
+            LOGGER.info(e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        try {
+            return ResponseEntity
+                .ok()
+                .contentLength(pdf.getSize())
+                .contentType(
+                    MediaType.parseMediaType("application/octet-stream"))
+                .body(new InputStreamResource(pdf.getInputStream()));
+        } catch (IOException e) {
+            LOGGER.info(e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
@@ -86,6 +117,29 @@ public class TicketEndpoint {
             return ticketService.findAll();
         } else {
             return ticketService.findAllFilteredByCustomerAndEvent(customerName, eventName);
+        }
+    }
+
+    @RequestMapping(value = "/receipt", method = RequestMethod.GET)
+    @ApiOperation(value = "Get receipt PDF for list of tickets", authorizations = {@Authorization(value = "apiKey")})
+    public ResponseEntity<Resource> getReceiptPDF(@RequestParam List<String> tickets) {
+        MultipartFile pdf;
+        try {
+            pdf = ticketService.getReceipt(tickets);
+        } catch (Exception e) {
+            LOGGER.info(e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        try {
+            return ResponseEntity
+                .ok()
+                .contentLength(pdf.getSize())
+                .contentType(
+                    MediaType.parseMediaType("application/octet-stream"))
+                .body(new InputStreamResource(pdf.getInputStream()));
+        } catch (IOException e) {
+            LOGGER.info(e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

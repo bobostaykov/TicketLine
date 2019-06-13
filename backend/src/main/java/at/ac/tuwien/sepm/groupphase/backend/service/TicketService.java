@@ -1,7 +1,13 @@
 package at.ac.tuwien.sepm.groupphase.backend.service;
 
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.show.ShowDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.ticket.TicketDTO;
+import at.ac.tuwien.sepm.groupphase.backend.entity.Ticket;
+import com.itextpdf.text.DocumentException;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 public interface TicketService {
@@ -72,4 +78,20 @@ public interface TicketService {
      * @return list of found tickets
      */
     //List<TicketDTO> findByCustomerNameAndShowWithStatusReservated(String surname, String firstname, ShowDTO show);
+
+    /**
+     * Get one receipt PDF for the list of ticket IDs
+     *
+     * @param ticketIDs String List containg ticket IDs
+     * @return receipt PDF as MultipartFile
+     */
+    MultipartFile getReceipt(List<String> ticketIDs) throws DocumentException, IOException;
+
+    /**
+     * Delete ticket(s) by id and receive storno receipt
+     *
+     * @param tickets list of ticket ids
+     * @return Cancellation PDF receipt for deleted tickets as MultipartFile
+     */
+    MultipartFile deleteAndGetCancellationReceipt(List<String> tickets) throws DocumentException, IOException;
 }
