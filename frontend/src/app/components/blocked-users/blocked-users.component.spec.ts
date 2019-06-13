@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { LocationsComponent } from './locations.component';
+import { BlockedUsersComponent } from './blocked-users.component';
 
-describe('LocationsComponent', () => {
-  let component: LocationsComponent;
-  let fixture: ComponentFixture<LocationsComponent>;
+describe('BlockedUsersComponent', () => {
+  let component: BlockedUsersComponent;
+  let fixture: ComponentFixture<BlockedUsersComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ LocationsComponent ]
+      declarations: [ BlockedUsersComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(LocationsComponent);
+    fixture = TestBed.createComponent(BlockedUsersComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

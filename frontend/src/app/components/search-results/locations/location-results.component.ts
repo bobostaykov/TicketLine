@@ -3,8 +3,6 @@ import {ActivatedRoute} from '@angular/router';
 import {LocationResultsService} from '../../../services/search-results/locations/location-results.service';
 import {Location} from '../../../dtos/location';
 
-// TODO remove all console.log()
-
 @Component({
   selector: 'app-locations',
   templateUrl: './location-results.component.html',
@@ -12,12 +10,21 @@ import {Location} from '../../../dtos/location';
 })
 export class LocationResultsComponent implements OnInit {
 
-  private page: number = 1;
-  private pageSize: number = 10;
+  private page: number = 0;
+  private pages: Array<number>;
   private dataReady: boolean = false;
+
+  private country: string;
+  private city: string;
+  private street: string;
+  private postalCode: string;
+  private description: string;
+
   private error: boolean = false;
   private errorMessage: string = '';
+
   private resultsFor: string;
+
   private locations: Location[];
   private headers: string[] = [
     'Country',
@@ -33,24 +40,50 @@ export class LocationResultsComponent implements OnInit {
     this.resultsFor = this.route.snapshot.queryParamMap.get('resultsFor');
     if (this.resultsFor === 'ATTRIBUTES') {
       this.loadLocationsFiltered(
-        this.route.snapshot.queryParamMap.get('country'),
-        this.route.snapshot.queryParamMap.get('city'),
-        this.route.snapshot.queryParamMap.get('street'),
-        this.route.snapshot.queryParamMap.get('postalCode'),
-        this.route.snapshot.queryParamMap.get('description')
+        this.country = this.route.snapshot.queryParamMap.get('country'),
+        this.city = this.route.snapshot.queryParamMap.get('city'),
+        this.street = this.route.snapshot.queryParamMap.get('street'),
+        this.postalCode = this.route.snapshot.queryParamMap.get('postalCode'),
+        this.description = this.route.snapshot.queryParamMap.get('description'),
+        this.page
       );
     } else {
       this.defaultServiceErrorHandling('No results for this type');
     }
   }
 
-  private loadLocationsFiltered(country, city, street, postalCode, description) {
+  private loadLocationsFiltered(country, city, street, postalCode, description, page) {
     console.log('Location Component: loadLocationsFiltered');
-    this.locationsService.findLocationsFiltered(country, city, street, postalCode, description).subscribe(
-      (locations: Location[]) => { this.locations = locations; },
+    this.locationsService.findLocationsFiltered(country, city, street, postalCode, description, page).subscribe(
+      result => {
+        this.locations = result['content'];
+        this.pages = new Array(result['totalPages']);
+      },
       error => {this.defaultServiceErrorHandling(error); },
           () => { this.dataReady = true; }
     );
+  }
+
+  private setPage(i, event: any) {
+    event.preventDefault();
+    this.page = i;
+    this.loadLocationsFiltered(this.country, this.city, this.street, this.postalCode, this.description, this.page);
+  }
+
+  private previousPage(event: any) {
+    event.preventDefault();
+    if (this.page > 0 ) {
+      this.page--;
+      this.loadLocationsFiltered(this.country, this.city, this.street, this.postalCode, this.description, this.page);
+    }
+  }
+
+  private nextPage(event: any) {
+    event.preventDefault();
+    if (this.page < this.pages.length - 1) {
+      this.page++;
+      this.loadLocationsFiltered(this.country, this.city, this.street, this.postalCode, this.description, this.page);
+    }
   }
 
   private defaultServiceErrorHandling(error: any) {

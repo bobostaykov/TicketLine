@@ -3,7 +3,6 @@ package at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.hall;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.location.LocationDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.seat.SeatDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.sector.SectorDTO;
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 

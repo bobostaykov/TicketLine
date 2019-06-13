@@ -3,7 +3,6 @@ package at.ac.tuwien.sepm.groupphase.backend.entity;
 import at.ac.tuwien.sepm.groupphase.backend.datatype.PriceCategory;
 
 import javax.persistence.*;
-import java.util.HashMap;
 import java.util.Map;
 
 @Entity

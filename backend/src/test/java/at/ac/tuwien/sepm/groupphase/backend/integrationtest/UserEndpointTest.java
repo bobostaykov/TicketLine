@@ -5,7 +5,7 @@ import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.SimpleNewsDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.user.UserDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.News;
 import at.ac.tuwien.sepm.groupphase.backend.entity.User;
-import at.ac.tuwien.sepm.groupphase.backend.integrationtest.base.BaseIntegrationTest;
+import at.ac.tuwien.sepm.groupphase.backend.integrationtest.base.BaseIntegrationTestWithMockedUserCredentials;
 import at.ac.tuwien.sepm.groupphase.backend.repository.UserRepository;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -18,20 +18,21 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.hamcrest.core.Is.is;
 import static org.mockito.ArgumentMatchers.any;
 
-public class UserEndpointTest extends BaseIntegrationTest {
+public class UserEndpointTest extends BaseIntegrationTestWithMockedUserCredentials {
+
+    @MockBean
+    private UserRepository userRepository;
 
     private static final String USER_ENDPOINT = "/users";
     private static final String SPECIFIC_USER_PATH = "/{userId}";
 
     private static final long TEST_USER_ID = 1L;
+    private static final long TEST_USER_ID_ERROR = -1L;
     private static final String TEST_USER_NAME = "Messi";
     private static final String TEST_USER_PASS = "Messi123";
     private static final UserType TEST_USER_TYPE = UserType.ADMIN;
@@ -40,8 +41,6 @@ public class UserEndpointTest extends BaseIntegrationTest {
     private static final List<News> TEST_READ_NEWS = new ArrayList<News>();
     private static final List<SimpleNewsDTO> TEST_READ_NEWS_DTO = new ArrayList<SimpleNewsDTO>();
 
-    @MockBean
-    private UserRepository userRepository;
 
     @Test
     public void findAllUsersUnauthorizedAsAnonymous() {
@@ -72,6 +71,39 @@ public class UserEndpointTest extends BaseIntegrationTest {
             .when().get(USER_ENDPOINT)
             .then().extract().response();
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.FORBIDDEN.value()));
+    }
+
+    @Test
+    public void findAllUsersAsAdmin() {
+        BDDMockito.
+            given(userRepository.findAll()).
+            willReturn(Collections.singletonList(
+                User.builder()
+                    .id(TEST_USER_ID)
+                    .username(TEST_USER_NAME)
+                    .password(TEST_USER_PASS)
+                    .type(TEST_USER_TYPE)
+                    .userSince(TEST_USER_SINCE)
+                    .lastLogin(TEST_USER_LAST_LOGIN)
+                    .readNews(TEST_READ_NEWS)
+                    .build()));
+        Response response = RestAssured
+            .given()
+            .contentType(ContentType.JSON)
+            .header(HttpHeaders.AUTHORIZATION, validAdminTokenWithPrefix)
+            .when().get(USER_ENDPOINT)
+            .then().extract().response();
+        Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
+        Assert.assertThat(Arrays.asList(response.as(UserDTO[].class)), is(Collections.singletonList(
+            UserDTO.builder()
+                .id(TEST_USER_ID)
+                .username(TEST_USER_NAME)
+                .password(TEST_USER_PASS)
+                .type(TEST_USER_TYPE)
+                .userSince(TEST_USER_SINCE)
+                .lastLogin(TEST_USER_LAST_LOGIN)
+                .readNews(TEST_READ_NEWS_DTO)
+                .build())));
     }
 
     @Test
@@ -156,7 +188,7 @@ public class UserEndpointTest extends BaseIntegrationTest {
     @Test
     public void createUserAsAdmin() {
         BDDMockito.
-            given(userRepository.save(any(User.class))).
+            given(userRepository.createUser(any(User.class))).
             willReturn(User.builder()
                 .id(TEST_USER_ID)
                 .username(TEST_USER_NAME)
@@ -177,7 +209,8 @@ public class UserEndpointTest extends BaseIntegrationTest {
                 .build())
             .when().post(USER_ENDPOINT)
             .then().extract().response();
-        Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
+        Assert.assertThat(response.getStatusCode(), is(HttpStatus.CREATED.value()));
+        UserDTO dto = response.as(UserDTO.class);
         Assert.assertThat(response.as(UserDTO.class), is(UserDTO.builder()
             .id(TEST_USER_ID)
             .username(TEST_USER_NAME)
@@ -188,5 +221,92 @@ public class UserEndpointTest extends BaseIntegrationTest {
             .readNews(TEST_READ_NEWS_DTO)
             .build()));
     }
+
+//    @Test//(expected = ResponseStatusException.class)
+//    public void createUserWithExistingUsernameAsAdmin() {
+//        BDDMockito.
+//            given(userRepository.save(User.builder()
+//                .id(TEST_USER_ID_ERROR)
+//                .build())).
+//            willReturn(User.builder()
+//                .id(TEST_USER_ID_ERROR)
+//                .build());
+////            willThrow(DataIntegrityViolationException.class);
+//        Response response1 = RestAssured
+//            .given()
+//            .contentType(ContentType.JSON)
+//            .header(HttpHeaders.AUTHORIZATION, validAdminTokenWithPrefix)
+//            .body(UserDTO.builder()
+//                .username(TEST_USER_NAME)
+//                .password(TEST_USER_PASS)
+//                .type(TEST_USER_TYPE)
+//                .build())
+//            .when().post(USER_ENDPOINT)
+//            .then().extract().response();
+//        Response response2 = RestAssured
+//            .given()
+//            .contentType(ContentType.JSON)
+//            .header(HttpHeaders.AUTHORIZATION, validAdminTokenWithPrefix)
+//            .body(UserDTO.builder()
+//                .username(TEST_USER_NAME)
+//                .password(TEST_USER_PASS)
+//                .type(TEST_USER_TYPE)
+//                .build())
+//            .when().post(USER_ENDPOINT)
+//            .then().extract().response();
+//        Assert.assertThat(response1.getStatusCode(), is(HttpStatus.CREATED.value()));
+//        Assert.assertThat(response2.getStatusCode(), is(HttpStatus.CREATED.value()));
+//        Assert.assertThat(response2.as(UserDTO.class), is(UserDTO.builder()
+//            .id(TEST_USER_ID_ERROR)
+//            .build()));
+//    }
+
+//    @Test
+//    public void deleteUserAsUser() {
+//        BDDMockito.
+//            given(userRepository.save(any(User.class))).
+//            willReturn(User.builder()
+//                .id(TEST_USER_ID)
+//                .username(TEST_USER_NAME)
+//                .password(TEST_USER_PASS)
+//                .type(TEST_USER_TYPE)
+//                .userSince(TEST_USER_SINCE)
+//                .lastLogin(TEST_USER_LAST_LOGIN)
+//                .readNews(TEST_READ_NEWS)
+//                .build());
+//        BDDMockito.verify(userRepository).deleteById(TEST_USER_ID);
+////            given(userRepository.deleteById(TEST_USER_ID));
+//        Response response = RestAssured
+//            .given()
+//            .contentType(ContentType.JSON)
+//            .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
+//            .when().get(USER_ENDPOINT)
+//            .then().extract().response();
+//        Assert.assertThat(response.getStatusCode(), is(HttpStatus.FORBIDDEN.value()));
+//    }
+
+//    @Test
+//    public void deleteUserAsAdmin() {
+//        BDDMockito.verify(userRepository).deleteById(TEST_USER_ID);
+////            given(userRepository.findAll()).
+////            willReturn(Collections.singletonList(
+////                User.builder()
+////                    .id(TEST_USER_ID)
+////                    .username(TEST_USER_NAME)
+////                    .password(TEST_USER_PASS)
+////                    .type(TEST_USER_TYPE)
+////                    .userSince(TEST_USER_SINCE)
+////                    .lastLogin(TEST_USER_LAST_LOGIN)
+////                    .readNews(TEST_READ_NEWS)
+////                    .build()));
+//        Response response = RestAssured
+//            .given()
+//            .contentType(ContentType.JSON)
+//            .header(HttpHeaders.AUTHORIZATION, validAdminTokenWithPrefix)
+//            .when().delete(USER_ENDPOINT + "/1")
+//            .then().extract().response();
+//        Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
+//        Assert.assertNull(response.as(UserDTO.class));
+//    }
 
 }

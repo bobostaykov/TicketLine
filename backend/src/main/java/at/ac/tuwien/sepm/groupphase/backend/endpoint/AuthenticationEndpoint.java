@@ -9,6 +9,8 @@ import at.ac.tuwien.sepm.groupphase.backend.service.implementation.SimpleHeaderT
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
@@ -19,6 +21,7 @@ import springfox.documentation.annotations.ApiIgnore;
 public class AuthenticationEndpoint {
 
     private final HeaderTokenAuthenticationService authenticationService;
+    private final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
     public AuthenticationEndpoint(SimpleHeaderTokenAuthenticationService simpleHeaderTokenAuthenticationService) {
         authenticationService = simpleHeaderTokenAuthenticationService;
@@ -27,6 +30,7 @@ public class AuthenticationEndpoint {
     @RequestMapping(method = RequestMethod.POST)
     @ApiOperation(value = "Get an authentication token with your username and password")
     public AuthenticationToken authenticate(@RequestBody final AuthenticationRequest authenticationRequest) {
+        LOGGER.info("authenticating "+ authenticationRequest.getUsername());
         return authenticationService.authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
     }
 

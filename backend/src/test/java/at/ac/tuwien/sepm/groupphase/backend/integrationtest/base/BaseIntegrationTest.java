@@ -2,7 +2,7 @@ package at.ac.tuwien.sepm.groupphase.backend.integrationtest.base;
 
 import at.ac.tuwien.sepm.groupphase.backend.configuration.JacksonConfiguration;
 import at.ac.tuwien.sepm.groupphase.backend.security.AuthenticationConstants;
-import at.ac.tuwien.sepm.groupphase.backend.service.implementation.SimpleHeaderTokenAuthenticationService;
+import at.ac.tuwien.sepm.groupphase.backend.service.HeaderTokenAuthenticationService;
 import io.restassured.RestAssured;
 import io.restassured.config.ObjectMapperConfig;
 import io.restassured.config.RestAssuredConfig;
@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -30,11 +31,18 @@ public abstract class BaseIntegrationTest {
     @Value("${server.context-path}")
     private String contextPath;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    /*
+    @MockBean
+    public UserRepository userRepository;
+*/
     @LocalServerPort
     private int port;
 
     @Autowired
-    private SimpleHeaderTokenAuthenticationService simpleHeaderTokenAuthenticationService;
+    private HeaderTokenAuthenticationService simpleHeaderTokenAuthenticationService;
 
     @Autowired
     private JacksonConfiguration jacksonConfiguration;
@@ -44,6 +52,14 @@ public abstract class BaseIntegrationTest {
 
     @Before
     public void beforeBase() {
+  /*
+        BDDMockito.given(userRepository.findOneByUsername("user"))
+            .willReturn(Optional.of(User.builder().username("user").password(passwordEncoder.encode("password")).type(UserType.SELLER).id(1L).build()));
+        BDDMockito.given(userRepository.findOneByUsername("admin"))
+            .willReturn(Optional.of(User.builder().username("admin").password(passwordEncoder.encode("password")).type(UserType.ADMIN).id(2L).build()));
+
+
+   */
         RestAssured.baseURI = SERVER_HOST;
         RestAssured.basePath = contextPath;
         RestAssured.port = port;

@@ -7,6 +7,11 @@ import at.ac.tuwien.sepm.groupphase.backend.repository.LocationRepositoryCustom;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.support.PagedListHolder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -30,9 +35,16 @@ public class LocationRepositoryImpl implements LocationRepositoryCustom {
     }
 
     @Override
-    public List<Location> findLocationsFiltered(String country, String city, String street, String postalCode, String description) {
+    public Page<Location> findLocationsFiltered(String country, String city, String street, String postalCode, String description, Integer page) {
 
         LOGGER.info("Location Repository Impl: findLocationsFiltered");
+        LOGGER.debug("country: " + country);
+        LOGGER.debug("city: " + city);
+        LOGGER.debug("street: " + street);
+        LOGGER.debug("postalCode: " + postalCode);
+        LOGGER.debug("description: " + description);
+        LOGGER.debug("page: " + page);
+
         CriteriaBuilder cBuilder = entityManager.getCriteriaBuilder();
         List<Predicate> predicates = new ArrayList<>();
         CriteriaQuery<Location> criteriaQuery = cBuilder.createQuery(Location.class);
@@ -57,13 +69,20 @@ public class LocationRepositoryImpl implements LocationRepositoryCustom {
         criteriaQuery.select(location).where(predicates.toArray(new Predicate[predicates.size()]));
         TypedQuery<Location> typedQuery = entityManager.createQuery(criteriaQuery);
 
-        LOGGER.debug(typedQuery.unwrap(org.hibernate.Query.class).getQueryString());
-        List<Location> results = typedQuery.getResultList();
-        if (results.isEmpty()) {
+        List<Location> locationList = typedQuery.getResultList();
+        if (locationList.isEmpty()) {
             throw new NotFoundException("No locations are found with those parameters");
         }
 
-        return results;
+        int pageSize = 10;
+        int totalElements = locationList.size();
+
+        typedQuery.setFirstResult(page * pageSize);
+        typedQuery.setMaxResults(pageSize);
+        Pageable pageable = PageRequest.of(page, pageSize);
+        locationList = typedQuery.getResultList();
+
+        return new PageImpl<>(locationList, pageable, totalElements);
     }
 
     @SuppressWarnings("unchecked")

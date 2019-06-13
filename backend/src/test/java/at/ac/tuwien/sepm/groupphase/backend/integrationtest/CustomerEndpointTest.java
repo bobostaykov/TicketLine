@@ -2,7 +2,7 @@ package at.ac.tuwien.sepm.groupphase.backend.integrationtest;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.customer.CustomerDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Customer;
-import at.ac.tuwien.sepm.groupphase.backend.integrationtest.base.BaseIntegrationTest;
+import at.ac.tuwien.sepm.groupphase.backend.integrationtest.base.BaseIntegrationTestWithMockedUserCredentials;
 import at.ac.tuwien.sepm.groupphase.backend.repository.CustomerRepository;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -22,7 +22,7 @@ import java.util.Optional;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.Matchers.any;
 
-public class CustomerEndpointTest extends BaseIntegrationTest {
+public class CustomerEndpointTest extends BaseIntegrationTestWithMockedUserCredentials {
 
     private static final String CUSTOMER_ENDPOINT = "/customers";
 

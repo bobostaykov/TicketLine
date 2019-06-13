@@ -3,6 +3,7 @@ import {AuthService} from '../../services/auth/auth.service';
 import {User} from '../../dtos/user';
 import {UserService} from '../../services/user/user.service';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {UserType} from '../../datatype/user_type';
 
 @Component({
   selector: 'app-user',
@@ -11,13 +12,16 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 })
 export class UserComponent implements OnInit {
 
-  error: boolean = false;
-  errorMessage: string = '';
-  users: User[];
-  userForm: FormGroup;
-  submitted: boolean = false;
-  usernameError: boolean = false;
-  headElements = ['Id', 'Name', 'Type', 'User Since', 'Last Login', 'Remove'];
+  private error: boolean = false;
+  private errorMessage: string = '';
+  private users: User[];
+  private userForm: FormGroup;
+  private submitted: boolean = false;
+  private usernameError: boolean = false;
+  private headElements = ['Id', 'Name', 'Type', 'User Since', 'Last Login', 'Remove'];
+  private userTypes = ['Admin', 'Seller'];
+  private selectedUserType: string = null;
+  private userToDelete: number = null;
 
   constructor(private authService: AuthService, private userService: UserService, private formBuilder: FormBuilder) {
     this.userForm = this.formBuilder.group({
@@ -50,13 +54,14 @@ export class UserComponent implements OnInit {
     this.submitted = true;
     this.usernameError = false;
     if (this.userForm.valid
-      && (this.userForm.controls.type.value === 'ADMIN' || this.userForm.controls.type.value === 'SELLER')
-      && this.userForm.controls.rePassword.value === this.userForm.controls.password.value) {
+      && this.userForm.controls.rePassword.value === this.userForm.controls.password.value
+      && this.selectedUserType != null) {
       const user: User = new User(null,
         this.userForm.controls.username.value,
         this.userForm.controls.password.value,
-        this.userForm.controls.type.value,
+        UserType[this.selectedUserType.toUpperCase()],
         new Date().toISOString(),
+        null,
         null
       );
       this.createUser(user);
@@ -79,12 +84,29 @@ export class UserComponent implements OnInit {
     );
   }
 
+  /**
+   * blocks a user given by id
+   * @param userId the id of the user that is to be blocked
+   */
+  private blockUser(userId: number) {
+    this.userService.blockUser(userId).subscribe(
+      () => {},
+      err => { this.errorMessage = 'cant block admin'},
+      () => { this.loadUsers(); }
+    );
+  }
+
   private deleteUser(userId: number) {
+    this.userToDelete = null;
     this.userService.deleteUser(userId).subscribe(
       () => {},
       error => { this.defaultServiceErrorHandling(error); },
       () => { this.loadUsers(); }
     );
+  }
+
+  private setUserToDelete(userId: number) {
+    this.userToDelete = userId;
   }
 
   /**
@@ -99,6 +121,8 @@ export class UserComponent implements OnInit {
     this.error = true;
     if (error.error.news !== 'No message available') {
       this.errorMessage = error.error.news;
+    } else if (error.error.httpRequestStatusCode === 404) {
+      this.errorMessage = 'could not block user';
     } else {
       this.errorMessage = error.error.error;
     }

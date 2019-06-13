@@ -1,12 +1,18 @@
 package at.ac.tuwien.sepm.groupphase.backend.integrationtest;
 
+import at.ac.tuwien.sepm.groupphase.backend.datatype.EventType;
+import at.ac.tuwien.sepm.groupphase.backend.datatype.PriceCategory;
 import at.ac.tuwien.sepm.groupphase.backend.datatype.TicketStatus;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.artist.ArtistDTO;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.customer.CustomerDTO;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.event.EventDTO;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.hall.HallDTO;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.location.LocationDTO;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.seat.SeatDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.show.ShowDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.ticket.TicketDTO;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Customer;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Show;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Ticket;
-import at.ac.tuwien.sepm.groupphase.backend.integrationtest.base.BaseIntegrationTest;
+import at.ac.tuwien.sepm.groupphase.backend.entity.*;
+import at.ac.tuwien.sepm.groupphase.backend.integrationtest.base.BaseIntegrationTestWithMockedUserCredentials;
 import at.ac.tuwien.sepm.groupphase.backend.repository.CustomerRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.TicketRepository;
 import io.restassured.RestAssured;
@@ -16,15 +22,6 @@ import io.restassured.response.Response;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import at.ac.tuwien.sepm.groupphase.backend.datatype.EventType;
-import at.ac.tuwien.sepm.groupphase.backend.datatype.PriceCategory;
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.artist.ArtistDTO;
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.customer.CustomerDTO;
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.event.EventDTO;
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.hall.HallDTO;
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.location.LocationDTO;
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.seat.SeatDTO;
-import at.ac.tuwien.sepm.groupphase.backend.entity.*;
 import org.mockito.BDDMockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
@@ -37,7 +34,7 @@ import java.util.*;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.ArgumentMatchers.any;
 
-public class TicketEndpointTest extends BaseIntegrationTest {
+public class TicketEndpointTest extends BaseIntegrationTestWithMockedUserCredentials {
 
     private static final String TICKET_ENDPOINT = "/tickets";
     private static final String RESERVATED_TICKET = "/reservated";

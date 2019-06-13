@@ -6,7 +6,7 @@ import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.SimpleNewsDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.File;
 import at.ac.tuwien.sepm.groupphase.backend.entity.News;
 import at.ac.tuwien.sepm.groupphase.backend.entity.User;
-import at.ac.tuwien.sepm.groupphase.backend.integrationtest.base.BaseIntegrationTest;
+import at.ac.tuwien.sepm.groupphase.backend.integrationtest.base.BaseIntegrationTestWithMockedUserCredentials;
 import at.ac.tuwien.sepm.groupphase.backend.repository.DBFileRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.NewsRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.UserRepository;
@@ -31,7 +31,7 @@ import java.util.*;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.Matchers.any;
 
-public class NewsEndpointTest extends BaseIntegrationTest {
+public class NewsEndpointTest extends BaseIntegrationTestWithMockedUserCredentials {
 
     private static final String NEWS_ENDPOINT = "/news";
     private static final String FILE_ENDPOINT = NEWS_ENDPOINT + "/file";

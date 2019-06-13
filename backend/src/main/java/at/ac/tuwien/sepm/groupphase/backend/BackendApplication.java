@@ -1,6 +1,5 @@
 package at.ac.tuwien.sepm.groupphase.backend;
 
-import at.ac.tuwien.sepm.groupphase.backend.configuration.SecurityConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 

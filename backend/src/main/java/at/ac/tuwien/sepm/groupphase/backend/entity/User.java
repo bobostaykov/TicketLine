@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Table(name = "user")
 public class User {
 
     @Id
@@ -36,6 +37,13 @@ public class User {
 
     @OneToMany(fetch = FetchType.EAGER)
     private List<News> readNews;
+
+    @OneToOne(mappedBy =  "user",cascade = { CascadeType.ALL}, orphanRemoval = true, optional = false)
+    private LoginAttempts loginAttempts;
+
+
+
+
 
     public User() {
         this.readNews = new ArrayList<News>();
@@ -97,6 +105,14 @@ public class User {
         this.lastLogin = lastLogin;
     }
 
+    public LoginAttempts getLoginAttempts() {
+        return loginAttempts;
+    }
+
+    public void setLoginAttempts(LoginAttempts loginAttempts) {
+        this.loginAttempts = loginAttempts;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -105,8 +121,7 @@ public class User {
             ", type=" + type +
             ", userSince=" + userSince +
             ", lastLogin=" + lastLogin +
-            ", readNews=" + readNews.toString() +
-            '}';
+            ", readNews="+ readNews != null ? readNews.toString() : "" + '}';
     }
 
     @Override
@@ -151,6 +166,7 @@ public class User {
         private LocalDateTime userSince;
         private LocalDateTime lastLogin;
         private List<News> readNews;
+        private LoginAttempts loginAttempts;
 
         private UserBuilder() {
             this.readNews = new ArrayList<News>();
@@ -190,6 +206,10 @@ public class User {
             this.readNews = readNews;
             return this;
         }
+        public UserBuilder loginAttempts(LoginAttempts loginAttempts){
+            this.loginAttempts = loginAttempts;
+            return this;
+        }
 
         public User build() {
             User user = new User();
@@ -200,6 +220,7 @@ public class User {
             user.setUserSince(userSince);
             user.setLastLogin(lastLogin);
             user.setReadNews(readNews);
+            user.setLoginAttempts(loginAttempts);
             return user;
         }
     }

@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {EventService} from '../../../services/event/event.service';
 import {Router} from '@angular/router';
 import {EventTickets} from '../../../dtos/event_tickets';
+import {TopTenDetails} from '../../../dtos/top-ten-details';
 
 @Component({
   selector: 'app-top-ten-events',
@@ -104,7 +105,9 @@ export class TopTenEventsComponent implements OnInit {
       }
     }
 
-    this.eventService.getTopTenEvents(monthsArray, categoriesArray).subscribe(
+    const monthsCats = new TopTenDetails(monthsArray, categoriesArray);
+
+    this.eventService.getTopTenEvents(monthsCats).subscribe(
       (events: EventTickets[]) => { this.data = this.eventsToData(events.slice(0, 10)); },
       error => { this.defaultServiceErrorHandling(error); },
     () => { this.dataReady = true; }

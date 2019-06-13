@@ -3,7 +3,6 @@ package at.ac.tuwien.sepm.groupphase.backend.unit.mapper;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.artist.ArtistDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Artist;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.artist.ArtistMapper;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

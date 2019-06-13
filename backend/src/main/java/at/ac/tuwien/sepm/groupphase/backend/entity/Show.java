@@ -1,7 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.entity;
 
 import javax.persistence.*;
-import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
@@ -123,6 +122,20 @@ public class Show {
     @Override
     public int hashCode() {
         return Objects.hash(id, event, time, date, hall, description, ticketsSold);
+    }
+
+    @Override
+    public String toString() {
+        return "Show{" +
+            "id=" + id +
+            ", event=" + event +
+            ", time=" + time +
+            ", date=" + date +
+            ", hall=" + hall +
+            ", description='" + description + '\'' +
+            ", ticketsSold=" + ticketsSold +
+            ", pricePattern=" + pricePattern +
+            '}';
     }
 
     public static final class ShowBuilder {

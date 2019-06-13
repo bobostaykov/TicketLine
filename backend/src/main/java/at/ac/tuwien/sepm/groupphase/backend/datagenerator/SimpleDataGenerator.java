@@ -1,18 +1,12 @@
 package at.ac.tuwien.sepm.groupphase.backend.datagenerator;
 
-import at.ac.tuwien.sepm.groupphase.backend.datatype.EventType;
-import at.ac.tuwien.sepm.groupphase.backend.entity.*;
 import at.ac.tuwien.sepm.groupphase.backend.repository.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
 
 /*
     CLASS IS NO LONGER USED

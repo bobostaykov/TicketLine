@@ -1,27 +1,40 @@
-<h1 class="mt-5" *ngIf="resultsFor === 'ATTRIBUTES'">Locations - Results for the chosen parameters</h1>
-<h1 class="mt-5" *ngIf="resultsFor === null">Locations - No Results</h1>
+<div *ngIf="dataReady && locations.length > 0">
+  <h1 class="mt-5" *ngIf="resultsFor === 'ATTRIBUTES'">Locations - Results for the chosen parameters</h1>
+  <h1 class="mt-5" *ngIf="resultsFor === null">Locations - No Results</h1>
 
-<table class="table mt-4">
-  <thead>
-  <tr>
-    <th *ngFor="let head of headers" scope="col">{{head}}</th>
-  </tr>
-  </thead>
-  <tbody>
-  <tr *ngFor="let location of locations | slice: (page - 1) * pageSize : page * pageSize" routerLink="/events/search/results/shows" [queryParams]="{resultsFor: 'LOCATION', id: location.id}">
-    <td class="align-middle">{{location.country}}</td>
-    <td class="align-middle">{{location.city}}</td>
-    <td class="align-middle">{{location.postalCode}}</td>
-    <td class="align-middle">{{location.street}}</td>
-    <td class="align-middle">{{location.description}}</td>
-  </tr>
-  </tbody>
-</table>
-<div class="justify-content-center">
-  <ngb-pagination
-    [(page)]="page"
-    [pageSize]="pageSize"
-    [collectionSize]="locations.length"
-    *ngIf="dataReady">
-  </ngb-pagination>
+  <table class="table mt-4">
+    <thead>
+    <tr>
+      <th *ngFor="let head of headers" scope="col">{{head}}</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let location of locations" routerLink="/events/search/results/shows"
+        [queryParams]="{resultsFor: 'LOCATION', id: location.id}">
+      <td class="align-middle">{{location.country}}</td>
+      <td class="align-middle">{{location.city}}</td>
+      <td class="align-middle">{{location.postalCode}}</td>
+      <td class="align-middle">{{location.street}}</td>
+      <td class="align-middle">{{location.description}}</td>
+    </tr>
+    </tbody>
+  </table>
+
+  <div class="justify-content-center" *ngIf="pages.length > 1">
+    <ul class="nav nav-pills">
+      <li class="nav-item">
+        <a class="nav-link" href="" (click)="previousPage($event)">«</a>
+      </li>
+      <li class="nav-item" *ngFor="let p of pages; let i = index">
+        <a class="nav-link" href="" (click)="setPage(i, $event)" [ngClass]="{'active': i == page}">{{i}}</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="" (click)="nextPage($event)">»</a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div *ngIf="dataReady && locations.length === 0">
+  <h1 class="mt-5" align="center">Locations - No Results</h1>
 </div>

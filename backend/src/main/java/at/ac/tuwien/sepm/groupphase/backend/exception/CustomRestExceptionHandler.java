@@ -117,4 +117,7 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
             HttpStatus.INTERNAL_SERVER_ERROR, ex.getLocalizedMessage(), "Error occured");
         return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
     }
+
+
+
 }
