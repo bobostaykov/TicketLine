@@ -24,11 +24,13 @@ export class ShowResultsService {
     return this.httpClient.get<Show[]>(this.showBaseUri + '/location/' + id, {params: {page: page}});
   }
 
-  public findShowsFilteredByShowAttributes(eventName, hallName, dateFrom, dateTo, timeFrom, timeTo, minPrice, maxPrice,
+  public findShowsFilteredBySomeParameters(eventName, eventType, artistName, hallName, dateFrom, dateTo, timeFrom, timeTo, minPrice, maxPrice,
                                            duration, country, city, street, postalCode, page) {
     console.log('ShowResultsService: findShowsFilteredByShowAttributes');
     let parameters = new HttpParams();
     parameters = eventName ? parameters.append('eventName', eventName) : parameters;
+    parameters = eventType ? parameters.append('eventType', eventType) : parameters;
+    parameters = artistName ? parameters.append('artistName', artistName) : parameters;
     parameters = hallName ? parameters.append('hallName', hallName) : parameters;
     parameters = dateFrom ? parameters.append('dateFrom', dateFrom) : parameters;
     parameters = dateTo ? parameters.append('dateTo', dateTo) : parameters;
