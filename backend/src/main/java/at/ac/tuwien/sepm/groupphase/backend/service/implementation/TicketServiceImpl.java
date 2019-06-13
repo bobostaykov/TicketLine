@@ -132,14 +132,14 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public MultipartFile getReceipt(List<String> ticketIDs) throws Exception {
+    public MultipartFile getReceipt(List<String> ticketIDs) throws DocumentException, IOException {
         List<TicketDTO> tickets = ticketMapper.ticketToTicketDTO(ticketRepository.findByIdIn(this.parseListOfIds(ticketIDs)));
         return this.generateReceipt(tickets, false);
     }
 
     @Override
     @Transactional
-    public MultipartFile deleteAndGetStornoReceipt(List<String> ticketIDs) throws Exception{
+    public MultipartFile deleteAndGetCancellationReceipt(List<String> ticketIDs) throws DocumentException, IOException{
         List<TicketDTO> tickets = ticketMapper.ticketToTicketDTO(ticketRepository.findByIdIn(this.parseListOfIds(ticketIDs)));
         ticketRepository.deleteByIdIn(this.parseListOfIds(ticketIDs));
         MultipartFile receipt = generateReceipt(tickets, true);
@@ -167,16 +167,16 @@ public class TicketServiceImpl implements TicketService {
      * @param tickets List of Ticket DTOs
      * @return receipt PDF as MultipartFile
      */
-    private MultipartFile generateReceipt(List<TicketDTO> tickets, Boolean storno) throws Exception, ServiceException {
+    private MultipartFile generateReceipt(List<TicketDTO> tickets, Boolean cancellation) throws DocumentException, IOException {
         if (tickets.size() < 1)
-            throw new ServiceException("Cannot create receipt for empty list of Tickets.");
+            throw new NotFoundException("Cannot create receipt for empty list of Tickets.");
         int numberOfTickets = tickets.size();
         Double returnSum;
         Double sum = 0.0;
         Document receipt = new Document();
         String fileName;
-        if (storno)
-            fileName = RECEIPT_PATH + "storno-receipt_" + LocalDateTime.now().toString() + ".pdf";
+        if (cancellation)
+            fileName = RECEIPT_PATH + "cancellation-receipt_" + LocalDateTime.now().toString() + ".pdf";
         else
             fileName = RECEIPT_PATH + "receipt_" + LocalDateTime.now().toString() + ".pdf";
 
@@ -186,9 +186,9 @@ public class TicketServiceImpl implements TicketService {
             Files.createDirectories(path);
         PdfWriter.getInstance(receipt, new FileOutputStream(fileName));
 
-        receipt.addTitle("Ticketline" + (storno ? " storno" : "") + " receipt");
+        receipt.addTitle("Ticketline" + (cancellation ? " cancellation" : "") + " receipt");
         receipt.addAuthor("Ticketline");
-        receipt.addSubject("Ticketline" + (storno ? " storno" : "") + " receipt");
+        receipt.addSubject("Ticketline" + (cancellation ? " cancellation" : "") + " receipt");
         receipt.addKeywords("Ticketline");
         receipt.addCreator("Ticketline");
 
@@ -197,7 +197,7 @@ public class TicketServiceImpl implements TicketService {
         Font font = FontFactory.getFont(FontFactory.HELVETICA, 16, BaseColor.BLACK);
         Font fontBold = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 16, BaseColor.BLACK);
         Paragraph headline;
-        if (storno)
+        if (cancellation)
             headline = new Paragraph("TICKETLINE STORNO-RECHNUNG", headlineFont);
 
         else
@@ -241,7 +241,7 @@ public class TicketServiceImpl implements TicketService {
         PdfPCell blank = new PdfPCell();
         blank.setPhrase(new Phrase(" ", font));
 
-        if (storno) {
+        if (cancellation) {
             returnSum = - sum;
             sum = 0.0;
             table.addCell(blank);
