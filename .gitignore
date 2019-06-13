@@ -155,4 +155,7 @@ Temporary Items
 .apdisk
 Icon
 
+###CUSTOM#####
+backend/receipt/*
+
 
