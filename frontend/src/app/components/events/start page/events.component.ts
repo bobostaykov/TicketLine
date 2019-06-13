@@ -33,6 +33,7 @@ export class EventsComponent implements OnInit {
       result => {
         this.events = result['content'];
         this.pages = new Array(result['totalPages']);
+        console.log(result);
         },
       error => { this.defaultServiceErrorHandling(error); },
       () => { this.dataReady = true; }

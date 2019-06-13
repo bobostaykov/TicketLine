@@ -83,7 +83,11 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
         }
         int pageSize = 10;
         int totalElements = eventList.size();
+
+        typedQuery.setFirstResult(page * pageSize);
+        typedQuery.setMaxResults(pageSize);
         Pageable pageable = PageRequest.of(page, pageSize);
+        eventList = typedQuery.getResultList();
 
         return new PageImpl<>(eventList, pageable, totalElements);
     }

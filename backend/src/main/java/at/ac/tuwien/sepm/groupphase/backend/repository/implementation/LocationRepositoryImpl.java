@@ -7,6 +7,7 @@ import at.ac.tuwien.sepm.groupphase.backend.repository.LocationRepositoryCustom;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.support.PagedListHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -68,7 +69,6 @@ public class LocationRepositoryImpl implements LocationRepositoryCustom {
         criteriaQuery.select(location).where(predicates.toArray(new Predicate[predicates.size()]));
         TypedQuery<Location> typedQuery = entityManager.createQuery(criteriaQuery);
 
-        LOGGER.debug(typedQuery.unwrap(org.hibernate.Query.class).getQueryString());
         List<Location> locationList = typedQuery.getResultList();
         if (locationList.isEmpty()) {
             throw new NotFoundException("No locations are found with those parameters");
@@ -76,7 +76,11 @@ public class LocationRepositoryImpl implements LocationRepositoryCustom {
 
         int pageSize = 10;
         int totalElements = locationList.size();
+
+        typedQuery.setFirstResult(page * pageSize);
+        typedQuery.setMaxResults(pageSize);
         Pageable pageable = PageRequest.of(page, pageSize);
+        locationList = typedQuery.getResultList();
 
         return new PageImpl<>(locationList, pageable, totalElements);
     }
