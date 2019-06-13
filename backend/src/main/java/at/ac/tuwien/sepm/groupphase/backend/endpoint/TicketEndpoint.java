@@ -7,11 +7,8 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -54,13 +51,13 @@ public class TicketEndpoint {
         return ticketService.deleteOne(id);
     }
 
-    @RequestMapping(value = "/storno", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/cancellation", method = RequestMethod.DELETE)
     @ApiOperation(value = "Delete Tickets by id and receive storno receipt", authorizations = {@Authorization(value = "apiKey")})
     public ResponseEntity<Resource> deleteAndGetStornoReceipt(@RequestParam List<String> tickets) {
         LOGGER.info("Delete Ticket(s) with id(s)" + tickets.toString() + " and receive storno receipt");
         MultipartFile pdf;
         try {
-            pdf = ticketService.deleteAndGetStornoReceipt(tickets);
+            pdf = ticketService.deleteAndGetCancellationReceipt(tickets);
         } catch (Exception e) {
             LOGGER.info(e.getMessage());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
