@@ -1,35 +1,41 @@
-<h1 class="mt-5 mb-4 left">Events</h1>
-<button mat-raised-button routerLink="/events/topten" id="top_ten" color="primary" class="mt-5 mb-4 right">Top 10</button>
-<button mat-raised-button routerLink="/events/search" id="search" color="primary" class="mr-3 mt-5 mb-4 right">Search</button>
+<div *ngIf="dataReady">
+  <h1 class="mt-5 mb-4 left">Events</h1>
+  <button mat-raised-button routerLink="/events/topten" id="top_ten" color="primary" class="mt-5 mb-4 right">Top 10
+  </button>
+  <button mat-raised-button routerLink="/events/search" id="search" color="primary" class="mr-3 mt-5 mb-4 right">
+    Search
+  </button>
 
-<table class="table mb-3" *ngIf="dataReady">
-  <thead>
+  <table class="table mb-3">
+    <thead>
     <tr>
       <th style="width: 45%">Name</th>
       <th style="width: 20%">Type</th>
       <th style="width: 35%">Artist</th>
     </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let event of events" routerLink="/events/search/results/shows" [queryParams]="{resultsFor: 'EVENT', name: event.name}">
+    </thead>
+    <tbody>
+    <tr *ngFor="let event of events" routerLink="/events/search/results/shows"
+        [queryParams]="{resultsFor: 'EVENT', name: event.name}">
       <td *ngIf="event.name">{{event.name}}</td>
       <td *ngIf="event.eventType">{{event.eventType.toString().toLowerCase()}}</td>
       <td *ngIf="event.artist">{{event.artist.name}}</td>
       <td *ngIf="!event.artist">&nbsp;</td>
     </tr>
-  </tbody>
-</table>
-<hr class="hr-bold">
-<div class="justify-content-center">
-  <ul class ="nav nav-pills">
-    <li class="nav-item">
-      <a class="nav-link" href="" (click)="previousPage($event)">«</a>
-    </li>
-    <li class="nav-item" *ngFor="let p of pages; let i = index">
-      <a class="nav-link" href="" (click)="setPage(i, $event)" [ngClass]="{'active': i == page}">{{i}}</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" style="padding: 4px 16px; font-size: 20px;" href="" (click)="nextPage($event)">»</a>
-    </li>
-  </ul>
+    </tbody>
+  </table>
+  <hr class="hr-bold">
+  <div class="justify-content-center">
+    <ul class="nav nav-pills">
+      <li class="nav-item">
+        <a class="nav-link" href="" (click)="previousPage($event)">«</a>
+      </li>
+      <li class="nav-item" *ngFor="let p of pages; let i = index">
+        <a class="nav-link" href="" (click)="setPage(i, $event)" [ngClass]="{'active': i == page}">{{i}}</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" style="padding: 4px 16px; font-size: 20px;" href="" (click)="nextPage($event)">»</a>
+      </li>
+    </ul>
+  </div>
 </div>
