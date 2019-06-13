@@ -43,7 +43,7 @@ public class TicketEndpointTest extends BaseIntegrationTest {
     private static final String RESERVATED_TICKET = "/reservated";
     private static final String FIND_BY_NAME = "/name";
     private static final String RECEIPT = "/receipt";
-    private static final String STORNO = "/storno";
+    private static final String CANCELLATION = "/cancellation";
     private static final String BUY_TICKET = "/buy";
     private static final String SPECIFIC_TICKET_PATH = "/{id}";
 
@@ -709,7 +709,16 @@ public class TicketEndpointTest extends BaseIntegrationTest {
 
     @Test
     public void getReceiptForListOfTickets() {
-        // TODO: Mock repo or create test test data
+        // TODO: Use real repo with test data
+        List<Long> ticketIDs = new ArrayList<>();
+        ticketIDs.add(TEST_TICKET_ID1);
+        ticketIDs.add(TEST_TICKET_ID2);
+        List<Ticket> returnedTickets = new ArrayList<>();
+        returnedTickets.add(Ticket.builder().id(TEST_TICKET_ID1).seatNumber(TEST_SEAT_SEAT_NO_1).rowNumber(TEST_SEAT_SEAT_ROW_1).price(TEST_TICKET_PRICE1).customer(TEST_CUSTOMER1).show(TEST_SHOW).status(TEST_TICKET_STATUS1).build());
+        returnedTickets.add(Ticket.builder().id(TEST_TICKET_ID2).seatNumber(TEST_SEAT_SEAT_NO_2).rowNumber(TEST_SEAT_SEAT_ROW_2).price(TEST_TICKET_PRICE2).customer(TEST_CUSTOMER2).show(TEST_SHOW).status(TEST_TICKET_STATUS2).build());
+        BDDMockito.
+            given(ticketRepository.findByIdIn(ticketIDs)).
+            willReturn(returnedTickets);
         Response response = RestAssured
             .given()
             .contentType(ContentType.JSON)
@@ -723,14 +732,37 @@ public class TicketEndpointTest extends BaseIntegrationTest {
     }
 
     @Test
+    public void getReceiptForEmptyListOfTickets() {
+        BDDMockito.
+            given(ticketRepository.findByIdIn(Collections.EMPTY_LIST)).
+            willReturn(Collections.EMPTY_LIST);
+        Response response = RestAssured
+            .given()
+            .contentType(ContentType.JSON)
+            .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
+            .when().get(TICKET_ENDPOINT + RECEIPT)
+            .then().extract().response();
+        Assert.assertThat(response.getStatusCode(), is(HttpStatus.BAD_REQUEST.value()));
+    }
+
+    @Test
     public void deleteTicketsAndReceiveReceipt() {
+        List<Long> ticketIDs = new ArrayList<>();
+        ticketIDs.add(TEST_TICKET_ID1);
+        ticketIDs.add(TEST_TICKET_ID2);
+        List<Ticket> returnedTickets = new ArrayList<>();
+        returnedTickets.add(Ticket.builder().id(TEST_TICKET_ID1).seatNumber(TEST_SEAT_SEAT_NO_1).rowNumber(TEST_SEAT_SEAT_ROW_1).price(TEST_TICKET_PRICE1).customer(TEST_CUSTOMER1).show(TEST_SHOW).status(TEST_TICKET_STATUS1).build());
+        returnedTickets.add(Ticket.builder().id(TEST_TICKET_ID2).seatNumber(TEST_SEAT_SEAT_NO_2).rowNumber(TEST_SEAT_SEAT_ROW_2).price(TEST_TICKET_PRICE2).customer(TEST_CUSTOMER2).show(TEST_SHOW).status(TEST_TICKET_STATUS2).build());
+        BDDMockito.
+            given(ticketRepository.findByIdIn(ticketIDs)).
+            willReturn(returnedTickets);
         Response response = RestAssured
             .given()
             .contentType(ContentType.JSON)
             .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
             .params("tickets", TEST_TICKET_ID1)
             .params("tickets", TEST_TICKET_ID2)
-            .when().delete(TICKET_ENDPOINT + STORNO)
+            .when().delete(TICKET_ENDPOINT + CANCELLATION)
             .then().extract().response();
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
         Assert.assertThat(response.contentType(), is("application/octet-stream" ));
