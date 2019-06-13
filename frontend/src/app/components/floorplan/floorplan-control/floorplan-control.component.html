@@ -8,12 +8,14 @@
             <label for="seatRowStart" class="sr-only">Seat Row Start</label>
             <input matInput id="seatRowStart" formControlName="seatRowStart" type="number" class="text-right"
                    aria-labelledby="seat row start"/>
+            <mat-error>Row must be set and greater than 0!</mat-error>
           </mat-form-field>
           <mat-form-field appearance="standard" class="col-5 pl-0">
             <span matPrefix class="pr-3">&ndash;</span>
             <label for="seatRowEnd" class="sr-only">Seat Row End</label>
             <input matInput id="seatRowEnd" formControlName="seatRowEnd" type="number" class="text-left"
                    aria-labelledby="seat row end"/>
+            <mat-error>Row must be set and greater than 0!</mat-error>
           </mat-form-field>
         </div>
         <div class="row col-6">
@@ -22,6 +24,7 @@
             <select matNativeControl id="seatPrice" formControlName="seatPrice" aria-labelledby="seat price">
               <option *ngFor="let price of priceCategories">{{price}}</option>
             </select>
+            <mat-error>Seat Price must be set!</mat-error>
           </mat-form-field>
         </div>
       </div>
@@ -32,12 +35,14 @@
             <label for="seatNumberStart" class="sr-only">Seat Number Start</label>
             <input matInput id="seatNumberStart" formControlName="seatNumberStart" type="number" class="text-right"
                    aria-labelledby="seat number start"/>
+            <mat-error>Seat Number must be set and greater than 0!</mat-error>
           </mat-form-field>
           <mat-form-field appearance="standard" class="col-5 pl-0">
             <span matPrefix class="pr-3">&ndash;</span>
             <label for="seatNumberEnd" class="sr-only">Seat Number End</label>
             <input matInput id="seatNumberEnd" formControlName="seatNumberEnd" type="number" class="text-left"
                    aria-labelledby="seat number end"/>
+            <mat-error>Seat Number must be set and greater than 0!</mat-error>
           </mat-form-field>
         </div>
         <div class="col-6 mt-1 text-nowrap">
@@ -51,16 +56,18 @@
       <div class="row">
         <div class="row col-6">
           <mat-form-field appearance="standard" class="col-7 pr-0">
-            <mat-label>Sector Numbers</mat-label>
+            <mat-label>Numbers</mat-label>
             <label for="sectorNumberStart" class="sr-only">Sector Number Start</label>
             <input matInput id="sectorNumberStart" formControlName="sectorNumberStart" type="number"
                    class="text-right" aria-labelledby="sector number start"/>
+            <mat-error>Sector Number must be set and greater than 0!</mat-error>
           </mat-form-field>
           <mat-form-field appearance="standard" class="col-5 pl-0">
             <span matPrefix class="pr-3">&ndash;</span>
             <label for="sectorNumberEnd" class="sr-only">Sector Number End</label>
             <input matInput id="sectorNumberEnd" formControlName="sectorNumberEnd" type="number" class="text-left"
                    aria-labelledby="sector number end"/>
+            <mat-error>Sector Number must be set and greater than 0!</mat-error>
           </mat-form-field>
         </div>
         <div class="row col-6">
@@ -69,6 +76,7 @@
             <select matNativeControl id="sectorPrice" formControlName="sectorPrice" aria-labelledby="sector price">
               <option *ngFor="let price of priceCategories">{{price}}</option>
             </select>
+            <mat-error>Sector Price must be set!</mat-error>
           </mat-form-field>
         </div>
       </div>
@@ -101,8 +109,8 @@
                   aria-labelledby="location selection">
             <option [ngValue]="null"></option>
             <option *ngFor="let location of locations" [ngValue]="location">{{displayLocation(location)}}</option>
-            -->
           </select>
+          <mat-error>A location must be selected!</mat-error>
         </mat-form-field>
         <mat-form-field appearance="outline" class="col-4">
           <mat-label>Hall</mat-label>
@@ -111,18 +119,22 @@
             <option [ngValue]="newHall">{{newHall.name}}</option>
             <option *ngFor="let hall of halls" [ngValue]="hall">{{hall.name}}</option>
           </select>
+          <mat-error>A Hall must be selected!</mat-error>
         </mat-form-field>
       </div>
       <div class="row">
         <mat-radio-group formControlName="hallType" class="col-7 d-flex align-items-end justify-content-end"
-                         aria-labelledby="hall seats or sectors">
+                         aria-labelledby="hall seats or sectors"
+                         [attr.disabled]="getSelectedHall().seats && getSelectedHall().seats.length > 0
+                          || getSelectedHall().sectors && getSelectedHall().sectors.length > 0">
           <mat-radio-button value="seats" color="primary" class="mx-3" aria-labelledby="hall with seats">Seats
           </mat-radio-button>
           <mat-radio-button value="sectors" color="primary" class="mx-3" aria-labelledby="hall with sectors">Sectors
           </mat-radio-button>
         </mat-radio-group>
         <div class="col-5 mt-1 text-right">
-          <button mat-raised-button color="primary" class="mr-3 mt-3 inputButton" (click)="postHall()">Save Hall</button>
+          <button mat-raised-button color="primary" class="mr-3 mt-3 inputButton" (click)="postHall()">Save Hall
+          </button>
           <button mat-raised-button color="warn" class="mr-3 mt-3 inputButton">Delete Hall</button>
         </div>
       </div>
@@ -131,10 +143,14 @@
 </div>
 
 <div *ngIf="createHallForm.get('hallType').value === 'seats'" class="row">
-  <app-floorplan-svg class="floorplanSvg" [seats]="getSelectedHall().seats" (addTicket)="addToTickets($event)"></app-floorplan-svg>
-  <app-floorplan-ticket class="floorplanTickets" *ngIf="tickets && tickets.length" [tickets]="tickets"></app-floorplan-ticket>
+  <app-floorplan-svg class="floorplanSvg" [seats]="getSelectedHall().seats"
+                     (addTicket)="addToTickets($event)"></app-floorplan-svg>
+  <app-floorplan-ticket class="floorplanTickets" *ngIf="tickets && tickets.length"
+                        [tickets]="tickets"></app-floorplan-ticket>
 </div>
 <div *ngIf="createHallForm.get('hallType').value === 'sectors'" class="row">
-  <app-floorplan-svg class="floorplanSvg" [sectors]="getSelectedHall().sectors" (addTicket)="addToTickets($event)"></app-floorplan-svg>
-  <app-floorplan-ticket class="floorplanTickets" *ngIf="tickets && tickets.length" [tickets]="tickets"></app-floorplan-ticket>
+  <app-floorplan-svg class="floorplanSvg" [sectors]="getSelectedHall().sectors"
+                     (addTicket)="addToTickets($event)"></app-floorplan-svg>
+  <app-floorplan-ticket class="floorplanTickets" *ngIf="tickets && tickets.length"
+                        [tickets]="tickets"></app-floorplan-ticket>
 </div>

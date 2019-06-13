@@ -82,7 +82,6 @@ export class FloorplanControlComponent implements OnInit {
       this.addSeatsForm.reset({
         'seatPrice': PriceCategory.Cheap
       });
-      this.changeHallTypeSelection();
     }
   }
 
@@ -108,7 +107,6 @@ export class FloorplanControlComponent implements OnInit {
       this.addSectorsForm.reset({
         'sectorPrice': PriceCategory.Cheap
       });
-      this.changeHallTypeSelection();
     }
   }
 
@@ -139,7 +137,6 @@ export class FloorplanControlComponent implements OnInit {
       this.addSeatsForm.reset({
         'seatPrice': PriceCategory.Cheap
       });
-      this.changeHallTypeSelection();
     }
   }
 
@@ -166,7 +163,6 @@ export class FloorplanControlComponent implements OnInit {
       this.addSectorsForm.reset({
         'sectorPrice': PriceCategory.Cheap
       });
-      this.changeHallTypeSelection();
     }
   }
 
@@ -359,21 +355,6 @@ export class FloorplanControlComponent implements OnInit {
    */
   private getSelectedHall(): Hall {
     return this.createHallForm.get('hallSelection').value;
-  }
-
-  /**
-   * called when changes are made to seat or sector arrays of selectedHall
-   * disables hallType selection if hall already contains seats or sectors
-   * enables hallType selection if hall does not contain seats or sectors anymore
-   */
-  private changeHallTypeSelection(): void {
-    const hallTypeSelection = this.createHallForm.get('hallType');
-    if (this.getSelectedHall().seats && this.getSelectedHall().seats.length ||
-      this.getSelectedHall().sectors && this.getSelectedHall().sectors.length) {
-      hallTypeSelection.disable();
-    } else {
-      hallTypeSelection.enable();
-    }
   }
 
   private addToTickets(ticket: Seat | Sector): void {
