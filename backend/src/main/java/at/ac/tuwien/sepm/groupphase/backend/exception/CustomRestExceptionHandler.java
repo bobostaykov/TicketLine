@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.exception;
 
+import com.itextpdf.text.DocumentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -17,6 +18,7 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import javax.validation.ConstraintViolationException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -61,6 +63,22 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
         String error = "Validation Error: Error = " + ex.getMessage();
         ApiError apiError = new ApiError(
             HttpStatus.BAD_REQUEST,ex.getLocalizedMessage(), error);
+        return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
+    }
+    @ExceptionHandler({DocumentException.class})
+    private ResponseEntity<Object> handleDocumentException(DocumentException ex, WebRequest request){
+        String message = "Internal Server Error: Could not create receipt PDF";
+        LOGGER.info("DocumentException: " + ex.getMessage());
+        ApiError apiError = new ApiError(
+            HttpStatus.INTERNAL_SERVER_ERROR, message, ex.getLocalizedMessage());
+        return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
+    }
+    @ExceptionHandler({IOException.class})
+    private ResponseEntity<Object> handleIOException(IOException ex, WebRequest request){
+        String message = "Internal Server Error: Could not create receipt PDF";
+        LOGGER.info("IOException: " + ex.getMessage());
+        ApiError apiError = new ApiError(
+            HttpStatus.INTERNAL_SERVER_ERROR, message, ex.getLocalizedMessage());
         return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
     }
     // MethodArgumentNotValidException gets thrown by JavaX Validation of request bodies. Override to get error messages
