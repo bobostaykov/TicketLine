@@ -11,10 +11,11 @@ import {User} from '../../dtos/user';
 })
 export class BlockedUsersComponent implements OnInit {
 
-  blockedUsers: User[];
-  headElements = ['Id', 'Name', 'Type', 'User Since', 'Last Login', 'Delete' ,'Unblock' ];
-  error: boolean = false;
-  errorMessage: string = '';
+  private blockedUsers: User[];
+  private headElements = ['Username', 'Type', 'User Since', 'Last Login', 'Delete' , 'Unblock'];
+  private error: boolean = false;
+  private errorMessage: string = '';
+  private userToDelete: number = null;
 
   constructor(private authService: AuthService, private userService: UserService) {
   }
@@ -28,15 +29,18 @@ export class BlockedUsersComponent implements OnInit {
   isAdmin(): boolean {
     return this.authService.getUserRole() === 'ADMIN';
   }
+
   private vanishError() {
     this.error = false;
   }
+
   private loadBlockedUsers() {
     console.log('get all blocked users')
     this.userService.getAllBlockedUsers().subscribe(
       (users: User[]) => { this.blockedUsers = users; },
       error => console.log(error));
   }
+
   private unblockUser(user: User) {
     this.userService.unblockUser(user.id).subscribe(
       () => {},
@@ -44,13 +48,20 @@ export class BlockedUsersComponent implements OnInit {
       () => { this.loadBlockedUsers(); }
     );
   }
+
   private deleteUser(userId: number) {
+    this.userToDelete = null;
     this.userService.deleteUser(userId).subscribe(
       () => {},
       error => { this.defaultServiceErrorHandling(error); },
       () => { this.loadBlockedUsers(); }
     );
   }
+
+  private setUserToDelete(userId: number) {
+    this.userToDelete = userId;
+  }
+
   private defaultServiceErrorHandling(error: any) {
     console.log(error);
     this.error = true;

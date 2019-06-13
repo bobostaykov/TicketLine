@@ -18,7 +18,7 @@ export class UserComponent implements OnInit {
   private userForm: FormGroup;
   private submitted: boolean = false;
   private usernameError: boolean = false;
-  private headElements = ['Id', 'Name', 'Type', 'User Since', 'Last Login', 'Remove'];
+  private headElements = ['Username', 'Type', 'User Since', 'Last Login', 'Remove', 'Block'];
   private userTypes = ['Admin', 'Seller'];
   private selectedUserType: string = null;
   private userToDelete: number = null;
