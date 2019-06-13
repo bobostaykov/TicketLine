@@ -19,6 +19,14 @@ export class EventService {
   constructor(private httpClient: HttpClient, private globals: Globals) { }
 
   /**
+   * Create event
+   */
+  public createEvent(event: Event): Observable<Event> {
+    console.log('Create event');
+    return this.httpClient.post<Event>(this.eventBaseUri, event);
+  }
+
+  /**
    * Get top ten events from backend
    */
   public getTopTenEvents(monthsCats: TopTenDetails): Observable<EventTickets[]> {
@@ -26,8 +34,7 @@ export class EventService {
     return this.httpClient.post<EventTickets[]>(this.eventBaseUri + '/topten', monthsCats);
   }
 
-  /**
-   * Get all events that apply to a specific eventType of search term (resultsFor: ARTIST, EVENT, LOCATION) from backend
+  /**   * Get all events that apply to a specific eventType of search term (resultsFor: ARTIST, EVENT, LOCATION) from backend
    * If resultsFor === ResultsFor.LOCATION, name_or_id will be the location's id, otherwise it will be the name of the event/artist
    */
   /*

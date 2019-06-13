@@ -76,7 +76,7 @@
 
             <div class="form-group">
               <label for="inputType">Type</label>
-              <select name="type" formControlName="type" class="form-control" id="inputType" aria-describedby="rePasswordHelp" [(ngModel)]="selectedUserType">
+              <select name="type" formControlName="type" class="form-control" id="inputType" aria-describedby="typeHelp" [(ngModel)]="selectedUserType">
                 <option *ngFor="let type of userTypes">{{type}}</option>
               </select>
               <div *ngIf="submitted && userForm.controls.type.errors" class="error">

@@ -13,6 +13,14 @@ import java.util.Set;
 public interface EventService {
 
     /**
+     * Add event to database
+     *
+     * @param eventDTO event to create
+     * @return created event
+     */
+    EventDTO createEvent(EventDTO eventDTO) throws ServiceException;
+
+    /**
      * Get top 10 events from backend
      *
      * @param monthsSet a list with the months by which to filter (either 1 entry or 12, if no month is specified)

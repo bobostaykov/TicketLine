@@ -8,6 +8,7 @@ export class Event {
     public eventType: EventType,
     public description: string,
     public content: string,
-    public artist: Artist
+    public artist: Artist,
+    public durationInMinutes: number
   ) {}
 }

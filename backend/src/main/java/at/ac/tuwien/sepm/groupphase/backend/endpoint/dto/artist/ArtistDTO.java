@@ -53,7 +53,7 @@ public class ArtistDTO {
     public String toString() {
         return "ArtistDTO{" +
             "id=" + id +
-            ", username='" + name + '\'' +
+            ", name='" + name + '\'' +
             '}';
     }
 
