@@ -76,8 +76,8 @@ public class PasswordChangeRequest {
 
         public PasswordChangeRequest build() {
             PasswordChangeRequest passwordChangeRequest = new PasswordChangeRequest();
-            PasswordChangeRequest.setUsername(username);
-            PasswordChangeRequest.setPassword(password);
+            passwordChangeRequest.setUsername(username);
+            passwordChangeRequest.setPassword(password);
             return passwordChangeRequest;
         }
     }
