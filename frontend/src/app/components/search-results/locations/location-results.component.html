@@ -1,4 +1,4 @@
-<div *ngIf="dataReady && locations.length > 0">
+<div *ngIf="dataReady && pages.length > 0">
   <h1 class="mt-5" *ngIf="resultsFor === 'ATTRIBUTES'">Locations - Results for the chosen parameters</h1>
   <h1 class="mt-5" *ngIf="resultsFor === null">Locations - No Results</h1>
 
@@ -35,6 +35,6 @@
   </div>
 </div>
 
-<div *ngIf="dataReady && locations.length === 0">
+<div *ngIf="dataReady && pages.length === 0">
   <h1 class="mt-5" align="center">Locations - No Results</h1>
 </div>

@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.service;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.customer.CustomerDTO;
+import org.springframework.data.domain.Page;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -25,9 +26,10 @@ public interface CustomerService {
     /**
      * Find all customers saved in the database.
      *
-     * @return list of all customers
+     * @param page the number of the page to return
+     * @return page of the found customers
      */
-    List<CustomerDTO> findAll();
+    Page<CustomerDTO> findAll(Integer page);
 
     /**
      * Find a single customer entry by id.
@@ -45,12 +47,13 @@ public interface CustomerService {
      * email - part of the e-mail address of customer
      * birthday - birthday of customer
      *
+     * @param page the number of the page to return
      * @param id ID of customer to search for
      * @param name name of customer to search for
      * @param firstname first name of customer to search for
      * @param email e-mail adress of customer to search for
      * @param birthday birthday of customer to search for
-     * @return List of customers that met the requested filter methods
+     * @return page of customers that met the requested filter methods
      */
-    List<CustomerDTO> findCustomersFiltered(Long id, String name, String firstname, String email, LocalDate birthday);
+    Page<CustomerDTO> findCustomersFiltered(Long id, String name, String firstname, String email, LocalDate birthday, Integer page);
 }

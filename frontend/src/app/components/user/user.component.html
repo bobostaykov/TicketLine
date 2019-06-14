@@ -117,7 +117,7 @@
   </div>
 </div>
 
-
+<div *ngIf="dataReady">
 <table class="table">
   <thead>
     <tr>
@@ -136,3 +136,19 @@
     </tr>
   </tbody>
 </table>
+
+  <hr class="hr-bold">
+  <div class="justify-content-center" *ngIf="pages.length > 1">
+    <ul class="nav nav-pills">
+      <li class="nav-item">
+        <a class="nav-link" href="" (click)="previousPage($event)">«</a>
+      </li>
+      <li class="nav-item" *ngFor="let p of pages; let i = index">
+        <a class="nav-link" href="" (click)="setPage(i, $event)" [ngClass]="{'active': i == page}">{{i}}</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="" (click)="nextPage($event)">»</a>
+      </li>
+    </ul>
+  </div>
+</div>

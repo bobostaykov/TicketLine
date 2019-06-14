@@ -32,7 +32,7 @@
   </div>
 </div>
 
-
+<div *ngIf="dataReady && pages.length > 0">
 <table class="table">
   <thead>
   <tr>
@@ -50,3 +50,21 @@
     <td class="align-middle"><button mat-raised-button (click)="unblockUser(user)"  >unblock user</button> </td>  </tr>
   </tbody>
 </table>
+  <hr class="hr-bold">
+  <div class="justify-content-center" *ngIf="pages.length > 1">
+    <ul class="nav nav-pills">
+      <li class="nav-item">
+        <a class="nav-link" href="" (click)="previousPage($event)">«</a>
+      </li>
+      <li class="nav-item" *ngFor="let p of pages; let i = index">
+        <a class="nav-link" href="" (click)="setPage(i, $event)" [ngClass]="{'active': i == page}">{{i}}</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="" (click)="nextPage($event)">»</a>
+      </li>
+    </ul>
+  </div>
+</div>
+<div *ngIf="dataReady && pages.length == 0">
+  <h1 class="mt-4">No blocked users!</h1>
+</div>

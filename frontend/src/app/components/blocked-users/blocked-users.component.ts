@@ -11,6 +11,10 @@ import {User} from '../../dtos/user';
 })
 export class BlockedUsersComponent implements OnInit {
 
+  private page: number = 0;
+  private pages: Array<number>;
+  private dataReady: boolean = false;
+
   private blockedUsers: User[];
   private headElements = ['Username', 'Type', 'User Since', 'Last Login', 'Delete' , 'Unblock'];
   private error: boolean = false;
@@ -34,18 +38,67 @@ export class BlockedUsersComponent implements OnInit {
     this.error = false;
   }
 
+
+  /**
+   * Sets page number to the chosen i
+   * @param i number of the page to get
+   * @param event to handle
+   */
+  private setPage(i, event: any) {
+    event.preventDefault();
+    this.page = i;
+    this.loadBlockedUsers();
+  }
+
+  /**
+   * Sets page number to the previous one and calls the last method
+   * @param event o handle
+   */
+  private previousPage(event: any) {
+    event.preventDefault();
+    if (this.page > 0 ) {
+      this.page--;
+      this.loadBlockedUsers();
+    }
+  }
+
+  /**
+   * Sets page number to the next one and calls the last method
+   * @param event to handle
+   */
+  private nextPage(event: any) {
+    event.preventDefault();
+    if (this.page < this.pages.length - 1) {
+      this.page++;
+      this.loadBlockedUsers();
+    }
+  }
+
   private loadBlockedUsers() {
-    console.log('get all blocked users')
-    this.userService.getAllBlockedUsers().subscribe(
-      (users: User[]) => { this.blockedUsers = users; },
-      error => console.log(error));
+    console.log('get all blocked users');
+    this.userService.getAllBlockedUsers(this.page).subscribe(
+      result => {
+        this.blockedUsers = result['content'];
+        this.pages = new Array(result['totalPages']);
+      },
+      error => this.defaultServiceErrorHandling(error),
+      () => {
+        this.dataReady = true;
+        if (this.blockedUsers.length === 0 && this.pages.length === 1) {
+          this.page--;
+          this.loadBlockedUsers();
+        }
+      }
+    );
   }
 
   private unblockUser(user: User) {
     this.userService.unblockUser(user.id).subscribe(
       () => {},
       error => { this.defaultServiceErrorHandling(error); },
-      () => { this.loadBlockedUsers(); }
+      () => {
+          this.loadBlockedUsers();
+      }
     );
   }
 

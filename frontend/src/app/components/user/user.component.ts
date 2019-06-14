@@ -12,6 +12,10 @@ import {UserType} from '../../datatype/user_type';
 })
 export class UserComponent implements OnInit {
 
+  private page: number = 0;
+  private pages: Array<number>;
+  private dataReady: boolean = false;
+
   private error: boolean = false;
   private errorMessage: string = '';
   private users: User[];
@@ -40,10 +44,49 @@ export class UserComponent implements OnInit {
    * Load all users from the backend
    */
   private loadUsers() {
-    this.userService.getAllUsers().subscribe(
-      (users: User[]) => { this.users = users; },
-      error => { this.defaultServiceErrorHandling(error); }
+    this.userService.getAllUsers(this.page).subscribe(
+      result => {
+        this.users = result['content'];
+        this.pages = new Array(result['totalPages']);
+        },
+      error => { this.defaultServiceErrorHandling(error); },
+      () => { this.dataReady = true; }
     );
+  }
+
+  /**
+   * Sets page number to the chosen i
+   * @param i number of the page to get
+   * @param event to handle
+   */
+  private setPage(i, event: any) {
+    event.preventDefault();
+    this.page = i;
+    this.loadUsers();
+  }
+
+  /**
+   * Sets page number to the previous one and calls the last method
+   * @param event o handle
+   */
+  private previousPage(event: any) {
+    event.preventDefault();
+    if (this.page > 0 ) {
+      this.page--;
+      this.loadUsers();
+    }
+  }
+
+  /**
+   * Sets page number to the next one and calls the last method
+   * @param event to handle
+   */
+  private nextPage(event: any) {
+    event.preventDefault();
+    if (this.page < this.pages.length - 1) {
+      this.page++;
+      this.loadUsers();
+    }
   }
 
   /**

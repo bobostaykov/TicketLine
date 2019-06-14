@@ -7,6 +7,8 @@ import at.ac.tuwien.sepm.groupphase.backend.entity.News;
 import at.ac.tuwien.sepm.groupphase.backend.entity.User;
 import at.ac.tuwien.sepm.groupphase.backend.integrationtest.base.BaseIntegrationTestWithMockedUserCredentials;
 import at.ac.tuwien.sepm.groupphase.backend.repository.UserRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
@@ -14,9 +16,12 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.BDDMockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 
+import java.awt.print.Pageable;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -47,7 +52,7 @@ public class UserEndpointTest extends BaseIntegrationTestWithMockedUserCredentia
         Response response = RestAssured
             .given()
             .contentType(ContentType.JSON)
-            .when().get(USER_ENDPOINT)
+            .when().get(USER_ENDPOINT + "?page=0")
             .then().extract().response();
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.UNAUTHORIZED.value()));
     }
@@ -55,20 +60,26 @@ public class UserEndpointTest extends BaseIntegrationTestWithMockedUserCredentia
     @Test
     public void findAllUsersAsUser() {
         BDDMockito.
-            given(userRepository.findAll()).
-            willReturn(Collections.singletonList(
-                User.builder()
-                    .id(TEST_USER_ID)
-                    .username(TEST_USER_NAME)
-                    .type(TEST_USER_TYPE)
-                    .userSince(TEST_USER_SINCE)
-                    .lastLogin(TEST_USER_LAST_LOGIN)
-                    .build()));
+            given(userRepository.findAll(PageRequest.of(0, 10))).
+            willReturn(
+                new PageImpl<>(
+                    Collections.singletonList(
+                        User.builder()
+                            .id(TEST_USER_ID)
+                            .username(TEST_USER_NAME)
+                            .password(TEST_USER_PASS)
+                            .type(TEST_USER_TYPE)
+                            .userSince(TEST_USER_SINCE)
+                            .lastLogin(TEST_USER_LAST_LOGIN)
+                            .readNews(TEST_READ_NEWS)
+                            .build()), PageRequest.of(0,10), 1
+                )
+            );
         Response response = RestAssured
             .given()
             .contentType(ContentType.JSON)
             .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
-            .when().get(USER_ENDPOINT)
+            .when().get(USER_ENDPOINT + "?page=0")
             .then().extract().response();
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.FORBIDDEN.value()));
     }
@@ -76,34 +87,48 @@ public class UserEndpointTest extends BaseIntegrationTestWithMockedUserCredentia
     @Test
     public void findAllUsersAsAdmin() {
         BDDMockito.
-            given(userRepository.findAll()).
-            willReturn(Collections.singletonList(
-                User.builder()
-                    .id(TEST_USER_ID)
-                    .username(TEST_USER_NAME)
-                    .password(TEST_USER_PASS)
-                    .type(TEST_USER_TYPE)
-                    .userSince(TEST_USER_SINCE)
-                    .lastLogin(TEST_USER_LAST_LOGIN)
-                    .readNews(TEST_READ_NEWS)
-                    .build()));
+            given(userRepository.findAll(PageRequest.of(0, 10))).
+            willReturn(
+                new PageImpl<>(
+                    Collections.singletonList(
+                    User.builder()
+                        .id(TEST_USER_ID)
+                        .username(TEST_USER_NAME)
+                        .password(TEST_USER_PASS)
+                        .type(TEST_USER_TYPE)
+                        .userSince(TEST_USER_SINCE)
+                        .lastLogin(TEST_USER_LAST_LOGIN)
+                        .readNews(TEST_READ_NEWS)
+                        .build()), PageRequest.of(0,10), 1
+                )
+            );
         Response response = RestAssured
             .given()
             .contentType(ContentType.JSON)
             .header(HttpHeaders.AUTHORIZATION, validAdminTokenWithPrefix)
-            .when().get(USER_ENDPOINT)
+            .when().get(USER_ENDPOINT + "?page=0")
             .then().extract().response();
+
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
-        Assert.assertThat(Arrays.asList(response.as(UserDTO[].class)), is(Collections.singletonList(
-            UserDTO.builder()
-                .id(TEST_USER_ID)
-                .username(TEST_USER_NAME)
-                .password(TEST_USER_PASS)
-                .type(TEST_USER_TYPE)
-                .userSince(TEST_USER_SINCE)
-                .lastLogin(TEST_USER_LAST_LOGIN)
-                .readNews(TEST_READ_NEWS_DTO)
-                .build())));
+        try{
+            String jsonObject = new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(
+                new PageImpl<>(
+                    Collections.singletonList(
+                        UserDTO.builder()
+                            .id(TEST_USER_ID)
+                            .username(TEST_USER_NAME)
+                            .password(TEST_USER_PASS)
+                            .type(TEST_USER_TYPE)
+                            .userSince(TEST_USER_SINCE)
+                            .lastLogin(TEST_USER_LAST_LOGIN)
+                            .readNews(TEST_READ_NEWS_DTO)
+                            .build()), PageRequest.of(0,10), 1
+                )
+            );
+            Assert.assertEquals(response.getBody().asString(), jsonObject);
+        }catch (JsonProcessingException e) {
+            Assert.fail();
+        }
     }
 
     @Test

@@ -79,7 +79,7 @@ public class EventServiceImpl implements EventService {
         try {
             int pageSize = 10;
             if(page < 0) {
-                throw new ServiceException("Not a valid page.");
+                throw new IllegalArgumentException("Not a valid page.");
             }
             Pageable pageable = PageRequest.of(page, pageSize);
             return eventRepository.findAllByOrderByNameAsc(pageable).map(eventMapper::eventToEventDTO);
@@ -93,7 +93,7 @@ public class EventServiceImpl implements EventService {
         LOGGER.info("Find all events filtered by some attributes: " + parameters.toString());
         try{
             if(page < 0) {
-                throw new ServiceException("Not a valid page.");
+                throw new IllegalArgumentException("Not a valid page.");
             }
             Page<Event> page1 = eventRepository.findAllEventsFiltered(parameters, page);
             LOGGER.debug("Event Service: " + page1.getContent().toString());
@@ -109,7 +109,7 @@ public class EventServiceImpl implements EventService {
         try{
             int pageSize = 10;
             if(page < 0) {
-                throw new ServiceException("Not a valid page.");
+                throw new IllegalArgumentException("Not a valid page.");
             }
             Pageable pageable = PageRequest.of(page, pageSize);
             return eventRepository.findAllByArtist_Id(id, pageable).map(eventMapper::eventToEventDTO);
