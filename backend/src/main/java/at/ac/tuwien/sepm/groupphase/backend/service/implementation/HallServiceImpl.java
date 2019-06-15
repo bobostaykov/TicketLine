@@ -1,11 +1,11 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.implementation;
 
+import at.ac.tuwien.sepm.groupphase.backend.datatype.HallRequestParameters;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.hall.HallDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Hall;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Seat;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Sector;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.hall.HallMapper;
-import at.ac.tuwien.sepm.groupphase.backend.exception.CustomValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.HallRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.HallService;
 import org.slf4j.Logger;
@@ -29,9 +29,10 @@ public class HallServiceImpl implements HallService {
     }
 
     @Override
-    public List<HallDTO> findAllHalls() {
-        LOGGER.info("Finding all halls saved in the system");
-        return hallMapper.hallListToHallDTOs(hallRepository.findAll());
+    public List<HallDTO> findAllHalls(List<HallRequestParameters> fields) {
+        LOGGER.info("Finding all halls with " + (isEmpty(fields) ?  "all parameters" : "parameters " + fields.toString()));
+        return isEmpty(fields) ? hallMapper.hallListToHallDTOs(hallRepository.findAll()) :
+            hallMapper.hallListToHallDTOs(hallRepository.findAllWithSpecifiedFields(fields));
     }
 
     @Override

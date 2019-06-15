@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface HallRepository extends JpaRepository<Hall, Long> {
+public interface HallRepository extends JpaRepository<Hall, Long>, HallRepositoryCustom {
 
     /**
      * returns a list of all halls found in the system

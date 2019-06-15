@@ -1,5 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint;
 
+import at.ac.tuwien.sepm.groupphase.backend.conversion.CaseInsensitiveEnumConverter;
+import at.ac.tuwien.sepm.groupphase.backend.datatype.HallRequestParameters;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.hall.HallDTO;
 import at.ac.tuwien.sepm.groupphase.backend.exception.CustomValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
@@ -11,10 +13,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 @RestController
 @RequestMapping(value = "/halls")
@@ -28,11 +33,16 @@ public class HallEndpoint {
         this.hallService = hallService;
     }
 
+    @InitBinder
+    public void initBinder(WebDataBinder binder){
+        binder.registerCustomEditor(HallRequestParameters.class, new CaseInsensitiveEnumConverter<>(HallRequestParameters.class));
+    }
+
     @GetMapping
     @ApiOperation(value = "Get all saved halls", authorizations = {@Authorization(value = "apiKey")})
-    public List<HallDTO> getHalls(){
-        LOGGER.info("GET Halls: all Halls");
-        return hallService.findAllHalls();
+    public List<HallDTO> getHalls(@RequestParam(value = "fields", required = false) List<HallRequestParameters> fields){
+        LOGGER.info("GET Halls: all Halls with " + (isEmpty(fields) ? "all parameters" : "parameters " +  fields.toString()));
+        return hallService.findAllHalls(fields);
     }
 
     @PostMapping
