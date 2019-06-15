@@ -3,6 +3,7 @@ package at.ac.tuwien.sepm.groupphase.backend.entity;
 import at.ac.tuwien.sepm.groupphase.backend.datatype.PriceCategory;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -22,6 +23,9 @@ public class Sector {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "hall_id", nullable = false)
     private Hall hall;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "sector")
+    private List<Ticket> tickets;
 
     public Long getId() {
         return id;
@@ -59,34 +63,40 @@ public class Sector {
         this.hall = hall;
     }
 
+    public List<Ticket> getTickets() {
+        return tickets;
+    }
+
+    public void setTickets(List<Ticket> ticketDTOS) {
+        this.tickets = ticketDTOS;
+    }
+
     @Override
     public String toString() {
         return "Sector{" +
             "id=" + id +
             ", sectorNumber=" + sectorNumber +
-            ", priceCategory='" + priceCategory + "\'" +
+            ", priceCategory=" + priceCategory +
             ", hall=" + hall +
+            ", tickets=" + tickets +
             '}';
     }
 
     @Override
     public boolean equals(Object o) {
-        if(this == o) return  true;
-        if(o == null || getClass() != o.getClass()) return false;
+        if (this == o) return true;
+        if (!(o instanceof Sector)) return false;
         Sector sector = (Sector) o;
-        return Objects.equals(id, sector.getId()) &&
-            Objects.equals(sectorNumber, sector.getSectorNumber()) &&
-            Objects.equals(priceCategory, sector.getPriceCategory()) &&
-            Objects.equals(hall, sector.getHall());
+        return Objects.equals(getId(), sector.getId()) &&
+            Objects.equals(getSectorNumber(), sector.getSectorNumber()) &&
+            getPriceCategory() == sector.getPriceCategory() &&
+            Objects.equals(getHall(), sector.getHall()) &&
+            Objects.equals(getTickets(), sector.getTickets());
     }
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (sectorNumber != null ? sectorNumber.hashCode() : 0);
-        result = 31 * result + (priceCategory != null ? priceCategory.hashCode() : 0);
-        result = 31 * result + (hall != null ? hall.hashCode() : 0);
-        return result;
+        return Objects.hash(getId(), getSectorNumber(), getPriceCategory(), getHall(), getTickets());
     }
 
     public static final class SectorBuilder{
@@ -94,6 +104,7 @@ public class Sector {
         private Integer sectorNumber;
         private PriceCategory priceCategory;
         private Hall hall;
+        private List<Ticket> tickets;
 
         private SectorBuilder(){}
 
@@ -117,12 +128,18 @@ public class Sector {
             return this;
         }
 
+        public SectorBuilder tickets(List<Ticket> tickets){
+            this.tickets = tickets;
+            return this;
+        }
+
         public Sector build(){
             Sector sector = new Sector();
             sector.setId(id);
             sector.setSectorNumber(sectorNumber);
             sector.setPriceCategory(priceCategory);
             sector.setHall(hall);
+            sector.setTickets(tickets);
             return sector;
         }
     }

@@ -1,11 +1,13 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.sector;
 
 import at.ac.tuwien.sepm.groupphase.backend.datatype.PriceCategory;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.ticket.TicketDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
+import java.util.List;
 import java.util.Objects;
 
 @ApiModel(value = "SectorDTO", description = "A DTO for sector entities")
@@ -22,6 +24,9 @@ public class SectorDTO {
     @ApiModelProperty(name = "The sector's price category. Either cheap, average or expensive", required = true)
     @NotNull(message = "Sector price category was not set")
     private PriceCategory priceCategory;
+
+    @ApiModelProperty(name = "Tickets bought for this sector")
+    private List<TicketDTO> ticketDTOS;
 
     public Long getId() {
         return id;
@@ -47,6 +52,14 @@ public class SectorDTO {
         this.priceCategory = priceCategory;
     }
 
+    public List<TicketDTO> getTicketDTOS() {
+        return ticketDTOS;
+    }
+
+    public void setTicketDTOS(List<TicketDTO> ticketDTOS) {
+        this.ticketDTOS = ticketDTOS;
+    }
+
     public static SectorDTOBuilder builder(){
         return new SectorDTOBuilder();
     }
@@ -57,31 +70,31 @@ public class SectorDTO {
             "id=" + id +
             ", sectorNumber=" + sectorNumber +
             ", priceCategory=" + priceCategory +
+            ", ticketDTOS=" + ticketDTOS +
             '}';
     }
 
     @Override
     public boolean equals(Object o) {
-        if(this == o) return  true;
-        if(o == null || getClass() != o.getClass()) return false;
+        if (this == o) return true;
+        if (!(o instanceof SectorDTO)) return false;
         SectorDTO sectorDTO = (SectorDTO) o;
-        return Objects.equals(id, sectorDTO.getId()) &&
-            Objects.equals(sectorNumber, sectorDTO.getSectorNumber()) &&
-            Objects.equals(priceCategory, sectorDTO.getPriceCategory());
+        return Objects.equals(getId(), sectorDTO.getId()) &&
+            Objects.equals(getSectorNumber(), sectorDTO.getSectorNumber()) &&
+            getPriceCategory() == sectorDTO.getPriceCategory() &&
+            Objects.equals(getTicketDTOS(), sectorDTO.getTicketDTOS());
     }
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (sectorNumber != null ? sectorNumber.hashCode() : 0);
-        result = 31 * result + (priceCategory != null ? priceCategory.hashCode() : 0);
-        return result;
+        return Objects.hash(getId(), getSectorNumber(), getPriceCategory(), getTicketDTOS());
     }
 
     public static final class SectorDTOBuilder{
         private Long id;
         private Integer sectorNumber;
         private PriceCategory priceCategory;
+        private List<TicketDTO> ticketDTOS;
 
         private SectorDTOBuilder(){}
 
@@ -100,11 +113,17 @@ public class SectorDTO {
             return this;
         }
 
+        public SectorDTOBuilder ticketDTOS(List<TicketDTO> ticketDTOS){
+            this.ticketDTOS = ticketDTOS;
+            return this;
+        }
+
         public SectorDTO build(){
             SectorDTO sectorDTO = new SectorDTO();
             sectorDTO.setId(id);
             sectorDTO.setSectorNumber(sectorNumber);
             sectorDTO.setPriceCategory(priceCategory);
+            sectorDTO.setTicketDTOS(ticketDTOS);
             return sectorDTO;
         }
     }

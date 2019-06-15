@@ -3,6 +3,7 @@ package at.ac.tuwien.sepm.groupphase.backend.entity;
 import at.ac.tuwien.sepm.groupphase.backend.datatype.PriceCategory;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -23,8 +24,11 @@ public class Seat {
     private PriceCategory priceCategory;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="hall_id", nullable = false)
+    @JoinColumn(name = "hall_id", nullable = false)
     private Hall hall;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "seat")
+    private List<Ticket> tickets;
 
     public Long getId() {
         return id;
@@ -58,7 +62,7 @@ public class Seat {
         this.priceCategory = priceCategory;
     }
 
-    public static SeatBuilder builder(){
+    public static SeatBuilder builder() {
         return new SeatBuilder();
     }
 
@@ -70,6 +74,14 @@ public class Seat {
         this.hall = hall;
     }
 
+    public List<Ticket> getTickets(){
+        return tickets;
+    }
+
+    public void setTickets(List<Ticket> tickets) {
+        this.tickets = tickets;
+    }
+
     @Override
     public String toString() {
         return "Seat{" +
@@ -78,72 +90,77 @@ public class Seat {
             ", seatRow=" + seatRow +
             ", priceCategory='" + priceCategory + "\'" +
             ", hall=" + hall +
+            ", tickets=" + tickets.toString() +
             '}';
     }
 
     @Override
     public boolean equals(Object o) {
-        if(this == o) return  true;
-        if(o == null || getClass() != o.getClass()) return false;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         Seat seat = (Seat) o;
         return Objects.equals(id, seat.getId()) &&
             Objects.equals(seatNumber, seat.getSeatNumber()) &&
             Objects.equals(seatRow, seat.getSeatRow()) &&
             Objects.equals(priceCategory, seat.getPriceCategory()) &&
-            Objects.equals(hall, seat.getHall());
+            Objects.equals(hall, seat.getHall()) &&
+            Objects.equals(tickets, seat.getTickets());
     }
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (seatNumber != null ? seatNumber.hashCode() : 0);
-        result = 31 * result + (seatRow != null ? seatRow.hashCode() : 0);
-        result = 31 * result + (priceCategory != null ? priceCategory.hashCode() : 0);
-        result = 31 * result + (hall != null ? hall.hashCode() : 0);
-        return result;
+        return Objects.hash(id, seatNumber, seatRow, priceCategory, hall, tickets);
     }
 
-    public static final class SeatBuilder{
+    public static final class SeatBuilder {
         private Long id;
         private Integer seatNumber;
         private Integer seatRow;
         private PriceCategory priceCategory;
         private Hall hall;
+        private List<Ticket> ticket;
 
-        private SeatBuilder(){}
+        private SeatBuilder() {
+        }
 
-        public SeatBuilder id(Long id){
+        public SeatBuilder id(Long id) {
             this.id = id;
             return this;
         }
 
-        public SeatBuilder seatNumber(Integer seatNumber){
+        public SeatBuilder seatNumber(Integer seatNumber) {
             this.seatNumber = seatNumber;
             return this;
         }
 
-        public SeatBuilder seatRow(Integer seatRow){
+        public SeatBuilder seatRow(Integer seatRow) {
             this.seatRow = seatRow;
             return this;
         }
 
-        public SeatBuilder priceCategory(PriceCategory priceCategory){
+        public SeatBuilder priceCategory(PriceCategory priceCategory) {
             this.priceCategory = priceCategory;
             return this;
         }
 
-        public SeatBuilder hall(Hall hall){
+        public SeatBuilder hall(Hall hall) {
             this.hall = hall;
             return this;
         }
 
-        public Seat build(){
+        public SeatBuilder ticket(List<Ticket> ticket){
+            this.ticket = ticket;
+            return this;
+        }
+
+        public Seat build() {
             Seat seat = new Seat();
             seat.setId(id);
             seat.setSeatNumber(seatNumber);
             seat.setSeatRow(seatRow);
             seat.setPriceCategory(priceCategory);
             seat.setHall(hall);
+            seat.setTickets(ticket);
             return seat;
         }
     }
