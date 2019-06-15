@@ -8,12 +8,6 @@ import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.event.TopTenDetailsDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.searchParameters.EventSearchParametersDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Artist;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Event;
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.artist.ArtistDTO;
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.event.EventDTO;
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.event.EventTicketsDTO;
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.event.TopTenDetailsDTO;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Artist;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Event;
 import at.ac.tuwien.sepm.groupphase.backend.integrationtest.base.BaseIntegrationTestWithMockedUserCredentials;
 import at.ac.tuwien.sepm.groupphase.backend.repository.EventRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -25,10 +19,8 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.BDDMockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 
@@ -63,8 +55,8 @@ public class EventEndpointTest extends BaseIntegrationTestWithMockedUserCredenti
     private static final String EVENT_FILTERED_DESCRIPTION = "/events?description=esc&page=0";
     private static final String EVENT_FILTERED_CONTENT = "/events?content=NO_CONTENT&page=0";
     private static final String EVENT_FILTERED_DURATION = "/events?duration=200&page=0";
-    private static final String EVENT_FILTERED_ARTIST = "/events?artistName=vasko&page=0";
-
+    private static final String EVENT_FILTERED_ARTIST_NAME = "/events?artistName=vasko&page=0";
+    private static final String EVENT_FILTERE_ARTIST_ID = "/events/artist/2?page=0";
 
     private static final Artist ARTIST_1 = Artist.builder().id(1L).name("Vasko").build();
     private static final Artist ARTIST_2 = Artist.builder().id(2L).name("Venci").build();
@@ -380,7 +372,50 @@ public class EventEndpointTest extends BaseIntegrationTestWithMockedUserCredenti
 
     @Test
     public void findAllEventsFilteredByArtistID() {
+        BDDMockito.
+            given(eventRepository.findAllByArtist_Id(2L, PageRequest.of(0,10)))
+            .willReturn(new PageImpl<>(
+                Collections.singletonList(
+                    Event.builder()
+                        .id(ID_EVENT_2)
+                        .name(NAME_2)
+                        .eventType(TYPE_2)
+                        .description(DESCRIPTION_2)
+                        .content(CONTENT_2)
+                        .durationInMinutes(DURATION_2)
+                        .artist(ARTIST_2)
+                        .build()
+                ),
+                PageRequest.of(0,10), 1)
+            );
 
+        Response response = RestAssured
+            .given()
+            .contentType(ContentType.JSON)
+            .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
+            .when().get(EVENT_FILTERE_ARTIST_ID)
+            .then().extract().response();
+
+        Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
+        try{
+            String jsonObject = new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(
+                new PageImpl<>(
+                    Collections.singletonList(
+                        EventDTO.builder()
+                            .id(ID_EVENT_2)
+                            .name(NAME_2)
+                            .eventType(TYPE_2)
+                            .description(DESCRIPTION_2)
+                            .content(CONTENT_2)
+                            .durationInMinutes(DURATION_2)
+                            .artist(ARTIST_DTO_2)
+                            .build()
+                    ),
+                    PageRequest.of(0,10), 1));
+            Assert.assertEquals(response.getBody().asString(), jsonObject);
+        }catch (JsonProcessingException e) {
+            Assert.fail();
+        }
     }
 
     @Test
@@ -571,7 +606,7 @@ public class EventEndpointTest extends BaseIntegrationTestWithMockedUserCredenti
             .given()
             .contentType(ContentType.JSON)
             .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
-            .when().get(EVENT_FILTERED_ARTIST)
+            .when().get(EVENT_FILTERED_ARTIST_NAME)
             .then().extract().response();
 
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
