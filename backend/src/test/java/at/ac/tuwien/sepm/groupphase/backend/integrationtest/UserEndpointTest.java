@@ -7,22 +7,33 @@ import at.ac.tuwien.sepm.groupphase.backend.entity.News;
 import at.ac.tuwien.sepm.groupphase.backend.entity.User;
 import at.ac.tuwien.sepm.groupphase.backend.integrationtest.base.BaseIntegrationTestWithMockedUserCredentials;
 import at.ac.tuwien.sepm.groupphase.backend.repository.UserRepository;
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
+import net.minidev.json.JSONArray;
+import net.minidev.json.JSONObject;
+import net.minidev.json.parser.JSONParser;
+import net.minidev.json.parser.ParseException;
+import org.apache.http.util.EntityUtils;
+import org.hibernate.tuple.entity.EntityTuplizer;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.BDDMockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 
 import java.awt.print.Pageable;
+import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import static org.hamcrest.core.Is.is;
@@ -36,16 +47,15 @@ public class UserEndpointTest extends BaseIntegrationTestWithMockedUserCredentia
     private static final String USER_ENDPOINT = "/users";
     private static final String SPECIFIC_USER_PATH = "/{userId}";
 
-    private static final long TEST_USER_ID = 1L;
-    private static final long TEST_USER_ID_ERROR = -1L;
+    private static final Long TEST_USER_ID = 1L;
+    private static final Long TEST_USER_ID_ERROR = -1L;
     private static final String TEST_USER_NAME = "Messi";
     private static final String TEST_USER_PASS = "Messi123";
     private static final UserType TEST_USER_TYPE = UserType.ADMIN;
     private static final LocalDateTime TEST_USER_SINCE = LocalDateTime.of(1011, 11, 11, 11, 11, 11, 11);
     private static final LocalDateTime TEST_USER_LAST_LOGIN = LocalDateTime.of(2012, 12, 12, 12, 12, 12, 12);
     private static final List<News> TEST_READ_NEWS = new ArrayList<News>();
-    private static final List<SimpleNewsDTO> TEST_READ_NEWS_DTO = new ArrayList<SimpleNewsDTO>();
-
+    private static final List<SimpleNewsDTO> TEST_READ_NEWS_DTO = new ArrayList<>();
 
     @Test
     public void findAllUsersUnauthorizedAsAnonymous() {
@@ -81,6 +91,7 @@ public class UserEndpointTest extends BaseIntegrationTestWithMockedUserCredentia
             .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
             .when().get(USER_ENDPOINT + "?page=0")
             .then().extract().response();
+
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.FORBIDDEN.value()));
     }
 
@@ -102,6 +113,7 @@ public class UserEndpointTest extends BaseIntegrationTestWithMockedUserCredentia
                         .build()), PageRequest.of(0,10), 1
                 )
             );
+
         Response response = RestAssured
             .given()
             .contentType(ContentType.JSON)
@@ -110,25 +122,16 @@ public class UserEndpointTest extends BaseIntegrationTestWithMockedUserCredentia
             .then().extract().response();
 
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
-        try{
-            String jsonObject = new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(
-                new PageImpl<>(
-                    Collections.singletonList(
-                        UserDTO.builder()
-                            .id(TEST_USER_ID)
-                            .username(TEST_USER_NAME)
-                            .password(TEST_USER_PASS)
-                            .type(TEST_USER_TYPE)
-                            .userSince(TEST_USER_SINCE)
-                            .lastLogin(TEST_USER_LAST_LOGIN)
-                            .readNews(TEST_READ_NEWS_DTO)
-                            .build()), PageRequest.of(0,10), 1
-                )
-            );
-            Assert.assertEquals(response.getBody().asString(), jsonObject);
-        }catch (JsonProcessingException e) {
-            Assert.fail();
-        }
+
+        UserDTO readValue = response.jsonPath().getList("content", UserDTO.class).get(0);
+        Assert.assertNotNull(readValue);
+        Assert.assertEquals(readValue.getId(), TEST_USER_ID);
+        Assert.assertEquals(readValue.getUsername(), TEST_USER_NAME);
+        Assert.assertEquals(readValue.getPassword(), TEST_USER_PASS);
+        Assert.assertEquals(readValue.getType(), TEST_USER_TYPE);
+        Assert.assertEquals(readValue.getLastLogin(), TEST_USER_LAST_LOGIN);
+        Assert.assertEquals(readValue.getUserSince(), TEST_USER_SINCE);
+        Assert.assertTrue(readValue.getReadNews().isEmpty());
     }
 
     @Test

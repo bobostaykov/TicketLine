@@ -105,7 +105,7 @@ public class UserEndpoint {
     @RequestMapping(value = "/blocked", method = RequestMethod.GET)
     @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "get all blocked users", authorizations = {@Authorization(value = "apiKey")})
-    public Page<UserDTO> getAllBlockedUsers(@RequestParam(value = "page") Integer page){
+    public Page<UserDTO> getAllBlockedUsers(@RequestParam(value = "page", required = false) Integer page){
         LOGGER.info("get all blocked users");
         try{
             return userService.getAllBlockedUsers(page);
