@@ -51,6 +51,7 @@ public class TicketServiceTest {
     private Seat TEST_SEAT1;
     private Seat TEST_SEAT2;
     private Seat TEST_SEAT3;
+    private Sector TEST_SECTOR;
 
     /******************************************************************
      TEST VARIABLES
@@ -75,6 +76,8 @@ public class TicketServiceTest {
     private Long TEST_SEAT_ID_1 = 51L;
     private Long TEST_SEAT_ID_2 = 52L;
     private Long TEST_SEAT_ID_3 = 53L;
+    private Long TEST_SECTOR_ID = 55L;
+    private Integer TEST_SECTOR_NUMBER = 5;
     private Integer TEST_SEAT_SEAT_NO_1 = 43;
     private Integer TEST_SEAT_SEAT_NO_2 = 44;
     private Integer TEST_SEAT_SEAT_NO_3 = 45;
@@ -174,6 +177,11 @@ public class TicketServiceTest {
             .seatRow(TEST_SEAT_SEAT_ROW_3)
             .priceCategory(TEST_SEAT_PRICE_CATEGORY_3)
             .build();
+        TEST_SECTOR = Sector.builder()
+            .id(TEST_SECTOR_ID)
+            .sectorNumber(TEST_SECTOR_NUMBER)
+            .priceCategory(PriceCategory.AVERAGE)
+            .build();
         TEST_HALL_SEATS.add(TEST_SEAT1);
         TEST_HALL_SEATS.add(TEST_SEAT2);
         TEST_HALL_SEATS.add(TEST_SEAT3);
@@ -211,8 +219,7 @@ public class TicketServiceTest {
             .show(TEST_SHOW)
             .customer(TEST_CUSTOMER1)
             .price(TEST_TICKET_PRICE1)
-            .seatNumber(TEST_TICKET_SEAT_NO1)
-            .rowNumber(TEST_TICKET_ROW_NO1)
+            .seat(TEST_SEAT1)
             .status(TEST_TICKET_STATUS1)
             .build();
         TEST_TICKET2 = Ticket.builder()
@@ -220,7 +227,7 @@ public class TicketServiceTest {
             .show(TEST_SHOW)
             .customer(TEST_CUSTOMER2)
             .price(TEST_TICKET_PRICE2)
-            .sectorNumber(TEST_TICKET_SECTOR2)
+            .sector(TEST_SECTOR)
             .status(TEST_TICKET_STATUS2)
             .build();
         TEST_CUSTOMER1_LIST = new ArrayList<>();

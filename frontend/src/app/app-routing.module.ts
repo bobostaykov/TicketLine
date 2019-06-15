@@ -14,7 +14,9 @@ import {LocationResultsComponent} from './components/search-results/locations/lo
 import {EventResultsComponent} from './components/search-results/events/event-results.component';
 import {FloorplanControlComponent} from './components/floorplan/floorplan-control/floorplan-control.component';
 import {CustomerComponent} from './components/customer/customer.component';
+import {TicketCheckReservationComponent} from './components/ticket/ticket-check-reservation/ticket-check-reservation.component';
 import {BlockedUsersComponent} from './components/blocked-users/blocked-users.component';
+import {TicketComponent} from './components/ticket/ticket.component';
 
 // TODO Refactor Names: ShowResultsComponent -> ShowResultsComponent; the same for LocationComponent; in Service as well
 const routes: Routes = [
@@ -31,7 +33,9 @@ const routes: Routes = [
   {path: 'events/search/results/locations', canActivate: [AuthGuard], component: LocationResultsComponent},
   {path: 'events/search/results/events', canActivate: [AuthGuard], component: EventResultsComponent},
   {path: 'floorplan', canActivate: [AuthGuard], component: FloorplanControlComponent},
-  {path: 'blocked', canActivate: [AuthGuard], component: BlockedUsersComponent}
+  {path: 'ticket', canActivate: [AuthGuard], component: TicketComponent},
+  {path: 'ticket-check-reservation', canActivate: [AuthGuard], component: TicketCheckReservationComponent},
+  {path: 'blocked', canActivate: [AuthGuard], component: BlockedUsersComponent},
 ];
 
 @NgModule({

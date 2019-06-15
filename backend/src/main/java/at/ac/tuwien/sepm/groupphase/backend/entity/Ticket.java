@@ -16,19 +16,19 @@ public class Ticket {
     @JoinColumn(nullable = false, name = "show_id")
     private Show show;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false, name = "customer_id")
-    private Customer customer;
-
     @Column(nullable = false)
     private Double price;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="seat_id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(nullable = false, name = "customer_id")
+    private Customer customer;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "seat_id")
     private Seat seat;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="sector_id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "sector_id")
     private Sector sector;
 
     @Column(nullable = false)
@@ -66,28 +66,28 @@ public class Ticket {
         return price;
     }
 
+    public void setSector(Sector sector) {
+        this.sector = sector;
+    }
+
+    public Sector getSector() {
+        return sector;
+    }
+
+    public void setSeat(Seat seat) {
+        this.seat = seat;
+    }
+
+    public Seat getSeat() {
+        return seat;
+    }
+
     public void setStatus(TicketStatus status) {
         this.status = status;
     }
 
     public TicketStatus getStatus() {
         return status;
-    }
-
-    public void setSeat(Seat seat){
-        this.seat = seat;
-    }
-
-    public Seat getSeat(){
-        return seat;
-    }
-
-    public void setSector(Sector sector){
-        this.sector = sector;
-    }
-
-    public Sector getSector(){
-        return sector;
     }
 
     public static TicketBuilder builder() {
@@ -102,13 +102,16 @@ public class Ticket {
             ", price=" + price +
             ", customer=" + customer.toString() +
             ", status=" + status;
-        if (seat != null) {
-            out += ", seat=" + seat.toString();
+        if (seat != null && seat.getSeatNumber() != null) {
+            out = out + ", seatNumber=" + seat.getSeatNumber();
+        }
+        if (seat != null && seat.getSeatRow() != null) {
+            out = out + ", rowNumber =" + seat.getSeatRow();
         }
         if (sector != null) {
-            out += ", sector=" + sector.toString();
+            out = out + ", sectorNumber =" + sector.getSectorNumber();
         }
-        out += '}';
+        out = out + '}';
         return out;
     }
 
@@ -116,12 +119,14 @@ public class Ticket {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+
         Ticket ticket = (Ticket) o;
+
         if (id != null ? !id.equals(ticket.id) : ticket.id != null) return false;
         if (show != null ? !show.equals(ticket.show) : ticket.show != null) return false;
         if (price != null ? !price.equals(ticket.price) : ticket.price != null) return false;
         if (customer != null ? !customer.equals(ticket.customer) : ticket.customer != null) return false;
-        if (seat != null ? !seat.equals(ticket.seat) : ticket.seat!= null) return false;
+        if (seat != null ? !seat.equals(ticket.seat) : ticket.seat != null) return false;
         if (status != null ? !status.equals(ticket.status) : ticket.status != null) return false;
         return sector != null ? sector.equals(ticket.sector) : ticket.sector == null;
     }
