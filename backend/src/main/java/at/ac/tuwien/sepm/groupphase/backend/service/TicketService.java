@@ -1,24 +1,23 @@
 package at.ac.tuwien.sepm.groupphase.backend.service;
 
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.show.ShowDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.ticket.TicketDTO;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Ticket;
 import com.itextpdf.text.DocumentException;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 public interface TicketService {
 
     /**
-     * Save a single ticket entry
+     * Save a list of ticket entries
      *
-     * @param ticketDTO to be saved
-     * @return saved ticket entry
+     * @param tickets tickets to be saved
+     * @return saved ticket entries
      */
-    TicketDTO postTicket(TicketDTO ticketDTO);
+    List<TicketDTO> postTickets(List<TicketDTO> tickets);
 
     /**
      * Get all ticket entries
@@ -94,4 +93,12 @@ public interface TicketService {
      * @return Cancellation PDF receipt for deleted tickets as MultipartFile
      */
     MultipartFile deleteAndGetCancellationReceipt(List<String> tickets) throws DocumentException, IOException;
+
+    /**
+     * Generate PDF for list of tickets
+     *
+     * @param tickets list of tickets
+     * @return PDF containing printable tickets
+     */
+    MultipartFile generateTicketPDF(List<TicketDTO> tickets) throws DocumentException, IOException, NoSuchAlgorithmException;
 }

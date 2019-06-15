@@ -33,6 +33,9 @@
         <rest-assured.version>3.2.0</rest-assured.version>
         <itextpdf.version>5.5.13</itextpdf.version>
         <spring-mock.version>2.0.8</spring-mock.version>
+        <zxing-core.version>3.4.0</zxing-core.version>
+        <zxing-javase.version>3.4.0</zxing-javase.version>
+        <bouncycastle.version>1.62</bouncycastle.version>
     </properties>
 
     <dependencyManagement>
@@ -109,6 +112,21 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-mock</artifactId>
             <version>${spring-mock.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>core</artifactId>
+            <version>${zxing-core.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>javase</artifactId>
+            <version>${zxing-javase.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk15on</artifactId>
+            <version>${bouncycastle.version}</version>
         </dependency>
         <!-- test -->
         <dependency>

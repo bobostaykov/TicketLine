@@ -1,8 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.implementation;
 
 import at.ac.tuwien.sepm.groupphase.backend.datatype.TicketStatus;
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.customer.CustomerDTO;
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.show.ShowDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.ticket.TicketDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Customer;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Event;
@@ -12,37 +10,26 @@ import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.customer.CustomerMappe
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.show.ShowMapper;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.ticket.TicketMapper;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
-import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.CustomerRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.EventRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.ShowRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.TicketRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.CustomerService;
 import at.ac.tuwien.sepm.groupphase.backend.service.TicketService;
-import com.itextpdf.text.*;
-import com.itextpdf.text.pdf.PdfPCell;
-import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.text.pdf.PdfWriter;
-import org.apache.commons.io.IOUtils;
-import org.apache.tomcat.util.http.fileupload.FileItem;
+import at.ac.tuwien.sepm.groupphase.backend.service.generator.PDFGenerator;
+import com.itextpdf.text.DocumentException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 @Service
 @ConfigurationProperties("receipt")
@@ -55,6 +42,7 @@ public class TicketServiceImpl implements TicketService {
     private final ShowMapper showMapper;
     private final CustomerMapper customerMapper;
     private final CustomerService customerService;
+    private final PDFGenerator pdfGenerator;
 
     private static final String RECEIPT_PATH = "receipt/";
 
@@ -64,7 +52,7 @@ public class TicketServiceImpl implements TicketService {
     public TicketServiceImpl(TicketRepository ticketRepository, CustomerRepository customerRepository,
                              EventRepository eventRepository, TicketMapper ticketMapper, ShowMapper showMapper,
                              CustomerMapper customerMapper, CustomerService customerService,
-                             ShowRepository showRepository) {
+                             ShowRepository showRepository, PDFGenerator pdfGenerator) {
         this.ticketRepository = ticketRepository;
         this.customerRepository = customerRepository;
         this.eventRepository = eventRepository;
@@ -73,12 +61,13 @@ public class TicketServiceImpl implements TicketService {
         this.customerMapper = customerMapper;
         this.customerService = customerService;
         this.showRepository = showRepository;
-
+        this.pdfGenerator = pdfGenerator;
     }
 
     @Override
-    public TicketDTO postTicket(TicketDTO ticketDTO) {
-        return ticketMapper.ticketToTicketDTO(ticketRepository.save(ticketMapper.ticketDTOToTicket(ticketDTO)));
+    public List<TicketDTO> postTickets(List<TicketDTO> tickets) {
+        return ticketMapper.ticketToTicketDTO(ticketRepository.saveAll(ticketMapper.ticketDTOToTicket(tickets)));
+
     }
 
     @Override
@@ -134,7 +123,7 @@ public class TicketServiceImpl implements TicketService {
     @Override
     public MultipartFile getReceipt(List<String> ticketIDs) throws DocumentException, IOException {
         List<TicketDTO> tickets = ticketMapper.ticketToTicketDTO(ticketRepository.findByIdIn(this.parseListOfIds(ticketIDs)));
-        return this.generateReceipt(tickets, false);
+        return pdfGenerator.generateReceipt(tickets, false);
     }
 
     @Override
@@ -142,8 +131,12 @@ public class TicketServiceImpl implements TicketService {
     public MultipartFile deleteAndGetCancellationReceipt(List<String> ticketIDs) throws DocumentException, IOException{
         List<TicketDTO> tickets = ticketMapper.ticketToTicketDTO(ticketRepository.findByIdIn(this.parseListOfIds(ticketIDs)));
         ticketRepository.deleteByIdIn(this.parseListOfIds(ticketIDs));
-        MultipartFile receipt = generateReceipt(tickets, true);
-        return receipt;
+        return pdfGenerator.generateReceipt(tickets, true);
+    }
+
+    @Override
+    public MultipartFile generateTicketPDF(List<TicketDTO> tickets) throws DocumentException, IOException, NoSuchAlgorithmException {
+        return pdfGenerator.generateTicketPDF(tickets);
     }
 
     /**
@@ -159,150 +152,6 @@ public class TicketServiceImpl implements TicketService {
             ids.add(Long.parseLong(i));
         }
         return ids;
-    }
-
-    /**
-     * Generates receipt PDF from List of TicketDTOs
-     *
-     * @param tickets List of Ticket DTOs
-     * @return receipt PDF as MultipartFile
-     */
-    private MultipartFile generateReceipt(List<TicketDTO> tickets, Boolean cancellation) throws DocumentException, IOException {
-        if (tickets.size() < 1)
-            throw new NotFoundException("Cannot create receipt for empty list of Tickets.");
-        int numberOfTickets = tickets.size();
-        Double returnSum;
-        Double sum = 0.0;
-        Document receipt = new Document();
-        String fileName;
-        if (cancellation)
-            fileName = RECEIPT_PATH + "cancellation-receipt_" + LocalDateTime.now().toString() + ".pdf";
-        else
-            fileName = RECEIPT_PATH + "receipt_" + LocalDateTime.now().toString() + ".pdf";
-
-        Path path = Paths.get(RECEIPT_PATH);
-        //if directory exists?
-        if (!Files.exists(path))
-            Files.createDirectories(path);
-        PdfWriter.getInstance(receipt, new FileOutputStream(fileName));
-
-        receipt.addTitle("Ticketline" + (cancellation ? " cancellation" : "") + " receipt");
-        receipt.addAuthor("Ticketline");
-        receipt.addSubject("Ticketline" + (cancellation ? " cancellation" : "") + " receipt");
-        receipt.addKeywords("Ticketline");
-        receipt.addCreator("Ticketline");
-
-        receipt.open();
-        Font headlineFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 24, BaseColor.BLACK);
-        Font font = FontFactory.getFont(FontFactory.HELVETICA, 16, BaseColor.BLACK);
-        Font fontBold = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 16, BaseColor.BLACK);
-        Paragraph headline;
-        if (cancellation)
-            headline = new Paragraph("TICKETLINE STORNO-RECHNUNG", headlineFont);
-
-        else
-            headline = new Paragraph("TICKETLINE RECHNUNG", headlineFont);
-        receipt.add(headline);
-        receipt.add(Chunk.NEWLINE);
-        Paragraph date = new Paragraph("Rechnungsdatum: " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("DD.MM.YYYY")), font);
-        receipt.add(date);
-        receipt.add(Chunk.NEWLINE);
-        receipt.add(Chunk.NEWLINE);
-
-        int[] widths = {3, 6, 2};
-        PdfPTable table = new PdfPTable(3);
-        table.setWidths(widths);
-
-        PdfPCell itemNumber = new PdfPCell();
-        itemNumber.setPhrase(new Phrase("Position", fontBold));
-        table.addCell(itemNumber);
-        PdfPCell itemTitle = new PdfPCell();
-        itemTitle.setPhrase(new Phrase("Bezeichnung", fontBold));
-        table.addCell(itemTitle);
-        PdfPCell priceTitle = new PdfPCell();
-        priceTitle.setPhrase(new Phrase("Preis", fontBold));
-        table.addCell(priceTitle);
-
-        Integer i = 1;
-        for (TicketDTO t:tickets) {
-            PdfPCell number = new PdfPCell();
-            number.setPhrase(new Phrase(i.toString(), font));
-            table.addCell(number);
-            PdfPCell item = new PdfPCell();
-            item.setPhrase(new Phrase(t.getShow().getEvent().getName(), font));
-            table.addCell(item);
-            PdfPCell price = new PdfPCell();
-            price.setPhrase(new Phrase(this.print(t.getPrice()), font));
-            sum += t.getPrice();
-            table.addCell(price);
-            i++;
-        }
-
-        PdfPCell blank = new PdfPCell();
-        blank.setPhrase(new Phrase(" ", font));
-
-        if (cancellation) {
-            returnSum = - sum;
-            sum = 0.0;
-            table.addCell(blank);
-            PdfPCell sumText = new PdfPCell();
-            sumText.setPhrase(new Phrase("Rückgegeben in Bar", fontBold));
-            table.addCell(sumText);
-            PdfPCell sumValue = new PdfPCell();
-            sumValue.setPhrase(new Phrase(this.print(returnSum), fontBold));
-            table.addCell(sumValue);
-        }
-        table.addCell(blank);
-        PdfPCell sumText = new PdfPCell();
-        sumText.setPhrase(new Phrase("Summe", fontBold));
-        table.addCell(sumText);
-        PdfPCell sumValue = new PdfPCell();
-        sumValue.setPhrase(new Phrase(this.print(sum), fontBold));
-        table.addCell(sumValue);
-        table.addCell(blank);
-        PdfPCell taxText = new PdfPCell();
-        taxText.setPhrase(new Phrase("Steuersatz", fontBold));
-        table.addCell(taxText);
-        PdfPCell taxValue = new PdfPCell();
-        taxValue.setPhrase(new Phrase("13%", fontBold));
-        table.addCell(taxValue);
-
-        receipt.add(table);
-
-        receipt.add(Chunk.NEWLINE);
-        receipt.add(Chunk.NEWLINE);
-
-
-        // TODO: Use TICKETLINE_ADDRESS from application.yml here
-        Paragraph address = new Paragraph("Ticketline-Gasse 1a, 1010 Wien", font);
-        receipt.add(address);
-
-        receipt.close();
-        //return new File(fileName);
-
-        File pdf = new File(fileName);
-        FileInputStream input = new FileInputStream(pdf);
-        MultipartFile multipartPDF = new MockMultipartFile("file",
-            pdf.getName(), "text/plain", IOUtils.toByteArray(input));
-        return multipartPDF;
-        // TODO: delete file afterwards (or persist it?)
-    }
-
-    /**
-     * Generates Currency (€) String from Double
-     *
-     * @param price as Double
-     * @return String representation as €
-     */
-    private String print(Double price) {
-        String plusMinus = "";
-        if (price < 0.0) {
-            price = -price;
-            plusMinus = "- ";
-        }
-        long eurocents = Math.round(price * 100);
-        String centsStr = Long.toString(100 + eurocents%100).substring(1);
-        return plusMinus + eurocents / 100 + "," + centsStr + " €";
     }
 
     /**
