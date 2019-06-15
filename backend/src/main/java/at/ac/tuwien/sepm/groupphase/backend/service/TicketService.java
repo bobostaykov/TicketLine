@@ -12,12 +12,12 @@ import java.util.List;
 public interface TicketService {
 
     /**
-     * Save a list of ticket entries
+     * Save a single ticket entry
      *
-     * @param tickets tickets to be saved
-     * @return saved ticket entries
+     * @param ticketDTO ticket to be saved
+     * @return saved ticket entry
      */
-    List<TicketDTO> postTickets(List<TicketDTO> tickets);
+    TicketDTO postTicket(TicketDTO ticketDTO);
 
     /**
      * Get all ticket entries

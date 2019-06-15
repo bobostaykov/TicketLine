@@ -20,6 +20,7 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -35,11 +36,11 @@ public class TicketEndpoint {
 
     @RequestMapping(method = RequestMethod.POST)
     @ApiOperation(value = "Create a ticket", authorizations = {@Authorization(value = "apiKey")})
-    public List<TicketDTO> create(@RequestBody List<TicketDTO> tickets) throws IOException, DocumentException, NoSuchAlgorithmException {
+    public TicketDTO create(@RequestBody TicketDTO ticketDTO) throws IOException, DocumentException, NoSuchAlgorithmException {
         LOGGER.info("Create Ticket");
-        List<TicketDTO> ticketsCreated = ticketService.postTickets(tickets);
-        ticketService.generateTicketPDF(ticketsCreated); // TODO: return pdf instead of tickets
-        return ticketsCreated;
+        TicketDTO ticketCreated = ticketService.postTicket(ticketDTO);
+        ticketService.generateTicketPDF(Collections.singletonList(ticketCreated)); // TODO: return pdf instead of tickets
+        return ticketCreated;
     }
 
     @RequestMapping(method = RequestMethod.GET)

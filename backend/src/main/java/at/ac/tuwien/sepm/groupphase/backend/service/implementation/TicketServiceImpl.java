@@ -25,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
@@ -65,8 +64,8 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public List<TicketDTO> postTickets(List<TicketDTO> tickets) {
-        return ticketMapper.ticketToTicketDTO(ticketRepository.saveAll(ticketMapper.ticketDTOToTicket(tickets)));
+    public TicketDTO postTicket(TicketDTO ticketDTO) {
+        return ticketMapper.ticketToTicketDTO(ticketRepository.save(ticketMapper.ticketDTOToTicket(ticketDTO)));
 
     }
 
