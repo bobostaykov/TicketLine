@@ -6,6 +6,7 @@ import at.ac.tuwien.sepm.groupphase.backend.entity.Hall;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Seat;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Sector;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.hall.HallMapper;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.HallRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.HallService;
 import org.slf4j.Logger;
@@ -51,5 +52,11 @@ public class HallServiceImpl implements HallService {
             }
         }
         return hallMapper.hallToHallDTO(hallRepository.save(hall));
+    }
+
+    @Override
+    public HallDTO findHallById(Long hallId) {
+        LOGGER.info("Find hall with id " + hallId);
+        return hallMapper.hallToHallDTO(hallRepository.findById(hallId).orElseThrow(NotFoundException::new));
     }
 }

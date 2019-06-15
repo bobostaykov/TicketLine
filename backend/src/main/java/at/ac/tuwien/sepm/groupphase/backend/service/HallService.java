@@ -24,4 +24,11 @@ public interface HallService {
      * @throws ServiceException if something goes wrong during data processing
      */
     HallDTO addHall(HallDTO hallDTO) throws ServiceException, CustomValidationException;
+
+    /**
+     * finds specific hall by id
+     * @param hallId id of hall to be found
+     * @return hall with specified id
+     */
+    HallDTO findHallById(Long hallId);
 }

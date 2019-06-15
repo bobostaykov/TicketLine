@@ -38,6 +38,13 @@ public class HallEndpoint {
         binder.registerCustomEditor(HallRequestParameters.class, new CaseInsensitiveEnumConverter<>(HallRequestParameters.class));
     }
 
+    @GetMapping(value = "/{id}")
+    @ApiOperation(value = "Get specific hall by its id", authorizations = {@Authorization(value = "apiKey")})
+    public HallDTO getHallById(@PathVariable("id") Long hallId) {
+        LOGGER.info("GET hall with id " + hallId);
+        return hallService.findHallById(hallId);
+    }
+
     @GetMapping
     @ApiOperation(value = "Get all saved halls", authorizations = {@Authorization(value = "apiKey")})
     public List<HallDTO> getHalls(@RequestParam(value = "fields", required = false) List<HallRequestParameters> fields){
