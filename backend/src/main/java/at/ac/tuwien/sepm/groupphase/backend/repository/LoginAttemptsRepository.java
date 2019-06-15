@@ -2,7 +2,10 @@ package at.ac.tuwien.sepm.groupphase.backend.repository;
 
 import at.ac.tuwien.sepm.groupphase.backend.entity.LoginAttempts;
 import at.ac.tuwien.sepm.groupphase.backend.entity.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -27,7 +30,7 @@ public interface LoginAttemptsRepository extends JpaRepository<LoginAttempts, Lo
      *
      * @return returns a list of all blocked user
      */
-    List<LoginAttempts>  getAllByBlockedTrue();
+    List<LoginAttempts> getAllByBlockedTrue();
 
     /**
      *
@@ -39,8 +42,4 @@ public interface LoginAttemptsRepository extends JpaRepository<LoginAttempts, Lo
     LoginAttempts getLoginAttemptsById(Long id);
 
     LoginAttempts findByUser(User user);
-
-
-
-
 }

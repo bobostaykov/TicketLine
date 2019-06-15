@@ -31,6 +31,7 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
 
     @Override
     public User createUser(User user) {
+        LOGGER.debug("UserRepositoryImpl: createUser");
         LoginAttempts loginAttempts = LoginAttempts.builder().setAttempts(0).setBlocked(false).setUser(user).build();
         loginAttempts.setUserSynch(user);
         entityManager.persist(user);
@@ -39,6 +40,7 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
 
     @Override
     public List<User> findAllBlockedUsers() {
+        LOGGER.debug("UserRepositoryImpl: findAllBlockedUsers");
         CriteriaBuilder cBuilder = entityManager.getCriteriaBuilder();
         //Sammlung der Bedingungen
         List<Predicate> predicates = new ArrayList<>();

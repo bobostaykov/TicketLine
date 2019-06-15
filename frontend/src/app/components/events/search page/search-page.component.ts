@@ -30,7 +30,7 @@ export class SearchPageComponent implements OnInit {
   private locationDescription: string;
   private locationForm: FormGroup;
 
-  // Search events by name and type
+  // Search for events
   private eventName: string;
   private eventContent: string;
   private eventDescription: string;
@@ -38,7 +38,7 @@ export class SearchPageComponent implements OnInit {
   private eventTypeKeys: string[] = Object.keys(EventType);
   private eventForm: FormGroup;
 
-  // Search shows by specific attributes
+  // Search for shows
   private dateFrom: Date;
   private dateTo: Date;
   private timeFrom: Time;
@@ -52,7 +52,9 @@ export class SearchPageComponent implements OnInit {
   private maxPrice: number = this.priceOptions.ceil;
   private duration: number;
   private hallName: string;
+  private showArtistName: string;
   private showEventName: string;
+  private showEventType: EventType;
   private showCountry: string;
   private showCity: string;
   private showStreet: string;
@@ -84,6 +86,8 @@ export class SearchPageComponent implements OnInit {
 
     this.showForm = new FormGroup({
       showEventName: new FormControl(),
+      showEventType: new FormControl(),
+      showArtistName: new FormControl(),
       hallName: new FormControl(),
       minPrice: new FormControl(),
       maxPrice: new FormControl(),
@@ -155,7 +159,7 @@ export class SearchPageComponent implements OnInit {
 
     this.router.navigate(['/events/search/results/shows'], {
       queryParams: {
-        resultsFor: 'ATTRIBUTES', eventName: this.showEventName, hallName: this.hallName, dateFrom: this.dateFrom,
+        resultsFor: 'ATTRIBUTES', eventName: this.showEventName, eventType: this.showEventType, artistName: this.showArtistName, hallName: this.hallName, dateFrom: this.dateFrom,
         dateTo: this.dateTo, timeFrom: this.timeFrom, timeTo: this.timeTo, minPrice: this.minPrice, maxPrice: this.maxPrice,
         duration: this.duration, country: this.showCountry, city: this.showCity, street: this.showStreet, postalCode: this.showPostalCode
       }

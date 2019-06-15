@@ -3,6 +3,7 @@ package at.ac.tuwien.sepm.groupphase.backend.service;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.user.UserDTO;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -11,9 +12,10 @@ public interface UserService {
     /**
      * Find all user entries.
      *
-     * @return all users
+     * @param page number of the requested page
+     * @return page of the found users
      */
-    List<UserDTO> findAll() throws ServiceException;
+    Page<UserDTO> findAll(Integer page) throws ServiceException;
 
     /**
      * Find a single user entry by id.
@@ -64,7 +66,8 @@ public interface UserService {
 
     /**
      * Get all users
-     * @return a List with users that are currently blocked
+     * @param page number of the requested page
+     * @return a page with users that are currently blocked
      */
-    List<UserDTO> getAllBlockedUsers();
+    Page<UserDTO> getAllBlockedUsers(Integer page) throws ServiceException;
 }

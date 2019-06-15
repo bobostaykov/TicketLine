@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.implementation;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.customer.CustomerDTO;
+import at.ac.tuwien.sepm.groupphase.backend.entity.Customer;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.customer.CustomerMapper;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.CustomerRepository;
@@ -8,8 +9,12 @@ import at.ac.tuwien.sepm.groupphase.backend.service.CustomerService;
 import org.hibernate.service.spi.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.PersistenceException;
 import java.time.LocalDate;
 import java.util.List;
 @Service
@@ -58,14 +63,32 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public List<CustomerDTO> findAll() {
+    public Page<CustomerDTO> findAll(Integer page) {
         LOGGER.info("Find all customers ordered by ID");
-        return customerMapper.customerToCustomerDTO(customerRepository.findAllByOrderByIdAsc());
+        try{
+            int pageSize = 10;
+            if(page < 0) {
+                throw new IllegalArgumentException("Not a valid page.");
+            }
+            Pageable pageable = PageRequest.of(page, pageSize);
+            return customerRepository.findAllByOrderByIdAsc(pageable).map(customerMapper::customerToCustomerDTO);
+        } catch (PersistenceException e) {
+            throw new ServiceException(e.getMessage());
+        }
     }
 
     @Override
-    public List<CustomerDTO> findCustomersFiltered(Long id, String name, String firstname, String email, LocalDate birthday) {
+    public Page<CustomerDTO> findCustomersFiltered(Long id, String name, String firstname, String email, LocalDate birthday, Integer page) {
         LOGGER.info("Find customers filtered");
-        return customerMapper.customerToCustomerDTO(customerRepository.findCustomersFiltered(id, name, firstname, email, birthday));
+        try{
+            int pageSize = 10;
+            if(page < 0) {
+                throw new IllegalArgumentException("Not a valid page.");
+            }
+            Pageable pageable = PageRequest.of(page, pageSize);
+            return customerRepository.findCustomersFiltered(id, name, firstname, email, birthday, pageable).map(customerMapper::customerToCustomerDTO);
+        }catch (PersistenceException e){
+            throw new ServiceException(e.getMessage());
+        }
     }
  }

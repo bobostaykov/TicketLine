@@ -1,4 +1,4 @@
-<div *ngIf="dataReady && shows.length > 0">
+<div *ngIf="dataReady && pages.length > 0">
   <h1 class="mt-5" *ngIf="resultsFor === 'EVENT'">Shows - Results for the chosen event</h1>
   <h1 class="mt-5" *ngIf="resultsFor === 'LOCATION'">Shows - Results for the chosen location</h1>
   <h1 class="mt-5" *ngIf="resultsFor === 'ATTRIBUTES'">Shows - Results for the chosen parameters</h1>
@@ -41,7 +41,7 @@
   </div>
 </div>
 
-<div *ngIf="dataReady && shows.length === 0">
+<div *ngIf="dataReady && pages.length === 0">
   <h1 class="mt-5" align="center">Shows - No Results</h1>
 </div>
 

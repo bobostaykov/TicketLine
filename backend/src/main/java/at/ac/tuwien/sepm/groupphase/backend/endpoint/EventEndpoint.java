@@ -35,6 +35,20 @@ public class EventEndpoint {
         this.eventService = eventService;
     }
 
+
+    @RequestMapping(method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
+    @ApiOperation(value = "Create event", authorizations = {@Authorization(value = "apiKey")})
+    public EventDTO createEvent(@RequestBody EventDTO eventDTO) {
+        LOGGER.info("Event Endpoint: createEvent");
+        try {
+            return eventService.createEvent(eventDTO);
+        } catch (ServiceException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
+
+
     @RequestMapping(method = RequestMethod.POST, value = "/topten")
     @ApiOperation(value = "Get top 10 events", authorizations = {@Authorization(value = "apiKey")})
     public List<EventTicketsDTO> findTopTenEvents(@RequestBody TopTenDetailsDTO details) {

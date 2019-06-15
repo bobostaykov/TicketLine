@@ -10,9 +10,16 @@ import java.util.List;
 public interface ArtistRepository extends JpaRepository<Artist, Long> {
 
     /**
-     * Get all artists whose username contains the string 'artistName'
+     * Get all artists whose name contains the string 'artistName'
      *
      * @return list of artists
      */
     List<Artist> findByNameContainingIgnoreCase(String artistName);
+
+    /**
+     * Get artists whose name is 'artistName'
+     *
+     * @return artist with such a name
+     */
+    Artist findByName(String artistName);
 }

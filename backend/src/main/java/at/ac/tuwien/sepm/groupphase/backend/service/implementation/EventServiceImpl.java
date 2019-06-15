@@ -4,11 +4,15 @@ import at.ac.tuwien.sepm.groupphase.backend.datatype.EventType;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.event.EventDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.event.EventTicketsDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.searchParameters.EventSearchParametersDTO;
+import at.ac.tuwien.sepm.groupphase.backend.entity.Artist;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Event;
+import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.artist.ArtistMapper;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.event.EventMapper;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
+import at.ac.tuwien.sepm.groupphase.backend.repository.ArtistRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.EventRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.EventService;
+import org.hibernate.TransientPropertyValueException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -25,14 +29,34 @@ import java.util.Set;
 @Service
 public class EventServiceImpl implements EventService {
 
+    private final ArtistRepository artistRepository;
+    private final ArtistMapper artistMapper;
     private final EventRepository eventRepository;
     private final EventMapper eventMapper;
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
 
-    public EventServiceImpl(EventRepository eventRepository, EventMapper eventMapper) {
+    public EventServiceImpl(ArtistMapper artistMapper, ArtistRepository artistRepository, EventRepository eventRepository, EventMapper eventMapper) {
+        this.artistMapper = artistMapper;
+        this.artistRepository = artistRepository;
         this.eventRepository = eventRepository;
         this.eventMapper = eventMapper;
+    }
+
+    @Override
+    public EventDTO createEvent(EventDTO eventDTO) throws ServiceException {
+        LOGGER.info("Event Service: createEvent");
+        try {
+            Artist artist = artistRepository.findByName(eventDTO.getArtist().getName());
+            if (artist == null) {
+                LOGGER.info("Event Service: create artist for event");
+                artist = artistRepository.save(artistMapper.artistDTOToArtist(eventDTO.getArtist()));
+            }
+            eventDTO.setArtist(artistMapper.artistToArtistDTO(artist));
+            return eventMapper.eventToEventDTO(eventRepository.save(eventMapper.eventDTOToEvent(eventDTO)));
+        } catch (PersistenceException e) {
+            throw new ServiceException(e.getMessage());
+        }
     }
 
     @Override
@@ -55,7 +79,7 @@ public class EventServiceImpl implements EventService {
         try {
             int pageSize = 10;
             if(page < 0) {
-                throw new ServiceException("Not a valid page.");
+                throw new IllegalArgumentException("Not a valid page.");
             }
             Pageable pageable = PageRequest.of(page, pageSize);
             return eventRepository.findAllByOrderByNameAsc(pageable).map(eventMapper::eventToEventDTO);
@@ -69,7 +93,7 @@ public class EventServiceImpl implements EventService {
         LOGGER.info("Find all events filtered by some attributes: " + parameters.toString());
         try{
             if(page < 0) {
-                throw new ServiceException("Not a valid page.");
+                throw new IllegalArgumentException("Not a valid page.");
             }
             Page<Event> page1 = eventRepository.findAllEventsFiltered(parameters, page);
             LOGGER.debug("Event Service: " + page1.getContent().toString());
@@ -85,7 +109,7 @@ public class EventServiceImpl implements EventService {
         try{
             int pageSize = 10;
             if(page < 0) {
-                throw new ServiceException("Not a valid page.");
+                throw new IllegalArgumentException("Not a valid page.");
             }
             Pageable pageable = PageRequest.of(page, pageSize);
             return eventRepository.findAllByArtist_Id(id, pageable).map(eventMapper::eventToEventDTO);

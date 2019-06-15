@@ -14,12 +14,16 @@ import at.ac.tuwien.sepm.groupphase.backend.repository.LoginAttemptsRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.UserRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.HeaderTokenAuthenticationService;
 import at.ac.tuwien.sepm.groupphase.backend.service.UserService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import org.junit.*;
 import org.junit.rules.ExpectedException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -247,23 +251,32 @@ public class UserIntegrationTest extends BaseIntegrationTestWithMockedUserCreden
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.BAD_REQUEST.value()));
     }
     @Test
-    public void gettingAllBlockedUsersAsAdmin_returnsListWithBlockedUsers() throws ServiceException {
+    public void gettingAllBlockedUsersAsAdmin_returnsPageWithBlockedUsers() throws ServiceException {
         userService.blockUser(testUser1.getId());
         LoginAttempts attempts = loginAttemptsRepository.findById(testUser1.getId()).get();
-        Assert.assertThat(attempts.isBlocked(), is(true));
+        Assert.assertTrue(attempts.isBlocked());
+
         Response response = RestAssured
             .given()
             .contentType(ContentType.JSON)
             .headers(HttpHeaders.AUTHORIZATION, validAdminTokenWithPrefix)
-            .when().get(USER_ENDPOINT + BLOCKED_USER_PATH )
+            .when().get(USER_ENDPOINT + BLOCKED_USER_PATH + "?page=0")
             .then().extract().response();
-        User equalUser = userRepository.findById(testUser1.getId()).get();
-        Assert.assertThat(Arrays.asList(response.as(UserDTO[].class)), is(Collections.singletonList(userMapper.userToUserDTO(equalUser))));
+
+        try{
+            UserDTO equalUser = userMapper.userToUserDTO(userRepository.findById(testUser1.getId()).get());
+            List<UserDTO> userDTOList = new ArrayList<>();
+            userDTOList.add(equalUser);
+            String jsonObject = new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(
+                new PageImpl<>(userDTOList, PageRequest.of(0,10), 1));
+            Assert.assertThat(response.getBody().asString(), is(jsonObject));
+        }catch (JsonProcessingException e) {
+            Assert.fail();
+        }
+
         //reset
         userService.unblockUser(testUser1.getId());
         attempts = loginAttemptsRepository.findById(testUser1.getId()).get();
-        Assert.assertThat(attempts.isBlocked(), is(false));
+        Assert.assertFalse(attempts.isBlocked());
     }
-
-
 }
