@@ -68,12 +68,11 @@ public class UserServiceImpl implements UserService {
     public UserDTO createUser(UserDTO userDTO) throws ServiceException {
         try {
 
-            if(!userRepository.findOneByUsername(userDTO.getUsername()).isPresent()){
-            LOGGER.info("Create user with name: " + userDTO.getUsername());
+            if(userRepository.findOneByUsername(userDTO.getUsername()).isEmpty()){
+                LOGGER.info("Create user with name: " + userDTO.getUsername());
                 userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword()));
                 LOGGER.info("Setting password");
-                UserDTO dto =  userMapper.userToUserDTO(userRepository.createUser(userMapper.userDTOToUser(userDTO)));
-                return dto;
+                return userMapper.userToUserDTO(userRepository.createUser(userMapper.userDTOToUser(userDTO)));
             }else {
                 return UserDTO.builder().id(-1L).build();
             }

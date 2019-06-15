@@ -38,6 +38,7 @@ public class DataGeneratorManager implements ApplicationContextAware {
         context.getBean(ShowDataGenerator.class).generate();
         context.getBean(CustomerDataGenerator.class).generate();
         context.getBean(UserDataGenerator.class).generate();
+        context.getBean(TicketDataGenerator.class).generate();
         LOGGER.info("--------- DATA GENERATION COMPLETE --------");
     }
 
