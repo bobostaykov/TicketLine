@@ -1,6 +1,12 @@
 package at.ac.tuwien.sepm.groupphase.backend.integrationtest;
 
 import at.ac.tuwien.sepm.groupphase.backend.datatype.EventType;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.artist.ArtistDTO;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.event.EventDTO;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.event.EventTicketsDTO;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.event.TopTenDetailsDTO;
+import at.ac.tuwien.sepm.groupphase.backend.entity.Artist;
+import at.ac.tuwien.sepm.groupphase.backend.entity.Event;
 import at.ac.tuwien.sepm.groupphase.backend.integrationtest.base.BaseIntegrationTestWithMockedUserCredentials;
 import at.ac.tuwien.sepm.groupphase.backend.repository.EventRepository;
 import io.restassured.RestAssured;
@@ -8,15 +14,17 @@ import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.BDDMockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import javax.persistence.Tuple;
+import javax.persistence.TupleElement;
+import java.util.*;
 
 import static org.hamcrest.core.Is.is;
+import static org.mockito.ArgumentMatchers.any;
 
 public class EventEndpointTest extends BaseIntegrationTestWithMockedUserCredentials {
 
@@ -25,9 +33,12 @@ public class EventEndpointTest extends BaseIntegrationTestWithMockedUserCredenti
     private static final String MONTHS = "January";
     private static final String CATEGORIES = "OPERA,FESTIVAL,THEATRE";
     private static final Long TEST_EVENT_ID = 1L;
+    private static final Integer TEST_EVENT_DURATION = 120;
     private static final String TEST_EVENT_NAME = "Test Event";
     private static final EventType TEST_EVENT_TYPE = EventType.FESTIVAL;
     private static final Long TEST_TICKETS_SOLD = 10000L;
+    private static final String TEST_ARTIST_NAME = "Test Artist";
+    private static final Long TEST_ARTIST_ID= 1L;
     private static Set<String> monthsSet = new HashSet<>(Arrays.asList(MONTHS.split(",")));
     private static List<String> monthsList = Arrays.asList(MONTHS.split(","));
     private static Set<EventType> categoriesSet = new HashSet<>(Arrays.asList(EventType.valueOf("OPERA"), EventType.valueOf("FESTIVAL"), EventType.valueOf("THEATRE")));
@@ -35,6 +46,85 @@ public class EventEndpointTest extends BaseIntegrationTestWithMockedUserCredenti
 
     @MockBean
     private EventRepository eventRepository;
+
+    @Test
+    public void createEventUnauthorisedAsAnonymous() {
+        Response response = RestAssured
+            .given()
+            .contentType(ContentType.JSON)
+            .when().post(EVENT_ENDPOINT)
+            .then().extract().response();
+        Assert.assertThat(response.getStatusCode(), is(HttpStatus.UNAUTHORIZED.value()));
+    }
+
+
+    @Test
+    public void createEventAsUser() {
+        BDDMockito
+            .given(eventRepository.save(any(Event.class)))
+            .willReturn(Event.builder()
+                .id(TEST_EVENT_ID)
+                .name(TEST_EVENT_NAME)
+                .eventType(TEST_EVENT_TYPE)
+                .durationInMinutes(TEST_EVENT_DURATION)
+                .artist(Artist.builder().name(TEST_ARTIST_NAME).id(TEST_ARTIST_ID).build())
+                .build());
+        Response response = RestAssured
+            .given()
+            .contentType(ContentType.JSON)
+            .body(EventDTO.builder()
+                .id(TEST_EVENT_ID)
+                .name(TEST_EVENT_NAME)
+                .eventType(TEST_EVENT_TYPE)
+                .durationInMinutes(TEST_EVENT_DURATION)
+                .artist(ArtistDTO.builder().name(TEST_ARTIST_NAME).id(TEST_ARTIST_ID).build())
+                .build())
+            .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
+            .when().post(EVENT_ENDPOINT)
+            .then().extract().response();
+        Assert.assertThat(response.getStatusCode(), is(HttpStatus.CREATED.value()));
+        Assert.assertThat(response.as(EventDTO.class), is(EventDTO.builder()
+            .id(TEST_EVENT_ID)
+            .name(TEST_EVENT_NAME)
+            .eventType(TEST_EVENT_TYPE)
+            .durationInMinutes(TEST_EVENT_DURATION)
+            .artist(ArtistDTO.builder().name(TEST_ARTIST_NAME).id(TEST_ARTIST_ID).build())
+            .build()));
+    }
+
+    @Test
+    public void createEventAsAdmin() {
+        BDDMockito
+            .given(eventRepository.save(any(Event.class)))
+            .willReturn(Event.builder()
+                .id(TEST_EVENT_ID)
+                .name(TEST_EVENT_NAME)
+                .eventType(TEST_EVENT_TYPE)
+                .durationInMinutes(TEST_EVENT_DURATION)
+                .artist(Artist.builder().name(TEST_ARTIST_NAME).id(TEST_ARTIST_ID).build())
+                .build());
+        Response response = RestAssured
+            .given()
+            .contentType(ContentType.JSON)
+            .body(EventDTO.builder()
+                .id(TEST_EVENT_ID)
+                .name(TEST_EVENT_NAME)
+                .eventType(TEST_EVENT_TYPE)
+                .durationInMinutes(TEST_EVENT_DURATION)
+                .artist(ArtistDTO.builder().name(TEST_ARTIST_NAME).id(TEST_ARTIST_ID).build())
+                .build())
+            .header(HttpHeaders.AUTHORIZATION, validAdminTokenWithPrefix)
+            .when().post(EVENT_ENDPOINT)
+            .then().extract().response();
+        Assert.assertThat(response.getStatusCode(), is(HttpStatus.CREATED.value()));
+        Assert.assertThat(response.as(EventDTO.class), is(EventDTO.builder()
+            .id(TEST_EVENT_ID)
+            .name(TEST_EVENT_NAME)
+            .eventType(TEST_EVENT_TYPE)
+            .durationInMinutes(TEST_EVENT_DURATION)
+            .artist(ArtistDTO.builder().name(TEST_ARTIST_NAME).id(TEST_ARTIST_ID).build())
+            .build()));
+    }
 
     @Test
     public void findTopTenEventsUnauthorisedAsAnonymous() {
@@ -45,8 +135,8 @@ public class EventEndpointTest extends BaseIntegrationTestWithMockedUserCredenti
             .then().extract().response();
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.UNAUTHORIZED.value()));
     }
-}
-/*
+
+
     @Test
     public void findTopTenEventsAsUser() {
         BDDMockito
@@ -74,7 +164,7 @@ public class EventEndpointTest extends BaseIntegrationTestWithMockedUserCredenti
 
                 @Override
                 public Object get(int i) {
-                    List<Object> list = new ArrayList<>(){};
+                    List<Object> list = new ArrayList<>() {};
                     list.add(TEST_EVENT_NAME);
                     list.add(TEST_TICKETS_SOLD);
                     return list.get(i);
@@ -135,7 +225,8 @@ public class EventEndpointTest extends BaseIntegrationTestWithMockedUserCredenti
 
                 @Override
                 public Object get(int i) {
-                    List<Object> list = new ArrayList<>(){};
+                    List<Object> list = new ArrayList<>() {
+                    };
                     list.add(TEST_EVENT_NAME);
                     list.add(TEST_TICKETS_SOLD);
                     return list.get(i);
@@ -178,8 +269,8 @@ public class EventEndpointTest extends BaseIntegrationTestWithMockedUserCredenti
             .then().extract().response();
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.UNAUTHORIZED.value()));
     }
-
-    // TODO 2 Tests are failing
+/*
+    // TODO: fix problem with pagination
     @Test
     public void findAllEventsAsUser() {
         BDDMockito
@@ -230,3 +321,4 @@ public class EventEndpointTest extends BaseIntegrationTestWithMockedUserCredenti
                 .build())));
     }
 */
+}
