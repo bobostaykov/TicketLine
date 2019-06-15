@@ -2,6 +2,7 @@ package at.ac.tuwien.sepm.groupphase.backend.endpoint;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.ticket.TicketDTO;
 import at.ac.tuwien.sepm.groupphase.backend.service.TicketService;
+import com.itextpdf.text.DocumentException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
@@ -16,7 +17,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -32,9 +36,11 @@ public class TicketEndpoint {
 
     @RequestMapping(method = RequestMethod.POST)
     @ApiOperation(value = "Create a ticket", authorizations = {@Authorization(value = "apiKey")})
-    public TicketDTO create(@RequestBody TicketDTO ticketDTO) {
+    public TicketDTO create(@RequestBody TicketDTO ticketDTO) throws IOException, DocumentException, NoSuchAlgorithmException {
         LOGGER.info("Create Ticket");
-        return ticketService.postTicket(ticketDTO);
+        TicketDTO ticketCreated = ticketService.postTicket(ticketDTO);
+        ticketService.generateTicketPDF(Collections.singletonList(ticketCreated)); // TODO: return pdf instead of tickets
+        return ticketCreated;
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -67,7 +73,7 @@ public class TicketEndpoint {
                 .ok()
                 .contentLength(pdf.getSize())
                 .contentType(
-                    MediaType.parseMediaType("application/octet-stream"))
+                    MediaType.parseMediaType("application/pdf"))
                 .body(new InputStreamResource(pdf.getInputStream()));
         } catch (IOException e) {
             LOGGER.info(e.getMessage());
@@ -122,7 +128,7 @@ public class TicketEndpoint {
 
     @RequestMapping(value = "/receipt", method = RequestMethod.GET)
     @ApiOperation(value = "Get receipt PDF for list of tickets", authorizations = {@Authorization(value = "apiKey")})
-    public ResponseEntity<Resource> getReceiptPDF(@RequestParam List<String> tickets) {
+    public ResponseEntity<Resource> getReceiptPDF(@RequestParam List<String> tickets, HttpServletResponse response) throws IOException {
         MultipartFile pdf;
         try {
             pdf = ticketService.getReceipt(tickets);
@@ -135,7 +141,7 @@ public class TicketEndpoint {
                 .ok()
                 .contentLength(pdf.getSize())
                 .contentType(
-                    MediaType.parseMediaType("application/octet-stream"))
+                    MediaType.parseMediaType("application/pdf"))
                 .body(new InputStreamResource(pdf.getInputStream()));
         } catch (IOException e) {
             LOGGER.info(e.getMessage());

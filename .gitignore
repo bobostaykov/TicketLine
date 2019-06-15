@@ -156,6 +156,7 @@ Temporary Items
 Icon
 
 ###CUSTOM#####
-backend/receipt/*.*
+backend/receipt/*
+backend/ticket/*
 
 

@@ -492,6 +492,7 @@ public class TicketEndpointTest extends BaseIntegrationTestWithMockedUserCredent
             .build()));
     }
 
+
     @Test
     public void deleteTicketUnauthorizedAsAnonymous() {
         Response response = RestAssured
@@ -725,7 +726,7 @@ public class TicketEndpointTest extends BaseIntegrationTestWithMockedUserCredent
             .when().get(TICKET_ENDPOINT + RECEIPT)
             .then().extract().response();
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
-        Assert.assertThat(response.contentType(), is("application/octet-stream" ));
+        Assert.assertThat(response.contentType(), is("application/pdf" ));
     }
 
     @Test
@@ -762,7 +763,7 @@ public class TicketEndpointTest extends BaseIntegrationTestWithMockedUserCredent
             .when().delete(TICKET_ENDPOINT + CANCELLATION)
             .then().extract().response();
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
-        Assert.assertThat(response.contentType(), is("application/octet-stream" ));
+        Assert.assertThat(response.contentType(), is("application/pdf" ));
     }
 
 
