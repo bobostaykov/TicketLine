@@ -12,7 +12,6 @@ import {EventType} from '../../../datatype/event_type';
 import {Artist} from '../../../dtos/artist';
 import {Hall} from '../../../dtos/hall';
 import {Location} from '../../../dtos/location';
-import {Ticket} from '../../../dtos/ticket';
 import {TicketService} from '../../../services/ticket/ticket.service';
 import {TicketStatus} from '../../../datatype/ticket_status';
 import {TicketPost} from '../../../dtos/ticket-post';
@@ -61,9 +60,9 @@ export class TicketCheckReservationComponent implements OnInit {
     this.artist = new Artist(8, 'Cher');
     this.hall = new Hall(7, 'Stadthalle A', this.location, this.seats, this.sectors);
     this.event = new Event(6, 'Here we go again', EventType.CONCERT, 'description for this default test event',
-      'content for this default test event', this.artist);
+      'content for this default test event', this.artist, 120);
     this.sector = new Sector(5, 2, PriceCategory.Average);
-    this.customer = new Customer(3, 'Müller', 'Petra', 'petra.mueller@email.com', '05.05.2005');
+    this.customer = new Customer(1, 'Müller', 'Petra', 'petra.mueller@email.com', '05.05.2005');
     this.show = new Show(2, this.event, '20:20', '12.05.2019', this.hall, 'description for this default test show', 44);
     this.ticket_seats.push(new Seat(10, 14, 22, PriceCategory.Average));
     this.ticket_seats.push(new Seat(10, 15, 22, PriceCategory.Average));
@@ -79,13 +78,24 @@ export class TicketCheckReservationComponent implements OnInit {
       for (const entry of this.ticket_seats) {
         this.seatsStr.push(entry.seatNumber.toString());
         this.rowStr.push(entry.seatRow.toString());
-        const currentTicket = new TicketPost(null, 4, 7, 44.56, 8, null, TicketStatus.RESERVATED);
-        this.createTicket(currentTicket);
       }
     }
 
     if (this.ticket_sectors.length > 0) {
       this.amtTickets = this.ticket_sectors.length;
+    }
+  }
+
+  addTickets() {
+    if (this.ticket_seats.length > 0) {
+      this.amtTickets = this.ticket_seats.length;
+      for (const entry of this.ticket_seats) {
+        const currentTicket = new TicketPost(null, 4, 1, 44.56, 8, null, TicketStatus.RESERVATED);
+        this.createTicket(currentTicket);
+      }
+    }
+
+    if (this.ticket_sectors.length > 0) {
       for (const entry of this.ticket_sectors) {
         const currentTicket = new TicketPost(null, 4, 7, this.price.pop(), null, 8, TicketStatus.RESERVATED);
         this.createTicket(currentTicket);
@@ -134,6 +144,11 @@ export class TicketCheckReservationComponent implements OnInit {
       this.errorMessage = error.error.ticketCheckReservation;
     } else {
       this.errorMessage = error.error.error;
+    }
+    if (error.error.status === 'BAD_REQUEST') {
+      console.log('here we go');
+      this.errorMessage = error.error.message;
+      this.ticketExistsError = true;
     }
   }
 

@@ -34,7 +34,6 @@ const routes: Routes = [
   {path: 'events/search/results/events', canActivate: [AuthGuard], component: EventResultsComponent},
   {path: 'floorplan', canActivate: [AuthGuard], component: FloorplanControlComponent},
   {path: 'ticket', canActivate: [AuthGuard], component: TicketComponent},
-  {path: 'floorplan', canActivate: [AuthGuard], component: FloorplanControlComponent},
   {path: 'ticket-check-reservation', canActivate: [AuthGuard], component: TicketCheckReservationComponent},
   {path: 'blocked', canActivate: [AuthGuard], component: BlockedUsersComponent}
 ];

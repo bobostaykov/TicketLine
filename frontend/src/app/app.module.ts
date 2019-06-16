@@ -31,6 +31,7 @@ import {CustomerComponent} from './components/customer/customer.component';
 import {CustomerDialogComponent} from './components/customer-dialog/customer-dialog.component';
 import {TicketCheckReservationComponent} from './components/ticket/ticket-check-reservation/ticket-check-reservation.component';
 import { BlockedUsersComponent } from './components/blocked-users/blocked-users.component';
+import {TicketComponent} from './components/ticket/ticket.component';
 
 @NgModule({
   declarations: [
@@ -54,7 +55,8 @@ import { BlockedUsersComponent } from './components/blocked-users/blocked-users.
     CustomerDialogComponent,
     CustomerDialogComponent,
     BlockedUsersComponent,
-    TicketCheckReservationComponent
+    TicketCheckReservationComponent,
+    TicketComponent
   ],
   imports: [
     BrowserModule,

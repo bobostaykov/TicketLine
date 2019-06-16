@@ -240,14 +240,14 @@ public class PDFGeneratorImpl implements PDFGenerator{
         showDate.setPhrase(new Phrase(ticket.getShow().getDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")) + " " +
             ticket.getShow().getTime().format(DateTimeFormatter.ofPattern("HH:mm")), fontBold));
         table.addCell(showDate);
-        if (ticket.getSectorNumber() != null) {
+        if (ticket.getSector().getSectorNumber() != null) {
             PdfPCell sector = new PdfPCell();
-            sector.setPhrase(new Phrase("Sektor: " + ticket.getSectorNumber().toString(), fontBold));
+            sector.setPhrase(new Phrase("Sektor: " + ticket.getSector().getSectorNumber().toString(), fontBold));
             table.addCell(sector);
         }
         else {
             PdfPCell seat = new PdfPCell();
-            seat.setPhrase(new Phrase("Reihe: " + ticket.getRowNumber().toString() + "  Sitzplatz: " + ticket.getSeatNumber().toString(), fontBold));
+            seat.setPhrase(new Phrase("Reihe: " + ticket.getSeat().getSeatRow().toString() + "  Sitzplatz: " + ticket.getSeat().getSeatNumber().toString(), fontBold));
             table.addCell(seat);
         }
         PdfPCell price = new PdfPCell();
