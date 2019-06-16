@@ -1,10 +1,10 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.generator;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.ticket.TicketDTO;
-import com.itextpdf.text.*;
+import com.itextpdf.text.DocumentException;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.*;
+import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
