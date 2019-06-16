@@ -2,7 +2,8 @@ package at.ac.tuwien.sepm.groupphase.backend.endpoint;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.ticket.TicketDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.ticket.TicketPostDTO;
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.ticket.TicketPostDTO;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
+import at.ac.tuwien.sepm.groupphase.backend.exception.TicketSoldOutException;
 import at.ac.tuwien.sepm.groupphase.backend.service.TicketService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -11,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -27,10 +29,17 @@ public class TicketEndpoint {
 
 
     @RequestMapping(method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(value = "Create a ticket", authorizations = {@Authorization(value = "apiKey")})
     public TicketDTO create(@RequestBody TicketPostDTO ticketPostDTO) {
         LOGGER.info("Create Ticket");
-        return ticketService.postTicket(ticketPostDTO);
+        try {
+            return ticketService.postTicket(ticketPostDTO);
+        } catch (TicketSoldOutException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        } catch (NotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
     }
 
     @RequestMapping(method = RequestMethod.GET)

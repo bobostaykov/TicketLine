@@ -2,6 +2,7 @@ package at.ac.tuwien.sepm.groupphase.backend.service;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.ticket.TicketDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.ticket.TicketPostDTO;
+import at.ac.tuwien.sepm.groupphase.backend.exception.TicketSoldOutException;
 
 import java.util.List;
 
@@ -13,7 +14,7 @@ public interface TicketService {
      * @param ticketDTO to be saved
      * @return saved ticket entry
      */
-    TicketDTO postTicket(TicketPostDTO ticketDTO);
+    TicketDTO postTicket(TicketPostDTO ticketDTO)  throws TicketSoldOutException;
 
     /**
      * Get all ticket entries

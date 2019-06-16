@@ -1,6 +1,5 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.implementation;
 
-import at.ac.tuwien.sepm.groupphase.backend.datagenerator.TicketDataGenerator;
 import at.ac.tuwien.sepm.groupphase.backend.datatype.TicketStatus;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.ticket.TicketDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.ticket.TicketPostDTO;
@@ -9,6 +8,7 @@ import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.customer.CustomerMappe
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.show.ShowMapper;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.ticket.TicketMapper;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
+import at.ac.tuwien.sepm.groupphase.backend.exception.TicketSoldOutException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.*;
 import at.ac.tuwien.sepm.groupphase.backend.service.CustomerService;
 import at.ac.tuwien.sepm.groupphase.backend.service.TicketService;
@@ -50,7 +50,7 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public TicketDTO postTicket(TicketPostDTO ticketPostDTO) {
+    public TicketDTO postTicket(TicketPostDTO ticketPostDTO) throws TicketSoldOutException{
         Customer customer = this.customerRepository.getOne(ticketPostDTO.getCustomer());
         if (customer == null) {
             throw new NotFoundException("No Customer found with id " + ticketPostDTO.getCustomer());
@@ -66,14 +66,16 @@ public class TicketServiceImpl implements TicketService {
         Sector sector = null;
         if (ticketPostDTO.getSeat() != null) {
             seat = this.seatRepository.getOne(ticketPostDTO.getSeat());
+            if (!this.ticketRepository.findAllByShowAndSeat(show, seat).isEmpty()) {
+                throw new TicketSoldOutException("Ticket for this seat is already sold, please choose another seat");
+            }
         }
         if (ticketPostDTO.getSector() != null) {
             sector = this.sectorRepository.getOne(ticketPostDTO.getSector());
+            if (this.ticketRepository.findAllByShowAndSector(show, sector).size() == show.getHall().getSeats().size()) {
+                throw new TicketSoldOutException("Tickets for this sector are sold out, please choose another sector");
+            }
         }
-
-
-
-
 
         Ticket ticket = new Ticket().builder()
             .status(ticketPostDTO.getStatus())
