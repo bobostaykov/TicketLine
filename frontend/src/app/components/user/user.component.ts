@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {AuthService} from '../../services/auth/auth.service';
 import {User} from '../../dtos/user';
 import {UserService} from '../../services/user/user.service';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {UserType} from '../../datatype/user_type';
 
 @Component({
   selector: 'app-user',
@@ -89,6 +90,10 @@ export class UserComponent implements OnInit {
       err => { this.errorMessage = 'cant block admin'},
       () => { this.loadUsers(); }
     );
+  }
+
+  private userIsAdmin(user: User): boolean {
+    return user.type === UserType.ADMIN;
   }
 
   private deleteUser(userId: number) {

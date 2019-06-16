@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint;
 
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.PasswordChangeRequest;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.user.UserDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.User;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
@@ -111,6 +112,13 @@ public class UserEndpoint {
         return userService.getAllBlockedUsers();
     }
 
+    @RequestMapping(value = "/password/{id}", method = RequestMethod.POST)
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "change password of user with id", authorizations = {@Authorization(value = "apiKey")})
+    public void changePassword(@RequestBody PasswordChangeRequest passwordChangeRequest){
+        LOGGER.info("changing password for user " + passwordChangeRequest.getId());
+        userService.changePassword(passwordChangeRequest);
+    }
 
 
 }

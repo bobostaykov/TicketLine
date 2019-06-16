@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.service;
 
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.PasswordChangeRequest;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.user.UserDTO;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
@@ -67,4 +68,10 @@ public interface UserService {
      * @return a List with users that are currently blocked
      */
     List<UserDTO> getAllBlockedUsers();
+
+    /**
+     * changes the password of a user (request is from an admin)
+     * @param passwordChangeRequest contains the id and the new password
+     */
+    void changePassword(PasswordChangeRequest passwordChangeRequest) throws ServiceException;
 }

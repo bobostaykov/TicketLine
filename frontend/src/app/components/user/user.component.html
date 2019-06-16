@@ -117,7 +117,9 @@
       <td class="align-middle">{{user.userSince}}</td>
       <td class="align-middle">{{user.lastLogin}}</td>
       <td class="align-middle"><img (click)="deleteUser(user.id)" src="../../../assets/trash.png" width="25" height="25" alt="delete"></td>
-      <td class="align-middle"><button mat-raised-button (click)="blockUser(user.id)"  >block user</button> </td>
+      <td *ngif= "userIsAdmin(user)" class="align-middle"><button mat-raised-button (click)="blockUser(user.id)"  >block user</button> </td>
+      <td *ngif= "userIsAdmin(user)" class="align-middle"><button mat-raised-button (click)="blockUser(user.id)" data toggle="modal" data-target=".change-password-modal"  >change password </button></td>
     </tr>
+  <div> id= </div>
   </tbody>
 </table>

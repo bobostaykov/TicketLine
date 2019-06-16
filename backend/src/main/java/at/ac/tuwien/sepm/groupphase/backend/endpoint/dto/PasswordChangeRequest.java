@@ -4,23 +4,17 @@ import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.authentication.Authenti
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import java.util.Objects;
+
 @ApiModel(value = "passwordChangeDTO", description = "DTO to pass new user credentials to the backend")
 public class PasswordChangeRequest {
-    @ApiModelProperty(required = true, name = "The unique username of the user", example = "admin")
-    private String username;
-
     @ApiModelProperty(required = true, name = "The password of the user", example = "password")
     private String password;
 
-    public String getUsername() {
-        return username;
-    }
+    @ApiModelProperty(required = true, name = "the id of the user", example = "1")
+    public Long id;
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public CharSequence getPassword() {
+    public String getPassword() {
         return password;
     }
 
@@ -28,44 +22,47 @@ public class PasswordChangeRequest {
         this.password = password;
     }
 
-    @Override
-    public String toString() {
-        return "AuthenticationRequest{" +
-            "username='" + username + '\'' +
-            ", password='" + password + '\'' +
-            '}';
+    public Long getId() {
+        return id;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        PasswordChangeRequest that = (PasswordChangeRequest) o;
-
-        if (username != null ? !username.equals(that.username) : that.username != null) return false;
-        return password != null ? password.equals(that.password) : that.password == null;
-
-    }
-
-    @Override
-    public int hashCode() {
-        int result = username != null ? username.hashCode() : 0;
-        result = 31 * result + (password != null ? password.hashCode() : 0);
-        return result;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public static PasswordChangeRequest.PasswordChangeRequestBuilder builder() {
         return new PasswordChangeRequestBuilder();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PasswordChangeRequest that = (PasswordChangeRequest) o;
+        return Objects.equals(password, that.password) &&
+            Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(password, id);
+    }
+
+    @Override
+    public String toString() {
+        return "PasswordChangeRequest{" +
+            "password='" + password + '\'' +
+            ", id=" + id +
+            '}';
+    }
+
     public static final class PasswordChangeRequestBuilder {
 
-        private String username;
+        private Long userId;
         private String password;
 
-        public PasswordChangeRequestBuilder username(String username) {
-            this.username = username;
+        public PasswordChangeRequestBuilder userId(Long userId) {
+            this.userId = userId;
             return this;
         }
 
@@ -76,7 +73,7 @@ public class PasswordChangeRequest {
 
         public PasswordChangeRequest build() {
             PasswordChangeRequest passwordChangeRequest = new PasswordChangeRequest();
-            passwordChangeRequest.setUsername(username);
+            passwordChangeRequest.setId(userId);
             passwordChangeRequest.setPassword(password);
             return passwordChangeRequest;
         }
