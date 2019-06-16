@@ -725,8 +725,8 @@ public class TicketEndpointTest extends BaseIntegrationTest {
         ticketIDs.add(TEST_TICKET_ID1);
         ticketIDs.add(TEST_TICKET_ID2);
         List<Ticket> returnedTickets = new ArrayList<>();
-        returnedTickets.add(Ticket.builder().id(TEST_TICKET_ID1).seatNumber(TEST_SEAT_SEAT_NO_1).rowNumber(TEST_SEAT_SEAT_ROW_1).price(TEST_TICKET_PRICE1).customer(TEST_CUSTOMER1).show(TEST_SHOW).status(TEST_TICKET_STATUS1).build());
-        returnedTickets.add(Ticket.builder().id(TEST_TICKET_ID2).seatNumber(TEST_SEAT_SEAT_NO_2).rowNumber(TEST_SEAT_SEAT_ROW_2).price(TEST_TICKET_PRICE2).customer(TEST_CUSTOMER2).show(TEST_SHOW).status(TEST_TICKET_STATUS2).build());
+        returnedTickets.add(Ticket.builder().id(TEST_TICKET_ID1).seat(TEST_SEAT).price(TEST_TICKET_PRICE1).customer(TEST_CUSTOMER1).show(TEST_SHOW).status(TEST_TICKET_STATUS1).build());
+        returnedTickets.add(Ticket.builder().id(TEST_TICKET_ID2).seat(TEST_SEAT2).price(TEST_TICKET_PRICE2).customer(TEST_CUSTOMER2).show(TEST_SHOW).status(TEST_TICKET_STATUS2).build());
         BDDMockito.
             given(ticketRepository.findByIdIn(ticketIDs)).
             willReturn(returnedTickets);
@@ -762,8 +762,8 @@ public class TicketEndpointTest extends BaseIntegrationTest {
         ticketIDs.add(TEST_TICKET_ID1);
         ticketIDs.add(TEST_TICKET_ID2);
         List<Ticket> returnedTickets = new ArrayList<>();
-        returnedTickets.add(Ticket.builder().id(TEST_TICKET_ID1).seatNumber(TEST_SEAT_SEAT_NO_1).rowNumber(TEST_SEAT_SEAT_ROW_1).price(TEST_TICKET_PRICE1).customer(TEST_CUSTOMER1).show(TEST_SHOW).status(TEST_TICKET_STATUS1).build());
-        returnedTickets.add(Ticket.builder().id(TEST_TICKET_ID2).seatNumber(TEST_SEAT_SEAT_NO_2).rowNumber(TEST_SEAT_SEAT_ROW_2).price(TEST_TICKET_PRICE2).customer(TEST_CUSTOMER2).show(TEST_SHOW).status(TEST_TICKET_STATUS2).build());
+        returnedTickets.add(Ticket.builder().id(TEST_TICKET_ID1).seat(TEST_SEAT).price(TEST_TICKET_PRICE1).customer(TEST_CUSTOMER1).show(TEST_SHOW).status(TEST_TICKET_STATUS1).build());
+        returnedTickets.add(Ticket.builder().id(TEST_TICKET_ID2).seat(TEST_SEAT2).price(TEST_TICKET_PRICE2).customer(TEST_CUSTOMER2).show(TEST_SHOW).status(TEST_TICKET_STATUS2).build());
         BDDMockito.
             given(ticketRepository.findByIdIn(ticketIDs)).
             willReturn(returnedTickets);
