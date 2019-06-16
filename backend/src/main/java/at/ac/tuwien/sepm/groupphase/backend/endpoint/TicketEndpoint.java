@@ -128,7 +128,7 @@ public class TicketEndpoint {
 
     @RequestMapping(value = "/receipt", method = RequestMethod.GET)
     @ApiOperation(value = "Get receipt PDF for list of tickets", authorizations = {@Authorization(value = "apiKey")})
-    public ResponseEntity<Resource> getReceiptPDF(@RequestParam List<String> tickets, HttpServletResponse response) throws IOException {
+    public ResponseEntity<Resource> getReceiptPDF(@RequestParam List<String> tickets) {
         MultipartFile pdf;
         try {
             pdf = ticketService.getReceipt(tickets);

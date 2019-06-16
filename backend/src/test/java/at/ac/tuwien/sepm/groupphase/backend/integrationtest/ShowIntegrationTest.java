@@ -196,13 +196,6 @@ public class ShowIntegrationTest extends BaseIntegrationTestWithMockedUserCreden
     }
 
     @Test
-    public void repositoryTest(){
-        ShowSearchParametersDTO parametersDTO = ShowSearchParametersDTO.builder().eventName("irthday").build();
-        Page<Show> showPage = showRepository.findAllShowsFiltered(parametersDTO,0);
-        Assert.assertTrue(showPage.hasContent());
-    }
-
-    @Test
     public void searchShowsByMaxDate_returnsCorrectNumberOfShows(){
         Response response = RestAssured
             .given()
