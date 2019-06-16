@@ -7,6 +7,7 @@ import {TicketService} from '../../services/ticket/ticket.service';
 import {Ticket} from '../../dtos/ticket';
 import {News} from '../../dtos/news';
 import {Customer} from '../../dtos/customer';
+import {TicketPost} from '../../dtos/ticket-post';
 
 @Component({
   selector: 'app-ticket',
@@ -19,7 +20,7 @@ export class TicketComponent implements OnInit {
   errorMessage: string = '';
   ticketForm: FormGroup;
   submitted: boolean = false;
-  private ticket: Ticket;
+  private ticket: TicketPost;
 
   constructor(private ticketService: TicketService, private ngbPaginationConfig: NgbPaginationConfig, private formBuilder: FormBuilder,
               private cd: ChangeDetectorRef, private authService: AuthService) {}
@@ -31,7 +32,7 @@ export class TicketComponent implements OnInit {
    * adds ticket to backend
    * @param ticket to be added
    */
-  private addTicket(ticket: Ticket) {
+  private addTicket(ticket: TicketPost) {
     console.log('Create ticket');
     this.ticketService.createTicket(ticket).subscribe(
       addedTicket => this.ticket = addedTicket,
