@@ -1,37 +1,25 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.implementation;
 
+import at.ac.tuwien.sepm.groupphase.backend.datagenerator.TicketDataGenerator;
 import at.ac.tuwien.sepm.groupphase.backend.datatype.TicketStatus;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.ticket.TicketDTO;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Customer;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Event;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Show;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Ticket;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.ticket.TicketPostDTO;
+import at.ac.tuwien.sepm.groupphase.backend.entity.*;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.customer.CustomerMapper;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.show.ShowMapper;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.ticket.TicketMapper;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
-import at.ac.tuwien.sepm.groupphase.backend.repository.CustomerRepository;
-import at.ac.tuwien.sepm.groupphase.backend.repository.EventRepository;
-import at.ac.tuwien.sepm.groupphase.backend.repository.ShowRepository;
-import at.ac.tuwien.sepm.groupphase.backend.repository.TicketRepository;
+import at.ac.tuwien.sepm.groupphase.backend.repository.*;
 import at.ac.tuwien.sepm.groupphase.backend.service.CustomerService;
 import at.ac.tuwien.sepm.groupphase.backend.service.TicketService;
-import at.ac.tuwien.sepm.groupphase.backend.service.generator.PDFGenerator;
-import com.itextpdf.text.DocumentException;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
-@ConfigurationProperties("receipt")
 public class TicketServiceImpl implements TicketService {
     private final TicketRepository ticketRepository;
     private final CustomerRepository customerRepository;
@@ -41,17 +29,14 @@ public class TicketServiceImpl implements TicketService {
     private final ShowMapper showMapper;
     private final CustomerMapper customerMapper;
     private final CustomerService customerService;
-    private final PDFGenerator pdfGenerator;
-
-    private static final String RECEIPT_PATH = "receipt/";
-
-    @Value("${receipt.address}")
-    private static String TICKETLINE_ADDRESS;
+    private final SeatRepository seatRepository;
+    private final SectorRepository sectorRepository;
 
     public TicketServiceImpl(TicketRepository ticketRepository, CustomerRepository customerRepository,
                              EventRepository eventRepository, TicketMapper ticketMapper, ShowMapper showMapper,
                              CustomerMapper customerMapper, CustomerService customerService,
-                             ShowRepository showRepository, PDFGenerator pdfGenerator) {
+                             ShowRepository showRepository, SeatRepository seatRepository,
+                             SectorRepository sectorRepository) {
         this.ticketRepository = ticketRepository;
         this.customerRepository = customerRepository;
         this.eventRepository = eventRepository;
@@ -60,13 +45,45 @@ public class TicketServiceImpl implements TicketService {
         this.customerMapper = customerMapper;
         this.customerService = customerService;
         this.showRepository = showRepository;
-        this.pdfGenerator = pdfGenerator;
+        this.seatRepository = seatRepository;
+        this.sectorRepository = sectorRepository;
     }
 
     @Override
-    public TicketDTO postTicket(TicketDTO ticketDTO) {
-        return ticketMapper.ticketToTicketDTO(ticketRepository.save(ticketMapper.ticketDTOToTicket(ticketDTO)));
+    public TicketDTO postTicket(TicketPostDTO ticketPostDTO) {
+        Customer customer = this.customerRepository.getOne(ticketPostDTO.getCustomer());
+        if (customer == null) {
+            throw new NotFoundException("No Customer found with id " + ticketPostDTO.getCustomer());
+        }
+        Show show = this.showRepository.getOne(ticketPostDTO.getShow());
+        if (show == null) {
+            throw new NotFoundException("No Show found with id " + ticketPostDTO.getShow());
+        }
+        if ((ticketPostDTO.getSeat() == null && ticketPostDTO.getSector() == null) || (ticketPostDTO.getSeat() != null && ticketPostDTO.getSector() != null)) {
+            throw new NotFoundException("Either seat or sector must be given.");
+        }
+        Seat seat = null;
+        Sector sector = null;
+        if (ticketPostDTO.getSeat() != null) {
+            seat = this.seatRepository.getOne(ticketPostDTO.getSeat());
+        }
+        if (ticketPostDTO.getSector() != null) {
+            sector = this.sectorRepository.getOne(ticketPostDTO.getSector());
+        }
 
+
+
+
+
+        Ticket ticket = new Ticket().builder()
+            .status(ticketPostDTO.getStatus())
+            .customer(customer)
+            .price(ticketPostDTO.getPrice())
+            .show(show)
+            .seat(seat)
+            .sector(sector)
+            .build();
+        return ticketMapper.ticketToTicketDTO(ticketRepository.save(ticket));
     }
 
     @Override
@@ -117,40 +134,6 @@ public class TicketServiceImpl implements TicketService {
             result2 = ticketRepository.findAllByShow(shows);
         }
         return ticketMapper.ticketToTicketDTO(this.difference(result1, result2));
-    }
-
-    @Override
-    public MultipartFile getReceipt(List<String> ticketIDs) throws DocumentException, IOException {
-        List<TicketDTO> tickets = ticketMapper.ticketToTicketDTO(ticketRepository.findByIdIn(this.parseListOfIds(ticketIDs)));
-        return pdfGenerator.generateReceipt(tickets, false);
-    }
-
-    @Override
-    @Transactional
-    public MultipartFile deleteAndGetCancellationReceipt(List<String> ticketIDs) throws DocumentException, IOException{
-        List<TicketDTO> tickets = ticketMapper.ticketToTicketDTO(ticketRepository.findByIdIn(this.parseListOfIds(ticketIDs)));
-        ticketRepository.deleteByIdIn(this.parseListOfIds(ticketIDs));
-        return pdfGenerator.generateReceipt(tickets, true);
-    }
-
-    @Override
-    public MultipartFile generateTicketPDF(List<TicketDTO> tickets) throws DocumentException, IOException, NoSuchAlgorithmException {
-        return pdfGenerator.generateTicketPDF(tickets);
-    }
-
-    /**
-     * Parse a list of ids
-     *
-     * @param stringIds List of ticket ids as strings
-     * @return a list ticket ids as Long
-     */
-    private List<Long> parseListOfIds(List<String> stringIds) {
-        List<Long> ids = new ArrayList<>();
-        for (String i:
-            stringIds) {
-            ids.add(Long.parseLong(i));
-        }
-        return ids;
     }
 
     /**

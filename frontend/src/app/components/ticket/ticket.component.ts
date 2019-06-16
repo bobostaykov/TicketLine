@@ -28,18 +28,6 @@ export class TicketComponent implements OnInit {
   }
 
   /**
-   * adds ticket to backend
-   * @param ticket to be added
-   */
-  private addTicket(ticket: Ticket) {
-    console.log('Create ticket');
-    this.ticketService.createTicket(ticket).subscribe(
-      addedTicket => this.ticket = addedTicket,
-      error => this.defaultServiceErrorHandling(error)
-    );
-  }
-
-  /**
    * Returns true if the authenticated user is an admin
    */
   isAdmin(): boolean {
