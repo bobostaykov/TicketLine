@@ -37,6 +37,7 @@ public class TicketEndpoint {
         this.ticketService = ticketService;
     }
 
+
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(value = "Create a ticket", authorizations = {@Authorization(value = "apiKey")})
