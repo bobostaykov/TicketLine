@@ -50,42 +50,58 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public TicketDTO postTicket(TicketPostDTO ticketPostDTO) throws TicketSoldOutException{
-        Customer customer = this.customerRepository.getOne(ticketPostDTO.getCustomer());
-        if (customer == null) {
-            throw new NotFoundException("No Customer found with id " + ticketPostDTO.getCustomer());
-        }
-        Show show = this.showRepository.getOne(ticketPostDTO.getShow());
-        if (show == null) {
-            throw new NotFoundException("No Show found with id " + ticketPostDTO.getShow());
-        }
-        if ((ticketPostDTO.getSeat() == null && ticketPostDTO.getSector() == null) || (ticketPostDTO.getSeat() != null && ticketPostDTO.getSector() != null)) {
-            throw new NotFoundException("Either seat or sector must be given.");
-        }
-        Seat seat = null;
-        Sector sector = null;
-        if (ticketPostDTO.getSeat() != null) {
-            seat = this.seatRepository.getOne(ticketPostDTO.getSeat());
-            if (!this.ticketRepository.findAllByShowAndSeat(show, seat).isEmpty()) {
-                throw new TicketSoldOutException("Ticket for this seat is already sold, please choose another seat");
+    public List<TicketDTO> postTicket(List<TicketPostDTO> ticketPostDTO) throws TicketSoldOutException{
+        // Check if any of the requested tickets were already sold or reservated
+        for (TicketPostDTO current : ticketPostDTO) {
+            if (current.getSeat() != null) {
+                if (!this.ticketRepository.findAllByShowAndSeat(this.showRepository.getOne(current.getShow()),
+                    this.seatRepository.getOne(current.getSeat())).isEmpty()) {
+                    throw new TicketSoldOutException("Ticket for this seat is already sold, please choose another seat");
+                }
             }
-        }
-        if (ticketPostDTO.getSector() != null) {
-            sector = this.sectorRepository.getOne(ticketPostDTO.getSector());
-            if (this.ticketRepository.findAllByShowAndSector(show, sector).size() == show.getHall().getSeats().size()) {
-                throw new TicketSoldOutException("Tickets for this sector are sold out, please choose another sector");
+            if (current.getSector() != null) {
+                if (this.ticketRepository.findAllByShowAndSector(this.showRepository.getOne(current.getShow()),
+                    this.sectorRepository.getOne(current.getSector())).size() ==
+                    this.showRepository.getOne(current.getShow()).getHall().getSeats().size()) {
+                    throw new TicketSoldOutException("Tickets for this sector are sold out, please choose another sector");
+                }
             }
         }
 
-        Ticket ticket = new Ticket().builder()
-            .status(ticketPostDTO.getStatus())
-            .customer(customer)
-            .price(ticketPostDTO.getPrice())
-            .show(show)
-            .seat(seat)
-            .sector(sector)
-            .build();
-        return ticketMapper.ticketToTicketDTO(ticketRepository.save(ticket));
+        // Create each ticket
+        List<TicketDTO> created = new ArrayList<>();
+        for (TicketPostDTO current : ticketPostDTO) {
+            Customer customer = this.customerRepository.getOne(current.getCustomer());
+            if (customer == null) {
+                throw new NotFoundException("No Customer found with id " + current.getCustomer());
+            }
+            Show show = this.showRepository.getOne(current.getShow());
+            if (show == null) {
+                throw new NotFoundException("No Show found with id " + current.getShow());
+            }
+            if ((current.getSeat() == null && current.getSector() == null) || (current.getSeat() != null && current.getSector() != null)) {
+                throw new NotFoundException("Either seat or sector must be given.");
+            }
+            Seat seat = null;
+            Sector sector = null;
+            if (current.getSeat() != null) {
+                seat = this.seatRepository.getOne(current.getSeat());
+            }
+            if (current.getSector() != null) {
+                sector = this.sectorRepository.getOne(current.getSector());
+            }
+
+            Ticket ticket = new Ticket().builder()
+                .status(current.getStatus())
+                .customer(customer)
+                .price(current.getPrice())
+                .show(show)
+                .seat(seat)
+                .sector(sector)
+                .build();
+            created.add(ticketMapper.ticketToTicketDTO(ticketRepository.save(ticket)));
+        }
+        return created;
     }
 
     @Override
