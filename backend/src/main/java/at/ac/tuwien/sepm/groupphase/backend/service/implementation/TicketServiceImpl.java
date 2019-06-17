@@ -50,9 +50,9 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public List<TicketDTO> postTicket(List<TicketPostDTO> ticketPostDTO) throws TicketSoldOutException{
+    public List<TicketDTO> postTicket(List<TicketPostDTO> ticketPostDTOS) throws TicketSoldOutException{
         // Check if any of the requested tickets were already sold or reservated
-        for (TicketPostDTO current : ticketPostDTO) {
+        for (TicketPostDTO current : ticketPostDTOS) {
             if (current.getSeat() != null) {
                 if (!this.ticketRepository.findAllByShowAndSeat(this.showRepository.getOne(current.getShow()),
                     this.seatRepository.getOne(current.getSeat())).isEmpty()) {
@@ -70,7 +70,7 @@ public class TicketServiceImpl implements TicketService {
 
         // Create each ticket
         List<TicketDTO> created = new ArrayList<>();
-        for (TicketPostDTO current : ticketPostDTO) {
+        for (TicketPostDTO current : ticketPostDTOS) {
             Customer customer = this.customerRepository.getOne(current.getCustomer());
             if (customer == null) {
                 throw new NotFoundException("No Customer found with id " + current.getCustomer());

@@ -56,8 +56,7 @@ import {TicketComponent} from './components/ticket/ticket.component';
     CustomerDialogComponent,
     TicketComponent,
     BlockedUsersComponent,
-    TicketCheckReservationComponent,
-    TicketComponent
+    TicketCheckReservationComponent
   ],
   imports: [
     BrowserModule,
