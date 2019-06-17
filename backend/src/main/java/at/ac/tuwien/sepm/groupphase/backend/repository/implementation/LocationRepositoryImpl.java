@@ -74,11 +74,15 @@ public class LocationRepositoryImpl implements LocationRepositoryCustom {
             throw new NotFoundException("No locations are found with those parameters");
         }
 
-        int pageSize = 10;
-        int totalElements = locationList.size();
-        Pageable pageable = PageRequest.of(page, pageSize);
-
-        return new PageImpl<>(locationList, pageable, totalElements);
+        // TODO: Sollte noch verändert werden, sobald Pagination überarbeitet wurde
+        if (page == null) {
+            return new PageImpl<>(locationList);
+        } else {
+            int pageSize = 10;
+            int totalElements = locationList.size();
+            Pageable pageable = PageRequest.of(page, pageSize);
+            return new PageImpl<>(locationList, pageable, totalElements);
+        }
     }
 
     @SuppressWarnings("unchecked")

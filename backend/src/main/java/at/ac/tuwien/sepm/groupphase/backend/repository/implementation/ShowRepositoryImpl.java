@@ -165,11 +165,15 @@ public class ShowRepositoryImpl implements ShowRepositoryCustom {
 
 
         // Filters from the result only the wanted page
-        int pageSize = 10;
-        int totalElements = showList.size();
-        Pageable pageable = PageRequest.of(page, pageSize);
-
-        return new PageImpl<>(showList, pageable, totalElements);
+        // TODO: Sollte noch verändert werden, sobald Pagination überarbeitet wurde
+        if(page == null){
+            return new PageImpl<>(showList);
+        } else {
+            int pageSize = 10;
+            int totalElements = showList.size();
+            Pageable pageable = PageRequest.of(page, pageSize);
+            return new PageImpl<>(showList, pageable, totalElements);
+        }
     }
 
     private static java.util.function.Predicate<Show> compareMaxPrice(Double maxPrice){

@@ -75,7 +75,7 @@ public class ShowServiceImpl implements ShowService {
     public Page<ShowDTO> findAllShowsFiltered(ShowSearchParametersDTO parameters, Integer page) throws ServiceException {
         try{
             LOGGER.info("Show Service: Find all shows filtered by :" + parameters.toString());
-            if(page < 0) {
+            if(page != null && page < 0) {
                 throw new IllegalArgumentException("Not a valid page.");
             }
             return showRepository.findAllShowsFiltered(parameters, page).map(showMapper::showToShowDTO);

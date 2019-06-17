@@ -37,7 +37,7 @@ public class LocationServiceImpl implements LocationService {
             if (postalCode != null && postalCode.equals("")) postalCode = null;
             if (description != null && description.equals("")) description = null;
 
-            if(page < 0) {
+            if(page != null && page < 0) {
                 throw new IllegalArgumentException("Not a valid page.");
             }
             return locationRepository.findLocationsFiltered(country, city, street, postalCode, description, page).map(locationMapper::locationToLocationDTO);
