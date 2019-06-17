@@ -14,7 +14,7 @@ public interface TicketService {
      * @param ticketDTO to be saved
      * @return saved ticket entry
      */
-    TicketDTO postTicket(TicketPostDTO ticketDTO)  throws TicketSoldOutException;
+    List<TicketDTO> postTicket(List<TicketPostDTO> ticketDTO)  throws TicketSoldOutException;
 
     /**
      * Get all ticket entries
