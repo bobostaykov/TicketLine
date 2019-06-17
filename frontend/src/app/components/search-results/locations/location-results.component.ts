@@ -14,6 +14,7 @@ export class LocationResultsComponent implements OnInit {
   private pages: Array<number>;
   private dataReady: boolean = false;
 
+  private name: string;
   private country: string;
   private city: string;
   private street: string;
@@ -40,6 +41,7 @@ export class LocationResultsComponent implements OnInit {
     this.resultsFor = this.route.snapshot.queryParamMap.get('resultsFor');
     if (this.resultsFor === 'ATTRIBUTES') {
       this.loadLocationsFiltered(
+        this.name = this.route.snapshot.queryParamMap.get('name'),
         this.country = this.route.snapshot.queryParamMap.get('country'),
         this.city = this.route.snapshot.queryParamMap.get('city'),
         this.street = this.route.snapshot.queryParamMap.get('street'),
@@ -52,9 +54,9 @@ export class LocationResultsComponent implements OnInit {
     }
   }
 
-  private loadLocationsFiltered(country, city, street, postalCode, description, page) {
+  private loadLocationsFiltered(name, country, city, street, postalCode, description, page) {
     console.log('Location Component: loadLocationsFiltered');
-    this.locationsService.findLocationsFiltered(country, city, street, postalCode, description, page).subscribe(
+    this.locationsService.findLocationsFiltered(name, country, city, street, postalCode, description, page).subscribe(
       result => {
         this.locations = result['content'];
         this.pages = new Array(result['totalPages']);
@@ -67,14 +69,14 @@ export class LocationResultsComponent implements OnInit {
   private setPage(i, event: any) {
     event.preventDefault();
     this.page = i;
-    this.loadLocationsFiltered(this.country, this.city, this.street, this.postalCode, this.description, this.page);
+    this.loadLocationsFiltered(this.name, this.country, this.city, this.street, this.postalCode, this.description, this.page);
   }
 
   private previousPage(event: any) {
     event.preventDefault();
     if (this.page > 0 ) {
       this.page--;
-      this.loadLocationsFiltered(this.country, this.city, this.street, this.postalCode, this.description, this.page);
+      this.loadLocationsFiltered(this.name, this.country, this.city, this.street, this.postalCode, this.description, this.page);
     }
   }
 
@@ -82,7 +84,7 @@ export class LocationResultsComponent implements OnInit {
     event.preventDefault();
     if (this.page < this.pages.length - 1) {
       this.page++;
-      this.loadLocationsFiltered(this.country, this.city, this.street, this.postalCode, this.description, this.page);
+      this.loadLocationsFiltered(this.name, this.country, this.city, this.street, this.postalCode, this.description, this.page);
     }
   }
 

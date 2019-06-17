@@ -23,6 +23,7 @@ export class SearchPageComponent implements OnInit {
 
   // Search for locations
   private countries: string[];
+  private locationName: string;
   private locationCountry: string;
   private locationCity: string;
   private locationStreet: string;
@@ -49,12 +50,13 @@ export class SearchPageComponent implements OnInit {
     translate: (value: number): string => '€' + value
   };
   private minPrice: number = this.priceOptions.floor;
-  private maxPrice: number = this.priceOptions.ceil;
+  private maxPrice: number = this.priceOptions.floor;
   private duration: number;
   private hallName: string;
   private showArtistName: string;
   private showEventName: string;
   private showEventType: EventType;
+  private showLocationName: string;
   private showCountry: string;
   private showCity: string;
   private showStreet: string;
@@ -70,6 +72,7 @@ export class SearchPageComponent implements OnInit {
     });
 
     this.locationForm = new FormGroup({
+      locationName: new FormControl(),
       locationCountry: new FormControl(),
       locationCity: new FormControl(),
       locationStreet  : new FormControl(),
@@ -96,6 +99,7 @@ export class SearchPageComponent implements OnInit {
       timeFrom: new FormControl(),
       timeTo: new FormControl(),
       duration: new FormControl(),
+      showLocationName: new FormControl(),
       showCountry: new FormControl(),
       showCity: new FormControl(),
       showStreet: new FormControl(),
@@ -112,25 +116,25 @@ export class SearchPageComponent implements OnInit {
       );
   }
 
-  private submitArtistForm() {
+  private searchForArtists() {
     if (this.artistName !== '') {
       this.router.navigate(['/events/search/results/artists'], { queryParams: { artist_name: this.artistName } });
     }
   }
 
-  private searchByLocation(): void {
-    if (this.locationCountry !== undefined || this.locationCity !== undefined || this.locationStreet !== undefined ||
+  private searchForLocations(): void {
+    if (this.locationName !== undefined || this.locationCountry !== undefined || this.locationCity !== undefined || this.locationStreet !== undefined ||
       this.locationPostalCode !== undefined || this.locationDescription !== undefined ) {
       this.router.navigate(['events/search/results/locations'], {
         queryParams: {
-          resultsFor: 'ATTRIBUTES', country: this.locationCountry, city: this.locationCity, street: this.locationStreet,
+          resultsFor: 'ATTRIBUTES', name: this.locationName, country: this.locationCountry, city: this.locationCity, street: this.locationStreet,
           postalCode: this.locationPostalCode, description: this.locationDescription
         }
       });
     }
   }
 
-  private searchByEventAttributes(): void {
+  private searchForEvents(): void {
     if (this.eventName !== undefined || this.eventContent !== undefined || this.eventDescription !== undefined || this.eventType !== undefined) {
       this.router.navigate(['/events/search/results/events'], {
         queryParams: {
@@ -140,7 +144,7 @@ export class SearchPageComponent implements OnInit {
     }
   }
 
-  private searchForSpecificShows(): void {
+  private searchForShows(): void {
 
     if (this.dateFrom > this.dateTo) {
       this.openSnackBar('Invalid Dates: \"From Date\" is after than \"To Date\"');
@@ -157,14 +161,18 @@ export class SearchPageComponent implements OnInit {
       return;
     }
 
-    this.router.navigate(['/events/search/results/shows'], {
-      queryParams: {
-        resultsFor: 'ATTRIBUTES', eventName: this.showEventName, eventType: this.showEventType, artistName: this.showArtistName, hallName: this.hallName, dateFrom: this.dateFrom,
-        dateTo: this.dateTo, timeFrom: this.timeFrom, timeTo: this.timeTo, minPrice: this.minPrice, maxPrice: this.maxPrice,
-        duration: this.duration, country: this.showCountry, city: this.showCity, street: this.showStreet, postalCode: this.showPostalCode
-      }
-    });
-
+    if ( this.dateFrom !== undefined || this.dateTo !== undefined || this.timeFrom !== undefined || this.timeTo !== undefined ||
+    this.minPrice !== 0 || this.maxPrice !== 0 || this.duration !== undefined || this.hallName !== undefined ||
+    this.showArtistName !== undefined || this.showEventName !== undefined || this.showEventType !== undefined || this.showLocationName !== undefined ||
+      this.showCountry !== undefined || this.showCity !== undefined || this.showStreet !== undefined || this.showPostalCode !== undefined ) {
+      this.router.navigate(['/events/search/results/shows'], {
+        queryParams: {
+          resultsFor: 'ATTRIBUTES', eventName: this.showEventName, eventType: this.showEventType, artistName: this.showArtistName, hallName: this.hallName, dateFrom: this.dateFrom,
+          dateTo: this.dateTo, timeFrom: this.timeFrom, timeTo: this.timeTo, minPrice: this.minPrice, maxPrice: this.maxPrice,
+          duration: this.duration, locationName: this.showLocationName, country: this.showCountry, city: this.showCity, street: this.showStreet, postalCode: this.showPostalCode
+        }
+      });
+    }
   }
 
   openSnackBar(message: string) {
