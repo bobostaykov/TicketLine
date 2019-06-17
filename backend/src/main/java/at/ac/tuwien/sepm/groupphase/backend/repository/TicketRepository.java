@@ -109,4 +109,13 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
      */
     List<Ticket> findAllByShowAndSector(Show show, Sector sector);
 
+    /**
+     * Find all Tickets filtered by a given show and status.
+     *
+     * @param show show to search tickets for
+     * @param status status to serach tickets for
+     * @return
+     */
+    List<Ticket> findAllByShowAndStatus(Show show, TicketStatus status);
+
 }
