@@ -51,7 +51,7 @@ public class TicketExpirationHandlerImpl implements TicketExpirationHandler {
             return;
         LocalTime showStartTime = showDTO.getTime();
         LocalTime localTimeAfter30Minutes = LocalTime.now().plusMinutes(30);
-        if (showStartTime.isBefore(localTimeAfter30Minutes))
+        if (showStartTime.isAfter(localTimeAfter30Minutes))
             return;
         List<TicketDTO> ticketsToExpire = ticketMapper.ticketToTicketDTO(ticketRepository.findAllByShowAndStatus(showMapper.showDTOToShow(showDTO), TicketStatus.RESERVATED));
         for (TicketDTO t:

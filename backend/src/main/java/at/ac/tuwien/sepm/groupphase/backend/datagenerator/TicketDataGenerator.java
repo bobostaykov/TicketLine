@@ -24,7 +24,8 @@ public class TicketDataGenerator implements DataGenerator {
     private final ShowRepository showRepository;
     private final SeatRepository seatRepository;
 
-    private final static int NUM_OF_TICKETS = 2;
+    private final static int NUM_OF_TICKETS = 4;
+    private final static int NUM_OF_CUSTOMERS = 2;
 
     public TicketDataGenerator(TicketRepository ticketRepository,
                                CustomerRepository customerRepository,
@@ -45,7 +46,7 @@ public class TicketDataGenerator implements DataGenerator {
             List<Ticket> tickets = new ArrayList<>();
             for (Long i = 1L; i <= NUM_OF_TICKETS; i++) {
                 tickets.add(Ticket.builder()
-                    .customer(customerRepository.getOne(i))
+                    .customer(customerRepository.getOne(((i-1) % NUM_OF_CUSTOMERS) + 1))
                     .show(showRepository.getOne(i))
                     .price(faker.random().nextDouble()*50)
                     .seat(seatRepository.getOne(i))

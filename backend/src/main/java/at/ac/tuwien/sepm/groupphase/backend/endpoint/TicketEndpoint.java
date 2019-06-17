@@ -2,9 +2,13 @@ package at.ac.tuwien.sepm.groupphase.backend.endpoint;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.ticket.TicketDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.ticket.TicketPostDTO;
+import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.show.ShowMapper;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.TicketSoldOutException;
+import at.ac.tuwien.sepm.groupphase.backend.repository.ShowRepository;
+import at.ac.tuwien.sepm.groupphase.backend.service.ShowService;
 import at.ac.tuwien.sepm.groupphase.backend.service.TicketService;
+import at.ac.tuwien.sepm.groupphase.backend.service.ticketExpirationHandler.TicketExpirationHandler;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
@@ -21,10 +25,16 @@ import java.util.List;
 @Api(value = "tickets")
 public class TicketEndpoint {
     private final TicketService ticketService;
+    private final TicketExpirationHandler ticketExpirationHandler; // REMOVE AFTER TEST
+    private final ShowRepository showRepository; // REMOVE AFTER TEST
+    private final ShowMapper showMapper; // REMOVE AFTER TEST
     private static final Logger LOGGER = LoggerFactory.getLogger(TicketEndpoint.class);
 
-    public TicketEndpoint(TicketService ticketService) {
+    public TicketEndpoint(TicketService ticketService, TicketExpirationHandler ticketExpirationHandler, ShowRepository showRepository, ShowMapper showMapper) {
         this.ticketService = ticketService;
+        this.ticketExpirationHandler = ticketExpirationHandler;
+        this.showRepository = showRepository;
+        this.showMapper = showMapper;
     }
 
 
@@ -45,6 +55,13 @@ public class TicketEndpoint {
     @RequestMapping(method = RequestMethod.GET)
     @ApiOperation(value = "Get all tickets", authorizations = {@Authorization(value = "apiKey")})
     public List<TicketDTO> findAll() {
+        return ticketService.findAll();
+    }
+
+    // REMOVE AFTER TEST
+    @RequestMapping(value = "/expire/{id}", method = RequestMethod.GET)
+    public List<TicketDTO> findAllAfterExpire(@PathVariable Long id) {
+        ticketExpirationHandler.setExpiredReservatedTicketsToStatusExpired(showMapper.showToShowDTO(showRepository.findById(id).orElseThrow(NotFoundException::new)));
         return ticketService.findAll();
     }
 

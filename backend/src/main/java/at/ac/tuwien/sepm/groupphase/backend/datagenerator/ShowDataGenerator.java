@@ -41,10 +41,10 @@ public class ShowDataGenerator implements DataGenerator {
             LOGGER.info("Shows already generated");
         }else {
             LOGGER.info("Generating shows");
-            Show show1 = Show.builder().id(1L).event(eventRepository.getOne(1L)).hall(hallRepository.getOne(1L)).ticketsSold(10000L).date(LocalDate.parse("09-10-2019", dateFormatter)).time(LocalTime.parse("10:30", timeFormatter)).description("description").build();
-            Show show2 = Show.builder().id(2L).event(eventRepository.getOne(3L)).hall(hallRepository.getOne(2L)).ticketsSold(2000L).date(LocalDate.parse("15-11-2019", dateFormatter)).time(LocalTime.parse("20:30", timeFormatter)).description("description").build();
-            Show show3 = Show.builder().id(3L).event(eventRepository.getOne(4L)).hall(hallRepository.getOne(3L)).ticketsSold(1500L).date(LocalDate.parse("14-08-2019", dateFormatter)).time(LocalTime.parse( "17:30", timeFormatter)).description("description").build();
-            Show show4 = Show.builder().id(4L).event(eventRepository.getOne(5L)).hall(hallRepository.getOne(4L)).ticketsSold(150L).date(LocalDate.parse("07-07-2019", dateFormatter)).time(LocalTime.parse( "19:00", timeFormatter)).description("description").build();
+            Show show1 = Show.builder().id(1L).event(eventRepository.getOne(1L)).hall(hallRepository.getOne(1L)).ticketsSold(10000L).date(LocalDate.now()).time(LocalTime.now().plusMinutes(25)).description("description").build();
+            Show show2 = Show.builder().id(2L).event(eventRepository.getOne(3L)).hall(hallRepository.getOne(2L)).ticketsSold(2000L).date(LocalDate.now()).time(LocalTime.now()).description("description").build();
+            Show show3 = Show.builder().id(3L).event(eventRepository.getOne(4L)).hall(hallRepository.getOne(3L)).ticketsSold(1500L).date(LocalDate.now().minusDays(1)).time(LocalTime.parse( "17:30", timeFormatter)).description("description").build();
+            Show show4 = Show.builder().id(4L).event(eventRepository.getOne(5L)).hall(hallRepository.getOne(4L)).ticketsSold(150L).date(LocalDate.now()).time(LocalTime.now().plusMinutes(45)).description("description").build();
             Show show5 = Show.builder().id(5L).event(eventRepository.getOne(6L)).hall(hallRepository.getOne(5L)).ticketsSold(200L).date(LocalDate.parse("01-01-2019", dateFormatter)).time(LocalTime.parse( "19:30", timeFormatter)).description("description").build();
 
             Show show6 = Show.builder().id(6L).event(eventRepository.getOne(7L)).hall(hallRepository.getOne(6L)).ticketsSold(1000L).date(LocalDate.parse("17-09-2029", dateFormatter)).time(LocalTime.parse( "21:00",timeFormatter)).description("description").build();
