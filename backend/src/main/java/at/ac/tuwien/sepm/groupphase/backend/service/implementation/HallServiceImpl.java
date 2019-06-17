@@ -1,7 +1,8 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.implementation;
 
-import at.ac.tuwien.sepm.groupphase.backend.datatype.HallRequestParameters;
+import at.ac.tuwien.sepm.groupphase.backend.datatype.HallRequestParameter;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.hall.HallDTO;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.searchParameters.HallSearchParametersDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Hall;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Seat;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Sector;
@@ -30,10 +31,17 @@ public class HallServiceImpl implements HallService {
     }
 
     @Override
-    public List<HallDTO> findAllHalls(List<HallRequestParameters> fields) {
-        LOGGER.info("Finding all halls with " + (isEmpty(fields) ?  "all parameters" : "parameters " + fields.toString()));
-        return isEmpty(fields) ? hallMapper.hallListToHallDTOs(hallRepository.findAll()) :
-            hallMapper.hallListToHallDTOs(hallRepository.findAllWithSpecifiedFields(fields));
+    public List<HallDTO> findHalls(List<HallRequestParameter> fields, HallSearchParametersDTO searchParameters) {
+        LOGGER.info("Finding halls with " + (isEmpty(fields) ?  "all parameters " : "parameters " + fields.toString())
+        + (searchParameters != null ? "matching search parameters " + searchParameters.toString() : ""));
+        if(searchParameters == null || (searchParameters.getName() == null && searchParameters.getLocation() == null)){
+            return isEmpty(fields) ? hallMapper.hallListToHallDTOs(hallRepository.findAll()) :
+                hallMapper.hallListToHallDTOs(hallRepository.findAllWithSpecifiedFields(fields));
+        } else {
+            return isEmpty(fields) ?
+                hallMapper.hallListToHallDTOs(hallRepository.findByNameContainingAndLocation(searchParameters.getName(), searchParameters.getLocation())) :
+                hallMapper.hallListToHallDTOs(hallRepository.findAllFilteredWithSpecifiedFields(searchParameters, fields));
+        }
     }
 
     @Override

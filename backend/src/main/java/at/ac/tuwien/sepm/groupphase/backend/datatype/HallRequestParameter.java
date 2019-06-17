@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * all possible search parameters for which halls can be retrieved usind Requestparam fields
  */
-public enum HallRequestParameters {
+public enum HallRequestParameter {
     @JsonProperty("id")
     ID,
     @JsonProperty("name")

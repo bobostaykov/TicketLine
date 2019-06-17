@@ -1,7 +1,8 @@
 package at.ac.tuwien.sepm.groupphase.backend.service;
 
-import at.ac.tuwien.sepm.groupphase.backend.datatype.HallRequestParameters;
+import at.ac.tuwien.sepm.groupphase.backend.datatype.HallRequestParameter;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.hall.HallDTO;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.searchParameters.HallSearchParametersDTO;
 import at.ac.tuwien.sepm.groupphase.backend.exception.CustomValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 
@@ -10,12 +11,14 @@ import java.util.List;
 public interface HallService {
 
     /**
-     * gets a list of all halls found in the system
+     * gets a list of halls found in the system filtered by search parameters if given
      * @param fields representing fields of hall entity that will be returned.
      * If null will return entire entity
+     * @param searchParameters for which halls will be returned
+     * if null will return all halls
      * @return list of all halls
      */
-    List<HallDTO> findAllHalls(List<HallRequestParameters> fields);
+    List<HallDTO> findHalls(List<HallRequestParameter> fields, HallSearchParametersDTO searchParameters);
 
     /**
      * Adds hall to the system

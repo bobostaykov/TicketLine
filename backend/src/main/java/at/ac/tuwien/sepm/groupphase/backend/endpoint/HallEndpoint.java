@@ -1,8 +1,9 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint;
 
 import at.ac.tuwien.sepm.groupphase.backend.conversion.CaseInsensitiveEnumConverter;
-import at.ac.tuwien.sepm.groupphase.backend.datatype.HallRequestParameters;
+import at.ac.tuwien.sepm.groupphase.backend.datatype.HallRequestParameter;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.hall.HallDTO;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.searchParameters.HallSearchParametersDTO;
 import at.ac.tuwien.sepm.groupphase.backend.exception.CustomValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.service.HallService;
@@ -35,7 +36,7 @@ public class HallEndpoint {
 
     @InitBinder
     public void initBinder(WebDataBinder binder){
-        binder.registerCustomEditor(HallRequestParameters.class, new CaseInsensitiveEnumConverter<>(HallRequestParameters.class));
+        binder.registerCustomEditor(HallRequestParameter.class, new CaseInsensitiveEnumConverter<>(HallRequestParameter.class));
     }
 
     @GetMapping(value = "/{id}")
@@ -47,9 +48,11 @@ public class HallEndpoint {
 
     @GetMapping
     @ApiOperation(value = "Get all saved halls", authorizations = {@Authorization(value = "apiKey")})
-    public List<HallDTO> getHalls(@RequestParam(value = "fields", required = false) List<HallRequestParameters> fields){
-        LOGGER.info("GET Halls: all Halls with " + (isEmpty(fields) ? "all parameters" : "parameters " +  fields.toString()));
-        return hallService.findAllHalls(fields);
+    public List<HallDTO> getHalls(@RequestParam(value = "fields", required = false) List<HallRequestParameter> fields,
+                                  @RequestBody(required = false) HallSearchParametersDTO searchParametersDTO){
+        LOGGER.info("GET Halls: Halls with " + (isEmpty(fields) ? "all parameters" : "parameters " +  fields.toString())
+        + (searchParametersDTO != null ? "matching search parameters " + searchParametersDTO.toString() : ""));
+        return hallService.findHalls(fields, searchParametersDTO);
     }
 
     @PostMapping
