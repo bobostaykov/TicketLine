@@ -96,29 +96,30 @@
         <mat-form-field appearance="outline" class="col-4">
           <mat-label>Show</mat-label>
           <label for="showSelection" class="sr-only">Show Selection</label>
-          <select matNativeControl id="showSelection" formControlName="showSelection"
-                  aria-labelledby="show selection">
-            <option [ngValue]="null"></option>
-            <option>Show1</option>
-          </select>
+          <input matInput id="showSelection" placeholder="Show" aria-labelledby="Show Selection input"
+                 [matAutocomplete]="showOptions" formControlName="showSelection" />
+          <mat-autocomplete #showOptions="matAutocomplete">
+            <mat-option>Show 1</mat-option>
+          </mat-autocomplete>
         </mat-form-field>
         <mat-form-field appearance="outline" class="col-4">
           <mat-label>Location</mat-label>
           <label for="locationSelection" class="sr-only">Location Selection</label>
-          <select matNativeControl id="locationSelection" formControlName="locationSelection"
-                  aria-labelledby="location selection">
-            <option [ngValue]="null"></option>
-            <option *ngFor="let location of locations" [ngValue]="location">{{displayLocation(location)}}</option>
-          </select>
+          <input matInput id="locationSelection" placeholder="Location" aria-labelledby="Location Selection Input"
+          [matAutocomplete]="locationOptions" formControlName="locationSelection" />
+          <mat-autocomplete #locationOptions="matAutocomplete">
+            <mat-option *ngFor="let location of locations$ | async" [value]="location">{{location.locationName}}</mat-option>
+          </mat-autocomplete>
           <mat-error>A location must be selected!</mat-error>
         </mat-form-field>
         <mat-form-field appearance="outline" class="col-4">
           <mat-label>Hall</mat-label>
           <label for="hallSelection" class="sr-only">Hall Selection</label>
-          <select matNativeControl id="hallSelection" formControlName="hallSelection" aria-labelledby="hall selection">
-            <option [ngValue]="newHall">{{newHall.name}}</option>
-            <option *ngFor="let hall of halls" [ngValue]="hall">{{hall.name}}</option>
-          </select>
+          <input matInput id="hallSelection" placeholder="Hall" aria-labelledby="Hall Selection Input"
+                 [matAutocomplete]="hallOptions" formControlName="hallSelection" />
+          <mat-autocomplete #hallOptions="matAutocomplete">
+            <mat-option *ngFor="let hall of halls$ | async" [value]="hall">{{hall.name}}</mat-option>
+          </mat-autocomplete>
           <mat-error>A Hall must be selected!</mat-error>
         </mat-form-field>
       </div>

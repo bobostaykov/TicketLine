@@ -6,8 +6,12 @@ import {PriceCategory} from '../../../dtos/priceCategory';
 import {Hall} from '../../../dtos/hall';
 import {Location} from '../../../dtos/location';
 import {HallService} from '../../../services/hall/hall.service';
-import {LocationService} from '../../../services/location/location.service';
 import {ShowResultsService} from '../../../services/search-results/shows/show-results.service';
+import {Observable, Subject} from 'rxjs';
+import {Show} from '../../../dtos/show';
+import {HallRequestParameter} from '../../../datatype/HallRequestParameter';
+import {debounceTime, distinctUntilChanged, switchMap} from 'rxjs/operators';
+import {LocationResultsService} from '../../../services/search-results/locations/location-results.service';
 
 @Component({
   selector: 'app-floorplan-control',
@@ -18,14 +22,12 @@ export class FloorplanControlComponent implements OnInit {
 
   // initialization of new hall entity
   private newHall: Hall = new Hall(null, 'New Hall', null, [], []);
-  // contains names and id of all Halls
-  private allHalls: Hall[];
-  // contains names of specific halls that show up after selecting a specific location
-  // noinspection JSMismatchedCollectionQueryUpdate
-  private halls: Hall[];
-  // contains all locations
-  private locations: Location[];
-  // list of priceCategories to loop through in select fields
+  private halls$: Observable<Hall[]>;
+  private locations$: Observable<Location[]>;
+  private shows$: Observable<Show[]>;
+  private searchHalls = new Subject<string>();
+  private searchLocations = new Subject<string>();
+  private searchShows = new Subject<string>();
   // noinspection JSMismatchedCollectionQueryUpdate
   private priceCategories: string[] = Object.keys(PriceCategory);
   // form groups to add seats/sectors and persist new halls to backend
@@ -35,7 +37,8 @@ export class FloorplanControlComponent implements OnInit {
   // list of seats and sectors tickets were selected fro
   private tickets: Array<Seat | Sector> = [];
 
-  constructor(private hallService: HallService, private locationService: LocationService, private showService: ShowResultsService) {
+  constructor(private hallService: HallService, private locationResultsService: LocationResultsService,
+              private showService: ShowResultsService) {
   }
 
   /**
@@ -44,10 +47,6 @@ export class FloorplanControlComponent implements OnInit {
    * calls initialization of all FormGroups in the component
    */
   ngOnInit(): void {
-    // loading halls saved in backend and adding them to the halls  and allHalls array
-    this.getAllHalls();
-    // loading locations saved in backend and adding them to the locations array
-    this.getAllLocations();
     // initializing forms that allow users to add seats and sectors to new Halls
     // as well as persist hall to backend
     this.buildSeatForm();
@@ -183,8 +182,8 @@ export class FloorplanControlComponent implements OnInit {
     );
     this.hallService.createHall(hall).subscribe(
       createdHall => {
-        this.allHalls.push(createdHall);
-        this.halls.push(createdHall);
+        // this.allHalls.push(createdHall);
+        // this.halls.push(createdHall);
       },
       error => console.log(error)
     );
@@ -298,55 +297,23 @@ export class FloorplanControlComponent implements OnInit {
     });
     const hallSelection = this.createHallForm.get('hallSelection');
     const locationSelection = this.createHallForm.get('locationSelection');
-    hallSelection.valueChanges.subscribe(hall => {
-      if (hall.location !== null) {
-        // necessary because location select tag does not recognize hall.location
-        locationSelection.setValue(this.locations.find(location => location.id === hall.location.id), {emitEvent: false});
-      }
-    });
-    locationSelection.valueChanges.subscribe(location => {
-      if (location !== null) {
-        this.halls = this.allHalls.filter(hall => hall.location.id === location.id);
-      } else {
-        this.halls = this.allHalls;
-      }
-    });
-  }
+    const showSelection = this.createHallForm.get('showSelection');
 
-  /**
-   * load all halls from backend via hallService
-   */
-  private getAllHalls(): void {
-    console.log('Loading all halls from backend');
-    this.hallService.getAllHalls().subscribe(
-      halls => {
-        this.allHalls = halls;
-        this.halls = halls;
-      },
-      error => console.log(error)
+    this.halls$ = this.searchHalls.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      switchMap((hallName: string) => this.hallService.searchHalls(hallName, null, [HallRequestParameter.ID, HallRequestParameter.NAME])
+      ));
+    hallSelection.valueChanges.subscribe(hall => this.searchHalls.next(hall));
+    this.locations$ = this.searchLocations.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      switchMap((locationName: string) => this.locationResultsService.getSearchSuggestions(locationName))
     );
-  }
-
-  /**
-   * loads all locations from backend via locationService
-   */
-  private getAllLocations(): void {
-    console.log('Loading all locations from backend');
-    this.locationService.getAllLocations().subscribe(
-      locations => this.locations = locations,
-      // TODO: implement proper error handling once globalErrorHandler exists
-      error => console.log(error)
-    );
-  }
-
-  /**
-   * helper method
-   * returns string representing location
-   * @param location for which to return string
-   */
-  private displayLocation(location: Location): string {
-    return location !== null ? location.street + ', ' +
-      location.city + ' ' + location.postalCode : '';
+    locationSelection.valueChanges.subscribe(location => this.searchLocations.next(location));
+    showSelection.valueChanges.subscribe(show => {
+      console.log(show);
+    });
   }
 
   /**

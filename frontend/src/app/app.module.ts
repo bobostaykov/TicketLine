@@ -16,7 +16,15 @@ import {httpInterceptorProviders} from './interceptors';
 import {Globals} from './global/globals';
 import { TopTenEventsComponent } from './components/events/top-ten-events/top-ten-events.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {MatButtonModule, MatCheckboxModule, MatInputModule, MatSelectModule, MatSnackBarModule, MatRadioModule} from '@angular/material';
+import {
+  MatButtonModule,
+  MatCheckboxModule,
+  MatInputModule,
+  MatSelectModule,
+  MatSnackBarModule,
+  MatRadioModule,
+  MatAutocompleteModule
+} from '@angular/material';
 import {NgxChartsModule} from '@swimlane/ngx-charts';
 import { SearchPageComponent } from './components/events/search page/search-page.component';
 import { ArtistResultsComponent } from './components/search-results/artists/artist-results.component';
@@ -77,6 +85,7 @@ import {TicketComponent} from './components/ticket/ticket.component';
     NgxChartsModule,
     Ng5SliderModule,
     MatRadioModule,
+    MatAutocompleteModule
   ],
   providers: [httpInterceptorProviders, Globals],
   bootstrap: [AppComponent]
