@@ -55,7 +55,7 @@ export class TicketCheckReservationComponent implements OnInit {
 
   ngOnInit() {
     // TODO: delete default objects
-    this.location = new Location(9, 'Austria', 'Vienna', '1150', 'Roland-Rainer-Platz 1',
+    this.location = new Location(null, 9, 'Austria', 'Vienna', '1150', 'Roland-Rainer-Platz 1',
       'description for lcoation default test');
     this.artist = new Artist(8, 'Cher');
     this.hall = new Hall(7, 'Stadthalle A', this.location, this.seats, this.sectors);
