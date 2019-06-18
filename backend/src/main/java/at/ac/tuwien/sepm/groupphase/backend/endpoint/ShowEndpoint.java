@@ -18,6 +18,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 // TODO Class is unfinished
 @RestController
@@ -32,6 +33,13 @@ public class ShowEndpoint {
 
     ShowEndpoint(ShowService showService){
         this.showService = showService;
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @ApiOperation(value = "Get one show by its id", authorizations = {@Authorization(value = "apiKey")})
+    public ShowDTO findOneById(@PathVariable("id") Long id){
+        LOGGER.info("Show Endpoint: Find one show by id " + id);
+        return showService.findOneById(id);
     }
 
     @RequestMapping(value = "/location/{id}", method = RequestMethod.GET)
@@ -102,5 +110,15 @@ public class ShowEndpoint {
         } catch (NotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No shows are found for the given parameters:" + e.getMessage(), e);
         }
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/suggestions")
+    @ApiOperation(value = "Get a list of search suggestions for shows filtered by event name, date and time", authorizations = {@Authorization(value = "apiKey")})
+    public List<ShowDTO> getSearchSuggestions(@RequestParam(required = false) String eventName,
+                                                 @RequestParam(required = false) String date,
+                                                 @RequestParam(required = false) String time) {
+        LOGGER.info("GET search suggestions for show with parameters eventName = " + eventName +
+            ", date = " + date + ", time = " + time);
+        return showService.findSearchResultSuggestions(eventName, date, time);
     }
 }

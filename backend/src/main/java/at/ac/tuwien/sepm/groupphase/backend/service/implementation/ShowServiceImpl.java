@@ -3,6 +3,7 @@ package at.ac.tuwien.sepm.groupphase.backend.service.implementation;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.searchParameters.ShowSearchParametersDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.show.ShowDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.show.ShowMapper;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.ShowRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.ShowService;
 import org.hibernate.service.spi.ServiceException;
@@ -15,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.PersistenceException;
+import java.util.List;
 
 //TODO Class is unfinished
 @Service
@@ -101,6 +103,16 @@ public class ShowServiceImpl implements ShowService {
         }
     }
 
+    @Override
+    public List<ShowDTO> findSearchResultSuggestions(String eventName, String date, String time) {
+        LOGGER.info("Show Service: Find shows matching eventName = " + eventName + ", date = " + date + ", time = " + time);
+        return showMapper.showToShowDTO(showRepository.findByEventNameAndShowDateAndShowTime(eventName, date, time));
+    }
+
+    @Override
+    public ShowDTO findOneById(Long id) {
+        return showMapper.showToShowDTO(showRepository.findOneById(id).orElseThrow(NotFoundException::new));
+    }
     /*
     private static Predicate<ShowDTO> compareMinPrice(Double minPrice){
         return show -> show.getPricePattern()
