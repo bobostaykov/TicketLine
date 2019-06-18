@@ -2,6 +2,7 @@ package at.ac.tuwien.sepm.groupphase.backend.service;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.location.LocationDTO;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
+import at.ac.tuwien.sepm.groupphase.backend.repository.projections.SimpleLocation;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -34,4 +35,18 @@ public interface LocationService {
      * @return a list of all countries in the data base
      */
     List<String> getCountriesOrderedByName() throws ServiceException;
+
+    /**
+     * returns a list of locations as location ids and names that match parameter name
+     * @param name is a substring of the names of all locations that will be returned
+     * @return a list of locations with only id and name containing param name as a substring
+     */
+    List<SimpleLocation> findSearchResultSuggestions(String name);
+
+    /**
+     * finds and returns one location by its id
+     * @param id of location to be found
+     * @return location dto with it matching param
+     */
+    LocationDTO findOneById(Long id);
 }

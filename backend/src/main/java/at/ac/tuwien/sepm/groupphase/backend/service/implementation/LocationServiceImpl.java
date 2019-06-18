@@ -2,8 +2,10 @@ package at.ac.tuwien.sepm.groupphase.backend.service.implementation;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.location.LocationDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.location.LocationMapper;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.LocationRepository;
+import at.ac.tuwien.sepm.groupphase.backend.repository.projections.SimpleLocation;
 import at.ac.tuwien.sepm.groupphase.backend.service.LocationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +24,8 @@ public class LocationServiceImpl implements LocationService {
     private LocationMapper locationMapper;
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
-    LocationServiceImpl(LocationRepository locationRepository, LocationMapper locationMapper){
+    LocationServiceImpl(LocationRepository locationRepository,
+                        @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection") LocationMapper locationMapper){
         this.locationMapper = locationMapper;
         this.locationRepository = locationRepository;
     }
@@ -65,5 +68,18 @@ public class LocationServiceImpl implements LocationService {
         } catch (PersistenceException e) {
             throw new ServiceException(e.getMessage(), e);
         }
+    }
+
+    @Override
+    public List<SimpleLocation> findSearchResultSuggestions(String name) {
+        LOGGER.info("Location Service: Retrieving a list of locations with only name and ID set by search parameter name ="
+        + name);
+        return locationRepository.findByLocationNameContainingIgnoreCase(name);
+    }
+
+    @Override
+    public LocationDTO findOneById(Long id) {
+        LOGGER.info("Locaiton Service: Retrieving a location by id " + id);
+        return locationMapper.locationToLocationDTO(locationRepository.findOneById(id).orElseThrow(NotFoundException::new));
     }
 }
