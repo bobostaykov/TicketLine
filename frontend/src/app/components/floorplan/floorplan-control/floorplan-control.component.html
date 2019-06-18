@@ -1,5 +1,5 @@
 <!-- upper row containing forms to add seats or sectors as well as select a specific hall, show or location -->
-<div class="row mt-3 bottom-box-shadow pb-3 mb-3">
+<div class="row mt-3 bottom-box-shadow pb-4 mb-3">
   <div class="col-5" [ngSwitch]="createHallForm.get('hallType').value">
     <!-- form to add or delete seats from currently selected hall -->
     <form *ngSwitchCase="'seats'" [formGroup]="addSeatsForm" (ngSubmit)="addSeats()">
@@ -156,7 +156,8 @@
                          aria-labelledby="select either seats or sectors for hall"
                          [attr.disabled]="getSelectedHall().seats?.length > 0 || getSelectedHall().sectors?.length > 0">
           <mat-radio-button value="seats" color="primary" class="mx-3" aria-labelledby="seats">Seats</mat-radio-button>
-          <mat-radio-button value="sectors" color="primary" class="mx-3" aria-labelledby="sectors">Sectors</mat-radio-button>
+          <mat-radio-button value="sectors" color="primary" class="mx-3" aria-labelledby="sectors">Sectors
+          </mat-radio-button>
         </mat-radio-group>
         <!-- buttons to submit form and either submit hall to backend or delete it from backend -->
         <div class="col-5 mt-4 text-right">
@@ -169,7 +170,12 @@
 </div>
 <!-- adds floorplan svg and ticket component to page -->
 <div [ngSwitch]="createHallForm.get('hallType').value" class="row">
-  <app-floorplan-svg *ngSwitchCase="'seats'" class="floorplanSvg" [seats]="getSelectedHall().seats" (addTicket)="addToTickets($event)"></app-floorplan-svg>
-  <app-floorplan-svg *ngSwitchCase="'sectors'" class="floorplanSvg" [sectors]="getSelectedHall().sectors" (addTicket)="addToTickets($event)"></app-floorplan-svg>
-  <app-floorplan-ticket class="floorplanTickets" *ngIf="tickets && tickets.length" [tickets]="tickets"></app-floorplan-ticket>
+  <app-floorplan-svg *ngSwitchCase="'seats'" class="floorplanSvg" [seats]="getSelectedHall().seats"
+                     (addTicket)="addToTickets($event)"></app-floorplan-svg>
+  <app-floorplan-svg *ngSwitchCase="'sectors'" class="floorplanSvg" [sectors]="getSelectedHall().sectors"
+                     (addTicket)="addToTickets($event)"></app-floorplan-svg>
+  <div class="floorplanTickets" *ngIf="tickets && tickets.length">
+    <app-floorplan-ticket class="floorplanTickets" [tickets]="tickets"></app-floorplan-ticket>
+    <a mat-raised-button color="primary">Continue</a>
+  </div>
 </div>

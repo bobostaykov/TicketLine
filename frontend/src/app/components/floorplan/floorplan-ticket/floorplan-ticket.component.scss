@@ -1,9 +1,9 @@
 #ticket-container {
-  box-shadow: 0 1px 3px rgba(34, 25, 25, 0.4);
   display: flex;
   flex-direction: column;
   align-items: center;
-  height: 70vh;
+  height: 100%;
+  width: 100%;
 
   h3 {
     width: 100%;
@@ -19,12 +19,6 @@
     width: 100%;
     overflow-y: scroll;
     overflow-x: hidden;
-  }
-
-  .mat-raised-button {
-    background-color: #3f51b5;
-    margin: 0;
-    width: 100%;
   }
 }
 
