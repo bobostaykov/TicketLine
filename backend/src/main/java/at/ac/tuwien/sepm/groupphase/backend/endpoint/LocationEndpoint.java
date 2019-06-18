@@ -41,6 +41,7 @@ public class LocationEndpoint {
     @RequestMapping(method = RequestMethod.GET)
     @ApiOperation(value = "Get all shows filtered by location", authorizations = {@Authorization(value = "apiKey")})
     public Page<LocationDTO> findLocationsFiltered(
+        @RequestParam(value = "name", required = false) String name,
         @RequestParam(value = "country", required = false) String country,
         @RequestParam(value = "city", required = false) String city,
         @RequestParam(value = "street", required = false) String street,
@@ -49,12 +50,12 @@ public class LocationEndpoint {
         @RequestParam(value = "page", required = false) Integer page
     ) {
         try {
-            if (page != null && country == null && city == null && postalCode == null && street == null && description == null) {
+            if (page != null && name == null && country == null && city == null && postalCode == null && street == null && description == null) {
                 LOGGER.info("Location Endpoint: Get all locations");
                 return locationService.findAll(page);
             } else {
                 LOGGER.info("Location Endpoint: Get all locations filtered by some parameters");
-                return locationService.findLocationsFiltered(country, city, street, postalCode, description, page);
+                return locationService.findLocationsFiltered(name, country, city, street, postalCode, description, page);
             }
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error while looking for locations with those parameters: " + e.getMessage(), e);

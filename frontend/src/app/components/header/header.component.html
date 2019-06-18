@@ -27,7 +27,7 @@
         <a class="nav-link" *ngIf="authService.isLoggedIn()" routerLink="/floorplan" routerLinkActive="active">FloorPlan</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" *ngIf="authService.isLoggedIn() && authService.getUserRole()==='ADMIN'" routerLink="/managecontent" routerLinkActive="active">ContentManager</a>
+        <a class="nav-link" *ngIf="authService.isLoggedIn() && authService.getUserRole()==='ADMIN'" routerLink="/manager" routerLinkActive="active">ContentManager</a>
       </li>
     </ul>
     <ul class="navbar-nav mr-5">

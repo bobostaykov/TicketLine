@@ -178,10 +178,9 @@ export class SearchPageComponent implements OnInit {
   }
 
   openSnackBar(message: string) {
-    this.snackBar.open(message, null, {duration: 3000});
+    this.snackBar.open(message, null, {duration: 3000, panelClass: ['red-snackbar']});
   }
 
-  // TODO not a universal method
   public hasError = (controlName: string, errorName: string) => {
     return this.artistForm.controls[controlName].hasError(errorName);
   }
