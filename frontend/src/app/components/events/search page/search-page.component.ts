@@ -35,6 +35,7 @@ export class SearchPageComponent implements OnInit {
   private eventName: string;
   private eventContent: string;
   private eventDescription: string;
+  private eventArtistName: string;
   private eventType: EventType;
   private eventTypeKeys: string[] = Object.keys(EventType);
   private eventForm: FormGroup;
@@ -84,7 +85,8 @@ export class SearchPageComponent implements OnInit {
       eventName: new FormControl(),
       eventContent: new FormControl(),
       eventDescription: new FormControl(),
-      eventType: new FormControl()
+      eventType: new FormControl(),
+      eventArtistName: new FormControl()
     });
 
     this.showForm = new FormGroup({
@@ -135,10 +137,10 @@ export class SearchPageComponent implements OnInit {
   }
 
   private searchForEvents(): void {
-    if (this.eventName !== undefined || this.eventContent !== undefined || this.eventDescription !== undefined || this.eventType !== undefined) {
+    if (this.eventArtistName !== undefined || this.eventName !== undefined || this.eventContent !== undefined || this.eventDescription !== undefined || this.eventType !== undefined) {
       this.router.navigate(['/events/search/results/events'], {
         queryParams: {
-          resultsFor: 'ATTRIBUTES', eventName: this.eventName, eventType: this.eventType, content: this.eventContent, description: this.eventDescription
+          resultsFor: 'ATTRIBUTES', eventName: this.eventName, eventType: this.eventType, artistName: this.eventArtistName, content: this.eventContent, description: this.eventDescription
         }
       });
     }

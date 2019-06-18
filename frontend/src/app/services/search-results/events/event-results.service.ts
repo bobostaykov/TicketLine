@@ -18,11 +18,12 @@ export class EventResultsService {
     return this.httpClient.get<Event[]>(this.eventBaseUri + '/artist/' + id, {params: {page: page}});
   }
 
-  public findEventsFilteredByAttributes(eventName, eventType, content, description, page): Observable<Event[]> {
+  public findEventsFilteredByAttributes(eventName, eventType, artistName, content, description, page): Observable<Event[]> {
     console.log('Service Event-Results: findEventsFilteredByAttributes');
     let parameters = new HttpParams();
     parameters = eventName ? parameters.append('eventName', eventName) : parameters;
     parameters = content ? parameters.append('content', content) : parameters;
+    parameters = artistName ? parameters.append('artistName', artistName) : parameters;
     parameters = description ? parameters.append('description', description) : parameters;
     parameters = eventType ? parameters.append('eventType', eventType) : parameters;
     parameters = parameters.append('page', page);
