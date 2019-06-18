@@ -1,14 +1,12 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.seat;
 
 import at.ac.tuwien.sepm.groupphase.backend.datatype.PriceCategory;
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.ticket.TicketDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
-import java.util.List;
 import java.util.Objects;
 
 @ApiModel(value = "SeatDTO", description = "DTO for seat entities")
@@ -31,9 +29,6 @@ public class SeatDTO {
     @ApiModelProperty(name = "The seat's price category. Either cheap, average or expensive.", required = true)
     @NotNull(message = "Seat Price Category was not set")
     private PriceCategory priceCategory;
-
-    @ApiModelProperty(name = "Tickets bought for this seat")
-    private List<TicketDTO> ticketDTOS;
 
     public Long getId() {
         return id;
@@ -71,14 +66,6 @@ public class SeatDTO {
         return new SeatDTOBuilder();
     }
 
-    public List<TicketDTO> getTicketDTOS() {
-        return ticketDTOS;
-    }
-
-    public void setTicketDTOS(List<TicketDTO> ticketDTOS) {
-        this.ticketDTOS = ticketDTOS;
-    }
-
     @Override
     public String toString() {
         return "SeatDTO{" +
@@ -86,7 +73,6 @@ public class SeatDTO {
             ", seatNumber=" + seatNumber +
             ", seatRow=" + seatRow +
             ", priceCategory=" + priceCategory +
-            ", ticketDTOS=" + ticketDTOS +
             '}';
     }
 
@@ -98,13 +84,12 @@ public class SeatDTO {
         return Objects.equals(getId(), seatDTO.getId()) &&
             Objects.equals(getSeatNumber(), seatDTO.getSeatNumber()) &&
             Objects.equals(getSeatRow(), seatDTO.getSeatRow()) &&
-            Objects.equals(getPriceCategory(), seatDTO.getPriceCategory()) &&
-            Objects.equals(getTicketDTOS(), seatDTO.getTicketDTOS());
+            Objects.equals(getPriceCategory(), seatDTO.getPriceCategory());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getSeatNumber(), getSeatRow(), getPriceCategory(), getTicketDTOS());
+        return Objects.hash(getId(), getSeatNumber(), getSeatRow(), getPriceCategory());
     }
 
     public static class SeatDTOBuilder {
@@ -112,7 +97,6 @@ public class SeatDTO {
         private Integer seatNumber;
         private Integer seatRow;
         private PriceCategory priceCategory;
-        private List<TicketDTO> ticketDTOS;
 
         private SeatDTOBuilder(){}
 
@@ -136,18 +120,12 @@ public class SeatDTO {
             return this;
         }
 
-        public SeatDTOBuilder ticketDTOS(List<TicketDTO> ticketDTOS){
-            this.ticketDTOS = ticketDTOS;
-            return this;
-        }
-
         public SeatDTO build(){
             SeatDTO seatDTO = new SeatDTO();
             seatDTO.setId(id);
             seatDTO.setSeatNumber(seatNumber);
             seatDTO.setSeatRow(seatRow);
             seatDTO.setPriceCategory(priceCategory);
-            seatDTO.setTicketDTOS(ticketDTOS);
             return seatDTO;
         }
     }

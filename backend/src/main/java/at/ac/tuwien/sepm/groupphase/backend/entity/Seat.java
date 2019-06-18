@@ -3,7 +3,6 @@ package at.ac.tuwien.sepm.groupphase.backend.entity;
 import at.ac.tuwien.sepm.groupphase.backend.datatype.PriceCategory;
 
 import javax.persistence.*;
-import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -26,9 +25,6 @@ public class Seat {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "hall_id", nullable = false)
     private Hall hall;
-
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "seat")
-    private List<Ticket> tickets;
 
     public Long getId() {
         return id;
@@ -74,14 +70,6 @@ public class Seat {
         this.hall = hall;
     }
 
-    public List<Ticket> getTickets(){
-        return tickets;
-    }
-
-    public void setTickets(List<Ticket> tickets) {
-        this.tickets = tickets;
-    }
-
     @Override
     public String toString() {
         return "Seat{" +
@@ -90,7 +78,6 @@ public class Seat {
             ", seatRow=" + seatRow +
             ", priceCategory='" + priceCategory + "\'" +
             ", hall=" + hall +
-            ", tickets=" + tickets.toString() +
             '}';
     }
 
@@ -103,13 +90,12 @@ public class Seat {
             Objects.equals(seatNumber, seat.getSeatNumber()) &&
             Objects.equals(seatRow, seat.getSeatRow()) &&
             Objects.equals(priceCategory, seat.getPriceCategory()) &&
-            Objects.equals(hall, seat.getHall()) &&
-            Objects.equals(tickets, seat.getTickets());
+            Objects.equals(hall, seat.getHall());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, seatNumber, seatRow, priceCategory, hall, tickets);
+        return Objects.hash(id, seatNumber, seatRow, priceCategory, hall);
     }
 
     public static final class SeatBuilder {
@@ -118,7 +104,6 @@ public class Seat {
         private Integer seatRow;
         private PriceCategory priceCategory;
         private Hall hall;
-        private List<Ticket> ticket;
 
         private SeatBuilder() {
         }
@@ -148,11 +133,6 @@ public class Seat {
             return this;
         }
 
-        public SeatBuilder ticket(List<Ticket> ticket){
-            this.ticket = ticket;
-            return this;
-        }
-
         public Seat build() {
             Seat seat = new Seat();
             seat.setId(id);
@@ -160,7 +140,6 @@ public class Seat {
             seat.setSeatRow(seatRow);
             seat.setPriceCategory(priceCategory);
             seat.setHall(hall);
-            seat.setTickets(ticket);
             return seat;
         }
     }

@@ -3,7 +3,6 @@ package at.ac.tuwien.sepm.groupphase.backend.entity;
 import at.ac.tuwien.sepm.groupphase.backend.datatype.PriceCategory;
 
 import javax.persistence.*;
-import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -23,9 +22,6 @@ public class Sector {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "hall_id", nullable = false)
     private Hall hall;
-
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "sector")
-    private List<Ticket> tickets;
 
     public Long getId() {
         return id;
@@ -63,14 +59,6 @@ public class Sector {
         this.hall = hall;
     }
 
-    public List<Ticket> getTickets() {
-        return tickets;
-    }
-
-    public void setTickets(List<Ticket> ticketDTOS) {
-        this.tickets = ticketDTOS;
-    }
-
     @Override
     public String toString() {
         return "Sector{" +
@@ -78,7 +66,6 @@ public class Sector {
             ", sectorNumber=" + sectorNumber +
             ", priceCategory=" + priceCategory +
             ", hall=" + hall +
-            ", tickets=" + tickets +
             '}';
     }
 
@@ -90,13 +77,12 @@ public class Sector {
         return Objects.equals(getId(), sector.getId()) &&
             Objects.equals(getSectorNumber(), sector.getSectorNumber()) &&
             getPriceCategory() == sector.getPriceCategory() &&
-            Objects.equals(getHall(), sector.getHall()) &&
-            Objects.equals(getTickets(), sector.getTickets());
+            Objects.equals(getHall(), sector.getHall());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getSectorNumber(), getPriceCategory(), getHall(), getTickets());
+        return Objects.hash(getId(), getSectorNumber(), getPriceCategory(), getHall());
     }
 
     public static final class SectorBuilder{
@@ -104,7 +90,6 @@ public class Sector {
         private Integer sectorNumber;
         private PriceCategory priceCategory;
         private Hall hall;
-        private List<Ticket> tickets;
 
         private SectorBuilder(){}
 
@@ -128,18 +113,12 @@ public class Sector {
             return this;
         }
 
-        public SectorBuilder tickets(List<Ticket> tickets){
-            this.tickets = tickets;
-            return this;
-        }
-
         public Sector build(){
             Sector sector = new Sector();
             sector.setId(id);
             sector.setSectorNumber(sectorNumber);
             sector.setPriceCategory(priceCategory);
             sector.setHall(hall);
-            sector.setTickets(tickets);
             return sector;
         }
     }
