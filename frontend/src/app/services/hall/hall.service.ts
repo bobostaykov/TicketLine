@@ -39,4 +39,9 @@ export class HallService {
     parameters = hallName ? parameters.append('name', hallName) : parameters;
     return this.httpClient.get<Hall[]>(this.hallBaseUri, {params: parameters});
   }
+
+  findOneById(id: number): Observable<Hall> {
+    console.log('Get hall with id ' + id);
+    return this.httpClient.get<Hall>(this.hallBaseUri + '/' + id);
+  }
 }

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {Globals} from '../../../global/globals';
 import {Observable} from 'rxjs';
@@ -11,7 +11,8 @@ export class LocationResultsService {
 
   private locationsBaseUri: string = this.globals.backendUri + '/locations';
 
-  constructor(private httpClient: HttpClient, private globals: Globals) { }
+  constructor(private httpClient: HttpClient, private globals: Globals) {
+  }
 
   public findLocationsFiltered(country, city, street, postalCode, description, page): Observable<Location[]> {
     console.log('Location Service: findLocationsFiltered');
@@ -37,5 +38,9 @@ export class LocationResultsService {
   public getSearchSuggestions(name: string): Observable<Location[]> {
     console.log('Location Service: Getting search suggestions for location name entered ' + name);
     return this.httpClient.get<Location[]>(this.locationsBaseUri + '/suggestions', {params: new HttpParams().set('name', name)});
+  }
+
+  findOneById(id: number): Observable<Location> {
+    return this.httpClient.get<Location>(this.locationsBaseUri + '/' + id);
   }
 }
