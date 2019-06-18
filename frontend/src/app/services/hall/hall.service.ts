@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Globals } from '../../global/globals';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpParams} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {Hall} from '../../dtos/hall';
+import {HallRequestParameter} from '../../datatype/HallRequestParameter';
 
 @Injectable({
   providedIn: 'root'
@@ -28,5 +29,14 @@ export class HallService {
   createHall(hall: Hall) {
     console.log('Create hall with name ' + hall.name);
     return this.httpClient.post<Hall>(this.hallBaseUri, hall);
+  }
+
+  searchHalls(hallName: string, hallLocation: Location, fields: HallRequestParameter[]): Observable<Hall[]> {
+    console.log('Getting all halls from search parameters: name = ' + hallName + ', location = ' + JSON.stringify(hallLocation) +
+      ' with ' + (fields ? ' fields ' + JSON.stringify(fields) : ' all fields'));
+    let parameters = new HttpParams();
+    parameters = fields ? parameters.append('fields', fields.toString()) : parameters;
+    parameters = hallName ? parameters.append('name', hallName) : parameters;
+    return this.httpClient.get<Hall[]>(this.hallBaseUri, {params: parameters});
   }
 }

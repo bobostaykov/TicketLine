@@ -21,12 +21,21 @@ export class LocationResultsService {
     parameters = street ? parameters.append('street', street) : parameters;
     parameters = postalCode ? parameters.append('postalCode', postalCode) : parameters;
     parameters = description ? parameters.append('postalCode', description) : parameters;
-    parameters = parameters.append('page', page);
+    parameters = page ? parameters.append('page', page) : parameters;
     return this.httpClient.get<Location[]>(this.locationsBaseUri, {params: parameters});
   }
 
   public getCountriesOrderedByName(): Observable<string[]> {
     console.log('Location Service: getCountriesOrderedByName');
     return this.httpClient.get<string[]>(this.locationsBaseUri + '/countries');
+  }
+
+  /**
+   * gets search suggestions for location dto as needed in Floorplan component
+   * @param name substring of names of all locations found
+   */
+  public getSearchSuggestions(name: string): Observable<Location[]> {
+    console.log('Location Service: Getting search suggestions for location name entered ' + name);
+    return this.httpClient.get<Location[]>(this.locationsBaseUri + '/suggestions', {params: new HttpParams().set('name', name)});
   }
 }
