@@ -28,6 +28,7 @@ export class LocationResultsComponent implements OnInit {
 
   private locations: Location[];
   private headers: string[] = [
+    'Name',
     'Country',
     'City',
     'Postcode',

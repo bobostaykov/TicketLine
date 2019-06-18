@@ -34,9 +34,10 @@ public class LocationRepositoryImpl implements LocationRepositoryCustom {
     }
 
     @Override
-    public Page<Location> findLocationsFiltered(String country, String city, String street, String postalCode, String description, Integer page) {
+    public Page<Location> findLocationsFiltered(String name, String country, String city, String street, String postalCode, String description, Integer page) {
 
         LOGGER.info("Location Repository Impl: findLocationsFiltered");
+        LOGGER.debug("name: " + name);
         LOGGER.debug("country: " + country);
         LOGGER.debug("city: " + city);
         LOGGER.debug("street: " + street);
@@ -49,6 +50,9 @@ public class LocationRepositoryImpl implements LocationRepositoryCustom {
         CriteriaQuery<Location> criteriaQuery = cBuilder.createQuery(Location.class);
         Root<Location> location = criteriaQuery.from(Location.class);
 
+        if (name != null) {
+            predicates.add(cBuilder.like(cBuilder.lower(location.get(Location_.locationName)), "%" + name.toLowerCase() + "%"));
+        }
         if (country != null) {
             predicates.add(cBuilder.like(cBuilder.lower(location.get(Location_.country)), "%" + country.toLowerCase() + "%"));
         }

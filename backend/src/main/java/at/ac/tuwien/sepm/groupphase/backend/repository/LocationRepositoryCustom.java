@@ -11,6 +11,7 @@ public interface LocationRepositoryCustom {
     /**
      * Find locations filtered by attributes
      *
+     * @param name of the location
      * @param country of the location
      * @param city of the location
      * @param street of the location
@@ -19,7 +20,7 @@ public interface LocationRepositoryCustom {
      * @param page the number of the page to return
      * @return a page of the found locations
      */
-    Page<Location> findLocationsFiltered(String country, String city, String street, String postalCode, String description, Integer page);
+    Page<Location> findLocationsFiltered(String name, String country, String city, String street, String postalCode, String description, Integer page);
 
     /**
      * @return a list of the names of all countries ordered alphabetically
