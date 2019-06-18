@@ -20,35 +20,38 @@ import {LocationResultsService} from '../../../services/search-results/locations
 })
 export class FloorplanControlComponent implements OnInit {
 
-  // initialization of new hall entity
+  // initialization of new hall entity which users can edit and persist to backend
   private newHall: Hall = new Hall(null, 'New Hall', null, [], []);
+  // observable halls containing all search suggestions for halls
   private halls$: Observable<Hall[]>;
+  // observable locations containing all search suggestions for locations
   private locations$: Observable<Location[]>;
+  // observable shows containing all search suggestions for shows
   private shows$: Observable<Show[]>;
+  // rxjs subjects which are used to both query backend and display search suggestions for hall, location and show search
   private searchHalls = new Subject<string>();
   private searchLocations = new Subject<string>();
   private searchShows = new Subject<string>();
+  // price categories to loop through. Still needs to be updated with show specific categories
   // noinspection JSMismatchedCollectionQueryUpdate
   private priceCategories: string[] = Object.keys(PriceCategory);
   // form groups to add seats/sectors and persist new halls to backend
   private addSeatsForm: FormGroup;
   private addSectorsForm: FormGroup;
   private createHallForm: FormGroup;
-  // list of seats and sectors tickets were selected fro
+  // list of seats and sectors tickets were selected for
+  // noinspection JSMismatchedCollectionQueryUpdate
   private tickets: Array<Seat | Sector> = [];
 
   constructor(private hallService: HallService, private locationResultsService: LocationResultsService,
-              private showService: ShowResultsService) {
+              private showResultsService: ShowResultsService) {
   }
 
   /**
    * run on initialization of component
-   * loads halls and locations from the backend
-   * calls initialization of all FormGroups in the component
+   * initializes necessary form groups
    */
   ngOnInit(): void {
-    // initializing forms that allow users to add seats and sectors to new Halls
-    // as well as persist hall to backend
     this.buildSeatForm();
     this.buildSectorForm();
     this.buildHallForm();
@@ -167,9 +170,10 @@ export class FloorplanControlComponent implements OnInit {
 
   /**
    * submit method for createHallForm
-   * creats new hall with seats or sectors added by user
-   * posts hall to backend via hallService
+   * creates new hall with seats or sectors added by user
+   * persists hall to backend via hallService
    * afterwards resets form
+   * TODO: not yet finished
    */
   private postHall() {
     const values = this.createHallForm.value;
@@ -282,10 +286,9 @@ export class FloorplanControlComponent implements OnInit {
 
   /**
    * called after initialization of component
-   * initializes createHallForm
-   * also notes changes to hall and location selection to set halls locations accordingly
-   * if a specific hall with set location is selected its location will also automatically be set in locationSelection
-   * if a specific location is selected only halls from given location will be presented to the user
+   * initialized createHallForm which allows users to persists halls to backend or delete them there
+   * also initializes rxjs subjects and changes them when createHallForm is changed
+   * this allows HTML to display search suggestions when user looks after a specific hall, show or location
    */
   private buildHallForm() {
     this.createHallForm = new FormGroup({
@@ -304,27 +307,141 @@ export class FloorplanControlComponent implements OnInit {
       distinctUntilChanged(),
       switchMap((hallName: string) => this.hallService.searchHalls(hallName, null, [HallRequestParameter.ID, HallRequestParameter.NAME])
       ));
-    hallSelection.valueChanges.subscribe(hall => this.searchHalls.next(hall));
+    hallSelection.valueChanges.subscribe(hall => {
+      if (typeof hall !== 'object') {
+        this.searchHalls.next(hall);
+      }
+    });
     this.locations$ = this.searchLocations.pipe(
       debounceTime(300),
       distinctUntilChanged(),
       switchMap((locationName: string) => this.locationResultsService.getSearchSuggestions(locationName))
     );
-    locationSelection.valueChanges.subscribe(location => this.searchLocations.next(location));
-    showSelection.valueChanges.subscribe(show => {
-      console.log(show);
+    locationSelection.valueChanges.subscribe((location: string) => {
+      if (typeof location !== 'object') {
+        this.searchLocations.next(location);
+      }
+    });
+    this.shows$ = this.searchShows.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      switchMap((showTerm: string) => {
+        console.log(showTerm);
+        const showComponents: string[] = showTerm.split(',');
+        console.log(showComponents);
+        const eventName: string = showComponents[0];
+        const date: string = showComponents[1];
+        const time: string = showComponents[2];
+        return this.showResultsService.getSearchSuggestions(eventName, date, time);
+      })
+    );
+    showSelection.valueChanges.subscribe(showTerm => {
+      if (typeof showTerm !== 'object') {
+        this.searchShows.next(showTerm);
+      }
     });
   }
 
   /**
-   * helper method
+   * adds tickets to ticket list displayed on the right side of the screen and passed on to other components
+   * @param ticket to be added to the list
+   */
+  private addToTickets(ticket: Seat | Sector): void {
+    this.tickets.push(ticket);
+  }
+
+  /**
+   * display function for show.
+   * @param show string which is displayed as option in show selection menu
+   * consists of the name of the show's associated event, the show date and the show time attributes
+   */
+  private displayShow(show?: Show): string | undefined {
+    console.log('Show: ');
+    console.log(show);
+    return show ? show.event.name + ', ' + show.date + ', ' + show.time : undefined;
+  }
+
+  /**
+   * display function for location
+   * @param location for which to return locationName to display
+   */
+  private displayLocation(location?: Location): string | undefined {
+    return location ? location.locationName : undefined;
+  }
+
+  /**
+   * display function for hall
+   * @param hall for which to return name to display
+   */
+  private displayHall(hall?: Hall): string | undefined {
+    return hall ? hall.name : undefined;
+  }
+
+  /**
+   * interacts with backend via showResultsService and finds single show by its id
+   * @param selectedShow for which to return entire entity from backend
+   */
+  private loadSelectedShow(selectedShow: Show): void {
+    this.showResultsService.findOneById(selectedShow.id).subscribe(
+      show => {
+        this.createHallForm.patchValue({
+          'showSelection': show,
+          'hallSelection': show.hall,
+          'locationSelection': show.hall.location
+        });
+      },
+      error => console.log(error)
+    );
+  }
+
+  /**
+   * interacts with backend via locationResultsService and finds single location by its id
+   * @param selectedLocation for which to return entire entity from backend
+   */
+  private loadSelectedLocation(selectedLocation: Location): void {
+    this.locationResultsService.findOneById(selectedLocation.id).subscribe(
+      location => {
+        let hall = this.getSelectedHall();
+        let show = this.createHallForm.get('showSelection').value;
+        if (hall.location) {
+          hall = hall.location.id === location.id ? hall : null;
+          show = hall ? show : null;
+        }
+        this.createHallForm.patchValue({
+          'locationSelection': location,
+          'hallSelection': hall,
+          'showSelection': show
+        });
+      },
+      error => console.log(error)
+    );
+  }
+
+  /**
+   * interacts wit hbackend via hallService and finds single hall by its id
+   * @param selectedHall for which to return entire entity from backend
+   */
+  private loadSelectedHall(selectedHall: Hall): void {
+    this.hallService.findOneById(selectedHall.id).subscribe(
+      hall => {
+        console.log(hall);
+        this.createHallForm.patchValue({
+          'hallSelection': hall,
+          'locationSelection': hall.location
+        });
+        console.log(this.createHallForm.value);
+      },
+      error => console.log(error)
+    );
+  }
+
+  /**
+   * getter
    * returns hall entity currently selected in createHallForm
    */
   private getSelectedHall(): Hall {
     return this.createHallForm.get('hallSelection').value;
   }
-
-  private addToTickets(ticket: Seat | Sector): void {
-    this.tickets.push(ticket);
-  }
 }
+
+
