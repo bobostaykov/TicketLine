@@ -4,6 +4,7 @@ import at.ac.tuwien.sepm.groupphase.backend.conversion.CaseInsensitiveEnumConver
 import at.ac.tuwien.sepm.groupphase.backend.datatype.HallRequestParameter;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.hall.HallDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.searchParameters.HallSearchParametersDTO;
+import at.ac.tuwien.sepm.groupphase.backend.entity.Location;
 import at.ac.tuwien.sepm.groupphase.backend.exception.CustomValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.service.HallService;
@@ -49,9 +50,15 @@ public class HallEndpoint {
     @GetMapping
     @ApiOperation(value = "Get all saved halls", authorizations = {@Authorization(value = "apiKey")})
     public List<HallDTO> getHalls(@RequestParam(value = "fields", required = false) List<HallRequestParameter> fields,
-                                  @RequestBody(required = false) HallSearchParametersDTO searchParametersDTO){
-        LOGGER.info("GET Halls: Halls with " + (isEmpty(fields) ? "all parameters" : "parameters " +  fields.toString())
-        + (searchParametersDTO != null ? "matching search parameters " + searchParametersDTO.toString() : ""));
+                                  @RequestParam(required = false) String name,
+                                  @RequestParam(required = false) Location location){
+        // TODO: add correct logger statement
+//        LOGGER.info("GET Halls: Halls with " + (isEmpty(fields) ? "all parameters" : "parameters " +  fields.toString())
+//        + (searchParametersDTO != null ? "matching search parameters " + searchParametersDTO.toString() : ""));
+        HallSearchParametersDTO searchParametersDTO = HallSearchParametersDTO.builder()
+            .name(name)
+            .location(location)
+            .build();
         return hallService.findHalls(fields, searchParametersDTO);
     }
 

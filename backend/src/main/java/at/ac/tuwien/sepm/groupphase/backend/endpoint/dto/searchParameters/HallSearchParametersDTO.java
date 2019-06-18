@@ -28,6 +28,10 @@ public class HallSearchParametersDTO {
         this.location = location;
     }
 
+    public static HallSearchParametersDTOBuilder builder(){
+        return new HallSearchParametersDTOBuilder();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -50,5 +54,25 @@ public class HallSearchParametersDTO {
             '}';
     }
 
+    public static class HallSearchParametersDTOBuilder {
+        private String name;
+        private Location location;
 
+        public HallSearchParametersDTOBuilder name(String name){
+            this.name = name;
+            return this;
+        }
+
+        public HallSearchParametersDTOBuilder location(Location location){
+            this.location = location;
+            return this;
+        }
+
+        public HallSearchParametersDTO build(){
+            HallSearchParametersDTO searchParameters = new HallSearchParametersDTO();
+            searchParameters.setName(name);
+            searchParameters.setLocation(location);
+            return searchParameters;
+        }
+    }
 }
