@@ -9,6 +9,7 @@ import at.ac.tuwien.sepm.groupphase.backend.entity.News;
 import at.ac.tuwien.sepm.groupphase.backend.entity.User;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.user.UserMapper;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
+import at.ac.tuwien.sepm.groupphase.backend.integrationtest.base.BaseIntegrationTest;
 import at.ac.tuwien.sepm.groupphase.backend.integrationtest.base.BaseIntegrationTestWithMockedUserCredentials;
 import at.ac.tuwien.sepm.groupphase.backend.repository.LoginAttemptsRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.UserRepository;
@@ -31,7 +32,7 @@ import java.util.List;
 
 import static org.hamcrest.core.Is.is;
 
-public class UserIntegrationTest extends BaseIntegrationTestWithMockedUserCredentials {
+public class UserIntegrationTest extends BaseIntegrationTest {
     private static final String USER_ENDPOINT = "/users";
     private static final String SPECIFIC_USER_PATH = "/{userId}";
     private static final String BLOCKED_USER_PATH = "/blocked";
@@ -105,14 +106,12 @@ public class UserIntegrationTest extends BaseIntegrationTestWithMockedUserCreden
     }
 
     @Test
-    @Ignore
     public void AuthenticationWithCorrectCredentials_resultsInNotNullToken(){
         AuthenticationToken token = authenticationService.authenticate(TEST_USER_NAME_1, TEST_USER_PASS_1);
         Assert.assertTrue(token != null);
     }
 
     @Test
-    @Ignore
     public void AuthenticationWithBadCredentials_throwsBadCredentialsException(){
         thrown.expect(BadCredentialsException.class);
         AuthenticationToken token = authenticationService.authenticate(TEST_USER_NAME_1, TEST_USER_PASS_2);
@@ -198,7 +197,6 @@ public class UserIntegrationTest extends BaseIntegrationTestWithMockedUserCreden
     }
 
     @Test
-    @Ignore
     public void authenticationOfUserWithBadCredentials_raisesAttemptsCounter(){
         userService.unblockUser(testUser1.getId());
         try{
@@ -211,7 +209,6 @@ public class UserIntegrationTest extends BaseIntegrationTestWithMockedUserCreden
     }
 
     @Test
-    @Ignore
     public void authenticationOfUserWithGoodCredentials_setsCounterBackToZero(){
         LoginAttempts attempts = loginAttemptsRepository.findById(testUser1.getId()).get();
         attempts.setNumberOfAttempts(1);
@@ -222,7 +219,6 @@ public class UserIntegrationTest extends BaseIntegrationTestWithMockedUserCreden
     }
 
     @Test
-    @Ignore
     public void authenticationOfAdminWithBadCredentials_doesNotChangeCounter(){
         LoginAttempts attempts = loginAttemptsRepository.findById(testUser2.getId()).get();
         Assert.assertEquals(0, attempts.getNumberOfAttempts());
