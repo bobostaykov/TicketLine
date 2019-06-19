@@ -12,9 +12,14 @@ import at.ac.tuwien.sepm.groupphase.backend.exception.TicketSoldOutException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.*;
 import at.ac.tuwien.sepm.groupphase.backend.service.CustomerService;
 import at.ac.tuwien.sepm.groupphase.backend.service.TicketService;
+import at.ac.tuwien.sepm.groupphase.backend.service.generator.PDFGenerator;
+import com.itextpdf.text.DocumentException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -31,12 +36,15 @@ public class TicketServiceImpl implements TicketService {
     private final CustomerService customerService;
     private final SeatRepository seatRepository;
     private final SectorRepository sectorRepository;
+    private final PDFGenerator pdfGenerator;
+
+    private static final String RECEIPT_PATH = "receipt/";
 
     public TicketServiceImpl(TicketRepository ticketRepository, CustomerRepository customerRepository,
                              EventRepository eventRepository, TicketMapper ticketMapper, ShowMapper showMapper,
                              CustomerMapper customerMapper, CustomerService customerService,
                              ShowRepository showRepository, SeatRepository seatRepository,
-                             SectorRepository sectorRepository) {
+                             SectorRepository sectorRepository, PDFGenerator pdfGenerator) {
         this.ticketRepository = ticketRepository;
         this.customerRepository = customerRepository;
         this.eventRepository = eventRepository;
@@ -47,6 +55,7 @@ public class TicketServiceImpl implements TicketService {
         this.showRepository = showRepository;
         this.seatRepository = seatRepository;
         this.sectorRepository = sectorRepository;
+        this.pdfGenerator = pdfGenerator;
     }
 
     @Override
@@ -160,6 +169,41 @@ public class TicketServiceImpl implements TicketService {
             result2 = ticketRepository.findAllByShow(shows);
         }
         return ticketMapper.ticketToTicketDTO(this.difference(result1, result2));
+    }
+
+    @Override
+    public MultipartFile getReceipt(List<String> ticketIDs) throws DocumentException, IOException {
+        List<TicketDTO> tickets = ticketMapper.ticketToTicketDTO(ticketRepository.findByIdIn(this.parseListOfIds(ticketIDs)));
+        return pdfGenerator.generateReceipt(tickets, false);
+    }
+
+    @Override
+    @Transactional
+    public MultipartFile deleteAndGetCancellationReceipt(List<String> ticketIDs) throws DocumentException, IOException {
+        List<TicketDTO> tickets = ticketMapper.ticketToTicketDTO(ticketRepository.findByIdIn(this.parseListOfIds(ticketIDs)));
+        ticketRepository.deleteByIdIn(this.parseListOfIds(ticketIDs));
+        return pdfGenerator.generateReceipt(tickets, true);
+    }
+
+    @Override
+    public MultipartFile generateTicketPDF(List<String> ticketIDs) throws DocumentException, IOException, NoSuchAlgorithmException {
+        List<TicketDTO> tickets = ticketMapper.ticketToTicketDTO(ticketRepository.findByIdIn(this.parseListOfIds(ticketIDs)));
+        return pdfGenerator.generateTicketPDF(tickets);
+    }
+
+    /**
+     * Parse a list of ids
+     *
+     * @param stringIds List of ticket ids as strings
+     * @return a list ticket ids as Long
+     */
+    private List<Long> parseListOfIds(List<String> stringIds) {
+        List<Long> ids = new ArrayList<>();
+        for (String i:
+            stringIds) {
+            ids.add(Long.parseLong(i));
+        }
+        return ids;
     }
 
     /**
