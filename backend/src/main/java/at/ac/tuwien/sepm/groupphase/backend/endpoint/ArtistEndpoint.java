@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -26,12 +27,12 @@ public class ArtistEndpoint {
         this.artistService = artistService;
     }
 
-    // OK
     @RequestMapping(method = RequestMethod.GET)
     @ApiOperation(value = "Get artists with 'artistName' as part of their name", authorizations = {@Authorization(value = "apiKey")})
-    public List<ArtistDTO> findArtistsByName(@RequestParam(value = "artist_name") String artistName) {
-        LOGGER.info("findArtistsByName() called");
-        return artistService.findArtistsByName(artistName);
+    public Page<ArtistDTO> findArtistsByName(@RequestParam(value = "artist_name") String artistName,
+                                             @RequestParam(value = "page", required = false) Integer page) {
+        LOGGER.info("ArtistEndpoint: findArtistsByName");
+        return artistService.findArtistsByName(artistName, page);
     }
 
 }

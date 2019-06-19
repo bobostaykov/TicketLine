@@ -15,16 +15,12 @@ import at.ac.tuwien.sepm.groupphase.backend.repository.LoginAttemptsRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.UserRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.HeaderTokenAuthenticationService;
 import at.ac.tuwien.sepm.groupphase.backend.service.UserService;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import org.junit.*;
 import org.junit.rules.ExpectedException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -32,8 +28,6 @@ import org.springframework.security.authentication.InternalAuthenticationService
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.core.Is.is;

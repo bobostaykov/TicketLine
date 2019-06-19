@@ -28,9 +28,10 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
-    public Page<LocationDTO> findLocationsFiltered(String country, String city, String street, String postalCode, String description, Integer page) throws ServiceException {
+    public Page<LocationDTO> findLocationsFiltered(String name, String country, String city, String street, String postalCode, String description, Integer page) throws ServiceException {
         LOGGER.info("Location Service: findLocationsFiltered()");
         try {
+            if (name != null && name.equals("")) name = null;
             if (country != null && country.equals("")) country = null;
             if (city != null && city.equals("")) city = null;
             if (street != null && street.equals("")) street = null;
@@ -40,7 +41,7 @@ public class LocationServiceImpl implements LocationService {
             if(page < 0) {
                 throw new IllegalArgumentException("Not a valid page.");
             }
-            return locationRepository.findLocationsFiltered(country, city, street, postalCode, description, page).map(locationMapper::locationToLocationDTO);
+            return locationRepository.findLocationsFiltered(name, country, city, street, postalCode, description, page).map(locationMapper::locationToLocationDTO);
         } catch (PersistenceException e) {
             throw new ServiceException(e.getMessage(), e);
         }

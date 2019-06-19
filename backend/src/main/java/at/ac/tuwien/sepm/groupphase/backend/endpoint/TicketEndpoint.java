@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
@@ -128,7 +127,7 @@ public class TicketEndpoint {
 
     @RequestMapping(value = "/receipt", method = RequestMethod.GET)
     @ApiOperation(value = "Get receipt PDF for list of tickets", authorizations = {@Authorization(value = "apiKey")})
-    public ResponseEntity<Resource> getReceiptPDF(@RequestParam List<String> tickets, HttpServletResponse response) throws IOException {
+    public ResponseEntity<Resource> getReceiptPDF(@RequestParam List<String> tickets) {
         MultipartFile pdf;
         try {
             pdf = ticketService.getReceipt(tickets);

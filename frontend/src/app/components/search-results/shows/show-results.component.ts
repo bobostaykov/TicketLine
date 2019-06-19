@@ -29,6 +29,7 @@ export class ShowResultsComponent implements OnInit {
   private timeFrom: string;
   private timeTo: string;
   private locationId: number;
+  private locationName: string;
   private country: string;
   private city: string;
   private street: string;
@@ -77,6 +78,7 @@ export class ShowResultsComponent implements OnInit {
           this.minPrice = +this.route.snapshot.queryParamMap.get('minPrice'),
           this.maxPrice = +this.route.snapshot.queryParamMap.get('maxPrice'),
           this.duration = +this.route.snapshot.queryParamMap.get('duration'),
+          this.locationName = this.route.snapshot.queryParamMap.get('locationName'),
           this.country = this.route.snapshot.queryParamMap.get('country'),
           this.city = this.route.snapshot.queryParamMap.get('city'),
           this.street = this.route.snapshot.queryParamMap.get('street'),
@@ -108,7 +110,7 @@ export class ShowResultsComponent implements OnInit {
         break;
       case 'ATTRIBUTES': this.loadShowsFilteredSomeParameters(
         this.eventName, this.eventType, this.artistName, this.hallName, this.dateFrom, this.dateTo, this.timeFrom,
-        this.timeTo, this.minPrice, this.maxPrice, this.duration, this.country,
+        this.timeTo, this.minPrice, this.maxPrice, this.duration, this.locationName, this.country,
         this.city, this.street, this.postalCode, this.page);
         break;
       default:
@@ -163,10 +165,10 @@ export class ShowResultsComponent implements OnInit {
   }
 
   private loadShowsFilteredSomeParameters(eventName, eventType, artistName, hallName, dateFrom, dateTo, timeFrom, timeTo, minPrice: number, maxPrice: number,
-                                            duration: number, country, city, street, postalCode, page: number) {
+                                            duration: number, locationName, country, city, street, postalCode, page: number) {
     console.log('ShowResultsComponent: loadShowsFilteredSomeParameters');
     this.showService.findShowsFilteredBySomeParameters(eventName, eventType, artistName, hallName, dateFrom, dateTo, timeFrom, timeTo, minPrice, maxPrice,
-      duration, country, city, street, postalCode, page).subscribe(
+      duration, locationName, country, city, street, postalCode, page).subscribe(
       result => {
         this.shows = result['content'];
         this.pages = new Array(result['totalPages']);

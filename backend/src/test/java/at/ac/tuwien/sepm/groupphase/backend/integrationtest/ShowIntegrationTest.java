@@ -2,28 +2,27 @@ package at.ac.tuwien.sepm.groupphase.backend.integrationtest;
 
 import at.ac.tuwien.sepm.groupphase.backend.datatype.EventType;
 import at.ac.tuwien.sepm.groupphase.backend.datatype.PriceCategory;
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.searchParameters.ShowSearchParametersDTO;
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.show.ShowDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.*;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.show.ShowMapper;
-import at.ac.tuwien.sepm.groupphase.backend.integrationtest.base.BaseIntegrationTest;
 import at.ac.tuwien.sepm.groupphase.backend.integrationtest.base.BaseIntegrationTestWithMockedUserCredentials;
 import at.ac.tuwien.sepm.groupphase.backend.repository.*;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
-import org.junit.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import static org.hamcrest.core.Is.is;
 import org.junit.Assert;
-import org.springframework.data.domain.Page;
+import org.junit.Before;
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+
+import static org.hamcrest.core.Is.is;
 
 public class ShowIntegrationTest extends BaseIntegrationTest {
     private static final String SHOWS_SEARCH_ENDPOINT = "/shows/filter?";
@@ -193,13 +192,6 @@ public class ShowIntegrationTest extends BaseIntegrationTest {
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
         List<Show> shows = response.jsonPath().getList("content");
         Assert.assertEquals(shows.size(), 2);
-    }
-
-    @Test
-    public void repositoryTest(){
-        ShowSearchParametersDTO parametersDTO = ShowSearchParametersDTO.builder().eventName("irthday").build();
-        Page<Show> showPage = showRepository.findAllShowsFiltered(parametersDTO,0);
-        Assert.assertTrue(showPage.hasContent());
     }
 
     @Test

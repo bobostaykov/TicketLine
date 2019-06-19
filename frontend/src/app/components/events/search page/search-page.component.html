@@ -1,7 +1,7 @@
 <h1 class="mt-5" align="center">Search Page</h1>
 
-<h3 class="mt-5">Search for specific shows:</h3>
-<form [formGroup]="showForm" (ngSubmit)="searchForSpecificShows()">
+<h3 class="mt-5">Search for shows:</h3>
+<form [formGroup]="showForm" (ngSubmit)="searchForShows()">
   <div>
     <mat-form-field appearance="outline">
       <mat-label>Event Name</mat-label>
@@ -63,6 +63,10 @@
   <div>
     <p><mat-label>Location:</mat-label></p>
     <mat-form-field appearance="outline">
+      <mat-label>Location Name</mat-label>
+      <input matInput type="text" id="show_location_name" formControlName="showLocationName" placeholder="Location Name" [(ngModel)]="showLocationName">
+    </mat-form-field>
+    <mat-form-field appearance="outline">
       <mat-label>Country</mat-label>
       <mat-select id="show_country" formControlName="showCountry" placeholder="Country" [(ngModel)]="showCountry">
         <mat-option>-- None --</mat-option>
@@ -92,8 +96,8 @@
 
 
 
-<h3 class="mt-5">Search for specific events:</h3>
-<form [formGroup]="eventForm" (ngSubmit)="searchByEventAttributes()">
+<h3 class="mt-5">Search for events:</h3>
+<form [formGroup]="eventForm" (ngSubmit)="searchForEvents()">
   <mat-form-field appearance="outline">
     <mat-label>Name</mat-label>
     <input matInput type="text" id="event_name" formControlName="eventName" placeholder="Name" [(ngModel)]="eventName">
@@ -104,6 +108,11 @@
       <mat-option>-- None --</mat-option>
       <mat-option *ngFor="let type of eventTypeKeys" [value]="type">{{type}}</mat-option>
     </mat-select>
+  </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>Artist Name</mat-label>
+    <input matInput type="text" id="event_artist_name" formControlName="eventArtistName" placeholder="ArtistName"
+           [(ngModel)]="eventArtistName">
   </mat-form-field>
   <mat-form-field appearance="outline">
     <mat-label>Content</mat-label>
@@ -122,8 +131,12 @@
 
 
 
-<h3 class="mt-5">Search for specific locations:</h3>
-<form [formGroup]="locationForm" (ngSubmit)="searchByLocation()">
+<h3 class="mt-5">Search for locations:</h3>
+<form [formGroup]="locationForm" (ngSubmit)="searchForLocations()">
+  <mat-form-field appearance="outline">
+    <mat-label>Name</mat-label>
+    <input matInput type="text" id="location_name" formControlName="locationName" placeholder="Name" [(ngModel)]="locationName">
+  </mat-form-field>
   <mat-form-field appearance="outline">
     <mat-label>Country</mat-label>
     <mat-select id="location_country" formControlName="locationCountry" placeholder="Country" [(ngModel)]="locationCountry">
@@ -158,8 +171,8 @@
 
 
 
-<h3 class="mt-5">Search for an artist:</h3>
-<form [formGroup]="artistForm" (ngSubmit)="submitArtistForm()">
+<h3 class="mt-5">Search for artists:</h3>
+<form [formGroup]="artistForm" (ngSubmit)="searchForArtists()">
   <mat-form-field appearance="outline">
     <mat-label>Artist Name</mat-label>
     <input matInput type="text" id="artist_name" formControlName="artist_name" placeholder="Artist Name"
@@ -171,4 +184,3 @@
     <button mat-raised-button id="search_artist" color="primary">Search</button>
   </p>
 </form>
-

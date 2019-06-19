@@ -7,7 +7,6 @@ import at.ac.tuwien.sepm.groupphase.backend.repository.LocationRepositoryCustom;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.support.PagedListHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -35,9 +34,10 @@ public class LocationRepositoryImpl implements LocationRepositoryCustom {
     }
 
     @Override
-    public Page<Location> findLocationsFiltered(String country, String city, String street, String postalCode, String description, Integer page) {
+    public Page<Location> findLocationsFiltered(String name, String country, String city, String street, String postalCode, String description, Integer page) {
 
         LOGGER.info("Location Repository Impl: findLocationsFiltered");
+        LOGGER.debug("name: " + name);
         LOGGER.debug("country: " + country);
         LOGGER.debug("city: " + city);
         LOGGER.debug("street: " + street);
@@ -50,6 +50,9 @@ public class LocationRepositoryImpl implements LocationRepositoryCustom {
         CriteriaQuery<Location> criteriaQuery = cBuilder.createQuery(Location.class);
         Root<Location> location = criteriaQuery.from(Location.class);
 
+        if (name != null) {
+            predicates.add(cBuilder.like(cBuilder.lower(location.get(Location_.locationName)), "%" + name.toLowerCase() + "%"));
+        }
         if (country != null) {
             predicates.add(cBuilder.like(cBuilder.lower(location.get(Location_.country)), "%" + country.toLowerCase() + "%"));
         }

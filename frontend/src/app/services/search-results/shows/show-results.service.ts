@@ -25,7 +25,7 @@ export class ShowResultsService {
   }
 
   public findShowsFilteredBySomeParameters(eventName, eventType, artistName, hallName, dateFrom, dateTo, timeFrom, timeTo, minPrice, maxPrice,
-                                           duration, country, city, street, postalCode, page) {
+                                           duration, locationName, country, city, street, postalCode, page) {
     console.log('ShowResultsService: findShowsFilteredByShowAttributes');
     let parameters = new HttpParams();
     parameters = eventName ? parameters.append('eventName', eventName) : parameters;
@@ -39,6 +39,7 @@ export class ShowResultsService {
     parameters = minPrice ? parameters.append('minPrice', minPrice) : parameters;
     parameters = maxPrice ? parameters.append('maxPrice', maxPrice) : parameters;
     parameters = duration ? parameters.append('duration', duration) : parameters;
+    parameters = locationName ? parameters.append('locationName', locationName) : parameters;
     parameters = country ? parameters.append('country', country) : parameters;
     parameters = city ? parameters.append('city', city) : parameters;
     parameters = street ? parameters.append('street', street) : parameters;
