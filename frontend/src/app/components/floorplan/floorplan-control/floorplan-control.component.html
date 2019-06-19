@@ -176,6 +176,6 @@
                      (addTicket)="addToTickets($event)"></app-floorplan-svg>
   <div class="floorplanTickets" *ngIf="tickets && tickets.length">
     <app-floorplan-ticket class="floorplanTickets" [tickets]="tickets"></app-floorplan-ticket>
-    <a mat-raised-button color="primary">Continue</a>
+    <a mat-raised-button color="primary" (click)="routeToTickets()">Continue</a>
   </div>
 </div>

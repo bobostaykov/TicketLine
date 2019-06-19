@@ -442,6 +442,10 @@ export class FloorplanControlComponent implements OnInit {
   private getSelectedHall(): Hall {
     return this.createHallForm.get('hallSelection').value;
   }
+
+  routeToTickets() {
+
+  }
 }
 
 
