@@ -3,6 +3,7 @@ package at.ac.tuwien.sepm.groupphase.backend.integrationtest;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.location.LocationDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Location;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
+import at.ac.tuwien.sepm.groupphase.backend.integrationtest.base.BaseIntegrationTest;
 import at.ac.tuwien.sepm.groupphase.backend.integrationtest.base.BaseIntegrationTestWithMockedUserCredentials;
 import at.ac.tuwien.sepm.groupphase.backend.repository.LocationRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -23,7 +24,7 @@ import java.util.Collections;
 
 import static org.hamcrest.core.Is.is;
 
-public class LocationEndpointTest extends BaseIntegrationTestWithMockedUserCredentials {
+public class LocationEndpointTest extends BaseIntegrationTest {
 
     private static final String LOCATION_ENDPOINT = "/locations";
 

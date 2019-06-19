@@ -12,6 +12,7 @@ import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.seat.SeatDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.show.ShowDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.ticket.TicketDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.*;
+import at.ac.tuwien.sepm.groupphase.backend.integrationtest.base.BaseIntegrationTest;
 import at.ac.tuwien.sepm.groupphase.backend.integrationtest.base.BaseIntegrationTestWithMockedUserCredentials;
 import at.ac.tuwien.sepm.groupphase.backend.repository.CustomerRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.TicketRepository;
@@ -34,7 +35,7 @@ import java.util.*;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.ArgumentMatchers.any;
 
-public class TicketEndpointTest extends BaseIntegrationTestWithMockedUserCredentials {
+public class TicketEndpointTest extends BaseIntegrationTest {
 
     private static final String TICKET_ENDPOINT = "/tickets";
     private static final String RESERVATED_TICKET = "/reservated";

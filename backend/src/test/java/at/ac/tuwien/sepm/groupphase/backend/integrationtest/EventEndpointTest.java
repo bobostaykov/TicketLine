@@ -8,6 +8,7 @@ import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.event.TopTenDetailsDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.searchParameters.EventSearchParametersDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Artist;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Event;
+import at.ac.tuwien.sepm.groupphase.backend.integrationtest.base.BaseIntegrationTest;
 import at.ac.tuwien.sepm.groupphase.backend.integrationtest.base.BaseIntegrationTestWithMockedUserCredentials;
 import at.ac.tuwien.sepm.groupphase.backend.repository.EventRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -31,7 +32,7 @@ import java.util.*;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.ArgumentMatchers.any;
 
-public class EventEndpointTest extends BaseIntegrationTestWithMockedUserCredentials {
+public class EventEndpointTest extends BaseIntegrationTest {
 
     private static final String EVENT_ENDPOINT = "/events";
     private static final String TOP_TEN_EVENTS_PATH = "/topten";

@@ -2,6 +2,7 @@ package at.ac.tuwien.sepm.groupphase.backend.integrationtest;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.artist.ArtistDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Artist;
+import at.ac.tuwien.sepm.groupphase.backend.integrationtest.base.BaseIntegrationTest;
 import at.ac.tuwien.sepm.groupphase.backend.integrationtest.base.BaseIntegrationTestWithMockedUserCredentials;
 import at.ac.tuwien.sepm.groupphase.backend.repository.ArtistRepository;
 import io.restassured.RestAssured;
@@ -19,7 +20,7 @@ import java.util.Collections;
 
 import static org.hamcrest.core.Is.is;
 
-public class ArtistEndpointTest extends BaseIntegrationTestWithMockedUserCredentials {
+public class ArtistEndpointTest extends BaseIntegrationTest {
 
     private static final String ARTIST_ENDPOINT = "/artists?artist_name=Artist1";
     private static final Long ARTIST_ID = 1L;

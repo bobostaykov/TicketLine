@@ -25,7 +25,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-public class ShowIntegrationTest extends BaseIntegrationTestWithMockedUserCredentials {
+public class ShowIntegrationTest extends BaseIntegrationTest {
     private static final String SHOWS_SEARCH_ENDPOINT = "/shows/filter?";
 
     @Autowired
