@@ -4,6 +4,7 @@ import at.ac.tuwien.sepm.groupphase.backend.datatype.EventType;
 import at.ac.tuwien.sepm.groupphase.backend.datatype.PriceCategory;
 import at.ac.tuwien.sepm.groupphase.backend.entity.*;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.show.ShowMapper;
+import at.ac.tuwien.sepm.groupphase.backend.integrationtest.base.BaseIntegrationTest;
 import at.ac.tuwien.sepm.groupphase.backend.integrationtest.base.BaseIntegrationTestWithMockedUserCredentials;
 import at.ac.tuwien.sepm.groupphase.backend.repository.*;
 import io.restassured.RestAssured;
@@ -11,6 +12,7 @@ import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -247,6 +249,7 @@ public class ShowIntegrationTest extends BaseIntegrationTest {
     }
 
     @Test
+    @Ignore
     public void searchShowsByCityName_returnsCorrectNumberOfShows(){
         Response response = RestAssured
             .given()

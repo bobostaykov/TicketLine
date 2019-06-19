@@ -2,7 +2,7 @@ package at.ac.tuwien.sepm.groupphase.backend.integrationtest;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.customer.CustomerDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Customer;
-import at.ac.tuwien.sepm.groupphase.backend.integrationtest.base.BaseIntegrationTestWithMockedUserCredentials;
+import at.ac.tuwien.sepm.groupphase.backend.integrationtest.base.BaseIntegrationTest;
 import at.ac.tuwien.sepm.groupphase.backend.repository.CustomerRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -26,7 +26,7 @@ import java.util.Optional;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.Matchers.any;
 
-public class CustomerEndpointTest extends BaseIntegrationTestWithMockedUserCredentials {
+public class CustomerEndpointTest extends BaseIntegrationTest {
 
     private static final String CUSTOMER_ENDPOINT = "/customers";
 
