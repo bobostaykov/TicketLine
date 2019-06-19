@@ -1,0 +1,26 @@
+.customerForm{
+  width: 50%;
+
+  table {
+    tr{
+      td{
+        font-size: 22px;
+      }
+
+      td:first-child{
+        color: #848484;
+        padding-left: 0;
+      }
+    }
+  }
+}
+
+.floorplanTickets{
+  width: 30%;
+}
+
+.customerPagination{
+  a{
+    cursor: pointer;
+  }
+}

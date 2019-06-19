@@ -1,13 +1,9 @@
-import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
-import {NgbPaginationConfig} from '@ng-bootstrap/ng-bootstrap';
-import {FormBuilder, FormGroup} from '@angular/forms';
-import {AuthService} from '../../services/auth/auth.service';
-
-import {TicketService} from '../../services/ticket/ticket.service';
-import {Ticket} from '../../dtos/ticket';
-import {News} from '../../dtos/news';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {Customer} from '../../dtos/customer';
-import {TicketPost} from '../../dtos/ticket-post';
+import {CustomerService} from '../../services/customer.service';
+import {NgbModal, NgbModalOptions} from '@ng-bootstrap/ng-bootstrap';
+import {Seat} from '../../dtos/seat';
+import {Sector} from '../../dtos/sector';
 
 @Component({
   selector: 'app-ticket',
@@ -16,45 +12,122 @@ import {TicketPost} from '../../dtos/ticket-post';
 })
 export class TicketComponent implements OnInit {
 
-  error: boolean = false;
-  errorMessage: string = '';
-  ticketForm: FormGroup;
-  submitted: boolean = false;
-  private ticket: TicketPost;
+  private tickets: Seat[] | Sector[];
+  private customerSelection: string = 'Anonymous';
+  private selectedCustomer: Customer;
+  private anonymousCustomer: Customer = null;
+  private foundCustomer: Customer;
+  private addedCustomer: Customer;
+  private customerFiltered: Customer;
+  private customers: Customer[];
+  private page;
+  private pages: number[];
+  @ViewChild('searchCustomersModal') modalReference: ElementRef;
 
-  constructor(private ticketService: TicketService, private ngbPaginationConfig: NgbPaginationConfig, private formBuilder: FormBuilder,
-              private cd: ChangeDetectorRef, private authService: AuthService) {}
+  constructor(private customerService: CustomerService, private modalService: NgbModal) {
+  }
 
   ngOnInit() {
   }
 
-  /**
-   * Returns true if the authenticated user is an admin
-   */
-  isAdmin(): boolean {
-    return this.authService.getUserRole() === 'ADMIN';
+  private getName(): string {
+    return this.selectedCustomer ? this.selectedCustomer.firstname + ' ' + this.selectedCustomer.name : '-';
   }
 
-  private defaultServiceErrorHandling(error: any) {
-    console.log(error);
-    this.error = true;
-    if (error.error.ticket !== 'No message available') {
-      this.errorMessage = error.error.ticket;
-    } else {
-      this.errorMessage = error.error.error;
+  private getMail(): string {
+    return this.selectedCustomer ? this.selectedCustomer.email : '-';
+  }
+
+  private getBirthday(): string {
+    return this.selectedCustomer ? this.selectedCustomer.birthday : '-';
+  }
+
+  private handleSearchSubmission(customer: Customer) {
+    this.customerFiltered = customer;
+    this.searchCustomers(0);
+    const options: NgbModalOptions = {
+      size: 'lg'
+    };
+    this.modalService.open(this.modalReference, options);
+  }
+
+  private searchCustomers(page: number): void {
+    console.log('Queries customerService to search for customers resembling ' + JSON.stringify(this.customerFiltered));
+    this.page = page;
+    this.customerService.searchCustomers(this.customerFiltered, page).subscribe(
+      result => {
+        this.customers = result['content'];
+        this.pages = new Array(result['totalPages']);
+      },
+      error => console.log(error),
+    );
+  }
+
+  /**
+   * adds newly created customer to backend
+   * @param customer to be added
+   */
+  private addCustomer(customer: Customer) {
+    console.log('Adding customer: ' + JSON.stringify(customer));
+    this.customerService.createCustomer(customer).subscribe(
+      addedCustomer => {
+        this.addedCustomer = addedCustomer;
+        this.selectedCustomer = customer;
+      },
+      error => console.log(error)
+    );
+  }
+
+  /**
+   * Sets page number to the chosen i
+   */
+  private setPage(i) {
+    this.page = i;
+    if (this.customerFiltered) {
+      this.searchCustomers(this.page);
     }
   }
 
   /**
-   * Error flag will be deactivated, which clears the error message
+   * Sets page number to the previous one and calls the last method
    */
-  vanishError() {
-    this.error = false;
+  private previousPage() {
+    if (this.page > 0) {
+      this.page--;
+      if (this.customerFiltered) {
+        this.searchCustomers(this.page);
+      }
+    }
   }
 
-  private clearForm() {
-    this.ticketForm.reset();
-    this.submitted = false;
+  /**
+   * Sets page number to the next one and calls the last method
+   */
+  private nextPage() {
+    if (this.page < this.pages.length - 1) {
+      this.page++;
+      if (this.customerFiltered) {
+        this.searchCustomers(this.page);
+      }
+    }
   }
 
+  selectCustomer(customer: Customer) {
+    this.foundCustomer = customer;
+    this.selectedCustomer = customer;
+  }
+
+  handleChangeInCustomerSelection(selectionChoice: string) {
+    switch (selectionChoice) {
+      case 'Anonymous':
+        this.selectedCustomer = this.anonymousCustomer;
+        break;
+      case 'Search Customers':
+        this.selectedCustomer = this.foundCustomer;
+        break;
+      case 'Add Customer':
+        this.selectedCustomer = this.addedCustomer;
+        break;
+    }
+  }
 }
