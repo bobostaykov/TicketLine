@@ -1,6 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.datagenerator.performanceTest;
 
-import at.ac.tuwien.sepm.groupphase.backend.configuration.DataGeneratorConfiguration;
+import at.ac.tuwien.sepm.groupphase.backend.configuration.PerformanceTestDataGeneratorConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -23,14 +23,14 @@ public class PerformanceTestDataGeneratorManager implements ApplicationContextAw
     private ApplicationContext context;
 
     PerformanceTestDataGeneratorManager(){
-        context = new AnnotationConfigApplicationContext(DataGeneratorConfiguration.class);
+        context = new AnnotationConfigApplicationContext(PerformanceTestDataGeneratorConfiguration.class);
     }
 
     @PostConstruct
-    private void generateData() {
+    private void generatePerformanceTestData() {
         LOGGER.info("---------- START DATA GENERATION ----------");
         context.getBean(NewsPerformanceTestDataGenerator.class).generate();
-        /*context.getBean(ArtistPerformanceTestDataGenerator.class).generate();
+        context.getBean(ArtistPerformanceTestDataGenerator.class).generate();
         context.getBean(EventPerformanceTestDataGenerator.class).generate();
         context.getBean(LocationPerformanceTestDataGenerator.class).generate();
         context.getBean(HallPerformanceTestDataGenerator.class).generate();
@@ -38,7 +38,7 @@ public class PerformanceTestDataGeneratorManager implements ApplicationContextAw
         context.getBean(ShowPerformanceTestDataGenerator.class).generate();
         context.getBean(CustomerPerformanceTestDataGenerator.class).generate();
         context.getBean(UserPerformanceTestDataGenerator.class).generate();
-        context.getBean(TicketPerformanceTestDataGenerator.class).generate();*/
+        context.getBean(TicketPerformanceTestDataGenerator.class).generate();
         LOGGER.info("--------- DATA GENERATION COMPLETE --------");
     }
 
