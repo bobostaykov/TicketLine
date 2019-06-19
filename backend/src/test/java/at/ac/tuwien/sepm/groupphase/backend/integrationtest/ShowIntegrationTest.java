@@ -24,7 +24,7 @@ import java.util.List;
 
 import static org.hamcrest.core.Is.is;
 
-public class ShowIntegrationTest extends BaseIntegrationTestWithMockedUserCredentials {
+public class ShowIntegrationTest extends BaseIntegrationTest {
     private static final String SHOWS_SEARCH_ENDPOINT = "/shows/filter?";
 
     @Autowired

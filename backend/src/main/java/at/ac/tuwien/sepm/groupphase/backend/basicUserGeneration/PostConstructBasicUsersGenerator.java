@@ -1,41 +1,50 @@
 package at.ac.tuwien.sepm.groupphase.backend.basicUserGeneration;
 
+import at.ac.tuwien.sepm.groupphase.backend.datatype.UserType;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.user.UserDTO;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.ContextStartedEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+
+import java.time.LocalDateTime;
 
 @Component
 public class PostConstructBasicUsersGenerator {
     @Autowired
-    private UserService userRepository;
+    private UserService userService;
     @Autowired
     PasswordEncoder passwordEncoder;
 
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
-/*
-    @PostConstruct
-    public void run() throws Exception {
+    @EventListener
+    public void run(ContextRefreshedEvent contextRefreshedEvent) throws Exception {
         //user service checks if already existing
         LOGGER.info("initializing basic users");
         try{
-            if(userRepository.findUserByName("admin") == null){
-
+            LOGGER.info("creating user admin");
+            if(userService.findUserByName("admin") == null){
+                userService.createUser(UserDTO.builder().type(UserType.ADMIN).password("password").username("admin").userSince(LocalDateTime.now()).build());
             }
+
         }catch (NotFoundException e){
             LOGGER.info("creating user admin");
-            userRepository.createUser(UserDTO.builder().type(UserType.ADMIN).password(passwordEncoder.encode("password")).username("admin").userSince(LocalDateTime.now()).build());
+            userService.createUser(UserDTO.builder().type(UserType.ADMIN).password("password").username("admin").userSince(LocalDateTime.now()).build());
         }
         try {
-            if (userRepository.findUserByName("user") == null) {
+            if (userService.findUserByName("user") == null) {
+                LOGGER.info("creating user admin");
+                userService.createUser(UserDTO.builder().type(UserType.SELLER).password("password").username("user").lastLogin(LocalDateTime.now()).userSince(LocalDateTime.now()).build());
             }
         }catch(NotFoundException e) {
-            LOGGER.info("creating user user");
-            userRepository.createUser(UserDTO.builder().type(UserType.SELLER).password(passwordEncoder.encode("password")).username("user").lastLogin(LocalDateTime.now()).userSince(LocalDateTime.now()).build());
+            LOGGER.info("creating user admin");
+            userService.createUser(UserDTO.builder().type(UserType.SELLER).password("password").username("user").lastLogin(LocalDateTime.now()).userSince(LocalDateTime.now()).build());
             }
         }
-
- */
 }
