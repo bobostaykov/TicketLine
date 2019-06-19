@@ -1,4 +1,4 @@
-package at.ac.tuwien.sepm.groupphase.backend.datagenerator;
+package at.ac.tuwien.sepm.groupphase.backend.datagenerator.performanceTest;
 
 import at.ac.tuwien.sepm.groupphase.backend.datatype.UserType;
 import at.ac.tuwien.sepm.groupphase.backend.entity.User;
@@ -12,21 +12,22 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
-@Profile("generateData")
+@Profile("generatePerformanceTestData")
 @Component
-public class UserDataGenerator implements DataGenerator {
+public class UserPerformanceTestDataGenerator extends PerformanceTestDataGenerator {
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
     private static final String USER_NAME = "user";
     private static final String ADMIN_NAME = "admin";
     private static final String USER_PASSWORD = "password";
     private static final String ADMIN_PASSWORD = "password";
+    private static final String BOTHIFY_PASSWORD_STRING = "########";
 
     Faker faker = new Faker();
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    public UserDataGenerator(UserRepository userRepository, PasswordEncoder passwordEncoder){
+    public UserPerformanceTestDataGenerator(UserRepository userRepository, PasswordEncoder passwordEncoder){
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
@@ -37,12 +38,14 @@ public class UserDataGenerator implements DataGenerator {
             LOGGER.info("Users already generated");
         }else {
             LOGGER.info("Generating users");
-            Long id = 1L, cn = 1L, sn = 1L;
-            User user = User.builder().username(USER_NAME).password(passwordEncoder.encode(USER_PASSWORD)).type(UserType.SELLER).userSince(LocalDateTime.now()).build();
-            User admin = User.builder().username(ADMIN_NAME).password(passwordEncoder.encode(ADMIN_PASSWORD)).type(UserType.ADMIN).userSince(LocalDateTime.now()).build();
-
-            userRepository.createUser(user);
-            userRepository.createUser(admin);
+            for(Long id = 1L; id <= NUM_OF_USERS; id++) {
+                userRepository.createUser(User.builder()
+                    .id(id)
+                    .type(id % 2 == 0 ? UserType.ADMIN : UserType.SELLER).username(faker.name().username().toLowerCase())
+                    .password(passwordEncoder.encode(faker.bothify(BOTHIFY_PASSWORD_STRING)))
+                    .userSince(LocalDateTime.now())
+                    .build());
+            }
         }
     }
 }
