@@ -123,13 +123,49 @@ export class TicketCheckReservationComponent implements OnInit {
     }
   }
 
+  getIdsOfCreatedTickets(): Number[] {
+    const ticketIDs: Number[] = Number[this.createdTickets.length];
+    for (let i = 0; i < this.createdTickets.length; i++) {
+      ticketIDs[i] = this.createdTickets[i].id;
+    }
+    return ticketIDs;
+  }
+
   /**
    * Sends news creation request
    * @param news the news which should be created
    */
   addTicket(tickets: TicketPost[]) {
     this.ticketService.createTicket(tickets).subscribe(
-      (newTickets: Ticket[]) => {this.createdTickets = newTickets;},
+      (newTickets: Ticket[]) => {this.createdTickets = newTickets; },
+      error => {
+        this.defaultServiceErrorHandling(error);
+      }
+    );
+  }
+
+  /**
+   * Sends receipt request
+   */
+  getReceipt() {
+    this.ticketService.getReceiptPdf(this.getIdsOfCreatedTickets()).subscribe(
+      res => {
+        const fileURL = URL.createObjectURL(res);
+        window.open(fileURL, '_blank');
+        },
+        error => {
+          console.log('receipt error')
+          this.defaultServiceErrorHandling(error);
+      }
+    );
+  }
+
+  /**
+   * Sends ticket pdf request
+  */
+  getTicketPdf() {
+    this.ticketService.getTicketPdf(this.getIdsOfCreatedTickets()).subscribe(
+      /*(newTickets: Ticket[]) => {this.createdTickets = newTickets;},*/
       error => {
         this.defaultServiceErrorHandling(error);
       }

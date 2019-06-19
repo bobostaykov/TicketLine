@@ -130,7 +130,7 @@ public class TicketServiceTest {
 
         this.ticketService = new TicketServiceImpl(this.ticketRepository, this.customerRepository, this.eventRepository,
             this.ticketMapper, null, null, null,  this.showRepository,
-            null, null);
+            null, null, null);
 
         TEST_ARTIST = Artist.builder()
             .id(TEST_ARTIST_ID)
