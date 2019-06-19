@@ -10,13 +10,13 @@ import io.swagger.annotations.Authorization;
 import org.hibernate.service.spi.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 
 @RestController
 @RequestMapping(value = "/customers")
@@ -61,12 +61,13 @@ public class CustomerEndpoint {
 
     @RequestMapping(method = RequestMethod.GET)
     @ApiOperation(value = "Get list of all customer entries filtered by specified attributes", authorizations = {@Authorization(value = "apiKey")})
-    public List<CustomerDTO> findAllFiltered(
+    public Page<CustomerDTO> findAllFiltered(
         @RequestParam(value = "id", required = false) Long id,
         @RequestParam(value = "name", required = false) String name,
         @RequestParam(value = "firstname", required = false) String firstname,
         @RequestParam(value = "email", required = false) String email,
-        @RequestParam(value = "birthday", required = false) String birthday_str) {
+        @RequestParam(value = "birthday", required = false) String birthday_str,
+        @RequestParam(value = "page", required = false) Integer page) {
 
         boolean filterData = !(id == null && name == null && firstname == null && email == null && birthday_str == null);
         LocalDate birthday = null;
@@ -74,21 +75,22 @@ public class CustomerEndpoint {
         if (birthday_str != null) {
             birthday = LocalDate.parse(birthday_str, formatter);
         }
-        if (filterData) {
-            LOGGER.info("Get all customers filtered by specified attributes");
-        } else {
-            LOGGER.info("Get all customers");
-        }
         try {
-            List<CustomerDTO> customerDTOList;
+            Page<CustomerDTO> customerDTOPage;
             if (filterData) {
-                customerDTOList = customerService.findCustomersFiltered(id, name, firstname, email, birthday);
+                LOGGER.info("Get all customers filtered by specified attributes");
+                customerDTOPage = customerService.findCustomersFiltered(id, name, firstname, email, birthday, page);
             } else {
-                customerDTOList = customerService.findAll();
+                LOGGER.info("Get all customers");
+                customerDTOPage = customerService.findAll(page);
             }
-            return customerDTOList;
+            return customerDTOPage;
         } catch (ServiceException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error during reading filtered customers", e);
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error while looking for events by that artist: " + e.getMessage(), e);
+        } catch (NotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No events are found by that artist:" + e.getMessage(), e);
         }
     }
 }

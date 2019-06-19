@@ -27,8 +27,6 @@ import org.springframework.security.authentication.InternalAuthenticationService
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.core.Is.is;
@@ -105,6 +103,7 @@ public class UserIntegrationTest extends BaseIntegrationTestWithMockedUserCreden
         }
 
     }
+
     @Test
     @Ignore
     public void AuthenticationWithCorrectCredentials_resultsInNotNullToken(){
@@ -118,6 +117,7 @@ public class UserIntegrationTest extends BaseIntegrationTestWithMockedUserCreden
         thrown.expect(BadCredentialsException.class);
         AuthenticationToken token = authenticationService.authenticate(TEST_USER_NAME_1, TEST_USER_PASS_2);
     }
+
     @Test
     public void AuthenticationWithCorrectCredentialsAndBlockedUser_resultsInNoAuthentication() throws ServiceException {
         thrown.expect(InternalAuthenticationServiceException.class);
@@ -129,6 +129,7 @@ public class UserIntegrationTest extends BaseIntegrationTestWithMockedUserCreden
         userService.unblockUser(testUser1.getId());
         Assert.assertThat(attempts.isBlocked(), is(false));
     }
+
     @Test
     public void blockUserAsAdmin_resultsInUserBeingBlocked(){
         Response response = RestAssured
@@ -144,6 +145,7 @@ public class UserIntegrationTest extends BaseIntegrationTestWithMockedUserCreden
         attempts = loginAttemptsRepository.findById(testUser1.getId()).get();
         Assert.assertThat(attempts.isBlocked(), is(false));
     }
+
     @Test
     public void blockUserAsUser_resultsInNoAuthorization(){
         Response response = RestAssured
@@ -155,6 +157,7 @@ public class UserIntegrationTest extends BaseIntegrationTestWithMockedUserCreden
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.FORBIDDEN.value()));
 
     }
+
     @Test
     public void unblockUserAsUser_resultsInNoAuthorization() {
         Response response = RestAssured
@@ -165,6 +168,7 @@ public class UserIntegrationTest extends BaseIntegrationTestWithMockedUserCreden
             .then().extract().response();
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.FORBIDDEN.value()));
     }
+
     @Test
     public void getBlockedUsersAsUser_resultsInNoAuthorization() {
         Response response = RestAssured
@@ -175,6 +179,7 @@ public class UserIntegrationTest extends BaseIntegrationTestWithMockedUserCreden
             .then().extract().response();
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.FORBIDDEN.value()));
     }
+
     @Test
     public void unblockUserAsAdmin_resultsInUserBeingUnblocked() throws ServiceException {
         userService.blockUser(testUser1.getId());
@@ -191,6 +196,7 @@ public class UserIntegrationTest extends BaseIntegrationTestWithMockedUserCreden
         Assert.assertThat(attempts.isBlocked(), is(false));
 
     }
+
     @Test
     @Ignore
     public void authenticationOfUserWithBadCredentials_raisesAttemptsCounter(){
@@ -203,6 +209,7 @@ public class UserIntegrationTest extends BaseIntegrationTestWithMockedUserCreden
         LoginAttempts attempts = loginAttemptsRepository.findById(testUser1.getId()).get();
         Assert.assertTrue(attempts.getNumberOfAttempts() > 0);
     }
+
     @Test
     @Ignore
     public void authenticationOfUserWithGoodCredentials_setsCounterBackToZero(){
@@ -213,6 +220,7 @@ public class UserIntegrationTest extends BaseIntegrationTestWithMockedUserCreden
         attempts = loginAttemptsRepository.findById(testUser1.getId()).get();
         Assert.assertEquals(0, attempts.getNumberOfAttempts() );
     }
+
     @Test
     @Ignore
     public void authenticationOfAdminWithBadCredentials_doesNotChangeCounter(){
@@ -226,6 +234,7 @@ public class UserIntegrationTest extends BaseIntegrationTestWithMockedUserCreden
         attempts = loginAttemptsRepository.findById(testUser2.getId()).get();
         Assert.assertEquals(0, attempts.getNumberOfAttempts());
     }
+
     @Test
     public void unblockingUserAsAdminWithInvalidId_returnsNotFound(){
         Response response = RestAssured
@@ -236,6 +245,7 @@ public class UserIntegrationTest extends BaseIntegrationTestWithMockedUserCreden
             .then().extract().response();
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.NOT_FOUND.value()));
     }
+
     @Test
     public void blockingAdminAsAdmin_returnsBadRequest(){
         Response response = RestAssured
@@ -246,24 +256,37 @@ public class UserIntegrationTest extends BaseIntegrationTestWithMockedUserCreden
             .then().extract().response();
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.BAD_REQUEST.value()));
     }
+
     @Test
-    public void gettingAllBlockedUsersAsAdmin_returnsListWithBlockedUsers() throws ServiceException {
+    public void gettingAllBlockedUsersAsAdmin_returnsPageWithBlockedUsers() throws ServiceException {
         userService.blockUser(testUser1.getId());
         LoginAttempts attempts = loginAttemptsRepository.findById(testUser1.getId()).get();
-        Assert.assertThat(attempts.isBlocked(), is(true));
+        Assert.assertTrue(attempts.isBlocked());
+
         Response response = RestAssured
             .given()
             .contentType(ContentType.JSON)
             .headers(HttpHeaders.AUTHORIZATION, validAdminTokenWithPrefix)
-            .when().get(USER_ENDPOINT + BLOCKED_USER_PATH )
+            .when().get(USER_ENDPOINT + BLOCKED_USER_PATH + "?page=0")
             .then().extract().response();
-        User equalUser = userRepository.findById(testUser1.getId()).get();
-        Assert.assertThat(Arrays.asList(response.as(UserDTO[].class)), is(Collections.singletonList(userMapper.userToUserDTO(equalUser))));
+
+        Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
+
+        UserDTO readValue = response.jsonPath().getList("content", UserDTO.class).get(0);
+        UserDTO expectedUser = userMapper.userToUserDTO(userRepository.findById(testUser1.getId()).get());
+
+        Assert.assertNotNull(readValue);
+        Assert.assertEquals(readValue.getId(), expectedUser.getId());
+        Assert.assertEquals(readValue.getUsername(), expectedUser.getUsername());
+        Assert.assertEquals(readValue.getPassword(), expectedUser.getPassword());
+        Assert.assertEquals(readValue.getType(), expectedUser.getType());
+        Assert.assertEquals(readValue.getLastLogin(), expectedUser.getLastLogin());
+        Assert.assertEquals(readValue.getUserSince(), expectedUser.getUserSince());
+        Assert.assertTrue(readValue.getReadNews().isEmpty());
+
         //reset
         userService.unblockUser(testUser1.getId());
         attempts = loginAttemptsRepository.findById(testUser1.getId()).get();
-        Assert.assertThat(attempts.isBlocked(), is(false));
+        Assert.assertFalse(attempts.isBlocked());
     }
-
-
 }

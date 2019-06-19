@@ -68,21 +68,20 @@ public class LocationRepositoryImpl implements LocationRepositoryCustom {
         criteriaQuery.select(location).where(predicates.toArray(new Predicate[predicates.size()]));
         TypedQuery<Location> typedQuery = entityManager.createQuery(criteriaQuery);
 
-        LOGGER.debug(typedQuery.unwrap(org.hibernate.Query.class).getQueryString());
         List<Location> locationList = typedQuery.getResultList();
         if (locationList.isEmpty()) {
             throw new NotFoundException("No locations are found with those parameters");
         }
 
-        // TODO: Sollte noch verändert werden, sobald Pagination überarbeitet wurde
-        if (page == null) {
-            return new PageImpl<>(locationList);
-        } else {
-            int pageSize = 10;
-            int totalElements = locationList.size();
-            Pageable pageable = PageRequest.of(page, pageSize);
-            return new PageImpl<>(locationList, pageable, totalElements);
-        }
+        int pageSize = 10;
+        int totalElements = locationList.size();
+
+        typedQuery.setFirstResult(page * pageSize);
+        typedQuery.setMaxResults(pageSize);
+        Pageable pageable = PageRequest.of(page, pageSize);
+        locationList = typedQuery.getResultList();
+
+        return new PageImpl<>(locationList, pageable, totalElements);
     }
 
     @SuppressWarnings("unchecked")

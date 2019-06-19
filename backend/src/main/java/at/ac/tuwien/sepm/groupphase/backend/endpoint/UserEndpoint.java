@@ -10,12 +10,11 @@ import io.swagger.annotations.Authorization;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.util.List;
 
 @RestController
 @RequestMapping(value = "/users")
@@ -32,10 +31,10 @@ public class UserEndpoint {
     @RequestMapping(method = RequestMethod.GET)
     @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "Get all users", authorizations = {@Authorization(value = "apiKey")})
-    public List<UserDTO> findAll() {
+    public Page<UserDTO> findAll(@RequestParam(value = "page") Integer page) {
         LOGGER.info("Get all users");
         try {
-            return userService.findAll();
+            return userService.findAll(page);
         } catch (ServiceException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
@@ -104,10 +103,16 @@ public class UserEndpoint {
     @RequestMapping(value = "/blocked", method = RequestMethod.GET)
     @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "get all blocked users", authorizations = {@Authorization(value = "apiKey")})
-    public List<UserDTO> getAllBlockedUsers(){
+    public Page<UserDTO> getAllBlockedUsers(@RequestParam(value = "page", required = false) Integer page){
         LOGGER.info("get all blocked users");
-        return userService.getAllBlockedUsers();
+        try{
+            return userService.getAllBlockedUsers(page);
+        } catch (ServiceException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error during reading filtered customers", e);
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error while looking for events by that artist: " + e.getMessage(), e);
+        } catch (NotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No events are found by that artist:" + e.getMessage(), e);
+        }
     }
-
-
 }

@@ -3,6 +3,7 @@ import {HttpClient} from '@angular/common/http';
 import {Ticket} from '../../dtos/ticket';
 import {Observable} from 'rxjs';
 import {Globals} from '../../global/globals';
+import {TicketPost} from '../../dtos/ticket-post';
 
 @Injectable({
   providedIn: 'root'
@@ -35,8 +36,8 @@ export class TicketService {
    * Persists ticket to the backend
    * @param ticket to persist
    */
-  createTicket(ticket: Ticket): Observable<Ticket> {
+  createTicket(ticket: TicketPost[]): Observable<Ticket[]> {
     console.log('Create ticket');
-    return this.httpClient.post<Ticket>(this.ticketBaseUri, ticket);
+    return this.httpClient.post<Ticket[]>(this.ticketBaseUri, ticket);
   }
 }

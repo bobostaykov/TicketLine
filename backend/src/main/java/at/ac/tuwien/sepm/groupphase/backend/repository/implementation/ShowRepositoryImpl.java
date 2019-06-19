@@ -2,13 +2,7 @@ package at.ac.tuwien.sepm.groupphase.backend.repository.implementation;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.searchParameters.ShowSearchParametersDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.*;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Event_;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Hall_;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Location_;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Show_;
 import at.ac.tuwien.sepm.groupphase.backend.repository.ShowRepositoryCustom;
-import at.ac.tuwien.sepm.groupphase.backend.repository.projections.SimpleShow;
-import org.hibernate.type.descriptor.sql.VarcharTypeDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +33,7 @@ public class ShowRepositoryImpl implements ShowRepositoryCustom {
     public ShowRepositoryImpl(EntityManager em) {
         this.em = em;
     }
+
 
 
     @Override
@@ -81,6 +76,7 @@ public class ShowRepositoryImpl implements ShowRepositoryCustom {
             }
 
             if (parameters.getEventName() != null) {
+                ;
                 predicates.add(cBuilder.like(cBuilder.lower(eventJoin.get(Event_.name)), "%" + parameters.getEventName().toLowerCase() + "%"));
             }
 
@@ -165,7 +161,7 @@ public class ShowRepositoryImpl implements ShowRepositoryCustom {
         }
 
         //Sortieren
-        Comparator<Show> byDate = Comparator.comparing(s -> s.getDate());
+        Comparator<Show> byDate = Comparator.comparing(s -> s.getDate() );
         Comparator<Show> byTime = Comparator.comparing(s -> s.getTime());
         Comparator<Show> byId = Comparator.comparing(s -> s.getId());
         showList = showList.stream()
@@ -173,15 +169,15 @@ public class ShowRepositoryImpl implements ShowRepositoryCustom {
 
 
         // Filters from the result only the wanted page
-        // TODO: Sollte noch verändert werden, sobald Pagination überarbeitet wurde
-        if (page == null) {
-            return new PageImpl<>(showList);
-        } else {
-            int pageSize = 10;
-            int totalElements = showList.size();
-            Pageable pageable = PageRequest.of(page, pageSize);
-            return new PageImpl<>(showList, pageable, totalElements);
-        }
+        int pageSize = 10;
+        int totalElements = showList.size();
+
+        typedQuery.setFirstResult(page * pageSize);
+        typedQuery.setMaxResults(pageSize);
+        Pageable pageable = PageRequest.of(page, pageSize);
+        showList = typedQuery.getResultList();
+
+        return new PageImpl<>(showList, pageable, totalElements);
     }
 
     public List<Show> findByEventNameAndShowDateAndShowTime(String eventName, String date, String time) {
@@ -222,7 +218,7 @@ public class ShowRepositoryImpl implements ShowRepositoryCustom {
             }).collect(Collectors.toList());
     }
 
-    private static java.util.function.Predicate<Show> compareMaxPrice(Double maxPrice) {
+    private static java.util.function.Predicate<Show> compareMaxPrice(Double maxPrice){
         return show -> show.getPricePattern()
             .getPriceMapping()
             .values()
@@ -231,14 +227,13 @@ public class ShowRepositoryImpl implements ShowRepositoryCustom {
                 .comparingDouble(Double::doubleValue))
             .get() > maxPrice;
     }
-
-    private static java.util.function.Predicate<Show> compareMinPrice(Double minPrice) {
+    private static java.util.function.Predicate<Show> compareMinPrice(Double minPrice){
         return show -> show.getPricePattern()
             .getPriceMapping()
             .values()
             .stream()
             .max(Comparator
-                .comparingDouble(Double::doubleValue))
+                .comparingDouble(Double :: doubleValue))
             .get() > minPrice;
     }
 }

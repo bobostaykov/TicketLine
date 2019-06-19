@@ -12,6 +12,7 @@ public interface UserRepositoryCustom {
      */
     User createUser (User user);
 
+    // TODO not used
     /**
      *
      * @return a list of all currently blocked users

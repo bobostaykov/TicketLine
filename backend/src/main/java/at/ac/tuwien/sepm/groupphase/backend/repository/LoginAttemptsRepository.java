@@ -27,7 +27,7 @@ public interface LoginAttemptsRepository extends JpaRepository<LoginAttempts, Lo
      *
      * @return returns a list of all blocked user
      */
-    List<LoginAttempts>  getAllByBlockedTrue();
+    List<LoginAttempts> getAllByBlockedTrue();
 
     /**
      *
@@ -39,8 +39,4 @@ public interface LoginAttemptsRepository extends JpaRepository<LoginAttempts, Lo
     LoginAttempts getLoginAttemptsById(Long id);
 
     LoginAttempts findByUser(User user);
-
-
-
-
 }

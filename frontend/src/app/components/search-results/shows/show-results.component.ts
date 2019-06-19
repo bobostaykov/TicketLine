@@ -21,6 +21,8 @@ export class ShowResultsComponent implements OnInit {
   private maxPrice: number;
   private duration: number;
   private eventName: string;
+  private eventType: string;
+  private artistName: string;
   private hallName: string;
   private dateFrom: string;
   private dateTo: string;
@@ -63,8 +65,10 @@ export class ShowResultsComponent implements OnInit {
         this.loadShowsFilteredByLocationID( this.locationId = +this.route.snapshot.queryParamMap.get('id'), this.page);
         break;
       case 'ATTRIBUTES':
-        this.loadShowsFilteredByShowAttributes(
+        this.loadShowsFilteredSomeParameters(
           this.eventName = this.route.snapshot.queryParamMap.get('eventName'),
+          this.eventType = this.route.snapshot.queryParamMap.get('eventType'),
+          this.artistName = this.route.snapshot.queryParamMap.get('artistName'),
           this.hallName = this.route.snapshot.queryParamMap.get('hallName'),
           this.dateFrom = this.route.snapshot.queryParamMap.get('dateFrom'),
           this.dateTo = this.route.snapshot.queryParamMap.get('dateTo'),
@@ -102,8 +106,8 @@ export class ShowResultsComponent implements OnInit {
         break;
       case 'LOCATION': this.loadShowsFilteredByLocationID(this.locationId, this.page);
         break;
-      case 'ATTRIBUTES': this.loadShowsFilteredByShowAttributes(
-        this.eventName, this.hallName, this.dateFrom, this.dateTo, this.timeFrom,
+      case 'ATTRIBUTES': this.loadShowsFilteredSomeParameters(
+        this.eventName, this.eventType, this.artistName, this.hallName, this.dateFrom, this.dateTo, this.timeFrom,
         this.timeTo, this.minPrice, this.maxPrice, this.duration, this.country,
         this.city, this.street, this.postalCode, this.page);
         break;
@@ -158,11 +162,10 @@ export class ShowResultsComponent implements OnInit {
     );
   }
 
-  private loadShowsFilteredByShowAttributes(eventName, hallName, dateFrom, dateTo, timeFrom, timeTo, minPrice: number, maxPrice: number,
+  private loadShowsFilteredSomeParameters(eventName, eventType, artistName, hallName, dateFrom, dateTo, timeFrom, timeTo, minPrice: number, maxPrice: number,
                                             duration: number, country, city, street, postalCode, page: number) {
-    console.log('ShowResultsComponent: loadShowsFilteredByShowAttributes');
-    console.log('ShowResultsComponent: ' + page);
-    this.showService.findShowsFilteredByShowAttributes(eventName, hallName, dateFrom, dateTo, timeFrom, timeTo, minPrice, maxPrice,
+    console.log('ShowResultsComponent: loadShowsFilteredSomeParameters');
+    this.showService.findShowsFilteredBySomeParameters(eventName, eventType, artistName, hallName, dateFrom, dateTo, timeFrom, timeTo, minPrice, maxPrice,
       duration, country, city, street, postalCode, page).subscribe(
       result => {
         this.shows = result['content'];

@@ -128,14 +128,9 @@ public class TicketServiceTest {
         this.showRepository = Mockito.mock(ShowRepository.class);
         this.ticketRepository = Mockito.mock(TicketRepository.class);
 
-        this.ticketService = new TicketServiceImpl(this.ticketRepository, this.customerRepository, this.eventRepository, this.ticketMapper, null, null, null,  this.showRepository);
-
-        /*
-        public TicketServiceImpl(TicketRepository ticketRepository, CustomerRepository customerRepository,
-                             EventRepository eventRepository, TicketMapper ticketMapper, ShowMapper showMapper,
-                             CustomerMapper customerMapper, CustomerService customerService,
-                             ShowRepository showRepository) {
-         */
+        this.ticketService = new TicketServiceImpl(this.ticketRepository, this.customerRepository, this.eventRepository,
+            this.ticketMapper, null, null, null,  this.showRepository,
+            null, null);
 
         TEST_ARTIST = Artist.builder()
             .id(TEST_ARTIST_ID)

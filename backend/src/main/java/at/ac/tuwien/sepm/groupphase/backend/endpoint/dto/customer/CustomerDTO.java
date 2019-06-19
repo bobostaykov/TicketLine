@@ -3,6 +3,9 @@ package at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.customer;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.PastOrPresent;
 import java.time.LocalDate;
 
 @ApiModel(value = "CustomerDTO", description = "A DTO for customer entries via rest")
@@ -11,15 +14,19 @@ public class CustomerDTO {
     private Long id;
 
     @ApiModelProperty(name = "The username of the customer")
+    @NotBlank(message = "name may not be blank")
     private String name;
 
     @ApiModelProperty(name = "The firstname of the customer")
+    @NotBlank(message = "firstname may not be blank")
     private String firstname;
 
     @ApiModelProperty(name = "The e-mail address of the customer")
+    @Email(message = "email invalid")
     private String email;
 
     @ApiModelProperty(name = "The birthday of the customer")
+    @PastOrPresent(message = "birthday may not be in the future")
     private LocalDate birthday;
 
     public Long getId() {

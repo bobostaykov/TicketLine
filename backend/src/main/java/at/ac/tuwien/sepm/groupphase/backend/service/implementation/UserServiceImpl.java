@@ -13,6 +13,10 @@ import at.ac.tuwien.sepm.groupphase.backend.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -40,10 +44,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDTO> findAll() throws ServiceException {
+    public Page<UserDTO> findAll(Integer page) throws ServiceException {
         LOGGER.info("Find all users");
         try {
-            return userMapper.userToUserDTO(userRepository.findAll());
+            int pageSize = 10;
+            if(page < 0) {
+                throw new IllegalArgumentException("Not a valid page.");
+            }
+            Pageable pageable = PageRequest.of(page, pageSize);
+            return userRepository.findAll(pageable).map(userMapper::userToUserDTO);
         } catch (PersistenceException e) {
             throw new ServiceException(e.getMessage());
         }
@@ -59,12 +68,11 @@ public class UserServiceImpl implements UserService {
     public UserDTO createUser(UserDTO userDTO) throws ServiceException {
         try {
 
-            if(!userRepository.findOneByUsername(userDTO.getUsername()).isPresent()){
-            LOGGER.info("Create user with name: " + userDTO.getUsername());
+            if(userRepository.findOneByUsername(userDTO.getUsername()).isEmpty()){
+                LOGGER.info("Create user with name: " + userDTO.getUsername());
                 userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword()));
                 LOGGER.info("Setting password");
-                UserDTO dto =  userMapper.userToUserDTO(userRepository.createUser(userMapper.userDTOToUser(userDTO)));
-                return dto;
+                return userMapper.userToUserDTO(userRepository.createUser(userMapper.userDTOToUser(userDTO)));
             }else {
                 return UserDTO.builder().id(-1L).build();
             }
@@ -135,14 +143,31 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDTO> getAllBlockedUsers() {
+    public Page<UserDTO> getAllBlockedUsers(Integer page) throws ServiceException{
         LOGGER.info("getting all blocked users");
-        List<LoginAttempts> blockedUserAttempts = loginAttemptsRepository.getAllByBlockedTrue();
-        List<UserDTO> users = new ArrayList<>();
-        Comparator<LoginAttempts> comparator = Comparator.comparing(la -> la.getUser().getId());
-        blockedUserAttempts.stream()
-            .sorted(comparator)
-            .forEach(loginAttempts -> users.add(userMapper.userToUserDTO(loginAttempts.getUser())));
-        return users;
+        try {
+            int pageSize = 10;
+            if(page < 0) {
+                throw new IllegalArgumentException("Not a valid page.");
+            }
+            Pageable pageable = PageRequest.of(page, pageSize);
+            List<LoginAttempts> blockedUserAttempts = loginAttemptsRepository.getAllByBlockedTrue();
+            List<UserDTO> users = new ArrayList<>();
+            Comparator<LoginAttempts> comparator = Comparator.comparing(la -> la.getUser().getId());
+            blockedUserAttempts.stream()
+                .sorted(comparator)
+                .forEach(loginAttempts -> users.add(userMapper.userToUserDTO(loginAttempts.getUser())));
+            int totalElements = users.size();
+            int from = page * pageSize;
+            int offset = page * pageSize + pageSize > totalElements ? (totalElements - page * pageSize) : pageSize;
+            List<UserDTO> sublist = users.subList(from, from + offset);
+            Page<UserDTO> result = new PageImpl<>(sublist, pageable, totalElements);
+            LOGGER.debug(result.getContent().toString());
+            LOGGER.debug("totalElem: " + result.getTotalElements());
+            LOGGER.debug("totalPages: " + result.getTotalPages());
+            return result;
+        } catch (PersistenceException e) {
+            throw new ServiceException(e.getMessage());
+        }
     }
 }

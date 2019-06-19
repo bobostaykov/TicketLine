@@ -4,59 +4,75 @@
   <button type="button" (click)="vanishError()" class="close" data-dismiss="alert" aria-label="Close Error message">
     <span aria-hidden="true">x</span>
   </button>
-  <strong>Error!</strong>
+  <strong>Error!{{errorMessage}}</strong>
 </div>
 
 <!-- table displaying customer search results -->
-<div class="row mt-4 mb-4">
-  <button *ngIf="isAdmin()" type="button" class="btn btn-secondary btn-sm my-2" data-toggle="modal"
-          data-target="#add-customer">Add
-    Customer
-  </button>
-  <button type="button" class="btn btn-secondary btn-sm m-2" data-toggle="modal" data-target="#search-customers">
-    Search Customers
-  </button>
-</div>
+<div *ngIf="dataReady">
+  <div class="row mt-4 mb-4">
+    <button *ngIf="isAdmin()" type="button" class="btn btn-secondary btn-sm m-2" data-toggle="modal"
+            data-target="#add-customer">Add
+      Customer
+    </button>
+    <button type="button" class="btn btn-secondary btn-sm m-2" data-toggle="modal" data-target="#search-customers">
+      Search Customers
+    </button>
+    <button type="button" class="btn btn-secondary btn-sm m-2" (click)="resetCustomerFilter()">
+      Show All Customers
+    </button>
+  </div>
 
-<table class="table">
-  <thead>
-  <tr>
-    <th scope="col">
-      ID
-    </th>
-    <th scope="col">
-      Name
-    </th>
-    <th scope="col">
-      First Name
-    </th>
-    <th scope="col">
-      E-Mail
-    </th>
-    <th scope="col">
-      Birthday
-    </th>
-    <th scope="col" *ngIf="isAdmin()">
-      Change
-    </th>
-  </tr>
-  </thead>
-  <tbody>
-  <tr *ngFor="let customer of customers">
-    <th scope="row">{{customer.id}}</th>
-    <td>{{customer.name}}</td>
-    <td>{{customer.firstname}}</td>
-    <td>{{customer.email}}</td>
-    <td>{{customer.birthday}}</td>
-    <td *ngIf="isAdmin()">
-      <button type="button" class="btn btn-secondary btn-sm m-2" data-toggle="modal" data-target="#update-customer"
-              (click)="setActiveCustomer(customer)">
-        Edit
-      </button>
-    </td>
-  </tr>
-  </tbody>
-</table>
+  <table class="table">
+    <thead>
+    <tr>
+      <th scope="col">
+        Name
+      </th>
+      <th scope="col">
+        First Name
+      </th>
+      <th scope="col">
+        E-Mail
+      </th>
+      <th scope="col">
+        Birthday
+      </th>
+      <th scope="col" *ngIf="isAdmin()">
+        Change
+      </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let customer of customers">
+      <td>{{customer.name}}</td>
+      <td>{{customer.firstname}}</td>
+      <td>{{customer.email}}</td>
+      <td>{{customer.birthday}}</td>
+      <td *ngIf="isAdmin()">
+        <button type="button" class="btn btn-secondary btn-sm m-2" data-toggle="modal" data-target="#update-customer"
+                (click)="setActiveCustomer(customer)">
+          Edit
+        </button>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+
+  <hr class="hr-bold">
+  <div class="justify-content-center" *ngIf="pages.length > 1">
+    <ul class="nav nav-pills">
+      <li class="nav-item">
+        <a class="nav-link" href="" (click)="previousPage($event)">«</a>
+      </li>
+      <li class="nav-item" *ngFor="let p of pages; let i = index">
+        <a class="nav-link" href="" (click)="setPage(i, $event)" [ngClass]="{'active': i == page}">{{i}}</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="" (click)="nextPage($event)">»</a>
+      </li>
+    </ul>
+  </div>
+</div>
 
 <!-- Modal to search for customers using costumer dialog component -->
 <div class="modal fade" id="search-customers" tabindex="-1" role="dialog" aria-labelledby="Search costumers modal"
@@ -72,7 +88,7 @@
       <div class="modal-body">
         <app-customer-dialog
           title="Search Customers"
-          (submitCustomer)="searchCustomers($event)">
+          (submitCustomer)="searchCustomers($event, 0)">
         </app-customer-dialog>
       </div>
       <div class="modal-footer">
@@ -132,4 +148,6 @@
     </div>
   </div>
 </div>
+
+
 

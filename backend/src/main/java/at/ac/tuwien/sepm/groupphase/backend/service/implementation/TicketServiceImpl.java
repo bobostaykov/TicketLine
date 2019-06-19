@@ -2,18 +2,14 @@ package at.ac.tuwien.sepm.groupphase.backend.service.implementation;
 
 import at.ac.tuwien.sepm.groupphase.backend.datatype.TicketStatus;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.ticket.TicketDTO;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Customer;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Event;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Show;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Ticket;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.ticket.TicketPostDTO;
+import at.ac.tuwien.sepm.groupphase.backend.entity.*;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.customer.CustomerMapper;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.show.ShowMapper;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.ticket.TicketMapper;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
-import at.ac.tuwien.sepm.groupphase.backend.repository.CustomerRepository;
-import at.ac.tuwien.sepm.groupphase.backend.repository.EventRepository;
-import at.ac.tuwien.sepm.groupphase.backend.repository.ShowRepository;
-import at.ac.tuwien.sepm.groupphase.backend.repository.TicketRepository;
+import at.ac.tuwien.sepm.groupphase.backend.exception.TicketSoldOutException;
+import at.ac.tuwien.sepm.groupphase.backend.repository.*;
 import at.ac.tuwien.sepm.groupphase.backend.service.CustomerService;
 import at.ac.tuwien.sepm.groupphase.backend.service.TicketService;
 import org.springframework.stereotype.Service;
@@ -33,11 +29,14 @@ public class TicketServiceImpl implements TicketService {
     private final ShowMapper showMapper;
     private final CustomerMapper customerMapper;
     private final CustomerService customerService;
+    private final SeatRepository seatRepository;
+    private final SectorRepository sectorRepository;
 
     public TicketServiceImpl(TicketRepository ticketRepository, CustomerRepository customerRepository,
                              EventRepository eventRepository, TicketMapper ticketMapper, ShowMapper showMapper,
                              CustomerMapper customerMapper, CustomerService customerService,
-                             ShowRepository showRepository) {
+                             ShowRepository showRepository, SeatRepository seatRepository,
+                             SectorRepository sectorRepository) {
         this.ticketRepository = ticketRepository;
         this.customerRepository = customerRepository;
         this.eventRepository = eventRepository;
@@ -46,12 +45,63 @@ public class TicketServiceImpl implements TicketService {
         this.customerMapper = customerMapper;
         this.customerService = customerService;
         this.showRepository = showRepository;
-
+        this.seatRepository = seatRepository;
+        this.sectorRepository = sectorRepository;
     }
 
     @Override
-    public TicketDTO postTicket(TicketDTO ticketDTO) {
-        return ticketMapper.ticketToTicketDTO(ticketRepository.save(ticketMapper.ticketDTOToTicket(ticketDTO)));
+    public List<TicketDTO> postTicket(List<TicketPostDTO> ticketPostDTO) throws TicketSoldOutException{
+        // Check if any of the requested tickets were already sold or reservated
+        for (TicketPostDTO current : ticketPostDTO) {
+            if (current.getSeat() != null) {
+                if (!this.ticketRepository.findAllByShowAndSeat(this.showRepository.getOne(current.getShow()),
+                    this.seatRepository.getOne(current.getSeat())).isEmpty()) {
+                    throw new TicketSoldOutException("Ticket for this seat is already sold, please choose another seat");
+                }
+            }
+            if (current.getSector() != null) {
+                if (this.ticketRepository.findAllByShowAndSector(this.showRepository.getOne(current.getShow()),
+                    this.sectorRepository.getOne(current.getSector())).size() ==
+                    this.showRepository.getOne(current.getShow()).getHall().getSeats().size()) {
+                    throw new TicketSoldOutException("Tickets for this sector are sold out, please choose another sector");
+                }
+            }
+        }
+
+        // Create each ticket
+        List<TicketDTO> created = new ArrayList<>();
+        for (TicketPostDTO current : ticketPostDTO) {
+            Customer customer = this.customerRepository.getOne(current.getCustomer());
+            if (customer == null) {
+                throw new NotFoundException("No Customer found with id " + current.getCustomer());
+            }
+            Show show = this.showRepository.getOne(current.getShow());
+            if (show == null) {
+                throw new NotFoundException("No Show found with id " + current.getShow());
+            }
+            if ((current.getSeat() == null && current.getSector() == null) || (current.getSeat() != null && current.getSector() != null)) {
+                throw new NotFoundException("Either seat or sector must be given.");
+            }
+            Seat seat = null;
+            Sector sector = null;
+            if (current.getSeat() != null) {
+                seat = this.seatRepository.getOne(current.getSeat());
+            }
+            if (current.getSector() != null) {
+                sector = this.sectorRepository.getOne(current.getSector());
+            }
+
+            Ticket ticket = new Ticket().builder()
+                .status(current.getStatus())
+                .customer(customer)
+                .price(current.getPrice())
+                .show(show)
+                .seat(seat)
+                .sector(sector)
+                .build();
+            created.add(ticketMapper.ticketToTicketDTO(ticketRepository.save(ticket)));
+        }
+        return created;
     }
 
     @Override

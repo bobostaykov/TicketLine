@@ -42,9 +42,6 @@ public class User {
     private LoginAttempts loginAttempts;
 
 
-
-
-
     public User() {
         this.readNews = new ArrayList<News>();
     }

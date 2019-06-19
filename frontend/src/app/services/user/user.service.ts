@@ -11,28 +11,30 @@ export class UserService {
 
   private userBaseUri: string = this.globals.backendUri + '/users';
   private blockedUserBaseUri: string = this.userBaseUri + '/blocked';
-  private unblockUserBaseUri: string = this.blockedUserBaseUri + '/unblock'
+  private unblockUserBaseUri: string = this.blockedUserBaseUri + '/unblock';
 
   constructor(private httpClient: HttpClient, private globals: Globals) {}
 
   /**
    * Loads all users from the backend
+   * @param page the number of the requested page
    */
-  getAllUsers(): Observable<User[]> {
+  getAllUsers(page): Observable<User[]> {
     console.log('Get all users');
-    return this.httpClient.get<User[]>(this.userBaseUri);
+    return this.httpClient.get<User[]>(this.userBaseUri, {params: {page: page}});
   }
 
   /**
    * Loads all blocked users from the backend
+   * @param page the number of the requested page
    */
-  getAllBlockedUsers(): Observable<User[]> {
-    return this.httpClient.get<User[]>(this.blockedUserBaseUri);
+  getAllBlockedUsers(page): Observable<User[]> {
+    return this.httpClient.get<User[]>(this.blockedUserBaseUri, {params: {page: page}});
   }
 
   /**
-   *
-   * @param unblocks the specified user
+   * unblocks the specified user
+   * @param userId id of an user
    */
   unblockUser(userId: number): Observable<{}> {
     console.log('unblocking user with id ' + userId);
@@ -41,7 +43,7 @@ export class UserService {
 
 
   blockUser(userId: number): Observable<{}> {
-    console.log('blocking user with id ' + userId)
+    console.log('blocking user with id ' + userId);
     return this.httpClient.put(this.blockedUserBaseUri + '/' + userId, null);
   }
 

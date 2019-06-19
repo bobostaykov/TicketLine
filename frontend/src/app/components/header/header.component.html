@@ -34,7 +34,6 @@
       <li class="nav-item">
         <a class="nav-link" *ngIf="authService.isLoggedIn()" routerLink="/ticket-check-reservation" routerLinkActive="active">Ticket Check R</a>
       </li>
-
     </ul>
     <ul class="navbar-nav mr-5">
       <a class="nav-link" *ngIf="!authService.isLoggedIn()" routerLink="/login" routerLinkActive="active">Login</a>

@@ -2,6 +2,7 @@ package at.ac.tuwien.sepm.groupphase.backend.integrationtest;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.location.LocationDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Location;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.integrationtest.base.BaseIntegrationTestWithMockedUserCredentials;
 import at.ac.tuwien.sepm.groupphase.backend.repository.LocationRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -290,18 +291,17 @@ public class LocationEndpointTest extends BaseIntegrationTestWithMockedUserCrede
         }
     }
 
-    // TODO: fix findLocationsFiltered arguments
-//    @Test
-//    public void findSpecificNonExistingLocationNotFoundAsUser(){
-//        BDDMockito.
-//            given(locationRepository.findLocationsFiltered("Austria", "Innsbruck", null, null, null))
-//            .willThrow(NotFoundException.class);
-//        Response response = RestAssured
-//            .given()
-//            .contentType(ContentType.JSON)
-//            .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
-//            .when().get(LOCATION_FILTERED_COUNTRY_AND_CITY_NOT_FOUND)
-//            .then().extract().response();
-//        Assert.assertThat(response.getStatusCode(), is(HttpStatus.NOT_FOUND.value()));
-//    }
+    @Test
+    public void findSpecificNonExistingLocationNotFoundAsUser(){
+        BDDMockito.
+            given(locationRepository.findLocationsFiltered("Austria", "Innsbruck", null, null, null, 0))
+            .willThrow(NotFoundException.class);
+        Response response = RestAssured
+            .given()
+            .contentType(ContentType.JSON)
+            .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
+            .when().get(LOCATION_FILTERED_COUNTRY_AND_CITY_NOT_FOUND)
+            .then().extract().response();
+        Assert.assertThat(response.getStatusCode(), is(HttpStatus.NOT_FOUND.value()));
+    }
 }
