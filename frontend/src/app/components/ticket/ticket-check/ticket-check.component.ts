@@ -19,13 +19,13 @@ import {Ticket} from '../../../dtos/ticket';
 export class TicketCheckReservationComponent implements OnInit {
   error: boolean = false;
   errorMessage: string = '';
-  submitted: boolean = false;
 
   private ticket_seats: Seat[] = [];
   private ticket_sectors: Sector[] = [];
   private ticket_show: Show;
   private ticket_customer: Customer;
   private ticket_status: TicketStatus;
+  private submitted: boolean;
 
   private priceTotal: number;
 
@@ -44,6 +44,7 @@ export class TicketCheckReservationComponent implements OnInit {
   ngOnInit() {
     this.ticket_seats = [];
     this.ticket_sectors = [];
+    this.submitted = false;
 
     if (this.ticket_status === TicketStatus.RESERVATED) {
       this.statusStr = 'Reservation';
@@ -100,16 +101,19 @@ export class TicketCheckReservationComponent implements OnInit {
    * @param tickets the ticket(s) which should be created
    */
   addTicket(tickets: TicketPost[]) {
-    this.ticketService.createTicket(tickets).subscribe(
-      (newTickets: Ticket[]) => {
-        this.createdTickets = newTickets;
-        console.log('Reservation already exists');
-        this.submitted = true;
-      },
-      error => {
-        this.defaultServiceErrorHandling(error);
-      }
-    );
+    if (tickets.length > 0) {
+      this.ticketService.createTicket(tickets).subscribe(
+        (newTickets: Ticket[]) => {
+          this.createdTickets = newTickets;
+          this.submitted = true;
+        },
+        error => {
+          this.defaultServiceErrorHandling(error);
+        }
+      );
+    } else {
+      console.log('No item in tickets');
+    }
   }
 
   private getIdsOfCreatedTickets(): Number[] {
