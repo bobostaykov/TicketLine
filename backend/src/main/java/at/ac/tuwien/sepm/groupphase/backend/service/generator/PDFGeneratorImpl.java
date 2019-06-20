@@ -34,7 +34,7 @@ public class PDFGeneratorImpl implements PDFGenerator{
     @Value("${receipt.address}")
     private static String TICKETLINE_ADDRESS;
 
-    public MultipartFile generateReceipt(List<TicketDTO> tickets, Boolean cancellation) throws DocumentException, IOException {
+    public byte[] generateReceipt(List<TicketDTO> tickets, Boolean cancellation) throws DocumentException, IOException {
         if (tickets.size() < 1)
             throw new NotFoundException("Cannot create receipt for empty list of Tickets.");
         Double returnSum;
@@ -47,7 +47,7 @@ public class PDFGeneratorImpl implements PDFGenerator{
             justFileName = "receipt_" + LocalDateTime.now().toString() + ".pdf";
         fileName = RECEIPT_PATH + justFileName;
         this.generatePathIfNotExists(RECEIPT_PATH);
-        OutputStream outputStream = new FileOutputStream(fileName);
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         PdfWriter.getInstance(receipt, outputStream);
 
         receipt.addTitle("Ticketline" + (cancellation ? " cancellation" : "") + " receipt");
@@ -144,15 +144,16 @@ public class PDFGeneratorImpl implements PDFGenerator{
         receipt.close();
         //return new File(fileName);
 
-        File file = new File(fileName);
+        /*File file = new File(fileName);
         FileInputStream input = new FileInputStream(file);
         MultipartFile multipartPDF = new MockMultipartFile(justFileName,
             file.getName(), "application/pdf", IOUtils.toByteArray(input));
-        return multipartPDF;
+        return multipartPDF;*/
+        return outputStream.toByteArray();
     }
 
     @Override
-    public MultipartFile generateTicketPDF(List<TicketDTO> tickets) throws DocumentException, IOException, NoSuchAlgorithmException {
+    public byte[] generateTicketPDF(List<TicketDTO> tickets) throws DocumentException, IOException, NoSuchAlgorithmException {
         int numberOfTickets = tickets.size();
         if (numberOfTickets < 1)
             throw new NotFoundException("Cannot create pdf for empty list of Tickets.");
@@ -162,7 +163,7 @@ public class PDFGeneratorImpl implements PDFGenerator{
 
         this.generatePathIfNotExists(TICKET_PATH);
 
-        OutputStream outputStream = new FileOutputStream(fileName);
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         PdfWriter.getInstance(pdf, outputStream);
 
         pdf.addTitle("Ticketline Ticket");
@@ -181,11 +182,12 @@ public class PDFGeneratorImpl implements PDFGenerator{
 
         pdf.close();
 
-        File file = new File(fileName);
+        /*File file = new File(fileName);
         FileInputStream input = new FileInputStream(file);
         MultipartFile multipartPDF = new MockMultipartFile(justFileName,
             file.getName(), "application/pdf", IOUtils.toByteArray(input));
-        return multipartPDF;
+        return multipartPDF;*/
+        return outputStream.toByteArray();
     }
 
     /**
@@ -240,7 +242,7 @@ public class PDFGeneratorImpl implements PDFGenerator{
         showDate.setPhrase(new Phrase(ticket.getShow().getDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")) + " " +
             ticket.getShow().getTime().format(DateTimeFormatter.ofPattern("HH:mm")), fontBold));
         table.addCell(showDate);
-        if (ticket.getSector().getSectorNumber() != null) {
+        if (ticket.getSector() != null && ticket.getSector().getSectorNumber() != null) {
             PdfPCell sector = new PdfPCell();
             sector.setPhrase(new Phrase("Sektor: " + ticket.getSector().getSectorNumber().toString(), fontBold));
             table.addCell(sector);
