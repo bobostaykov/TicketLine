@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.generator;
 
+import at.ac.tuwien.sepm.groupphase.backend.datatype.TicketStatus;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.location.LocationDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.ticket.TicketDTO;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
@@ -214,6 +215,7 @@ public class PDFGeneratorImpl implements PDFGenerator{
     }
 
     private void addTicketPage(TicketDTO ticket, Document doc) throws DocumentException, NoSuchAlgorithmException {
+        Boolean buy = ticket.getStatus() == TicketStatus.SOLD;
         Font headlineFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 24, BaseColor.BLACK);
         Font font = FontFactory.getFont(FontFactory.HELVETICA, 16, BaseColor.BLACK);
         Font fontBold = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 16, BaseColor.BLACK);
@@ -253,12 +255,21 @@ public class PDFGeneratorImpl implements PDFGenerator{
             table.addCell(seat);
         }
         PdfPCell price = new PdfPCell();
-        price.setPhrase(new Phrase("Preis: " + this.doubleToEuro(ticket.getPrice()), fontBold));
-        table.addCell(price);
-        PdfPCell qr = new PdfPCell();
-        qr.setImage(generateQrCode(ticket));
-        qr.setFixedHeight(200);
-        table.addCell(qr);
+        if (buy) {
+            price.setPhrase(new Phrase("Preis: " + this.doubleToEuro(ticket.getPrice()), fontBold));
+            table.addCell(price);
+            PdfPCell qr = new PdfPCell();
+            qr.setImage(generateQrCode(ticket));
+            qr.setFixedHeight(200);
+            table.addCell(qr);
+        }
+        else {
+            price.setPhrase(new Phrase("Preis (zu bezahlen): " + this.doubleToEuro(ticket.getPrice()), fontBold));
+            table.addCell(price);
+            PdfPCell reservationNumber = new PdfPCell();
+            reservationNumber.setPhrase(new Phrase("Reservierungsnummer: " + ticket.getReservationNumber().toString()));
+            table.addCell(reservationNumber);
+        }
 
         doc.add(table);
     }
