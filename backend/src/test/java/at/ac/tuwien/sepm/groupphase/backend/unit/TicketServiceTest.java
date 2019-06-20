@@ -122,10 +122,10 @@ public class TicketServiceTest {
     public void before() {
         this.customerRepository = Mockito.mock(CustomerRepository.class);
         this.eventRepository = Mockito.mock(EventRepository.class);
-        this.showRepository = Mockito.mock(ShowRepository.class);
         this.ticketRepository = Mockito.mock(TicketRepository.class);
+        this.showRepository = Mockito.mock(ShowRepository.class);
 
-        this.ticketService = new TicketServiceImpl(this.ticketRepository, this.customerRepository, this.eventRepository, this.ticketMapper, null, null, null,  this.showRepository, null);
+        this.ticketService = new TicketServiceImpl(this.ticketRepository, this.customerRepository, this.eventRepository, this.ticketMapper, this.showRepository, null);
 
         /*
         public TicketServiceImpl(TicketRepository ticketRepository, CustomerRepository customerRepository,

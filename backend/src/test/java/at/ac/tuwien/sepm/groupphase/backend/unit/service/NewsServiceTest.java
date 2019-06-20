@@ -74,9 +74,8 @@ public class NewsServiceTest {
         this.newsRepository = Mockito.mock(NewsRepository.class);
         this.userRepository = Mockito.mock(UserRepository.class);
         this.newsMapper = new NewsMapperImpl();
-        this.userMapper = new UserMapperImpl();
 
-        this.newsService = new NewsServiceImpl(this.newsRepository, this.userRepository, this.newsMapper, this.userMapper);
+        this.newsService = new NewsServiceImpl(this.newsRepository, this.userRepository, this.newsMapper);
         TEST_NEWS_DETAIL_DTO_1 = DetailedNewsDTO.builder()
             .id(TEST_NEWS_ID_1)
             .title(TEST_NEWS_TITLE_1)
