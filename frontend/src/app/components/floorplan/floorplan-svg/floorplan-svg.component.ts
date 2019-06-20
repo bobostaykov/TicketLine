@@ -260,9 +260,11 @@ export class FloorplanSvgComponent implements OnInit {
    * ends viewbox dragging by removing mousemove event listener
    */
   private svgDragExit(): void {
-    const svg = document.getElementsByTagName('svg')[0];
-    svg.removeEventListener('mousemove', this._svgDrag);
-    svg.classList.remove('grabbing');
+    const svg = document.getElementById('floorplan');
+    if (svg) {
+      svg.removeEventListener('mousemove', this._svgDrag);
+      svg.classList.remove('grabbing');
+    }
   }
 
   /**

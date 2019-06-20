@@ -22,11 +22,9 @@ export class FloorplanControlComponent implements OnInit {
 
   // initialization of new hall entity which users can edit and persist to backend
   private newHall: Hall = new Hall(null, 'New Hall', null, [], []);
-  // observable halls containing all search suggestions for halls
+  // observables containing search suggestions for halls, locations and shows respectively
   private halls$: Observable<Hall[]>;
-  // observable locations containing all search suggestions for locations
   private locations$: Observable<Location[]>;
-  // observable shows containing all search suggestions for shows
   private shows$: Observable<Show[]>;
   // rxjs subjects which are used to both query backend and display search suggestions for hall, location and show search
   private searchHalls = new Subject<string>();
@@ -39,6 +37,8 @@ export class FloorplanControlComponent implements OnInit {
   private addSeatsForm: FormGroup;
   private addSectorsForm: FormGroup;
   private createHallForm: FormGroup;
+  // variable for selection mechanism to choose if new hall should contain seats or sectors
+  private hallType: string = 'seats';
   // list of seats and sectors tickets were selected for
   // noinspection JSMismatchedCollectionQueryUpdate
   private tickets: Array<Seat | Sector> = [];
@@ -193,7 +193,6 @@ export class FloorplanControlComponent implements OnInit {
     );
     this.createHallForm.reset({
       'hallSelection': this.newHall = new Hall(null, 'New Hall', null, [], []),
-      'hallType': 'seats'
     });
   }
 
@@ -296,7 +295,6 @@ export class FloorplanControlComponent implements OnInit {
       'showSelection': new FormControl(null, [Validators.required]),
       'locationSelection': new FormControl(null, [Validators.required]),
       'floorplanName': new FormControl(null, [Validators.required]),
-      'hallType': new FormControl('seats', [Validators.required])
     });
     const hallSelection = this.createHallForm.get('hallSelection');
     const locationSelection = this.createHallForm.get('locationSelection');
@@ -401,7 +399,7 @@ export class FloorplanControlComponent implements OnInit {
       location => {
         let hall = this.getSelectedHall();
         let show = this.createHallForm.get('showSelection').value;
-        if (hall.location) {
+        if (hall !== this.newHall && hall.location) {
           hall = hall.location.id === location.id ? hall : null;
           show = hall ? show : null;
         }
@@ -423,19 +421,21 @@ export class FloorplanControlComponent implements OnInit {
     if (selectedHall !== this.newHall) {
       this.hallService.findOneById(selectedHall.id).subscribe(
         hall => {
-          console.log(hall);
           this.createHallForm.patchValue({
             'hallSelection': hall,
             'locationSelection': hall.location
           });
-          console.log(this.createHallForm.value);
+          if (hall.seats && hall.seats.length > 0) {
+            this.hallType = 'seats';
+          } else if (hall.sectors && hall.sectors.length > 0) {
+            this.hallType = 'sectors';
+          }
         },
         error => console.log(error)
       );
     } else {
       this.createHallForm.patchValue({
         'showSelection': null,
-        'locationSelection': null
       });
     }
   }
@@ -446,10 +446,6 @@ export class FloorplanControlComponent implements OnInit {
    */
   private getSelectedHall(): Hall {
     return this.createHallForm.get('hallSelection').value;
-  }
-
-  routeToTickets() {
-
   }
 }
 
