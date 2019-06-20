@@ -5,6 +5,7 @@ export class Seat {
     public id: number,
     public seatNumber: number,
     public seatRow: number,
-    public priceCategory: PriceCategory) {
+    public priceCategory: PriceCategory,
+    public price: number) {
   }
 }

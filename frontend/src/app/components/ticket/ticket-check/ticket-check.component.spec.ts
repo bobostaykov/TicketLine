@@ -1,6 +1,6 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import {TicketCheckReservationComponent} from './ticket-check-reservation.component';
+import {TicketCheckReservationComponent} from './ticket-check.component';
 
 describe('TicketCheckReservationComponent', () => {
   let component: TicketCheckReservationComponent;
