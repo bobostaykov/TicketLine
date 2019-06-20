@@ -52,6 +52,12 @@ public class ArtistServiceImpl implements ArtistService {
     }
 
     @Override
+    public ArtistDTO updateArtist(ArtistDTO artistDTO) {
+        LOGGER.info("ArtistService: updateArtist");
+        return artistMapper.artistToArtistDTO(artistRepository.save(artistMapper.artistDTOToArtist(artistDTO)));
+    }
+
+    @Override
     public void deleteById(Long artistId) throws ServiceException, DataIntegrityViolationException {
         LOGGER.info("ArtistService: deleteById " + artistId);
         try {

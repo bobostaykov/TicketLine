@@ -27,4 +27,11 @@ public interface ArtistService {
      * @throws DataIntegrityViolationException if the entity can't be deleted because it's referenced by another one
      */
     void deleteById(Long artistId) throws ServiceException, DataIntegrityViolationException;
+
+    /**
+     * Updates the given artist
+     * @param artistDTO the artist to change
+     * @return changed artist
+     */
+    ArtistDTO updateArtist(ArtistDTO artistDTO);
 }

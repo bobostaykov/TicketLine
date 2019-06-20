@@ -38,6 +38,14 @@ public class ArtistEndpoint {
         return artistService.findArtistsByName(artistName, page, pageSize);
     }
 
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "Update an artist by id", authorizations = {@Authorization(value = "apiKey")})
+    public ArtistDTO updateArtist(@RequestBody ArtistDTO artistDTO, @PathVariable("id") Long id) {
+        LOGGER.info("ArtistEndpoint: updateArtist");
+        return artistService.updateArtist(artistDTO);
+    }
+
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "Delete an artist by id", authorizations = {@Authorization(value = "apiKey")})
