@@ -12,6 +12,9 @@ public class Ticket {
     @SequenceGenerator(name = "seq_ticket_id", sequenceName = "seq_ticket_id")
     private Long id;
 
+    @Column(unique = true)
+    private String reservationNo;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false, name = "show_id")
     private Show show;
@@ -40,6 +43,14 @@ public class Ticket {
 
     public Long getId() {
         return id;
+    }
+
+    public void setReservationNo(String reservationNo) {
+        this.reservationNo = reservationNo;
+    }
+
+    public String getReservationNo() {
+        return reservationNo;
     }
 
     public void setShow(Show show) {
@@ -111,6 +122,9 @@ public class Ticket {
         if (sector != null) {
             out = out + ", sectorNumber =" + sector.getSectorNumber();
         }
+        if (reservationNo != null) {
+            out = out + ", rservationNumber = " + reservationNo;
+        }
         out = out + '}';
         return out;
     }
@@ -128,6 +142,7 @@ public class Ticket {
         if (customer != null ? !customer.equals(ticket.customer) : ticket.customer != null) return false;
         if (seat != null ? !seat.equals(ticket.seat) : ticket.seat != null) return false;
         if (status != null ? !status.equals(ticket.status) : ticket.status != null) return false;
+        if (reservationNo != null ? !reservationNo.equals(ticket.reservationNo) : ticket.reservationNo != null) return false;
         return sector != null ? sector.equals(ticket.sector) : ticket.sector == null;
     }
 
@@ -140,12 +155,14 @@ public class Ticket {
         result = 31 * result + (seat != null ? seat.hashCode() : 0);
         result = 31 * result + (sector != null ? sector.hashCode() : 0);
         result = 31 * result + (status != null ? status.hashCode() : 0);
+        result = 31 * result + (reservationNo != null ? reservationNo.hashCode() : 0);
         return result;
     }
 
     public static final class TicketBuilder {
 
         private Long id;
+        private String reservationNo;
         private Show show;
         private Double price;
         private Customer customer;
@@ -155,6 +172,11 @@ public class Ticket {
 
         public TicketBuilder id(Long reservationNumber) {
             this.id = reservationNumber;
+            return this;
+        }
+
+        public TicketBuilder reservationNo(String reservationNo) {
+            this.reservationNo = reservationNo;
             return this;
         }
 
@@ -190,6 +212,7 @@ public class Ticket {
         public Ticket build() {
             Ticket ticket = new Ticket();
             ticket.setId(id);
+            ticket.setReservationNo(reservationNo);
             ticket.setShow(show);
             ticket.setPrice(price);
             ticket.setCustomer(customer);

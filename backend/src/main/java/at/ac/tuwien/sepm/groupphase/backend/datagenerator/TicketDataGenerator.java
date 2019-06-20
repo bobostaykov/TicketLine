@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Profile("generateData")
 @Component
@@ -45,6 +46,7 @@ public class TicketDataGenerator implements DataGenerator {
             List<Ticket> tickets = new ArrayList<>();
             for (Long i = 1L; i <= NUM_OF_TICKETS; i++) {
                 tickets.add(Ticket.builder()
+                    .reservationNo(UUID.randomUUID().toString())
                     .customer(customerRepository.getOne(i))
                     .show(showRepository.getOne(i))
                     .price(faker.random().nextDouble()*50)

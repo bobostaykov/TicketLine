@@ -37,8 +37,8 @@ import {FloorplanControlComponent} from './components/floorplan/floorplan-contro
 import {FloorplanSvgComponent} from './components/floorplan/floorplan-svg/floorplan-svg.component';
 import {CustomerComponent} from './components/customer/customer.component';
 import {CustomerDialogComponent} from './components/customer-dialog/customer-dialog.component';
+import {TicketCheckReservationComponent} from './components/ticket/ticket-check/ticket-check.component';
 import { FloorplanTicketComponent } from './components/floorplan/floorplan-ticket/floorplan-ticket.component';
-import {TicketCheckReservationComponent} from './components/ticket/ticket-check-reservation/ticket-check-reservation.component';
 import { BlockedUsersComponent } from './components/blocked-users/blocked-users.component';
 import { MinDirective } from './directives/min.directive';
 import {TicketComponent} from './components/ticket/ticket.component';

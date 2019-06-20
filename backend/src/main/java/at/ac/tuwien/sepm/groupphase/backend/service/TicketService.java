@@ -3,7 +3,10 @@ package at.ac.tuwien.sepm.groupphase.backend.service;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.ticket.TicketDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.ticket.TicketPostDTO;
 import at.ac.tuwien.sepm.groupphase.backend.exception.TicketSoldOutException;
+import com.itextpdf.text.DocumentException;
 
+import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 public interface TicketService {
@@ -63,6 +66,30 @@ public interface TicketService {
      * @return list of found customers
      */
     List<TicketDTO> findAllFilteredByCustomerAndEvent(String customerName, String eventName);
+
+    /**
+     * Get one receipt PDF for the list of ticket IDs
+     *
+     * @param ticketIDs String List containg ticket IDs
+     * @return receipt PDF as MultipartFile
+     */
+    byte[] getReceipt(List<String> ticketIDs) throws DocumentException, IOException;
+
+    /**
+     * Delete ticket(s) by id and receive storno receipt
+     *
+     * @param tickets list of ticket ids
+     * @return Cancellation PDF receipt for deleted tickets as MultipartFile
+     */
+    byte[] deleteAndGetCancellationReceipt(List<String> tickets) throws DocumentException, IOException;
+
+    /**
+     * Generate PDF for list of tickets
+     *
+     * @param ticketIDs list of ticket-IDs
+     * @return PDF containing printable tickets
+     */
+    byte[] generateTicketPDF(List<String> ticketIDs) throws DocumentException, IOException, NoSuchAlgorithmException;
 
     // PINOS IMPLEMENTATION
     /**

@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import {Ticket} from '../../dtos/ticket';
 import {Observable} from 'rxjs';
 import {Globals} from '../../global/globals';
@@ -11,6 +11,7 @@ import {TicketPost} from '../../dtos/ticket-post';
 export class TicketService {
 
   private ticketBaseUri: string = this.globals.backendUri + '/tickets';
+  private printableTicketBaseUri: string = this.ticketBaseUri + '/printable';
 
   constructor(private httpClient: HttpClient, private globals: Globals) {
   }
@@ -39,5 +40,53 @@ export class TicketService {
   createTicket(ticket: TicketPost[]): Observable<Ticket[]> {
     console.log('Create ticket');
     return this.httpClient.post<Ticket[]>(this.ticketBaseUri, ticket);
+  }
+
+  /**
+   * Requests ticket pdf creation for ticket(s) and receive it
+   * @param ticketIDs IDs of the ticket(s) to request ticket pdf for
+   */
+  getTicketPdf(ticketIDs: Number[]): Observable<Blob> {
+    console.log('Get ticket pdf for tickets: ' + ticketIDs);
+    let params = new HttpParams();
+    params = params.append('tickets', ticketIDs.toString());
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Accept': 'application/pdf'
+    });
+    // tslint:disable-next-line:max-line-length
+    return this.httpClient.get<Blob>(this.printableTicketBaseUri + '/' + 'ticket', {headers: headers, responseType: 'blob' as 'json', params: params});
+  }
+
+  /**
+   * Requests receipt pdf creation for ticket(s) and receive it
+   * @param ticketIDs IDs of the ticket(s) to request receipt pdf for
+   */
+  getReceiptPdf(ticketIDs: Number[]): Observable<Blob> {
+    console.log('Get receipt pdf for tickets: ' + ticketIDs);
+    let params = new HttpParams();
+    params = params.append('tickets', ticketIDs.toString());
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Accept': 'application/pdf'
+    });
+    // tslint:disable-next-line:max-line-length
+    return this.httpClient.get<Blob>(this.printableTicketBaseUri + '/' + 'receipt', {headers: headers, responseType: 'blob' as 'json', params: params});
+  }
+
+  /**
+   * Requests deletion and cancellation receipt pdf creation for ticket(s) and receive it
+   * @param ticketIDs IDs of the ticket(s) to delete and request receipt pdf for
+   */
+  getCancellationReceiptPdf(ticketIDs: Number[]): Observable<Blob> {
+    console.log('Delete and get cancellation receipt pdf for tickets: ' + ticketIDs);
+    let params = new HttpParams();
+    params = params.append('tickets', ticketIDs.toString());
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Accept': 'application/pdf'
+    });
+    // tslint:disable-next-line:max-line-length
+    return this.httpClient.delete<Blob>(this.printableTicketBaseUri + '/' + 'cancellation', {headers: headers, responseType: 'blob' as 'json', params: params});
   }
 }
