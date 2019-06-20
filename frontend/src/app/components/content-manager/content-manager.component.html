@@ -1,132 +1,133 @@
-<form [formGroup]="addForm" (ngSubmit)="addContent()">
-  <mat-form-field appearance="outline">
-    <mat-select id="add_type" placeholder="Select" formControlName="addType" [(ngModel)]="addType">
-      <mat-option>-- None --</mat-option>
-      <mat-option value="Artist">Artist</mat-option>
-      <mat-option value="Event">Event</mat-option>
-      <mat-option value="Location">Location</mat-option>
-      <mat-option value="Show">Show</mat-option>
-    </mat-select>
-  </mat-form-field>
-  <button mat-raised-button id="add_content" color="primary">Add</button>
-</form>
+<div *ngIf="isAdmin()">
+  <form [formGroup]="addForm" (ngSubmit)="addContent()">
+    <mat-form-field appearance="outline">
+      <mat-select id="add_type" placeholder="Select" formControlName="addType" [(ngModel)]="addType">
+        <mat-option>-- None --</mat-option>
+        <mat-option value="Artist">Artist</mat-option>
+        <mat-option value="Event">Event</mat-option>
+        <mat-option value="Location">Location</mat-option>
+        <mat-option value="Show">Show</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <button mat-raised-button id="add_content" color="primary">Add</button>
+  </form>
 
 
+  <form [formGroup]="searchForm" (ngSubmit)="searchContent()">
+    <mat-form-field appearance="outline">
+      <mat-label>Name</mat-label>
+      <input matInput type="text" id="search_name" placeholder="Name" formControlName="searchName"
+             [(ngModel)]="searchName">
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-select id="search_type" placeholder="Select" formControlName="searchType" [(ngModel)]="searchType">
+        <mat-option>-- None --</mat-option>
+        <mat-option value="Artist">Artist</mat-option>
+        <mat-option value="Event">Event</mat-option>
+        <mat-option value="Location">Location</mat-option>
+        <mat-option value="Show">Show</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <button mat-raised-button id="search_content" color="primary">Search</button>
+  </form>
 
-<form [formGroup]="searchForm" (ngSubmit)="searchContent()">
-  <mat-form-field appearance="outline">
-    <mat-label>Name</mat-label>
-    <input matInput type="text" id="search_name" placeholder="Name" formControlName="searchName" [(ngModel)]="searchName">
-  </mat-form-field>
-  <mat-form-field appearance="outline">
-    <mat-select id="search_type" placeholder="Select" formControlName="searchType" [(ngModel)]="searchType">
-      <mat-option>-- None --</mat-option>
-      <mat-option value="Artist">Artist</mat-option>
-      <mat-option value="Event">Event</mat-option>
-      <mat-option value="Location">Location</mat-option>
-      <mat-option value="Show">Show</mat-option>
-    </mat-select>
-  </mat-form-field>
-  <button mat-raised-button id="search_content" color="primary">Search</button>
-</form>
 
+  <div *ngIf="dataReady && pages.length > 0">
+    <h3 class="mt-5">Results:</h3>
 
+    <!------------------------ Location --------------------------------->
+    <table class="table mt-4" *ngIf="savedType === 'Location'">
+      <thead>
+      <tr>
+        <th *ngFor="let head of locationHeaders" scope="col">{{head}}</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let location of locations">
+        <td class="align-middle">{{location.locationName}}</td>
+        <td class="align-middle">{{location.country}}</td>
+        <td class="align-middle">{{location.city}}</td>
+        <td class="align-middle">{{location.postalCode}}</td>
+        <td class="align-middle">{{location.street}}</td>
+        <td class="align-middle">{{location.description}}</td>
+        <td class="align-middle">Edit</td>
+        <td class="align-middle">Delete</td>
+      </tr>
+      </tbody>
+    </table>
 
-<div *ngIf="dataReady && pages.length > 0">
-  <h3 class="mt-5">Results:</h3>
+    <!------------------------ Show --------------------------------->
+    <table class="table mt-4" *ngIf="savedType === 'Show'">
+      <thead>
+      <tr>
+        <th *ngFor="let head of showHeaders" scope="col">{{head}}</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let show of shows">
+        <td class="align-middle">{{show.event.name}}</td>
+        <td class="align-middle">{{show.date | date:'mediumDate'}} {{show.time}}</td>
+        <td class="align-middle">{{show.hall.name}}</td>
+        <td class="align-middle">{{show.description}}</td>
+        <td class="align-middle">{{show.ticketsSold}}</td>
+        <td class="align-middle">Edit</td>
+        <td class="align-middle">Delete</td>
+      </tr>
+      </tbody>
+    </table>
 
-  <!------------------------ Location --------------------------------->
-  <table class="table mt-4" *ngIf="savedType === 'Location'">
-    <thead>
-    <tr>
-      <th *ngFor="let head of locationHeaders" scope="col">{{head}}</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr *ngFor="let location of locations">
-      <td class="align-middle">{{location.locationName}}</td>
-      <td class="align-middle">{{location.country}}</td>
-      <td class="align-middle">{{location.city}}</td>
-      <td class="align-middle">{{location.postalCode}}</td>
-      <td class="align-middle">{{location.street}}</td>
-      <td class="align-middle">{{location.description}}</td>
-      <td class="align-middle">Edit</td>
-      <td class="align-middle">Delete</td>
-    </tr>
-    </tbody>
-  </table>
+    <!------------------------ Event --------------------------------->
+    <table class="table mt-4" *ngIf="savedType === 'Event'">
+      <thead>
+      <tr>
+        <th *ngFor="let head of eventHeaders" scope="col">{{head}}</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let event of events">
+        <td class="align-middle">{{event.name}}</td>
+        <td class="align-middle">{{event.eventType}}</td>
+        <td class="align-middle" *ngIf="event.artist !== undefined">{{event.artist.name}}</td>
+        <td class="align-middle" *ngIf="event.artist === undefined"></td>
+        <td class="align-middle">{{event.durationInMinutes}}</td>
+        <td class="align-middle">{{event.description}}</td>
+        <td class="align-middle">{{event.content}}</td>
+        <td class="align-middle">Edit</td>
+        <td class="align-middle">Delete</td>
+      </tr>
+      </tbody>
+    </table>
 
-  <!------------------------ Show --------------------------------->
-  <table class="table mt-4" *ngIf="savedType === 'Show'">
-    <thead>
-    <tr>
-      <th *ngFor="let head of showHeaders" scope="col">{{head}}</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr *ngFor="let show of shows">
-      <td class="align-middle">{{show.event.name}}</td>
-      <td class="align-middle">{{show.date | date:'mediumDate'}} {{show.time}}</td>
-      <td class="align-middle">{{show.hall.name}}</td>
-      <td class="align-middle">{{show.description}}</td>
-      <td class="align-middle">{{show.ticketsSold}}</td>
-      <td class="align-middle">Edit</td>
-      <td class="align-middle">Delete</td>
-    </tr>
-    </tbody>
-  </table>
+    <!------------------------ Artist --------------------------------->
+    <table class="table mt-4" *ngIf="savedType === 'Artist'">
+      <thead>
+      <tr>
+        <th *ngFor="let head of artistHeaders" scope="col">{{head}}</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let artist of artists">
+        <td class="align-middle">{{artist.name}}</td>
+        <td class="align-middle">Edit</td>
+        <td class="align-middle">Delete</td>
+      </tr>
+      </tbody>
+    </table>
 
-  <!------------------------ Event --------------------------------->
-  <table class="table mt-4" *ngIf="savedType === 'Event'">
-    <thead>
-    <tr>
-      <th *ngFor="let head of eventHeaders" scope="col">{{head}}</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr *ngFor="let event of events">
-      <td class="align-middle">{{event.name}}</td>
-      <td class="align-middle">{{event.eventType}}</td>
-      <td class="align-middle" *ngIf="event.artist !== undefined">{{event.artist.name}}</td>
-      <td class="align-middle" *ngIf="event.artist === undefined"></td>
-      <td class="align-middle">{{event.durationInMinutes}}</td>
-      <td class="align-middle">{{event.description}}</td>
-      <td class="align-middle">{{event.content}}</td>
-      <td class="align-middle">Edit</td>
-      <td class="align-middle">Delete</td>
-    </tr>
-    </tbody>
-  </table>
-
-  <!------------------------ Artist --------------------------------->
-  <table class="table mt-4" *ngIf="savedType === 'Artist'">
-    <thead>
-    <tr>
-      <th *ngFor="let head of artistHeaders" scope="col">{{head}}</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr *ngFor="let artist of artists">
-      <td class="align-middle">{{artist.name}}</td>
-      <td class="align-middle">Edit</td>
-      <td class="align-middle">Delete</td>
-    </tr>
-    </tbody>
-  </table>
-
-  <!------------------------ Pagination --------------------------------->
-  <div class="justify-content-center" style="padding-bottom: 15px" *ngIf="pages.length > 1">
-    <ul class="nav nav-pills">
-      <li class="nav-item">
-        <a class="nav-link" href="" (click)="previousPage($event)">«</a>
-      </li>
-      <li class="nav-item" *ngFor="let p of pages; let i = index">
-        <a class="nav-link" href="" (click)="setPage(i, $event)" [ngClass]="{'active': i == page}">{{i}}</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="" (click)="nextPage($event)">»</a>
-      </li>
-    </ul>
+    <!------------------------ Pagination --------------------------------->
+    <div class="justify-content-center" style="padding-bottom: 15px" *ngIf="pages.length > 1">
+      <ul class="nav nav-pills">
+        <li class="nav-item">
+          <a class="nav-link" href="" (click)="previousPage($event)">«</a>
+        </li>
+        <li class="nav-item" *ngFor="let p of pages; let i = index">
+          <a class="nav-link" href="" (click)="setPage(i, $event)" [ngClass]="{'active': i == page}">{{i}}</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="" (click)="nextPage($event)">»</a>
+        </li>
+      </ul>
+    </div>
   </div>
+  <h3 class="mt-5" *ngIf="dataReady && pages.length === 0">No Results</h3>
 </div>
-<h3 class="mt-5" *ngIf="dataReady && pages.length === 0">No Results</h3>
