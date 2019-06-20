@@ -29,4 +29,10 @@ public interface ShowRepository extends JpaRepository<Show, Long>, ShowRepositor
      * @return a page of the found shows
      */
     Page<Show> findAllByHall_Location_Id(Long locationID, Pageable pageable);
+
+    /**
+     * Delete the show with the given id
+     * @param showId of the show to delete
+     */
+    void deleteById(Long showId);
 }

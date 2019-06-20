@@ -3,6 +3,7 @@ package at.ac.tuwien.sepm.groupphase.backend.service;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.searchParameters.ShowSearchParametersDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.show.ShowDTO;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 
 public interface ShowService {
@@ -64,4 +65,12 @@ public interface ShowService {
      */
     Page<ShowDTO> findAllShowsFilteredByLocationID(Long id, Integer page) throws ServiceException;
 
+    /**
+     * Delete the show with the given id
+     *
+     * @param showId of the show to delete
+     * @throws ServiceException if the id is not found
+     * @throws DataIntegrityViolationException if the entity can't be deleted because it's referenced by another one
+     */
+    void deleteById(Long showId) throws ServiceException, DataIntegrityViolationException;
 }

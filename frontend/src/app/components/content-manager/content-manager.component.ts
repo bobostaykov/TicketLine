@@ -18,7 +18,11 @@ import {MatSnackBar} from '@angular/material';
 })
 export class ContentManagerComponent implements OnInit {
 
+  private showToDelete: number;
+  private artistToDelete: number;
+
   private savedType: string;
+  private savedName: string;
 
   private page: number = 0;
   private pages: Array<number>;
@@ -101,11 +105,13 @@ export class ContentManagerComponent implements OnInit {
   }
 
   private addContent(): void {
+    console.log('ContentManager: addContent');
+
     if (this.addType === undefined) {
       this.openSnackBar('Type is required!', 'red-snackbar');
       return;
     }
-    console.log('ContentManager: addContent');
+
     switch (this.addType) {
       case 'Artist':
         break;
@@ -122,15 +128,22 @@ export class ContentManagerComponent implements OnInit {
 
   private searchContent(): void {
     console.log('ContentManager: searchContent');
+
     if (this.searchName === undefined || this.searchType === undefined) {
       this.openSnackBar('Both fields must be filled!', 'red-snackbar');
       return;
     }
 
-    this.savedType = this.searchType; // used to save the type so that the tables in the html file doesn't change when changing the search mask
-    switch (this.searchType) {
+    this.savedType = this.searchType;
+    this.savedName = this.searchName;
+
+    this.loadEntities();
+  }
+
+  private loadEntities() {
+    switch (this.savedType) {
       case 'Artist':
-        this.artistService.findArtists(this.searchName, this.page).subscribe(
+        this.artistService.findArtists(this.savedName, this.page).subscribe(
           result => {
             this.artists = result['content'];
             this.pages = new Array(result['totalPages']);
@@ -140,7 +153,7 @@ export class ContentManagerComponent implements OnInit {
         );
         break;
       case 'Show':
-        this.showService.findShowsFilteredByEventName(this.searchName, this.page).subscribe(
+        this.showService.findShowsFilteredByEventName(this.savedName, this.page).subscribe(
           result => {
             this.shows = result['content'];
             this.pages = new Array(result['totalPages']);
@@ -150,7 +163,7 @@ export class ContentManagerComponent implements OnInit {
         );
         break;
       case 'Event':
-        this.eventService.findEventsFilteredByAttributes(this.searchName, null, null, null, null, this.page).subscribe(
+        this.eventService.findEventsFilteredByAttributes(this.savedName, null, null, null, null, this.page).subscribe(
           result => {
             this.events = result['content'];
             this.pages = new Array(result['totalPages']);
@@ -161,7 +174,7 @@ export class ContentManagerComponent implements OnInit {
         );
         break;
       case 'Location':
-        this.locationService.findLocationsFiltered(this.searchName, null, null, null, null, null, this.page).subscribe(
+        this.locationService.findLocationsFiltered(this.savedName, null, null, null, null, null, this.page).subscribe(
           result => {
             this.locations = result['content'];
             this.pages = new Array(result['totalPages']);
@@ -195,6 +208,32 @@ export class ContentManagerComponent implements OnInit {
       this.page++;
       this.searchContent();
     }
+  }
+
+  private setShowToDelete(showId: number) {
+    this.showToDelete = showId;
+  }
+
+  private deleteShow() {
+    this.showService.deleteShow(this.showToDelete).subscribe(
+      () => {},
+      error => { this.defaultServiceErrorHandling(error); },
+      () => { this.loadEntities(); }
+    );
+    this.showToDelete = null;
+  }
+
+  private setArtistToDelete(artistId: number) {
+    this.artistToDelete = artistId;
+  }
+
+  private deleteArtist() {
+    this.artistService.deleteArtist(this.artistToDelete).subscribe(
+      () => {},
+      error => { this.defaultServiceErrorHandling(error); },
+      () => { this.loadEntities(); }
+    );
+    this.artistToDelete = null;
   }
 
   openSnackBar(message: string, css: string) {

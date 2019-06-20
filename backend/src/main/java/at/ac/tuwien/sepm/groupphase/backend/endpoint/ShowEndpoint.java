@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -101,6 +102,19 @@ public class ShowEndpoint {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error while looking for shows with those parameters", e);
         } catch (NotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No shows are found for the given parameters:" + e.getMessage(), e);
+        }
+    }
+
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "Delete a show by id", authorizations = {@Authorization(value = "apiKey")})
+    public void deleteById(@PathVariable Long id) {
+        LOGGER.info("ShowEndpoint: deleteById " + id);
+        try {
+            showService.deleteById(id);
+        } catch (ServiceException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
 }

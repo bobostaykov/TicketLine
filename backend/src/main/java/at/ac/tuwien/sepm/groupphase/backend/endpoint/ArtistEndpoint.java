@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.artist.ArtistDTO;
+import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.service.ArtistService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -8,10 +9,10 @@ import io.swagger.annotations.Authorization;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -33,6 +34,18 @@ public class ArtistEndpoint {
                                              @RequestParam(value = "page", required = false) Integer page) {
         LOGGER.info("ArtistEndpoint: findArtistsByName");
         return artistService.findArtistsByName(artistName, page);
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "Delete an artist by id", authorizations = {@Authorization(value = "apiKey")})
+    public void deleteById(@PathVariable Long id) {
+        LOGGER.info("ArtistEndpoint: deleteById " + id);
+        try {
+            artistService.deleteById(id);
+        } catch (ServiceException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
     }
 
 }

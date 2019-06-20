@@ -14,6 +14,11 @@ export class ShowResultsService {
 
   constructor(private httpClient: HttpClient, private globals: Globals) { }
 
+  public deleteShow(showId: number): Observable<{}> {
+    console.log('Delete show with id ' + showId);
+    return this.httpClient.delete(this.showBaseUri + '/' + showId);
+  }
+
   public findShowsFilteredByEventName(eventName, page): Observable<Show[]> {
     console.log('ShowResultsService: findShowsFilteredByEventName');
     return this.httpClient.get<Show[]>(this.showBaseUri + '/filter', {params: {eventName: eventName, page: page}});
