@@ -14,4 +14,6 @@ public interface HallRepository extends JpaRepository<Hall, Long> {
      * @return a list of hall entities
      */
     List<Hall> findAll();
+
+
 }
