@@ -93,10 +93,18 @@ public class TicketServiceImpl implements TicketService {
             Seat seat = null;
             Sector sector = null;
             if (current.getSeat() != null) {
-                seat = this.seatRepository.getOne(current.getSeat());
+                seat = this.seatRepository.findOneById(current.getSeat()).get();
+                if (!show.getHall().getSeats().contains(seat)) {
+                    throw new NotFoundException("Seat " + seat.getSeatNumber() + " in row " + seat.getSeatRow() +
+                        " not found in list of seats for this show!");
+                }
             }
             if (current.getSector() != null) {
                 sector = this.sectorRepository.getOne(current.getSector());
+                if (!show.getHall().getSectors().contains(sector)) {
+                    throw new NotFoundException("Sector " + sector.getSectorNumber() +
+                        " not found in list of sectors for this show!");
+                }
             }
 
             Ticket ticket = new Ticket().builder()
