@@ -16,7 +16,6 @@ import at.ac.tuwien.sepm.groupphase.backend.service.generator.PDFGenerator;
 import com.itextpdf.text.DocumentException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
@@ -164,21 +163,21 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public MultipartFile getReceipt(List<String> ticketIDs) throws DocumentException, IOException {
+    public byte[] getReceipt(List<String> ticketIDs) throws DocumentException, IOException {
         List<TicketDTO> tickets = ticketMapper.ticketToTicketDTO(ticketRepository.findByIdIn(this.parseListOfIds(ticketIDs)));
         return pdfGenerator.generateReceipt(tickets, false);
     }
 
     @Override
     @Transactional
-    public MultipartFile deleteAndGetCancellationReceipt(List<String> ticketIDs) throws DocumentException, IOException {
+    public byte[] deleteAndGetCancellationReceipt(List<String> ticketIDs) throws DocumentException, IOException {
         List<TicketDTO> tickets = ticketMapper.ticketToTicketDTO(ticketRepository.findByIdIn(this.parseListOfIds(ticketIDs)));
         ticketRepository.deleteByIdIn(this.parseListOfIds(ticketIDs));
         return pdfGenerator.generateReceipt(tickets, true);
     }
 
     @Override
-    public MultipartFile generateTicketPDF(List<String> ticketIDs) throws DocumentException, IOException, NoSuchAlgorithmException {
+    public byte[] generateTicketPDF(List<String> ticketIDs) throws DocumentException, IOException, NoSuchAlgorithmException {
         List<TicketDTO> tickets = ticketMapper.ticketToTicketDTO(ticketRepository.findByIdIn(this.parseListOfIds(ticketIDs)));
         return pdfGenerator.generateTicketPDF(tickets);
     }

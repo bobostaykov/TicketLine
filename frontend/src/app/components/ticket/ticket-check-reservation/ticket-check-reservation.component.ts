@@ -34,13 +34,13 @@ export class TicketCheckReservationComponent implements OnInit {
   private customer: Customer;
   private ticket_seats: Seat[] = [];
   private ticket_sectors: Sector[] = [];
-  private tickets: TicketPost[] = [];
+  private tickets: TicketPost[] = []; /* takre status from this to decide which buttons to show */
   private amtTickets: number;
   private seatsStr: String[] = [];
   private rowStr: String[] = [];
   private idxPrice: number;
   private ticketExistsError: boolean = false;
-  private createdTickets: Ticket[];
+  private createdTickets: Ticket[] = [];
 
   // TODO: delete default objects
   private sector: Sector;
@@ -112,6 +112,7 @@ export class TicketCheckReservationComponent implements OnInit {
 
   async createTicket(tickets: TicketPost[]) {
     this.ticketExistsError = false;
+    this.createdTickets = []; /* reset at beginning */
     this.addTicket(tickets);
     await this.delay(500);
     if (this.ticketExistsError) {
@@ -124,7 +125,7 @@ export class TicketCheckReservationComponent implements OnInit {
   }
 
   getIdsOfCreatedTickets(): Number[] {
-    const ticketIDs: Number[] = Number[this.createdTickets.length];
+    const ticketIDs: Number[] = []; /*Number[this.createdTickets.length];*/
     for (let i = 0; i < this.createdTickets.length; i++) {
       ticketIDs[i] = this.createdTickets[i].id;
     }
@@ -161,12 +162,32 @@ export class TicketCheckReservationComponent implements OnInit {
   }
 
   /**
+   * Sends deletion and cancellation receipt request
+   */
+  getCancellationReceipt() {
+    this.ticketService.getCancellationReceiptPdf(this.getIdsOfCreatedTickets()).subscribe(
+      res => {
+        const fileURL = URL.createObjectURL(res);
+        window.open(fileURL, '_blank');
+      },
+      error => {
+        console.log('cancellation receipt error')
+        this.defaultServiceErrorHandling(error);
+      }
+    );
+  }
+
+  /**
    * Sends ticket pdf request
   */
   getTicketPdf() {
     this.ticketService.getTicketPdf(this.getIdsOfCreatedTickets()).subscribe(
-      /*(newTickets: Ticket[]) => {this.createdTickets = newTickets;},*/
+      res => {
+        const fileURL = URL.createObjectURL(res);
+        window.open(fileURL, '_blank');
+      },
       error => {
+        console.log('ticket pdf error')
         this.defaultServiceErrorHandling(error);
       }
     );
@@ -182,12 +203,12 @@ export class TicketCheckReservationComponent implements OnInit {
   private defaultServiceErrorHandling(error: any) {
     console.log(error);
     this.error = true;
-    if (error.error.ticketCheckReservation !== 'No message available') {
-      this.errorMessage = error.error.ticketCheckReservation;
+    if (error.message !== 'No message available') {
+      this.errorMessage = error.message;
     } else {
-      this.errorMessage = error.error.error;
+      this.errorMessage = error.error;
     }
-    if (error.error.status === 'BAD_REQUEST') {
+    if (error.status === 'BAD_REQUEST') {
       console.log('here we go');
       this.errorMessage = error.error.message;
       this.ticketExistsError = true;
