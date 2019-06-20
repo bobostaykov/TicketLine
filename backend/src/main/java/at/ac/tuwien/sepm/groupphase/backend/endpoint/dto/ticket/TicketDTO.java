@@ -17,6 +17,9 @@ public class TicketDTO {
     @ApiModelProperty(name = "The automatically generated database id")
     private Long id;
 
+    @ApiModelProperty(name = "Reservation number for ticket reservations")
+    private String reservationNo;
+
     @ApiModelProperty(name = "The show this tickets was issued for")
     private ShowDTO show;
 
@@ -34,6 +37,14 @@ public class TicketDTO {
 
     @ApiModelProperty(name = "Status of the ticket (RESERVATED, SOLD)")
     private TicketStatus status;
+
+    public String getReservationNo() {
+        return reservationNo;
+    }
+
+    public void setReservationNo(String reservationNo) {
+        this.reservationNo = reservationNo;
+    }
 
     public void setId(Long id) {
         this.id = id;
@@ -112,6 +123,9 @@ public class TicketDTO {
         if (sector != null) {
             out = out + ", sectorNumber =" + sector.getSectorNumber();
         }
+        if (reservationNo != null) {
+            out = out + ", rservationNumber = " + reservationNo;
+        }
         out = out + '}';
         return out;
     }
@@ -129,6 +143,7 @@ public class TicketDTO {
         if (customer != null ? !customer.equals(ticketDTO.customer) : ticketDTO.customer != null) return false;
         if (seat != null ? !seat.equals(ticketDTO.seat) : ticketDTO.seat != null) return false;
         if (status != null ? !status.equals(ticketDTO.status) : ticketDTO.status != null) return false;
+        if (reservationNo != null ? !reservationNo.equals(ticketDTO.reservationNo) : ticketDTO.reservationNo != null) return false;
         return sector != null ? sector.equals(ticketDTO.sector) : ticketDTO.sector == null;
     }
 
@@ -141,12 +156,14 @@ public class TicketDTO {
         result = 31 * result + (seat != null ? seat.hashCode() : 0);
         result = 31 * result + (sector != null ? sector.hashCode() : 0);
         result = 31 * result + (status != null ? status.hashCode() : 0);
+        result = 31 * result + (reservationNo != null ? reservationNo.hashCode() : 0);
         return result;
     }
 
     public static final class TicketDTOBuilder {
 
         private Long id;
+        private String reservationNo;
         private ShowDTO show;
         private Double price;
         private CustomerDTO customer;
@@ -156,6 +173,11 @@ public class TicketDTO {
 
         public TicketDTOBuilder id(Long id) {
             this.id = id;
+            return this;
+        }
+
+        public TicketDTOBuilder reservationNo(String reservationNo) {
+            this.reservationNo = reservationNo;
             return this;
         }
 
@@ -192,6 +214,7 @@ public class TicketDTO {
         public TicketDTO build() {
             TicketDTO ticketDTO = new TicketDTO();
             ticketDTO.setId(id);
+            ticketDTO.setReservationNo(reservationNo);
             ticketDTO.setShow(show);
             ticketDTO.setPrice(price);
             ticketDTO.setCustomer(customer);
