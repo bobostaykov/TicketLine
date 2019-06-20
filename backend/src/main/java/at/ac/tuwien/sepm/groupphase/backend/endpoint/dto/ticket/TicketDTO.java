@@ -87,6 +87,10 @@ public class TicketDTO {
         return status;
     }
 
+    public String getReservationNumber() {
+        return "Dummy number";
+    }
+
     public void setStatus(TicketStatus status) {
         this.status = status;
     }
