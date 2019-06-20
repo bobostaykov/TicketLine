@@ -122,6 +122,7 @@ public class TicketServiceImpl implements TicketService {
                 .build();
             show.setTicketsSold(show.getTicketsSold() + 1);
             showRepository.save(show);
+            /* TODO: test everthing, also test if incrementing ticketSold worked */
             created.add(ticketMapper.ticketToTicketDTO(ticketRepository.save(ticket)));
         }
         return created;
