@@ -120,6 +120,8 @@ public class TicketServiceImpl implements TicketService {
                 .sector(sector)
                 .reservationNo(uniqueReservationNo)
                 .build();
+            show.setTicketsSold(show.getTicketsSold() + 1);
+            showRepository.save(show);
             created.add(ticketMapper.ticketToTicketDTO(ticketRepository.save(ticket)));
         }
         return created;
