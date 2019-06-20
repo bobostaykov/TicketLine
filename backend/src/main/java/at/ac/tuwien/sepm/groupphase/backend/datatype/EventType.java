@@ -10,5 +10,6 @@ public enum EventType {
     CONCERT,
     MOVIE,
     MUSICAL,
-    SPORT
+    SPORT,
+    OTHER
 }

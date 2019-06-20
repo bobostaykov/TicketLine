@@ -83,18 +83,19 @@ public class UserEndpoint {
 
     @RequestMapping(value = "/blocked/{id}" ,method = RequestMethod.PUT)
     @PreAuthorize("hasRole('ADMIN')")
-    @ApiOperation(value = "block user by id", authorizations = {@Authorization(value = "apiKey")})
+    @ApiOperation(value = "Block user by id", authorizations = {@Authorization(value = "apiKey")})
     public boolean blockUser(@PathVariable Long id){
-        LOGGER.info("blocking user with id" + id);
+        LOGGER.info("Blocking user with id" + id);
         try {
             return userService.blockUser(id);
         } catch (ServiceException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "error during blocking user with id: " + id +" "+ e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error during blocking user with id " + id + ": " + e.getMessage());
         }
     }
+
     @RequestMapping(value = "blocked/unblock/{id}", method = RequestMethod.PUT)
     @PreAuthorize("hasRole('ADMIN')")
-    @ApiOperation(value = "unblock user by id", authorizations = {@Authorization(value = "apiKey")})
+    @ApiOperation(value = "Unblocking user by id", authorizations = {@Authorization(value = "apiKey")})
     public boolean unblockUser(@PathVariable Long id){
         LOGGER.info("unblocking user with id: " + id);
         return userService.unblockUser(id);
@@ -102,10 +103,10 @@ public class UserEndpoint {
 
     @RequestMapping(value = "/blocked", method = RequestMethod.GET)
     @PreAuthorize("hasRole('ADMIN')")
-    @ApiOperation(value = "get all blocked users", authorizations = {@Authorization(value = "apiKey")})
+    @ApiOperation(value = "Get all blocked users", authorizations = {@Authorization(value = "apiKey")})
     public Page<UserDTO> getAllBlockedUsers(@RequestParam(value = "page", required = false) Integer page,
                                             @RequestParam(value = "pageSize", required = false) Integer pageSize){
-        LOGGER.info("get all blocked users");
+        LOGGER.info("Get all blocked users");
         try{
             return userService.getAllBlockedUsers(page, pageSize);
         } catch (ServiceException e) {

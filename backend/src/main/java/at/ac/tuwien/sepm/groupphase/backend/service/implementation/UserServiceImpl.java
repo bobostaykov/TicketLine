@@ -86,12 +86,12 @@ public class UserServiceImpl implements UserService {
     }
 
     public UserDTO findUserByName(String userName) throws NotFoundException{
-        LOGGER.info("finding user with username: " + userName);
+        LOGGER.info("Finding user with username: " + userName);
         Optional<User> found = userRepository.findOneByUsername(userName);
         if (found.isPresent()){
             return userMapper.userToUserDTO(found.get());
         }else {
-            throw new NotFoundException("could not find User with username: " + userName);
+            throw new NotFoundException("Could not find User with username: " + userName);
         }
 
     }
@@ -134,20 +134,20 @@ public class UserServiceImpl implements UserService {
         Optional<LoginAttempts> loginAttemptsFound = loginAttemptsRepository.findById(userId);
         if(loginAttemptsFound.isPresent()){
             if(loginAttemptsFound.get().getUser().getType().equals(UserType.ADMIN)){
-                throw new ServiceException("admin cant be blocked");
+                throw new ServiceException("Admin can't be blocked");
             }
             LoginAttempts loginAttempts = loginAttemptsFound.get();
             loginAttempts.setBlocked(true);
             loginAttemptsRepository.save(loginAttempts);
-            LOGGER.info("blocked user with id: " + userId);
+            LOGGER.info("Blocked user with id: " + userId);
             return true;
         }else
-            throw new NotFoundException("could not find user with id "+ userId);
+            throw new NotFoundException("Could not find user with id "+ userId);
     }
 
     @Override
     public Page<UserDTO> getAllBlockedUsers(Integer page, @Positive Integer pageSize) throws ServiceException{
-        LOGGER.info("getting all blocked users");
+        LOGGER.info("Getting all blocked users");
         try {
             if(pageSize == null){
                 pageSize = 10;

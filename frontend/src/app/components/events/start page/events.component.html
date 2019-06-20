@@ -55,12 +55,13 @@
             </div>
 
             <div class="form-group">
-              <label for="inputArtist">Artist</label>
-              <input type="text" name="artist" formControlName="artist" class="form-control" id="inputArtist"
-                     aria-describedby="artistHelp" placeholder="Enter artist name">
+              <div class="form-group">
+                <label for="inputArtist">Artist</label>
+                <ngx-select-dropdown id="inputArtist" formControlName="artist" [(ngModel)]="selectedArtist" [config]="config" [options]="options"></ngx-select-dropdown>
+              </div>
               <div *ngIf="submitted && createEventForm.controls.artist.errors" class="error">
                 <small class="form-text text-warning" *ngIf="createEventForm.controls.artist.errors.required">
-                  Artist name is required!
+                  Artist is required!
                 </small>
               </div>
             </div>
