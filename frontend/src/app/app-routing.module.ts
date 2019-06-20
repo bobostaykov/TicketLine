@@ -15,7 +15,6 @@ import {EventResultsComponent} from './components/search-results/events/event-re
 import {FloorplanControlComponent} from './components/floorplan-control/floorplan-control.component';
 import {CustomerComponent} from './components/customer/customer.component';
 import {BlockedUsersComponent} from './components/blocked-users/blocked-users.component';
-import {AddContentComponent} from './components/add-content/add-content.component';
 
 const routes: Routes = [
   {path: '', component: HomeComponent},
@@ -32,7 +31,6 @@ const routes: Routes = [
   {path: 'events/search/results/events', canActivate: [AuthGuard], component: EventResultsComponent},
   {path: 'floorplan', canActivate: [AuthGuard], component: FloorplanControlComponent},
   {path: 'blocked', canActivate: [AuthGuard], component: BlockedUsersComponent},
-  {path: 'addcontent', canActivate: [AuthGuard], component: AddContentComponent}
 ];
 
 @NgModule({

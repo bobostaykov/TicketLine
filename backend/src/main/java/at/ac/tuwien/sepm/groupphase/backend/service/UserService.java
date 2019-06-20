@@ -8,12 +8,13 @@ import org.springframework.data.domain.Page;
 public interface UserService {
 
     /**
-     * Find all user entries.
+     * Get all users or search by username, depending on whether username == null
      *
+     * @param username string to search by
      * @param page number of the requested page
      * @return page of the found users
      */
-    Page<UserDTO> findAll(Integer page) throws ServiceException;
+    Page<UserDTO> getUsers(String username, Integer page) throws ServiceException;
 
     /**
      * Find a single user entry by id.
@@ -63,9 +64,10 @@ public interface UserService {
 
 
     /**
-     * Get all users
+     * Get all blocked users or search by username, depending on whether username == null
+     * @param username string to search by
      * @param page number of the requested page
      * @return a page with users that are currently blocked
      */
-    Page<UserDTO> getAllBlockedUsers(Integer page) throws ServiceException;
+    Page<UserDTO> getBlockedUsers(String username, Integer page) throws ServiceException;
 }

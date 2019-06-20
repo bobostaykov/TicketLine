@@ -5,6 +5,7 @@ import {User} from '../../../dtos/user';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {EventType} from '../../../datatype/event_type';
 import {Artist} from '../../../dtos/artist';
+import {ArtistResultsService} from '../../../services/search-results/artists/artist-results.service';
 
 @Component({
   selector: 'app-events',
@@ -23,9 +24,22 @@ export class EventsComponent implements OnInit {
   private submitted: boolean = false;
   private selectedEventType: string = null;
   private duration: number = null;
-  private eventTypes = ['', 'Theatre', 'Opera', 'Festival', 'Concert', 'Movie', 'Musical', 'Sport'];
+  private eventTypes = ['', 'Theatre', 'Opera', 'Festival', 'Concert', 'Movie', 'Musical', 'Sport', 'Other'];
+  // for artist search dropdown
+  private options: string[] = [];
+  private config = {
+    displayKey: 'Select an artist',
+    search: true,
+    height: '350px',
+    placeholder: ' ',
+    limitTo: this.options.length,
+    moreText: 'more',
+    noResultsFound: 'No results found!',
+    searchPlaceholder: 'Search',
+    searchOnKey: 'name'
+  };
 
-  constructor(private eventService: EventService, private formBuilder: FormBuilder) {
+  constructor(private eventService: EventService, private artistResultsService: ArtistResultsService, private formBuilder: FormBuilder) {
     this.createEventForm = this.formBuilder.group({
       eventName: ['', [Validators.required]],
       type: ['', [Validators.required]],
@@ -38,6 +52,7 @@ export class EventsComponent implements OnInit {
 
   ngOnInit() {
     this.loadEvents();
+    this.loadArtists();
   }
 
   private addEvent() {
@@ -52,7 +67,8 @@ export class EventsComponent implements OnInit {
         this.duration
       );
       this.createEvent(event);
-      this.clearCreateEventForm();
+      window.location.reload();
+      // this.clearCreateEventForm();
     } else {
       console.log('Invalid input');
     }
@@ -76,6 +92,19 @@ export class EventsComponent implements OnInit {
       error => { this.defaultServiceErrorHandling(error); },
       () => { this.dataReady = true; }
     );
+  }
+
+  private loadArtists() {
+    this.artistResultsService.findArtists('').subscribe(
+      (artists: Artist[]) => { this.options = this.artistArrayToStringArray(artists); },
+      error => { this.defaultServiceErrorHandling(error); }
+    );
+  }
+
+  private artistArrayToStringArray(artists: Artist[]): string[] {
+    const toReturn: string[] = [];
+    artists.forEach(artist => { toReturn.push(artist.name); });
+    return toReturn;
   }
 
   private setPage(i, event: any) {

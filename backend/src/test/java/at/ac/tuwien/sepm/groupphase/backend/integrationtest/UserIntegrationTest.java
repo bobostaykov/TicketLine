@@ -121,6 +121,7 @@ public class UserIntegrationTest extends BaseIntegrationTestWithMockedUserCreden
     @Test
     public void AuthenticationWithCorrectCredentialsAndBlockedUser_resultsInNoAuthentication() throws ServiceException {
         thrown.expect(InternalAuthenticationServiceException.class);
+        userService.unblockUser(testUser1.getId());
         userService.blockUser(testUser1.getId());
         LoginAttempts attempts = loginAttemptsRepository.findById(testUser1.getId()).get();
         Assert.assertThat(attempts.isBlocked(), is(true));
@@ -136,7 +137,7 @@ public class UserIntegrationTest extends BaseIntegrationTestWithMockedUserCreden
             .given()
             .contentType(ContentType.JSON)
             .headers(HttpHeaders.AUTHORIZATION, validAdminTokenWithPrefix)
-            .when().put(USER_ENDPOINT + BLOCKED_USER_PATH + SPECIFIC_USER_PATH, testUser1.getId());
+            .when().put(USER_ENDPOINT + BLOCKED_USER_PATH + "/" + testUser1.getId());
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
         LoginAttempts attempts = loginAttemptsRepository.findById(testUser1.getId()).get();
         Assert.assertThat(attempts.isBlocked(), is(true));
@@ -175,13 +176,14 @@ public class UserIntegrationTest extends BaseIntegrationTestWithMockedUserCreden
             .given()
             .contentType(ContentType.JSON)
             .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
-            .when().get(USER_ENDPOINT + BLOCKED_USER_PATH )
+            .when().get(USER_ENDPOINT + BLOCKED_USER_PATH + "?username=null")
             .then().extract().response();
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.FORBIDDEN.value()));
     }
 
     @Test
     public void unblockUserAsAdmin_resultsInUserBeingUnblocked() throws ServiceException {
+        userService.unblockUser(testUser1.getId());
         userService.blockUser(testUser1.getId());
         LoginAttempts attempts = loginAttemptsRepository.findById(testUser1.getId()).get();
         Assert.assertThat(attempts.isBlocked(), is(true));
@@ -267,7 +269,7 @@ public class UserIntegrationTest extends BaseIntegrationTestWithMockedUserCreden
             .given()
             .contentType(ContentType.JSON)
             .headers(HttpHeaders.AUTHORIZATION, validAdminTokenWithPrefix)
-            .when().get(USER_ENDPOINT + BLOCKED_USER_PATH + "?page=0")
+            .when().get(USER_ENDPOINT + BLOCKED_USER_PATH + "?username=null&page=0")
             .then().extract().response();
 
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));

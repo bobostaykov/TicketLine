@@ -30,11 +30,13 @@ public class UserEndpoint {
 
     @RequestMapping(method = RequestMethod.GET)
     @PreAuthorize("hasRole('ADMIN')")
-    @ApiOperation(value = "Get all users", authorizations = {@Authorization(value = "apiKey")})
-    public Page<UserDTO> findAll(@RequestParam(value = "page") Integer page) {
-        LOGGER.info("Get all users");
+    @ApiOperation(value = "Get users", authorizations = {@Authorization(value = "apiKey")})
+    public Page<UserDTO> getUsers(@RequestParam(value = "username") String username, @RequestParam(value = "page") Integer page) {
+        LOGGER.info("Get users");
+        if (username.equals("null"))
+            username = null;
         try {
-            return userService.findAll(page);
+            return userService.getUsers(username, page);
         } catch (ServiceException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
@@ -83,18 +85,19 @@ public class UserEndpoint {
 
     @RequestMapping(value = "/blocked/{id}" ,method = RequestMethod.PUT)
     @PreAuthorize("hasRole('ADMIN')")
-    @ApiOperation(value = "block user by id", authorizations = {@Authorization(value = "apiKey")})
+    @ApiOperation(value = "Block user by id", authorizations = {@Authorization(value = "apiKey")})
     public boolean blockUser(@PathVariable Long id){
-        LOGGER.info("blocking user with id" + id);
+        LOGGER.info("Blocking user with id" + id);
         try {
             return userService.blockUser(id);
         } catch (ServiceException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "error during blocking user with id: " + id +" "+ e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error during blocking user with id " + id + ": " + e.getMessage());
         }
     }
+
     @RequestMapping(value = "blocked/unblock/{id}", method = RequestMethod.PUT)
     @PreAuthorize("hasRole('ADMIN')")
-    @ApiOperation(value = "unblock user by id", authorizations = {@Authorization(value = "apiKey")})
+    @ApiOperation(value = "Unblocking user by id", authorizations = {@Authorization(value = "apiKey")})
     public boolean unblockUser(@PathVariable Long id){
         LOGGER.info("unblocking user with id: " + id);
         return userService.unblockUser(id);
@@ -102,11 +105,13 @@ public class UserEndpoint {
 
     @RequestMapping(value = "/blocked", method = RequestMethod.GET)
     @PreAuthorize("hasRole('ADMIN')")
-    @ApiOperation(value = "get all blocked users", authorizations = {@Authorization(value = "apiKey")})
-    public Page<UserDTO> getAllBlockedUsers(@RequestParam(value = "page", required = false) Integer page){
-        LOGGER.info("get all blocked users");
+    @ApiOperation(value = "Get blocked users", authorizations = {@Authorization(value = "apiKey")})
+    public Page<UserDTO> getBlockedUsers(@RequestParam(value = "username") String username, @RequestParam(value = "page", required = false) Integer page){
+        LOGGER.info("Get blocked users");
+        if (username.equals("null"))
+            username = null;
         try{
-            return userService.getAllBlockedUsers(page);
+            return userService.getBlockedUsers(username, page);
         } catch (ServiceException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error during reading filtered customers", e);
         } catch (IllegalArgumentException e) {
@@ -115,4 +120,5 @@ public class UserEndpoint {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No events are found by that artist:" + e.getMessage(), e);
         }
     }
+
 }
