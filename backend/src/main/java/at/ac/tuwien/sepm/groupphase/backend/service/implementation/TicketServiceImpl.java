@@ -23,6 +23,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class TicketServiceImpl implements TicketService {
@@ -107,7 +108,10 @@ public class TicketServiceImpl implements TicketService {
                         " not found in list of sectors for this show!");
                 }
             }
-
+            String uniqueReservationNo = null;
+            if (current.getStatus() == TicketStatus.RESERVATED) {
+                uniqueReservationNo = UUID.randomUUID().toString();
+            }
             Ticket ticket = new Ticket().builder()
                 .status(current.getStatus())
                 .customer(customer)
@@ -115,6 +119,7 @@ public class TicketServiceImpl implements TicketService {
                 .show(show)
                 .seat(seat)
                 .sector(sector)
+                .reservationNo(uniqueReservationNo)
                 .build();
             created.add(ticketMapper.ticketToTicketDTO(ticketRepository.save(ticket)));
         }

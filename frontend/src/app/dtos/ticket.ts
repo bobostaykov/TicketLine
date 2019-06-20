@@ -7,6 +7,7 @@ import {TicketStatus} from '../datatype/ticket_status';
 export class Ticket {
   constructor(
     public id: number,
+    public reservationNo: string,
     public show: Show,
     public customer: Customer,
     public price: number,
