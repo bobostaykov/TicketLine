@@ -52,6 +52,7 @@ public class NewsEndpoint {
     @RequestMapping(method = RequestMethod.GET)
     @ApiOperation(value = "Get list of simple news entries", authorizations = {@Authorization(value = "apiKey")})
     public List<SimpleNewsDTO> findAll() {
+        LOGGER.info("News Endpoint: Get all news entries (short version)");
         return newsService.findAll();
     }
 
@@ -59,6 +60,7 @@ public class NewsEndpoint {
     @RequestMapping(value = "/unread", method = RequestMethod.GET)
     @ApiOperation(value = "Get list of unread News articles", authorizations = {@Authorization(value = "apiKey")})
     public List<SimpleNewsDTO> findUnread(HttpServletRequest request) {
+        LOGGER.info("News Endpoint: Get all unread news entries (short version)");
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         return newsService.findUnread(username);
     }
@@ -66,6 +68,7 @@ public class NewsEndpoint {
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ApiOperation(value = "Get detailed information about a specific news entry", authorizations = {@Authorization(value = "apiKey")})
     public DetailedNewsDTO find(@PathVariable Long id) {
+        LOGGER.info("News Endpoint: Get long/ detailed version of news entry with id " + id);
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         return newsService.findOne(id, username);
     }
@@ -74,12 +77,14 @@ public class NewsEndpoint {
     @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "Publish a new news entry", authorizations = {@Authorization(value = "apiKey")})
     public DetailedNewsDTO publishNews(@Valid @RequestBody DetailedNewsDTO detailedNewsDTO) {
+        LOGGER.info("News Endpoint: Publish a new news entry: " + detailedNewsDTO.toString());
         return newsService.publishNews(detailedNewsDTO);
     }
 
     @RequestMapping(value = FILE_URI + "/{id}", method = RequestMethod.GET)
     @ApiOperation(value = "Get file by id", authorizations = {@Authorization(value = "apiKey")})
     public ResponseEntity<Resource> findFileById(@PathVariable Long id) {
+        LOGGER.info("News Endpoint: Get news associated image with id " + id);
         File file = fileService.getFile(id);
         ResponseEntity<Resource>  returnValue = ResponseEntity.ok()
             .contentType(MediaType.parseMediaType("image/" + file.getFileType()))
@@ -92,8 +97,8 @@ public class NewsEndpoint {
     @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "Store file", authorizations = {@Authorization(value = "apiKey")})
     public String storeFile(@RequestParam("file") MultipartFile file) {
-
-        if (ALLOWED_FILE_TYPES.contains(FilenameUtils.getExtension(file.getOriginalFilename()))) {
+        LOGGER.info("News Endpoint: Store news associated image with name " + file.getOriginalFilename());
+        if (ALLOWED_FILE_TYPES.contains(FilenameUtils.getExtension(file.getOriginalFilename()).toLowerCase())) {
             try {
                 Long returnValue = fileService.storeFile(file);
                 return returnValue.toString();

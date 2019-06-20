@@ -20,29 +20,28 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class SimpleNewsService implements NewsService {
+public class NewsServiceImpl implements NewsService {
 
     private final NewsRepository newsRepository;
     private final UserRepository userRepository;
     private final NewsMapper newsMapper;
-    private final UserMapper userMapper;
-    private static final Logger LOGGER = LoggerFactory.getLogger(SimpleNewsService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(NewsServiceImpl.class);
 
-    public SimpleNewsService(NewsRepository newsRepository, UserRepository userRepository, NewsMapper newsMapper,
-                             UserMapper userMapper) {
+    public NewsServiceImpl(NewsRepository newsRepository, UserRepository userRepository, NewsMapper newsMapper) {
         this.newsRepository = newsRepository;
         this.userRepository = userRepository;
         this.newsMapper = newsMapper;
-        this.userMapper = userMapper;
     }
 
     @Override
     public List<SimpleNewsDTO> findAll() {
+        LOGGER.info("News Service: Get all news entries (short version)");
         return newsMapper.newsToSimpleNewsDTO(newsRepository.findAllByOrderByPublishedAtDesc());
     }
 
     @Override
     public List<SimpleNewsDTO> findUnread(String username) {
+        LOGGER.info("News Service: Get all unread news entries (short version) for user with username " + username);
         Optional<User> found = userRepository.findOneByUsername(username);
         if (!found.isEmpty()) {
             User user = found.get();
@@ -67,6 +66,7 @@ public class SimpleNewsService implements NewsService {
 
     @Override
     public void addNewsFetch(String username, Long news_id) {
+        LOGGER.info("News Service: Mark news entry with id " + news_id + " as read by user with username " + username);
         Optional<User> found = userRepository.findOneByUsername(username);
         if (!found.isEmpty()) {
             User user = found.get();
@@ -82,12 +82,14 @@ public class SimpleNewsService implements NewsService {
 
     @Override
     public DetailedNewsDTO findOne(Long id, String username) {
+        LOGGER.info("News Service: Get long/ detailed version of news entry with id " + id);
         this.addNewsFetch(username, id);
         return newsMapper.newsToDetailedNewsDTO(newsRepository.findOneById(id).orElseThrow(NotFoundException::new));
     }
 
     @Override
     public DetailedNewsDTO publishNews(DetailedNewsDTO detailedNewsDTO) {
+        LOGGER.info("News Service: Publish a new news entry: " + detailedNewsDTO.toString());
         detailedNewsDTO.setPublishedAt(LocalDateTime.now());
         return newsMapper.newsToDetailedNewsDTO(newsRepository.save(newsMapper.detailedNewsDTOToNews(detailedNewsDTO)));
     }

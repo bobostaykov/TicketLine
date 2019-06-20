@@ -10,6 +10,8 @@ import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import org.apache.commons.io.IOUtils;
 import org.bouncycastle.jcajce.provider.digest.SHA3;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Component;
@@ -31,10 +33,13 @@ public class PDFGeneratorImpl implements PDFGenerator{
     private static final String TICKET_PATH = "ticket/";
     private static final String TICKET_CHECK_URL = "https://ticketline.at/tickets/check/";
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(PDFGeneratorImpl.class);
+
     @Value("${receipt.address}")
     private static String TICKETLINE_ADDRESS;
 
     public MultipartFile generateReceipt(List<TicketDTO> tickets, Boolean cancellation) throws DocumentException, IOException {
+        LOGGER.info("PDF Generator: Generate (cancellation) receipt for ticket(s)");
         if (tickets.size() < 1)
             throw new NotFoundException("Cannot create receipt for empty list of Tickets.");
         Double returnSum;
@@ -142,7 +147,6 @@ public class PDFGeneratorImpl implements PDFGenerator{
         receipt.add(address);
 
         receipt.close();
-        //return new File(fileName);
 
         File file = new File(fileName);
         FileInputStream input = new FileInputStream(file);
@@ -152,7 +156,8 @@ public class PDFGeneratorImpl implements PDFGenerator{
     }
 
     @Override
-    public MultipartFile generateTicketPDF(List<TicketDTO> tickets) throws DocumentException, IOException, NoSuchAlgorithmException {
+    public MultipartFile generateTicketPDF(List<TicketDTO> tickets) throws DocumentException, IOException {
+        LOGGER.info("PDF Generator: Generate PDF for ticket(s) and/or reservation(s)");
         int numberOfTickets = tickets.size();
         if (numberOfTickets < 1)
             throw new NotFoundException("Cannot create pdf for empty list of Tickets.");
@@ -211,7 +216,7 @@ public class PDFGeneratorImpl implements PDFGenerator{
             Files.createDirectories(path);
     }
 
-    private void addTicketPage(TicketDTO ticket, Document doc) throws DocumentException, NoSuchAlgorithmException {
+    private void addTicketPage(TicketDTO ticket, Document doc) throws DocumentException {
         Font headlineFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 24, BaseColor.BLACK);
         Font font = FontFactory.getFont(FontFactory.HELVETICA, 16, BaseColor.BLACK);
         Font fontBold = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 16, BaseColor.BLACK);
@@ -265,7 +270,7 @@ public class PDFGeneratorImpl implements PDFGenerator{
         return String.format("%s\n%s %s, %s", location.getStreet(), location.getPostalCode(), location.getCity(), location.getCountry());
     }
 
-    private Image generateQrCode(TicketDTO ticket) throws BadElementException, NoSuchAlgorithmException {
+    private Image generateQrCode(TicketDTO ticket) throws BadElementException {
         SHA3.DigestSHA3 digestSHA3 = new SHA3.Digest512();
         byte[] digest = digestSHA3.digest(ticket.getId().toString().getBytes());
         String sha3_256hex = bytesToHex(digest);

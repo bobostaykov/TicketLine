@@ -7,17 +7,17 @@ import org.springframework.web.multipart.MultipartFile;
 public interface FileService {
 
     /**
-     * Find a single news entry by id.
+     * Find a single image associated to a news entry by id.
      *
-     * @param id the id of the news entry
-     * @return the news entry
+     * @param id the id of the image
+     * @return the image
      */
     File getFile(Long id);
 
     /**
-     * Store a single file
+     * Store a single image associated to a news entry
      *
-     * @param file to be stored
+     * @param file file to be stored
      * @return id of stored file
      */
     Long storeFile(MultipartFile file) throws ServiceException;

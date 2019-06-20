@@ -36,7 +36,7 @@ public class TicketEndpoint {
     @RequestMapping(method = RequestMethod.POST)
     @ApiOperation(value = "Create a ticket", authorizations = {@Authorization(value = "apiKey")})
     public TicketDTO create(@RequestBody TicketDTO ticketDTO) throws IOException, DocumentException, NoSuchAlgorithmException {
-        LOGGER.info("Create Ticket");
+        LOGGER.info("Ticket Endpoint: Create Ticket");
         TicketDTO ticketCreated = ticketService.postTicket(ticketDTO);
         ticketService.generateTicketPDF(Collections.singletonList(ticketCreated)); // TODO: return pdf instead of tickets
         return ticketCreated;
@@ -45,21 +45,22 @@ public class TicketEndpoint {
     @RequestMapping(method = RequestMethod.GET)
     @ApiOperation(value = "Get all tickets", authorizations = {@Authorization(value = "apiKey")})
     public List<TicketDTO> findAll() {
+        LOGGER.info("Ticket Endpoint: Get all Tickets");
         return ticketService.findAll();
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "Delete a ticket", authorizations = {@Authorization(value = "apiKey")})
+    @ApiOperation(value = "Delete a ticket by id", authorizations = {@Authorization(value = "apiKey")})
     public TicketDTO deleteById(@PathVariable Long id) {
-        LOGGER.info("Delete Ticket with id " + id);
+        LOGGER.info("Ticket Endpoint: Delete Ticket with id " + id);
         return ticketService.deleteOne(id);
     }
 
     @RequestMapping(value = "/cancellation", method = RequestMethod.DELETE)
     @ApiOperation(value = "Delete Tickets by id and receive storno receipt", authorizations = {@Authorization(value = "apiKey")})
     public ResponseEntity<Resource> deleteAndGetStornoReceipt(@RequestParam List<String> tickets) {
-        LOGGER.info("Delete Ticket(s) with id(s)" + tickets.toString() + " and receive storno receipt");
+        LOGGER.info("Ticket Endpoint: Delete Ticket(s) with id(s)" + tickets.toString() + " and receive storno receipt");
         MultipartFile pdf;
         try {
             pdf = ticketService.deleteAndGetCancellationReceipt(tickets);
@@ -81,23 +82,23 @@ public class TicketEndpoint {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    @ApiOperation(value = "Find Ticket", authorizations = {@Authorization(value = "apiKey")})
+    @ApiOperation(value = "Find Ticket by id", authorizations = {@Authorization(value = "apiKey")})
     public TicketDTO findById(@PathVariable Long id) {
-        LOGGER.info("Find Ticket with id " + id);
+        LOGGER.info("Ticket Endpoint: Find Ticket with id " + id);
         return ticketService.findOne(id);
     }
 
     @RequestMapping(value = "/buy/{id}", method = RequestMethod.PUT, produces = "application/json")
-    @ApiOperation(value = "Buy reservated Ticket", authorizations = {@Authorization(value = "apiKey")})
+    @ApiOperation(value = "Buy reservated Ticket by id", authorizations = {@Authorization(value = "apiKey")})
     public TicketDTO buyReservatedTicket(@PathVariable Long id) {
-        LOGGER.info("Buy Ticket with id " + id);
+        LOGGER.info("Ticket Endpoint: Buy Ticket with id " + id);
         return ticketService.changeStatusToSold(id);
     }
 
     @RequestMapping(value = "/reservated/{id}", method = RequestMethod.GET)
-    @ApiOperation(value = "Find reservated Ticket", authorizations = {@Authorization(value = "apiKey")})
+    @ApiOperation(value = "Find reservated Ticket by id", authorizations = {@Authorization(value = "apiKey")})
     public TicketDTO findReservatedById(@PathVariable Long id) {
-        LOGGER.info("Find reservated Ticket with id " + id);
+        LOGGER.info("Ticket Endpoint: Find reservated Ticket with id " + id);
         return ticketService.findOneReservated(id);
     }
 
@@ -115,9 +116,10 @@ public class TicketEndpoint {
 
     // PINO: added value = "filter" to avoid GET method crash with findAll()
     @RequestMapping(value = "/filter", method = RequestMethod.GET)
-    @ApiOperation(value = "Get all tickets filtered", authorizations = {@Authorization(value = "apiKey")})
+    @ApiOperation(value = "Find all tickets filtered by customer name and event name", authorizations = {@Authorization(value = "apiKey")})
     public List<TicketDTO> findTicketFilteredByCustomerAndEvent(@RequestParam(value = "customerName", required = false) String customerName,
                                                                 @RequestParam(value = "eventName", required = false) String eventName) {
+        LOGGER.info("Ticket Endpoint: Find all tickets filtered by customer with name {} and event with name {}", customerName, eventName);
         if (customerName == null && eventName == null) {
             return ticketService.findAll();
         } else {
@@ -128,6 +130,7 @@ public class TicketEndpoint {
     @RequestMapping(value = "/receipt", method = RequestMethod.GET)
     @ApiOperation(value = "Get receipt PDF for list of tickets", authorizations = {@Authorization(value = "apiKey")})
     public ResponseEntity<Resource> getReceiptPDF(@RequestParam List<String> tickets) {
+        LOGGER.info("Ticket Endpoint: Get receipt PDF for ticket(s) with id(s) " + tickets.toString());
         MultipartFile pdf;
         try {
             pdf = ticketService.getReceipt(tickets);

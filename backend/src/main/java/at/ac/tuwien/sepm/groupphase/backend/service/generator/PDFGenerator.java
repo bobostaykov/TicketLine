@@ -20,11 +20,11 @@ public interface PDFGenerator {
     MultipartFile generateReceipt(List<TicketDTO> tickets, Boolean cancellation) throws DocumentException, IOException;
 
     /**
-     * Generates PDF containing ticket(s) from List of TicketDTOs
+     * Generates PDF containing ticket(s) and/or reservations(s) from List of TicketDTOs
      *
      * @param tickets List of Ticket DTOs
-     * @return PDF containg ticket(s)
+     * @return PDF containg ticket(s) and/or reservations(s)
      */
-    MultipartFile generateTicketPDF(List<TicketDTO> tickets) throws DocumentException, IOException, NoSuchAlgorithmException;
+    MultipartFile generateTicketPDF(List<TicketDTO> tickets) throws DocumentException, IOException;
 
 }

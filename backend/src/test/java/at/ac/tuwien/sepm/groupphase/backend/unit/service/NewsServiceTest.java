@@ -12,7 +12,7 @@ import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.user.UserMapperImpl;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.NewsRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.UserRepository;
-import at.ac.tuwien.sepm.groupphase.backend.service.implementation.SimpleNewsService;
+import at.ac.tuwien.sepm.groupphase.backend.service.implementation.NewsServiceImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -28,7 +28,7 @@ import static org.mockito.Mockito.verify;
 
 public class NewsServiceTest {
 
-    private SimpleNewsService newsService;
+    private NewsServiceImpl newsService;
     private NewsRepository newsRepository;
     private UserRepository userRepository;
     private NewsMapper newsMapper;
@@ -76,7 +76,7 @@ public class NewsServiceTest {
         this.newsMapper = new NewsMapperImpl();
         this.userMapper = new UserMapperImpl();
 
-        this.newsService = new SimpleNewsService(this.newsRepository, this.userRepository, this.newsMapper, this.userMapper);
+        this.newsService = new NewsServiceImpl(this.newsRepository, this.userRepository, this.newsMapper, this.userMapper);
         TEST_NEWS_DETAIL_DTO_1 = DetailedNewsDTO.builder()
             .id(TEST_NEWS_ID_1)
             .title(TEST_NEWS_TITLE_1)
