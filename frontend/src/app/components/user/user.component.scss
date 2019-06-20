@@ -29,3 +29,12 @@ a:first-child {
 a:last-child {
   padding: 4px 16px; font-size: 20px;
 }
+
+input.search {
+  width: 240px;
+  height: 34px;
+}
+
+button.search {
+  height: 32px;
+}

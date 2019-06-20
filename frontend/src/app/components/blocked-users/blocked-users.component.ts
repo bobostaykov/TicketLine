@@ -18,15 +18,18 @@ export class BlockedUsersComponent implements OnInit {
   private blockedUsers: User[];
   private headElements = ['Username', 'Type', 'User Since', 'Last Login', 'Delete' , 'Unblock'];
   private error: boolean = false;
+  private userUnblocked: boolean = false;
   private errorMessage: string = '';
+  private unblockedUserMessage: string = 'User was successfully unblocked!';
   private userToDelete: number = null;
+  private userToSearch: string = null;
 
   constructor(private authService: AuthService, private userService: UserService) {
   }
 
   ngOnInit() {
     if (this.isAdmin()) {
-      this.loadBlockedUsers();
+      this.loadBlockedUsers(null);
     }
   }
 
@@ -47,7 +50,7 @@ export class BlockedUsersComponent implements OnInit {
   private setPage(i, event: any) {
     event.preventDefault();
     this.page = i;
-    this.loadBlockedUsers();
+    this.loadBlockedUsers(null);
   }
 
   /**
@@ -58,7 +61,7 @@ export class BlockedUsersComponent implements OnInit {
     event.preventDefault();
     if (this.page > 0 ) {
       this.page--;
-      this.loadBlockedUsers();
+      this.loadBlockedUsers(null);
     }
   }
 
@@ -70,13 +73,13 @@ export class BlockedUsersComponent implements OnInit {
     event.preventDefault();
     if (this.page < this.pages.length - 1) {
       this.page++;
-      this.loadBlockedUsers();
+      this.loadBlockedUsers(null);
     }
   }
 
-  private loadBlockedUsers() {
-    console.log('get all blocked users');
-    this.userService.getAllBlockedUsers(this.page).subscribe(
+  private loadBlockedUsers(username: string) {
+    console.log('Get blocked users');
+    this.userService.getBlockedUsers(username, this.page).subscribe(
       result => {
         this.blockedUsers = result['content'];
         this.pages = new Array(result['totalPages']);
@@ -86,7 +89,7 @@ export class BlockedUsersComponent implements OnInit {
         this.dataReady = true;
         if (this.blockedUsers.length === 0 && this.pages.length === 1) {
           this.page--;
-          this.loadBlockedUsers();
+          this.loadBlockedUsers(null);
         }
       }
     );
@@ -96,9 +99,7 @@ export class BlockedUsersComponent implements OnInit {
     this.userService.unblockUser(user.id).subscribe(
       () => {},
       error => { this.defaultServiceErrorHandling(error); },
-      () => {
-          this.loadBlockedUsers();
-      }
+      () => { this.loadBlockedUsers(this.userToSearch); this.showUserUnblockedMessage(); }
     );
   }
 
@@ -107,7 +108,7 @@ export class BlockedUsersComponent implements OnInit {
     this.userService.deleteUser(userId).subscribe(
       () => {},
       error => { this.defaultServiceErrorHandling(error); },
-      () => { this.loadBlockedUsers(); }
+      () => { this.loadBlockedUsers(null); }
     );
   }
 
@@ -124,4 +125,10 @@ export class BlockedUsersComponent implements OnInit {
       this.errorMessage = error.error.error;
     }
   }
+
+  private showUserUnblockedMessage() {
+    this.userUnblocked = true;
+    setTimeout(() => this.userUnblocked = false, 5000);
+  }
+
 }

@@ -51,7 +51,7 @@ public class UserEndpointTest extends BaseIntegrationTestWithMockedUserCredentia
         Response response = RestAssured
             .given()
             .contentType(ContentType.JSON)
-            .when().get(USER_ENDPOINT + "?page=0")
+            .when().get(USER_ENDPOINT + "?username=null&page=0")
             .then().extract().response();
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.UNAUTHORIZED.value()));
     }
@@ -78,7 +78,7 @@ public class UserEndpointTest extends BaseIntegrationTestWithMockedUserCredentia
             .given()
             .contentType(ContentType.JSON)
             .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
-            .when().get(USER_ENDPOINT + "?page=0")
+            .when().get(USER_ENDPOINT + "?username=null&page=0")
             .then().extract().response();
 
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.FORBIDDEN.value()));
@@ -107,7 +107,7 @@ public class UserEndpointTest extends BaseIntegrationTestWithMockedUserCredentia
             .given()
             .contentType(ContentType.JSON)
             .header(HttpHeaders.AUTHORIZATION, validAdminTokenWithPrefix)
-            .when().get(USER_ENDPOINT + "?page=0")
+            .when().get(USER_ENDPOINT + "?username=null&page=0")
             .then().extract().response();
 
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));

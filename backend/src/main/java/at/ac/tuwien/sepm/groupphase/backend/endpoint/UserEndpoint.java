@@ -30,12 +30,15 @@ public class UserEndpoint {
 
     @RequestMapping(method = RequestMethod.GET)
     @PreAuthorize("hasRole('ADMIN')")
-    @ApiOperation(value = "Get all users", authorizations = {@Authorization(value = "apiKey")})
-    public Page<UserDTO> findAll(@RequestParam(value = "page") Integer page,
-                                 @RequestParam(value = "pageSize", required = false) Integer pageSize) {
-        LOGGER.info("Get all users");
+    @ApiOperation(value = "Get users", authorizations = {@Authorization(value = "apiKey")})
+    public Page<UserDTO> getUsers(@RequestParam(value = "username") String username,
+                                  @RequestParam(value = "page") Integer page,
+                                  @RequestParam(value = "pageSize", required = false) Integer pageSize) {
+        LOGGER.info("Get users");
+        if (username.equals("null"))
+            username = null;
         try {
-            return userService.findAll(page, pageSize);
+            return userService.getUsers(username, page, pageSize);
         } catch (ServiceException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
@@ -102,12 +105,15 @@ public class UserEndpoint {
 
     @RequestMapping(value = "/blocked", method = RequestMethod.GET)
     @PreAuthorize("hasRole('ADMIN')")
-    @ApiOperation(value = "get all blocked users", authorizations = {@Authorization(value = "apiKey")})
-    public Page<UserDTO> getAllBlockedUsers(@RequestParam(value = "page", required = false) Integer page,
-                                            @RequestParam(value = "pageSize", required = false) Integer pageSize){
-        LOGGER.info("get all blocked users");
+    @ApiOperation(value = "Get blocked users", authorizations = {@Authorization(value = "apiKey")})
+    public Page<UserDTO> getBlockedUsers(@RequestParam(value = "username") String username,
+                                         @RequestParam(value = "page", required = false) Integer page,
+                                         @RequestParam(value = "pageSize", required = false) Integer pageSize){
+        LOGGER.info("Get blocked users");
+        if (username.equals("null"))
+            username = null;
         try{
-            return userService.getAllBlockedUsers(page, pageSize);
+            return userService.getBlockedUsers(username, page, pageSize);
         } catch (ServiceException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error during reading filtered customers", e);
         } catch (IllegalArgumentException e) {

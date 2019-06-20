@@ -16,20 +16,23 @@ export class UserService {
   constructor(private httpClient: HttpClient, private globals: Globals) {}
 
   /**
-   * Loads all users from the backend
+   * Loads all users from the backend, or users that have 'username' in their username, if username !== null
+   * @param username string to search by
    * @param page the number of the requested page
    */
-  getAllUsers(page): Observable<User[]> {
-    console.log('Get all users');
-    return this.httpClient.get<User[]>(this.userBaseUri, {params: {page: page}});
+  getUsers(username: string, page: number): Observable<User[]> {
+    console.log('Get users');
+    return this.httpClient.get<User[]>(this.userBaseUri, {params: { username: username, page: page.toString() }});
   }
 
   /**
-   * Loads all blocked users from the backend
+   * Loads all blocked users from the backend, or blocked users that have 'username' in their username, if username !== null
+   * @param username string to search by
    * @param page the number of the requested page
    */
-  getAllBlockedUsers(page): Observable<User[]> {
-    return this.httpClient.get<User[]>(this.blockedUserBaseUri, {params: {page: page}});
+  getBlockedUsers(username: string, page: number): Observable<User[]> {
+    console.log('Get blocked users');
+    return this.httpClient.get<User[]>(this.blockedUserBaseUri, {params: { username: username, page: page.toString() }});
   }
 
   /**

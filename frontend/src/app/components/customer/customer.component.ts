@@ -183,4 +183,5 @@ export class CustomerComponent implements OnInit {
     console.log('Customer Component was initialized!');
     this.loadCustomers();
   }
+
 }
