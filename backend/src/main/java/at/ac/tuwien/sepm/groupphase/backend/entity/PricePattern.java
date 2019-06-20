@@ -10,7 +10,6 @@ public class PricePattern {
 
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Id
-    @Column(name = "id")
     private Long id;
 
     @Column(name = "name")

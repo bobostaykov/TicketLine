@@ -53,7 +53,7 @@ public interface ShowService {
      * @return a list of Shows that matches the specified criteria
      * @throws ServiceException is thrown if something went wrong in the process
      */
-    Page<ShowDTO> findAllShowsFiltered(ShowSearchParametersDTO searchParameters, Integer page) throws ServiceException;
+    Page<ShowDTO> findAllShowsFiltered(ShowSearchParametersDTO searchParameters, Integer page, Integer pageSize) throws ServiceException;
 
     /**
      * Find all shows filtered by location id
@@ -63,7 +63,7 @@ public interface ShowService {
      * @return a page of the found shows
      * @throws ServiceException is thrown if something went wrong in the process
      */
-    Page<ShowDTO> findAllShowsFilteredByLocationID(Long id, Integer page) throws ServiceException;
+    Page<ShowDTO> findAllShowsFilteredByLocationID(Long id, Integer page, Integer pageSize) throws ServiceException;
 
     /**
      * Delete the show with the given id

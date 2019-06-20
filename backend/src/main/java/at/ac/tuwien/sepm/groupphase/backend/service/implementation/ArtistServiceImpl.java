@@ -35,12 +35,15 @@ public class ArtistServiceImpl implements ArtistService {
     }
 
     @Override
-    public Page<ArtistDTO> findArtistsByName(String artistName, Integer page) {
+    public Page<ArtistDTO> findArtistsByName(String artistName, Integer page, Integer pageSize) {
 //        List<Artist> list = artistRepository.findByNameContainingIgnoreCase(artistName);
 //        LOGGER.error("\n\n\n" + list.get(0).getUsername() + "\n\n\n");
 //        return list;
         LOGGER.info("ArtistService: findArtistsByName");
-        int pageSize = 10;
+        if(pageSize == null) {
+            //default size
+            pageSize = 10;
+        }
         if (page < 0) {
             throw new IllegalArgumentException("Not a valid page.");
         }

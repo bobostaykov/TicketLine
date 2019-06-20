@@ -2,6 +2,7 @@ package at.ac.tuwien.sepm.groupphase.backend.repository.implementation;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.searchParameters.ShowSearchParametersDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.*;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.ShowRepositoryCustom;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +34,7 @@ public class ShowRepositoryImpl implements ShowRepositoryCustom {
 
 
     @Override
-    public Page<Show> findAllShowsFiltered(ShowSearchParametersDTO parameters, Integer page) {
+    public Page<Show> findAllShowsFiltered(ShowSearchParametersDTO parameters, Pageable pageable) {
 
         LOGGER.info("Find shows filtered by " + parameters.toString());
 
@@ -65,14 +66,19 @@ public class ShowRepositoryImpl implements ShowRepositoryCustom {
 
         if (parameters.getEventId() != null
             || parameters.getEventName() != null
+            || parameters.getArtistName() != null
             || (parameters.getDurationInMinutes() != null && parameters.getDurationInMinutes() != 0)) {
+
             Join<Show, Event> eventJoin = show.join(Show_.event);
+
             if (parameters.getEventId() != null) {
                 predicates.add(cBuilder.equal(eventJoin.get(Event_.id), parameters.getEventId()));
             }
-
+            if(parameters.getArtistName() != null){
+                Join<Event, Artist> showArtistJoin = eventJoin.join(Event_.artist);
+                predicates.add(cBuilder.like(cBuilder.lower(showArtistJoin.get(Artist_.name)), "%" + parameters.getArtistName().toLowerCase() + "%"));
+            }
             if (parameters.getEventName() != null) {
-                ;
                 predicates.add(cBuilder.like(cBuilder.lower(eventJoin.get(Event_.name)), "%" + parameters.getEventName().toLowerCase() + "%"));
             }
 
@@ -124,19 +130,6 @@ public class ShowRepositoryImpl implements ShowRepositoryCustom {
             }
         }
 
-/*
-        if(parameters.getPriceInEuroFrom() != null || parameters.getPriceInEuroTo() != null){
-            Join<Show, PricePattern> pricePatternJoin = show.join(Show_.PRICE_PATTERN);
-            MapJoin<Show, PriceCategory, Double> mapJoin = pricePatternJoin.joinMap(PricePattern_.PRICE_MAPPING);
-            if(parameters.getPriceInEuroFrom() != null){
-                predicates.add(cBuilder.greaterThanOrEqualTo(mapJoin.in, parameters.getPriceInEuroFrom()));
-            }
-            if(parameters.getPriceInEuroTo() != null){
-                predicates.add(cBuilder.lessThanOrEqualTo(show.get("price"), parameters.getPriceInEuroTo()));
-            } }
-*/
-
-
         //Übergabe der Predicates
         criteriaQuery.select(show).where(predicates.toArray(new Predicate[predicates.size()]));
         TypedQuery<Show> typedQuery = em.createQuery(criteriaQuery);
@@ -163,17 +156,14 @@ public class ShowRepositoryImpl implements ShowRepositoryCustom {
         showList = showList.stream()
             .sorted(byDate.thenComparing(byTime).thenComparing(byId)).collect(Collectors.toList());
 
-
-        // Filters from the result only the wanted page
-        int pageSize = 10;
-        int totalElements = showList.size();
-
-        typedQuery.setFirstResult(page * pageSize);
-        typedQuery.setMaxResults(pageSize);
-        Pageable pageable = PageRequest.of(page, pageSize);
-        showList = typedQuery.getResultList();
-
-        return new PageImpl<>(showList, pageable, totalElements);
+        if(showList.isEmpty()){
+            throw new NotFoundException("Could not find any shows matching the criteria");
+        }
+        //filter the required page
+        int start = (int)pageable.getOffset();
+        int end = (start + pageable.getPageSize()) > showList.size() ? showList.size() : (start + pageable.getPageSize());
+        Page<Show> pages = new PageImpl<Show>(showList.subList(start, end), pageable, showList.size());
+        return pages;
     }
 
     private static java.util.function.Predicate<Show> compareMaxPrice(Double maxPrice){

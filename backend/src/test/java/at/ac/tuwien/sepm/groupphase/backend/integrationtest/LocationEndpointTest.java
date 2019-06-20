@@ -61,7 +61,7 @@ public class LocationEndpointTest extends BaseIntegrationTest {
     @Test
     public void findLocationByNameAsUser() {
         BDDMockito.
-            given(locationRepository.findLocationsFiltered(NAME, null, null, null, null, null, 0))
+            given(locationRepository.findLocationsFiltered(NAME, null, null, null, null, null, PageRequest.of(0,10)))
             .willReturn(new PageImpl<>(
                 Collections.singletonList(
                     Location.builder()
@@ -108,7 +108,7 @@ public class LocationEndpointTest extends BaseIntegrationTest {
     @Test
     public void findLocationByCountryAsUser() {
         BDDMockito.
-            given(locationRepository.findLocationsFiltered(null, COUNTRY, null, null, null, null, 0))
+            given(locationRepository.findLocationsFiltered(null, COUNTRY, null, null, null, null, PageRequest.of(0,10)))
             .willReturn(new PageImpl<>(
                 Collections.singletonList(
                 Location.builder()
@@ -155,7 +155,7 @@ public class LocationEndpointTest extends BaseIntegrationTest {
     @Test
     public void findLocationByPostalCodeAsUser() {
         BDDMockito.
-            given(locationRepository.findLocationsFiltered(null,null, null, null, POSTAL_CODE, null, 0))
+            given(locationRepository.findLocationsFiltered(null,null, null, null, POSTAL_CODE, null, PageRequest.of(0,10)))
             .willReturn(new PageImpl<>(
             Collections.singletonList(
                 Location.builder()
@@ -202,7 +202,7 @@ public class LocationEndpointTest extends BaseIntegrationTest {
         @Test
         public void findLocationByDescriptionAsUser() {
             BDDMockito
-                .given(locationRepository.findLocationsFiltered(null,null, null, null, null, "esc", 0))
+                .given(locationRepository.findLocationsFiltered(null,null, null, null, null, "esc", PageRequest.of(0,10)))
                 .willReturn(new PageImpl<>(
                 Collections.singletonList(
                     Location.builder()
@@ -249,7 +249,7 @@ public class LocationEndpointTest extends BaseIntegrationTest {
         @Test
         public void findLocationByStreetAsUser() {
             BDDMockito.
-                given(locationRepository.findLocationsFiltered(null,null, null, "69", null, null,0))
+                given(locationRepository.findLocationsFiltered(null,null, null, "69", null, null,PageRequest.of(0,10)))
                 .willReturn(new PageImpl<>(
                 Collections.singletonList(
                     Location.builder()
@@ -296,7 +296,7 @@ public class LocationEndpointTest extends BaseIntegrationTest {
     @Test
     public void findLocationByCountryAndCityAsUser() {
         BDDMockito.
-            given(locationRepository.findLocationsFiltered(null, COUNTRY, CITY, null, null, null, 0))
+            given(locationRepository.findLocationsFiltered(null, COUNTRY, CITY, null, null, null, PageRequest.of(0,10)))
            .willReturn(new PageImpl<>(
             Collections.singletonList(
                 Location.builder()
@@ -343,7 +343,7 @@ public class LocationEndpointTest extends BaseIntegrationTest {
     @Test
     public void findSpecificNonExistingLocationNotFoundAsUser(){
         BDDMockito.
-            given(locationRepository.findLocationsFiltered(null, "Austria", "Innsbruck", null, null, null, 0))
+            given(locationRepository.findLocationsFiltered(null, "Austria", "Innsbruck", null, null, null, PageRequest.of(0,10)))
             .willThrow(NotFoundException.class);
         Response response = RestAssured
             .given()

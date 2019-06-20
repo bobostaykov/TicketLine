@@ -35,7 +35,7 @@ public interface EventService {
      * @return a page of all EventDTOs
      * @throws ServiceException is thrown if something went wrong in the process
      */
-    Page<EventDTO> findAll(Integer page) throws ServiceException;
+    Page<EventDTO> findAll(Integer page, Integer PageSize) throws ServiceException;
 
     /**
      * Find all events filtered by eventName, eventType, content, description, duration, artistName
@@ -45,7 +45,7 @@ public interface EventService {
      * @return a page of the found events
      * @throws ServiceException is thrown if something went wrong in the process
      */
-    Page<EventDTO> findAllFiltered(EventSearchParametersDTO parameters, Integer page) throws ServiceException;
+    Page<EventDTO> findAllFiltered(EventSearchParametersDTO parameters, Integer page, Integer pageSize) throws ServiceException;
 
     /**
      * Find all events filtered by artist id
@@ -55,5 +55,5 @@ public interface EventService {
      * @return a page of the found events
      * @throws ServiceException is thrown if something went wrong in the process
      */
-    Page<EventDTO> findEventsFilteredByArtistID(Long id, Integer page) throws ServiceException;
+    Page<EventDTO> findEventsFilteredByArtistID(Long id, Integer page, Integer PageSize) throws ServiceException;
 }

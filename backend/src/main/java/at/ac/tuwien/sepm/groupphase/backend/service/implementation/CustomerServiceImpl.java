@@ -76,10 +76,12 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public Page<CustomerDTO> findCustomersFiltered(Long id, String name, String firstname, String email, LocalDate birthday, Integer page) {
+    public Page<CustomerDTO> findCustomersFiltered(Long id, String name, String firstname, String email, LocalDate birthday, Integer page, Integer pageSize) {
         LOGGER.info("Find customers filtered");
         try{
-            int pageSize = 10;
+            if(pageSize == null){
+                pageSize = 10;
+            }
             if(page < 0) {
                 throw new IllegalArgumentException("Not a valid page.");
             }

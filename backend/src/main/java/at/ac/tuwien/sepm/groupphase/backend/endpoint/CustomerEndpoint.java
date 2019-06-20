@@ -67,7 +67,8 @@ public class CustomerEndpoint {
         @RequestParam(value = "firstname", required = false) String firstname,
         @RequestParam(value = "email", required = false) String email,
         @RequestParam(value = "birthday", required = false) String birthday_str,
-        @RequestParam(value = "page", required = false) Integer page) {
+        @RequestParam(value = "page", required = false) Integer page,
+        @RequestParam(value = "pagesize", required = false) Integer pageSize) {
 
         boolean filterData = !(id == null && name == null && firstname == null && email == null && birthday_str == null);
         LocalDate birthday = null;
@@ -79,7 +80,7 @@ public class CustomerEndpoint {
             Page<CustomerDTO> customerDTOPage;
             if (filterData) {
                 LOGGER.info("Get all customers filtered by specified attributes");
-                customerDTOPage = customerService.findCustomersFiltered(id, name, firstname, email, birthday, page);
+                customerDTOPage = customerService.findCustomersFiltered(id, name, firstname, email, birthday, page, pageSize);
             } else {
                 LOGGER.info("Get all customers");
                 customerDTOPage = customerService.findAll(page);

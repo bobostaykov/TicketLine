@@ -47,7 +47,8 @@ public class LocationEndpoint {
         @RequestParam(value = "street", required = false) String street,
         @RequestParam(value = "postalCode", required = false) String postalCode,
         @RequestParam(value = "description", required = false) String description,
-        @RequestParam(value = "page", required = false) Integer page
+        @RequestParam(value = "page", required = false) Integer page,
+        @RequestParam(value = "pageSize", required = false) Integer pageSize
     ) {
         try {
             if (page != null && name == null && country == null && city == null && postalCode == null && street == null && description == null) {
@@ -55,7 +56,7 @@ public class LocationEndpoint {
                 return locationService.findAll(page);
             } else {
                 LOGGER.info("Location Endpoint: Get all locations filtered by some parameters");
-                return locationService.findLocationsFiltered(name, country, city, street, postalCode, description, page);
+                return locationService.findLocationsFiltered(name, country, city, street, postalCode, description, page, pageSize);
             }
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error while looking for locations with those parameters: " + e.getMessage(), e);

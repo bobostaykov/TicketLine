@@ -31,10 +31,11 @@ public class UserEndpoint {
     @RequestMapping(method = RequestMethod.GET)
     @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "Get all users", authorizations = {@Authorization(value = "apiKey")})
-    public Page<UserDTO> findAll(@RequestParam(value = "page") Integer page) {
+    public Page<UserDTO> findAll(@RequestParam(value = "page") Integer page,
+                                 @RequestParam(value = "pageSize", required = false) Integer pageSize) {
         LOGGER.info("Get all users");
         try {
-            return userService.findAll(page);
+            return userService.findAll(page, pageSize);
         } catch (ServiceException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
@@ -102,10 +103,11 @@ public class UserEndpoint {
     @RequestMapping(value = "/blocked", method = RequestMethod.GET)
     @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "get all blocked users", authorizations = {@Authorization(value = "apiKey")})
-    public Page<UserDTO> getAllBlockedUsers(@RequestParam(value = "page", required = false) Integer page){
+    public Page<UserDTO> getAllBlockedUsers(@RequestParam(value = "page", required = false) Integer page,
+                                            @RequestParam(value = "pageSize", required = false) Integer pageSize){
         LOGGER.info("get all blocked users");
         try{
-            return userService.getAllBlockedUsers(page);
+            return userService.getAllBlockedUsers(page, pageSize);
         } catch (ServiceException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error during reading filtered customers", e);
         } catch (IllegalArgumentException e) {

@@ -11,9 +11,10 @@ public interface UserService {
      * Find all user entries.
      *
      * @param page number of the requested page
+     * @param pageSize size of the requested Page
      * @return page of the found users
      */
-    Page<UserDTO> findAll(Integer page) throws ServiceException;
+    Page<UserDTO> findAll(Integer page, Integer pageSize) throws ServiceException;
 
     /**
      * Find a single user entry by id.
@@ -65,7 +66,8 @@ public interface UserService {
     /**
      * Get all users
      * @param page number of the requested page
+     * @param pageSize size of the requested page
      * @return a page with users that are currently blocked
      */
-    Page<UserDTO> getAllBlockedUsers(Integer page) throws ServiceException;
+    Page<UserDTO> getAllBlockedUsers(Integer page, Integer pageSize) throws ServiceException;
 }

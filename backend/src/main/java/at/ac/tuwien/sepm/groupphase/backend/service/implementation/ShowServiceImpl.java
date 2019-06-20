@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.PersistenceException;
+import javax.validation.constraints.Positive;
 
 //TODO Class is unfinished
 @Service
@@ -33,30 +34,6 @@ public class ShowServiceImpl implements ShowService {
         this.showMapper = showMapper;
     }
     public ShowServiceImpl(){}
-
-    /*
-    @Override
-    public Page<ShowDTO> findAllShowsFilteredByEventName(String eventName, Integer page) {
-        LOGGER.info("Find all shows filtered by event id");
-        try {
-            int pageSize = 10;
-            if(page < 0) {
-                throw new IllegalArgumentException("Not a valid page.");
-            }
-            Pageable pageable = PageRequest.of(page, pageSize);
-            Page<Show> page1 = showRepository.findAllShowsFilteredByEventName(eventName, pageable);
-            LOGGER.debug("PageToString: " + page1.toString());
-            LOGGER.debug("TotalElements: " + page1.getTotalElements());
-            LOGGER.debug("TotalPages: " + page1.getTotalPages());
-            LOGGER.debug("Content: " + page1.getContent());
-            LOGGER.debug("Size: " + page1.getContent().size());
-            return page1.map(showMapper::showToShowDTO);
-        } catch (PersistenceException e) {
-            throw new ServiceException(e.getMessage(), e);
-        }
-    }
-    */
-
     @Override
     public Page<ShowDTO> findAll(Integer page) throws ServiceException {
         LOGGER.info("Show Service: Find all shows");
@@ -73,13 +50,17 @@ public class ShowServiceImpl implements ShowService {
     }
 
     @Override
-    public Page<ShowDTO> findAllShowsFiltered(ShowSearchParametersDTO parameters, Integer page) throws ServiceException {
+    public Page<ShowDTO> findAllShowsFiltered(ShowSearchParametersDTO parameters, Integer page, @Positive Integer pageSize) throws ServiceException {
         try{
             LOGGER.info("Show Service: Find all shows filtered by :" + parameters.toString());
+            if(pageSize == null){
+                pageSize = 10;
+            }
             if(page < 0) {
                 throw new IllegalArgumentException("Not a valid page.");
             }
-            return showRepository.findAllShowsFiltered(parameters, page).map(showMapper::showToShowDTO);
+            Pageable pageable = PageRequest.of(page, pageSize);
+            return showRepository.findAllShowsFiltered(parameters, pageable).map(showMapper::showToShowDTO);
         }catch (PersistenceException e){
             throw new ServiceException(e.getMessage(), e);
         }
@@ -87,11 +68,13 @@ public class ShowServiceImpl implements ShowService {
     }
 
     @Override
-    public Page<ShowDTO> findAllShowsFilteredByLocationID(Long locationID, Integer page) {
+    public Page<ShowDTO> findAllShowsFilteredByLocationID(Long locationID, Integer page, @Positive Integer pageSize) {
         LOGGER.info("Show Service: Find all shows filtered by location id");
         try {
             if (locationID < 0) throw new IllegalArgumentException("The location id is negative");
-            int pageSize = 10;
+            if(pageSize == null){
+                pageSize = 10;
+            }
             if (page < 0) {
                 throw new IllegalArgumentException("Not a valid page.");
             }
@@ -112,25 +95,4 @@ public class ShowServiceImpl implements ShowService {
         }
     }
 
-    /*
-    private static Predicate<ShowDTO> compareMinPrice(Double minPrice){
-        return show -> show.getPricePattern()
-            .getPriceMapping()
-            .values()
-            .stream()
-            .min(Comparator
-                .comparingDouble(Double :: doubleValue))
-            .get() > minPrice;
-    }
-
-    private static Predicate<ShowDTO> compareMaxPrice(Double maxPrice){
-        return show -> show.getPricePattern()
-            .getPriceMapping()
-            .values()
-            .stream()
-            .min(Comparator
-                .comparingDouble(Double::doubleValue))
-            .get() > maxPrice;
-    }
-     */
 }

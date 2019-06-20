@@ -21,7 +21,7 @@ public interface LocationService {
      * @return a page of the found locations
      * @throws ServiceException if something goes wrong
      */
-    Page<LocationDTO> findLocationsFiltered(String name, String country, String city, String street, String postalCode, String description, Integer page) throws ServiceException;
+    Page<LocationDTO> findLocationsFiltered(String name, String country, String city, String street, String postalCode, String description, Integer page, Integer pageSize) throws ServiceException;
 
     /**
      * Finds all locations filtered by the given attributes

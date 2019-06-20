@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.PersistenceException;
 import javax.persistence.Tuple;
+import javax.validation.constraints.Positive;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -73,10 +74,12 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public Page<EventDTO> findAll(Integer page) throws ServiceException {
+    public Page<EventDTO> findAll(Integer page, @Positive Integer pageSize) throws ServiceException {
         LOGGER.info("Find all events");
         try {
-            int pageSize = 10;
+            if(pageSize == null){
+                pageSize = 10;
+            }
             if(page < 0) {
                 throw new IllegalArgumentException("Not a valid page.");
             }
@@ -88,13 +91,17 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public Page<EventDTO> findAllFiltered(EventSearchParametersDTO parameters, Integer page) throws ServiceException{
+    public Page<EventDTO> findAllFiltered(EventSearchParametersDTO parameters, Integer page, @Positive Integer pageSize) throws ServiceException{
         LOGGER.info("Find all events filtered by some attributes: " + parameters.toString());
         try{
+            if(pageSize == null){
+                pageSize = 10;
+            }
             if(page < 0) {
                 throw new IllegalArgumentException("Not a valid page.");
             }
-            Page<Event> page1 = eventRepository.findAllEventsFiltered(parameters, page);
+            Pageable pageable = PageRequest.of(page, pageSize);
+            Page<Event> page1 = eventRepository.findAllEventsFiltered(parameters, pageable);
             LOGGER.debug("Event Service: " + page1.getContent().toString());
             return page1.map(eventMapper::eventToEventDTO);
         } catch (PersistenceException e) {
@@ -103,10 +110,12 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public Page<EventDTO> findEventsFilteredByArtistID(Long id, Integer page) throws ServiceException{
+    public Page<EventDTO> findEventsFilteredByArtistID(Long id, Integer page, @Positive Integer pageSize) throws ServiceException{
         LOGGER.info("Event Service: findEventsFilteredByArtistID");
         try{
-            int pageSize = 10;
+            if(pageSize == null){
+                pageSize = 10;
+            }
             if(page < 0) {
                 throw new IllegalArgumentException("Not a valid page.");
             }
