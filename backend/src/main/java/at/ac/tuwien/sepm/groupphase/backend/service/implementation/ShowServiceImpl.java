@@ -9,6 +9,7 @@ import org.hibernate.service.spi.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -98,6 +99,16 @@ public class ShowServiceImpl implements ShowService {
             return showRepository.findAllByHall_Location_Id(locationID, pageable).map(showMapper::showToShowDTO);
         } catch (PersistenceException e) {
             throw new ServiceException(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void deleteById(Long showId) throws ServiceException, DataIntegrityViolationException {
+        LOGGER.info("ShowService: deleteById " + showId);
+        try {
+            showRepository.deleteById(showId);
+        } catch (PersistenceException e) {
+            throw new ServiceException(e.getMessage());
         }
     }
 

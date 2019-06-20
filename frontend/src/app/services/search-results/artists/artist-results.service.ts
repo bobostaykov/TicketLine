@@ -23,4 +23,8 @@ export class ArtistResultsService {
     return this.httpClient.get<Artist[]>(this.artistBaseUri, {params: { artist_name: artistName, page: page }});
   }
 
+  public deleteArtist(artistId: number): Observable<{}> {
+    console.log('Delete artist with id ' + artistId);
+    return this.httpClient.delete(this.artistBaseUri + '/' + artistId);
+  }
 }

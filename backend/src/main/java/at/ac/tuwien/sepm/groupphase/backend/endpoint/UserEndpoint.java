@@ -78,7 +78,6 @@ public class UserEndpoint {
         } catch (ServiceException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
-        LOGGER.info("\n\n\n" + id + "\n\n\n");
     }
 
     @RequestMapping(value = "/blocked/{id}" ,method = RequestMethod.PUT)

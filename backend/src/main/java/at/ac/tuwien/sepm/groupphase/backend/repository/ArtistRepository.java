@@ -24,4 +24,11 @@ public interface ArtistRepository extends JpaRepository<Artist, Long>, PagingAnd
      * @return artist with such a name
      */
     Artist findByName(String artistName);
+
+    /**
+     * Deletes the artist with the given id
+     *
+     * @param artistId to delete
+     */
+    void deleteById(Long artistId);
 }

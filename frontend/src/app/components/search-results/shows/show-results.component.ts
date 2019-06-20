@@ -158,6 +158,7 @@ export class ShowResultsComponent implements OnInit {
       result => {
         this.shows = result['content'];
         this.pages = new Array(result['totalPages']);
+
       },
       error => {this.defaultServiceErrorHandling(error); },
       () => { this.dataReady = true; }
@@ -172,7 +173,8 @@ export class ShowResultsComponent implements OnInit {
       result => {
         this.shows = result['content'];
         this.pages = new Array(result['totalPages']);
-      },
+        console.log(result);
+        },
       error => {this.defaultServiceErrorHandling(error); },
       () => { this.dataReady = true; }
     );
