@@ -356,8 +356,6 @@ export class FloorplanControlComponent implements OnInit {
    * consists of the name of the show's associated event, the show date and the show time attributes
    */
   private displayShow(show?: Show): string | undefined {
-    console.log('Show: ');
-    console.log(show);
     return show ? show.event.name + ', ' + show.date + ', ' + show.time : undefined;
   }
 
@@ -422,17 +420,24 @@ export class FloorplanControlComponent implements OnInit {
    * @param selectedHall for which to return entire entity from backend
    */
   private loadSelectedHall(selectedHall: Hall): void {
-    this.hallService.findOneById(selectedHall.id).subscribe(
-      hall => {
-        console.log(hall);
-        this.createHallForm.patchValue({
-          'hallSelection': hall,
-          'locationSelection': hall.location
-        });
-        console.log(this.createHallForm.value);
-      },
-      error => console.log(error)
-    );
+    if (selectedHall !== this.newHall) {
+      this.hallService.findOneById(selectedHall.id).subscribe(
+        hall => {
+          console.log(hall);
+          this.createHallForm.patchValue({
+            'hallSelection': hall,
+            'locationSelection': hall.location
+          });
+          console.log(this.createHallForm.value);
+        },
+        error => console.log(error)
+      );
+    } else {
+      this.createHallForm.patchValue({
+        'showSelection': null,
+        'locationSelection': null
+      });
+    }
   }
 
   /**
