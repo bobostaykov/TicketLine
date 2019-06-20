@@ -14,6 +14,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
@@ -54,18 +55,18 @@ public class EventRepositoryTest {
     @Test
     public void searchByMultipleParameters(){
         EventSearchParametersDTO parameters = EventSearchParametersDTO.builder().setArtistName(artist1.getName()).setDurationInMinutes(160).setContent(event1.getContent()).setName("Birth").build();
-        eventPage = eventRepository.findAllEventsFiltered(parameters, 0);
+        eventPage = eventRepository.findAllEventsFiltered(parameters, PageRequest.of(0, 10));
         Assert.assertTrue(eventPage.getContent().contains(event1));
         Assert.assertEquals(1, eventPage.getContent().size());
         parameters = EventSearchParametersDTO.builder().setContent("feie").setName("ind").build();
-        eventPage = eventRepository.findAllEventsFiltered(parameters, 0);
+        eventPage = eventRepository.findAllEventsFiltered(parameters, PageRequest.of(0, 10));
         Assert.assertTrue(eventPage.getContent().contains(event2));
     }
 
     @Test
     public void searchByEventName_FindsCorrectAmountOfShows_AndResultsMatchExpected(){
         EventSearchParametersDTO parameters = EventSearchParametersDTO.builder().setName("Birthday").build();
-        eventPage = eventRepository.findAllEventsFiltered(parameters, 0);
+        eventPage = eventRepository.findAllEventsFiltered(parameters, PageRequest.of(0, 10));
         Assert.assertEquals(2, eventPage.getContent().size());
         Assert.assertTrue(eventPage.getContent().contains(event1));
         Assert.assertTrue(eventPage.getContent().contains(event3));
@@ -74,41 +75,41 @@ public class EventRepositoryTest {
     @Test(expected = NotFoundException.class)
     public void searchByEventName_(){
         EventSearchParametersDTO parameters = EventSearchParametersDTO.builder().setName("Rihanna").build();
-        eventRepository.findAllEventsFiltered(parameters, 0);
+        eventRepository.findAllEventsFiltered(parameters, PageRequest.of(0, 10));
     }
 
     @Test
     public void searchByContent_FindsCorrectAmountOfShows_AndResultsMatchExpected(){
         EventSearchParametersDTO parameters = EventSearchParametersDTO.builder().setContent("feiern").build();
-        eventPage = eventRepository.findAllEventsFiltered(parameters, 0);
+        eventPage = eventRepository.findAllEventsFiltered(parameters, PageRequest.of(0, 10));
         Assert.assertEquals(3, eventPage.getContent().size());
         //Assert.assertTrue(eventList.contains(event1) && eventList.contains(event2) && eventList.contains(event3));
         parameters = EventSearchParametersDTO.builder().setContent("warten").build();
-        eventPage = eventRepository.findAllEventsFiltered(parameters, 0);
+        eventPage = eventRepository.findAllEventsFiltered(parameters, PageRequest.of(0, 10));
         Assert.assertEquals(1, eventPage.getContent().size());
         Assert.assertTrue(eventPage.getContent().contains(event2));
     }
     @Test
     public void searchByDuration_FindsCorrectAmountOfShows_AndResultsMatchExpected(){
         EventSearchParametersDTO parameters = EventSearchParametersDTO.builder().setDurationInMinutes(420).build();
-        eventPage = eventRepository.findAllEventsFiltered(parameters,0);
+        eventPage = eventRepository.findAllEventsFiltered(parameters,PageRequest.of(0, 10));
         Assert.assertEquals(2, eventPage.getContent().size());
         Assert.assertTrue(eventPage.getContent().contains(event2));
         Assert.assertTrue(eventPage.getContent().contains(event3));
         parameters = EventSearchParametersDTO.builder().setDurationInMinutes(160).build();
-        eventPage = eventRepository.findAllEventsFiltered(parameters,0);
+        eventPage = eventRepository.findAllEventsFiltered(parameters,PageRequest.of(0, 10));
         Assert.assertEquals(1, eventPage.getContent().size());
         Assert.assertTrue(eventPage.getContent().contains(event1));
     }
     @Test
     public void searchByArtist_FindsCorrectAmountOfShows_AndResultsMatchExpected(){
         EventSearchParametersDTO parameters = EventSearchParametersDTO.builder().setArtistName(artist1.getName()).build();
-        eventPage = eventRepository.findAllEventsFiltered(parameters,0);
+        eventPage = eventRepository.findAllEventsFiltered(parameters,PageRequest.of(0, 10));
         Assert.assertEquals(2, eventPage.getContent().size());
         Assert.assertTrue(eventPage.getContent().contains(event1));
         Assert.assertTrue(eventPage.getContent().contains(event2));
         parameters = EventSearchParametersDTO.builder().setArtistName(artist2.getName()).build();
-        eventPage = eventRepository.findAllEventsFiltered(parameters,0);
+        eventPage = eventRepository.findAllEventsFiltered(parameters,PageRequest.of(0, 10));
         Assert.assertEquals(2, eventPage.getContent().size());
         Assert.assertTrue(eventPage.getContent().contains(event3));
     }
@@ -116,12 +117,12 @@ public class EventRepositoryTest {
     @Test
     public void searchByEventType_FindsCorrectAmountOfShows_AndResultsMatchExpected(){
         EventSearchParametersDTO parameters = EventSearchParametersDTO.builder().setEventType(event3.getEventType()).build();
-        eventPage = eventRepository.findAllEventsFiltered(parameters,0);
+        eventPage = eventRepository.findAllEventsFiltered(parameters,PageRequest.of(0, 10));
         Assert.assertEquals(2, eventPage.getContent().size());
         Assert.assertTrue(eventPage.getContent().contains(event1));
         Assert.assertTrue(eventPage.getContent().contains(event3));
         parameters = EventSearchParametersDTO.builder().setEventType(eventTheatre.getEventType()).build();
-        eventPage = eventRepository.findAllEventsFiltered(parameters,0);
+        eventPage = eventRepository.findAllEventsFiltered(parameters,PageRequest.of(0, 10));
         Assert.assertEquals(1, eventPage.getContent().size());
         Assert.assertTrue(eventPage.getContent().contains(eventTheatre));
     }

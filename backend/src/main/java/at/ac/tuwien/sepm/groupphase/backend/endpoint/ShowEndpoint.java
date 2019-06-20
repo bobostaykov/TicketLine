@@ -37,10 +37,12 @@ public class ShowEndpoint {
 
     @RequestMapping(value = "/location/{id}", method = RequestMethod.GET)
     @ApiOperation(value = "Get list of all shows filtered by location id", authorizations = {@Authorization(value = "apiKey")})
-    public Page<ShowDTO> findAllShowsFilteredByLocationID(@PathVariable("id") Long locationID, @RequestParam(value = "page", required = false) Integer page){
+    public Page<ShowDTO> findAllShowsFilteredByLocationID(@PathVariable("id") Long locationID,
+                                                          @RequestParam(value = "page", required = false) Integer page,
+                                                          @RequestParam(value = "pageSize", required = false) Integer pageSize){
         LOGGER.info("Show Endpoint:  Get all shows filtered by location with id " + locationID);
         try{
-            return showService.findAllShowsFilteredByLocationID(locationID, page);
+            return showService.findAllShowsFilteredByLocationID(locationID, page, pageSize);
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error while looking for shows for that location", e);
         }catch (ServiceException e) {
@@ -53,6 +55,7 @@ public class ShowEndpoint {
     @RequestMapping(value = "/filter", method = RequestMethod.GET)
     @ApiOperation(value = "Get all shows filtered by specified attributes", authorizations = {@Authorization(value = "apiKey")})
     public Page<ShowDTO> findShowsFilteredByShowAttributes(@RequestParam(value = "eventId", required = false) Long eventId,
+                                                           @RequestParam(value = "artistName", required = false) String artistName,
                                                            @RequestParam(value = "eventName", required = false) String eventName,
                                                            @RequestParam(value = "hallName", required = false) String hallName,
                                                            @RequestParam(value="minPrice", required = false) Integer minPrice,
@@ -67,17 +70,17 @@ public class ShowEndpoint {
                                                            @RequestParam(value = "city", required = false) String city,
                                                            @RequestParam(value = "postalCode", required = false) String postalCode,
                                                            @RequestParam(value = "street", required = false) String street,
-                                                           @RequestParam(value = "page", required = false) Integer page)
+                                                           @RequestParam(value = "page", required = false) Integer page,
+                                                           @RequestParam(value = "pageSize", required = false) Integer pageSize)
     {
         try {
             LOGGER.debug("\neventName: " + eventName + "\nhallName: " + hallName + "\nminPrice: " + minPrice + "\nmaxPrice: " + maxPrice +
                 "\ndateFrom: " + dateFrom + "\ndateTo: " + dateTo + "\ntimeFrom: " + timeFrom + "\ntimeTo: " + timeTo + "\nduration: " + duration +
                 "\ncountry: " + country + "\ncity: " + city + "\nstreet: " + street + "\npostalCode: " + postalCode + "\npage: " + page);
 
-                // TODO Criteria Builder doesn't work properly with prices, that's why I set the values to null
                 ShowSearchParametersDTO parameters = new ShowSearchParametersDTO.builder()
-                    .priceInEuroFrom(null)
-                    .priceInEuroTo(null)
+                    .priceInEuroFrom(minPrice)
+                    .priceInEuroTo(maxPrice)
                     .eventName(eventName)
                     .hallName(hallName)
                     .dateFrom(dateFrom == null ? null : LocalDate.parse(dateFrom, dateFormatter))
@@ -91,10 +94,11 @@ public class ShowEndpoint {
                     .locationName(locationName)
                     .eventId(eventId)
                     .postalcode(postalCode)
+                    .artistName(artistName)
                     .build();
 
                 LOGGER.info("Get all shows filtered by specified attributes: " + parameters.toString());
-                return showService.findAllShowsFiltered(parameters, page);
+                return showService.findAllShowsFiltered(parameters, page, pageSize);
 
         }catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error while looking for shows with those parameters: " + e.getMessage(), e);

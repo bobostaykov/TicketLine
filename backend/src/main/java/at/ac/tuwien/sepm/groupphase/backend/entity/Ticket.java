@@ -8,8 +8,7 @@ import javax.persistence.*;
 public class Ticket {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "seq_ticket_id")
-    @SequenceGenerator(name = "seq_ticket_id", sequenceName = "seq_ticket_id")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -8,8 +8,7 @@ import java.time.LocalDateTime;
 public class News {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "seq_news_id")
-    @SequenceGenerator(name = "seq_news_id", sequenceName = "seq_news_id")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @Column(nullable = false, name = "published_at")

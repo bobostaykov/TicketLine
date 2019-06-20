@@ -21,6 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.PersistenceException;
+import javax.validation.constraints.Positive;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -44,10 +45,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Page<UserDTO> findAll(Integer page) throws ServiceException {
+    public Page<UserDTO> findAll(Integer page, @Positive Integer pageSize) throws ServiceException {
         LOGGER.info("Find all users");
         try {
-            int pageSize = 10;
+            if(pageSize == null){
+                pageSize = 10;
+            }
             if(page < 0) {
                 throw new IllegalArgumentException("Not a valid page.");
             }
@@ -143,10 +146,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Page<UserDTO> getAllBlockedUsers(Integer page) throws ServiceException{
+    public Page<UserDTO> getAllBlockedUsers(Integer page, @Positive Integer pageSize) throws ServiceException{
         LOGGER.info("getting all blocked users");
         try {
-            int pageSize = 10;
+            if(pageSize == null){
+                pageSize = 10;
+            }
             if(page < 0) {
                 throw new IllegalArgumentException("Not a valid page.");
             }

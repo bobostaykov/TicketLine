@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface CustomerRepository extends JpaRepository<Customer, Long>, PagingAndSortingRepository<Customer, Long> {
+public interface CustomerRepository extends CustomerRepositoryCustom, JpaRepository<Customer, Long>, PagingAndSortingRepository<Customer, Long> {
 
     /**
      * Find all customers and order the list by the ID ascending.
@@ -48,31 +48,4 @@ public interface CustomerRepository extends JpaRepository<Customer, Long>, Pagin
      */
     Optional<Customer> findOneById(Long id);
 
-    /**
-     * Find all customers filtered by the following attributes:
-     * ID - ID of customer
-     * name - part of the name of customer
-     * firstname - part of the first name of customer
-     * email - part of the e-mail address of customer
-     * birthday - birthday of customer
-     *
-     * @param pageable special parameter to apply pagination
-     * @param id ID of customer to search for
-     * @param name name of customer to search for
-     * @param firstname first name of customer to search for
-     * @param email e-mail address of customer to search for
-     * @param birthday birthday of customer to search for
-     * @return page of customers that met the requested filter methods
-     */
-    @Query(value = "SELECT * " +
-        "FROM customer c " +
-        "WHERE (LOWER(c.name) LIKE LOWER(CONCAT('%',:name,'%')) OR :name IS NULL) " +
-        "AND (LOWER(c.firstname) LIKE LOWER(CONCAT('%',:firstname,'%')) OR :firstname IS NULL) " +
-        "AND (LOWER(c.email) LIKE LOWER(CONCAT('%',:email,'%')) OR :email IS NULL) " +
-        "AND (c.birthday = :birthday OR :birthday IS NULL) " +
-        "AND (c.id = :id OR :id IS NULL)", nativeQuery = true)
-    Page<Customer> findCustomersFiltered(@Param("id") Long id, @Param("name") String name,
-                                         @Param("firstname") String firstname, @Param("email") String email,
-                                         @Param("birthday") LocalDate birthday,
-                                         Pageable pageable);
 }

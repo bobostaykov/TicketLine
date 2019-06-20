@@ -17,7 +17,7 @@ public interface ArtistService {
      * @param page number of the page to return
      * @return a list of suitable artists
      */
-    Page<ArtistDTO> findArtistsByName(String artistName, Integer page);
+    Page<ArtistDTO> findArtistsByName(String artistName, Integer page, Integer pageSize);
 
     /**
      * Delete the artist with the given Id

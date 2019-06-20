@@ -54,5 +54,5 @@ public interface CustomerService {
      * @param birthday birthday of customer to search for
      * @return page of customers that met the requested filter methods
      */
-    Page<CustomerDTO> findCustomersFiltered(Long id, String name, String firstname, String email, LocalDate birthday, Integer page);
+    Page<CustomerDTO> findCustomersFiltered(Long id, String name, String firstname, String email, LocalDate birthday, Integer page, Integer pageSize);
 }

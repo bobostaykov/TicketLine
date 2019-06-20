@@ -423,7 +423,7 @@ public class EventEndpointTest extends BaseIntegrationTest {
     public void findAllEventsFilteredByEventName() {
         EventSearchParametersDTO parametersDTO = EventSearchParametersDTO.builder().setName("a").build();
         BDDMockito.
-            given(eventRepository.findAllEventsFiltered(parametersDTO,0))
+            given(eventRepository.findAllEventsFiltered(parametersDTO,PageRequest.of(0, 10)))
             .willReturn(new PageImpl<>(
                 Collections.singletonList(
                     Event.builder()
@@ -472,7 +472,7 @@ public class EventEndpointTest extends BaseIntegrationTest {
     public void findAllEventsFilteredByEventType() {
         EventSearchParametersDTO parametersDTO = EventSearchParametersDTO.builder().setEventType(EventType.OPERA).build();
         BDDMockito.
-            given(eventRepository.findAllEventsFiltered(parametersDTO,0))
+            given(eventRepository.findAllEventsFiltered(parametersDTO,PageRequest.of(0, 10)))
             .willReturn(new PageImpl<>(
                 Collections.singletonList(
                     Event.builder()
@@ -521,7 +521,7 @@ public class EventEndpointTest extends BaseIntegrationTest {
     public void findAllEventsFilteredByDescription() {
         EventSearchParametersDTO parametersDTO = EventSearchParametersDTO.builder().setDescription("esc").build();
         BDDMockito.
-            given(eventRepository.findAllEventsFiltered(parametersDTO,0))
+            given(eventRepository.findAllEventsFiltered(parametersDTO,PageRequest.of(0, 10)))
             .willReturn(new PageImpl<>(
                 Collections.singletonList(
                     Event.builder()
@@ -570,7 +570,7 @@ public class EventEndpointTest extends BaseIntegrationTest {
     public void findAllEventsFilteredByContent() {
         EventSearchParametersDTO parametersDTO = EventSearchParametersDTO.builder().setContent("NO_CONTENT").build();
         BDDMockito.
-            given(eventRepository.findAllEventsFiltered(parametersDTO,0))
+            given(eventRepository.findAllEventsFiltered(parametersDTO,PageRequest.of(0, 10)))
             .willReturn(new PageImpl<>(List.of(), PageRequest.of(0,10), 0));
 
         Response response = RestAssured
@@ -587,7 +587,7 @@ public class EventEndpointTest extends BaseIntegrationTest {
     public void findAllEventsFilteredByArtistName() {
         EventSearchParametersDTO parametersDTO = EventSearchParametersDTO.builder().setArtistName("vasko").build();
         BDDMockito.
-            given(eventRepository.findAllEventsFiltered(parametersDTO,0))
+            given(eventRepository.findAllEventsFiltered(parametersDTO,PageRequest.of(0, 10)))
             .willReturn(new PageImpl<>(
                 Collections.singletonList(
                     Event.builder()
@@ -636,7 +636,7 @@ public class EventEndpointTest extends BaseIntegrationTest {
     public void findAllEventsFilteredByDuration() {
         EventSearchParametersDTO parametersDTO = EventSearchParametersDTO.builder().setDurationInMinutes(200).build();
         BDDMockito.
-            given(eventRepository.findAllEventsFiltered(parametersDTO,0))
+            given(eventRepository.findAllEventsFiltered(parametersDTO,PageRequest.of(0, 10)))
             .willReturn(new PageImpl<>(
                 List.of(
                     Event.builder()
