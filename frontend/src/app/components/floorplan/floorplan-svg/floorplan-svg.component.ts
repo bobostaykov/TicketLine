@@ -25,7 +25,7 @@ export class FloorplanSvgComponent implements OnInit {
   private priceCategories: string[] = Object.keys(PriceCategory);
   // on update operation updateElementModel is changed and then assigned to selected element
   private selectedElement: Seat | Sector;
-  private updateElementModel: Seat | Sector = this.seats ? new Seat(null, null, null, null) : new Sector(null, null, null);
+  private updateElementModel: Seat | Sector = this.seats ? new Seat(null, null, null, null, null) : new Sector(null, null, null, null);
   // updateSubmissionError is displayed if seat/sector with given number/row already exists in the hall
   private updateSubmissionError: boolean = false;
   private updateSubmissionMessage: string = '';
