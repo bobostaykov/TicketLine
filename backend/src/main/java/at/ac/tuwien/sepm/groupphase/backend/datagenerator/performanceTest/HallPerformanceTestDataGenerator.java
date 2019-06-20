@@ -40,7 +40,7 @@ public class HallPerformanceTestDataGenerator extends PerformanceTestDataGenerat
             for(Long id = 1L; id <= NUM_OF_HALLS; id++) {
                 Boolean seatsOrSectors = id % 2 == 0;
                 List<Seat> seats = seatsOrSectors ? new ArrayList<>() : null;
-                List<Sector> sectors = seatsOrSectors ? new ArrayList<>() : null;
+                List<Sector> sectors = seatsOrSectors ? null : new ArrayList<>();
                 if (seatsOrSectors) {
                     for (Long seatId = 1L; seatId <= NUM_OF_SEATS_PER_HALL; seatId++)
                         seats.add(Seat.builder()
@@ -67,6 +67,10 @@ public class HallPerformanceTestDataGenerator extends PerformanceTestDataGenerat
                     .seats(seatsOrSectors ? seats : null)
                     .sectors(seatsOrSectors ? null : sectors)
                     .build());
+            }
+            for (Hall h:
+                 halls) {
+                LOGGER.info(h.toString());
             }
             hallRepository.saveAll(halls);
         }

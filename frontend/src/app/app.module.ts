@@ -30,7 +30,6 @@ import {FloorplanComponent} from './components/floorplan/floorplan.component';
 import {CustomerComponent} from './components/customer/customer.component';
 import {CustomerDialogComponent} from './components/customer-dialog/customer-dialog.component';
 import { BlockedUsersComponent } from './components/blocked-users/blocked-users.component';
-import { AddContentComponent } from './components/add-content/add-content.component';
 
 @NgModule({
   declarations: [
@@ -52,8 +51,7 @@ import { AddContentComponent } from './components/add-content/add-content.compon
     FloorplanComponent,
     CustomerComponent,
     CustomerDialogComponent,
-    BlockedUsersComponent,
-    AddContentComponent
+    BlockedUsersComponent
   ],
   imports: [
     BrowserModule,
