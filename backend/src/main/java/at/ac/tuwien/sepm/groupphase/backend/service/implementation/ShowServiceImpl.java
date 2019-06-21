@@ -1,10 +1,14 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.implementation;
 
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.requestparameter.ShowRequestParameter;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.searchParameters.ShowSearchParametersDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.show.ShowDTO;
+import at.ac.tuwien.sepm.groupphase.backend.entity.Show;
+import at.ac.tuwien.sepm.groupphase.backend.entity.Ticket;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.show.ShowMapper;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.ShowRepository;
+import at.ac.tuwien.sepm.groupphase.backend.repository.TicketRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.ShowService;
 import org.hibernate.service.spi.ServiceException;
 import org.slf4j.Logger;
@@ -18,6 +22,8 @@ import org.springframework.stereotype.Service;
 import javax.persistence.PersistenceException;
 import java.util.List;
 
+import static org.springframework.util.CollectionUtils.isEmpty;
+
 //TODO Class is unfinished
 @Service
 public class ShowServiceImpl implements ShowService {
@@ -26,14 +32,19 @@ public class ShowServiceImpl implements ShowService {
     @Autowired
     private ShowRepository showRepository;
     @Autowired
-    private  ShowMapper showMapper;
+    private TicketRepository ticketRepository;
+    @Autowired
+    private ShowMapper showMapper;
     private static final Logger LOGGER = LoggerFactory.getLogger(ShowServiceImpl.class);
 
-    public ShowServiceImpl(ShowRepository showRepository, ShowMapper showMapper) {
+    public ShowServiceImpl(ShowRepository showRepository, ShowMapper showMapper, TicketRepository ticketRepository) {
         this.showRepository = showRepository;
+        this.ticketRepository = ticketRepository;
         this.showMapper = showMapper;
     }
-    public ShowServiceImpl(){}
+
+    public ShowServiceImpl() {
+    }
 
     /*
     @Override
@@ -63,7 +74,7 @@ public class ShowServiceImpl implements ShowService {
         LOGGER.info("Show Service: Find all shows");
         try {
             int pageSize = 10;
-            if(page < 0) {
+            if (page < 0) {
                 throw new IllegalArgumentException("Not a valid page.");
             }
             Pageable pageable = PageRequest.of(page, pageSize);
@@ -75,13 +86,13 @@ public class ShowServiceImpl implements ShowService {
 
     @Override
     public Page<ShowDTO> findAllShowsFiltered(ShowSearchParametersDTO parameters, Integer page) throws ServiceException {
-        try{
+        try {
             LOGGER.info("Show Service: Find all shows filtered by :" + parameters.toString());
-            if(page != null && page < 0) {
+            if (page != null && page < 0) {
                 throw new IllegalArgumentException("Not a valid page.");
             }
             return showRepository.findAllShowsFiltered(parameters, page).map(showMapper::showToShowDTO);
-        }catch (PersistenceException e){
+        } catch (PersistenceException e) {
             throw new ServiceException(e.getMessage(), e);
         }
 
@@ -110,8 +121,26 @@ public class ShowServiceImpl implements ShowService {
     }
 
     @Override
-    public ShowDTO findOneById(Long id) {
-        return showMapper.showToShowDTO(showRepository.findOneById(id).orElseThrow(NotFoundException::new));
+    public ShowDTO findOneById(Long id, List<ShowRequestParameter> include) {
+        Show show = showRepository.findOneById(id).orElseThrow(NotFoundException::new);
+        ShowDTO showDTO = showMapper.showToShowDTO(show);
+        if (include != null && include.contains(ShowRequestParameter.TICKETS)) {
+            List<Ticket> tickets = ticketRepository.findAllByShowId(showDTO.getId());
+            if (!isEmpty(showDTO.getHall().getSeats())) {
+                for (Ticket ticket : tickets) {
+                    // set ticket status for ever seat associated with the show that has already been sold or reserved
+                    showDTO.getHall().getSeats().stream()
+                        .filter(seatDTO -> seatDTO.getId().equals(ticket.getSeat().getId()))
+                        .findFirst().ifPresent(seatDTO -> seatDTO.setTicketStatus(ticket.getStatus()));
+                }
+            } else if (!isEmpty(showDTO.getHall().getSectors())) {
+                for (Ticket ticket : tickets)
+                    showDTO.getHall().getSectors().stream()
+                        .filter(sectorDTO -> sectorDTO.getId().equals(ticket.getSector().getId()))
+                        .findFirst().ifPresent(sectorDTO -> sectorDTO.setTicketStatus(ticket.getStatus()));
+            }
+        }
+        return showDTO;
     }
     /*
     private static Predicate<ShowDTO> compareMinPrice(Double minPrice){

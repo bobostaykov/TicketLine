@@ -54,6 +54,13 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
     List<Ticket> findAllByShow(List<Show> shows);
 
     /**
+     * Finds tickets for a single show by its id
+     * @param showId id of the show for which tickets should be found
+     * @return list of tickets associated with the show
+     */
+    List<Ticket> findAllByShowId(Long showId);
+
+    /**
      * Find ticket by given reservation number
      *
      * @param id of Ticket to be found
