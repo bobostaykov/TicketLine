@@ -40,9 +40,6 @@ export class FloorplanControlComponent implements OnInit {
   private createHallForm: FormGroup;
   // variable for selection mechanism to choose if new hall should contain seats or sectors
   private hallType: string = 'seats';
-  // list of seats and sectors tickets were selected for
-  // noinspection JSMismatchedCollectionQueryUpdate
-  private tickets: Array<Seat | Sector> = [];
 
   constructor(private hallService: HallService, private locationResultsService: LocationResultsService,
               private showResultsService: ShowResultsService, private ticketsession: TicketSessionService) {
