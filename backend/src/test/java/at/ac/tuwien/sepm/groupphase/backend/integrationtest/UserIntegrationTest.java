@@ -108,7 +108,7 @@ public class UserIntegrationTest extends BaseIntegrationTest {
     @Test
     public void AuthenticationWithCorrectCredentials_resultsInNotNullToken(){
         AuthenticationToken token = authenticationService.authenticate(TEST_USER_NAME_1, TEST_USER_PASS_1);
-        Assert.assertTrue(token != null);
+        Assert.assertNotNull(token);
     }
 
     @Test

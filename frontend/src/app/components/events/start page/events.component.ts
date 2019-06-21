@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {EventService} from '../../../services/event/event.service';
 import {Event} from '../../../dtos/event';
-import {User} from '../../../dtos/user';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {EventType} from '../../../datatype/event_type';
 import {Artist} from '../../../dtos/artist';
@@ -95,7 +94,7 @@ export class EventsComponent implements OnInit {
   }
 
   private loadArtists() {
-    this.artistResultsService.findArtists('', this.page).subscribe(
+    this.artistResultsService.findArtists('', this.page, 100).subscribe(
       (artists: Artist[]) => { this.options = this.artistArrayToStringArray(artists); },
       error => { this.defaultServiceErrorHandling(error); }
     );
@@ -103,7 +102,7 @@ export class EventsComponent implements OnInit {
 
   private artistArrayToStringArray(artists: Artist[]): string[] {
     const toReturn: string[] = [];
-    artists.forEach(artist => { toReturn.push(artist.name); });
+    artists['content'].forEach(artist => { toReturn.push(artist.name); });
     return toReturn;
   }
 

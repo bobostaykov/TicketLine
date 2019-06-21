@@ -143,7 +143,7 @@ export class ContentManagerComponent implements OnInit {
   private loadEntities() {
     switch (this.savedType) {
       case 'Artist':
-        this.artistService.findArtists(this.savedName, this.page).subscribe(
+        this.artistService.findArtists(this.savedName, this.page, null).subscribe(
           result => {
             this.artists = result['content'];
             this.pages = new Array(result['totalPages']);

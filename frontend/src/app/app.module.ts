@@ -73,9 +73,6 @@ import { SelectDropDownModule } from 'ngx-select-dropdown'
     Ng5SliderModule,
     SelectDropDownModule
   ],
-  entryComponents: [
-    CustomerDialogComponent
-  ],
   providers: [httpInterceptorProviders, Globals],
   bootstrap: [AppComponent]
 })

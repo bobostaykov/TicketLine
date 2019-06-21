@@ -5,9 +5,6 @@ import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 
-import java.sql.SQLException;
-import java.util.List;
-
 public interface ArtistService {
 
     /**

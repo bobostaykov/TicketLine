@@ -18,9 +18,10 @@ export class ArtistResultsService {
    *
    * @param artistName to look for
    * @param page the number of the requested page
+   * @param pageSize number of items per page
    */
-  public findArtists(artistName, page): Observable<Artist[]> {
-    return this.httpClient.get<Artist[]>(this.artistBaseUri, {params: { artist_name: artistName, page: page }});
+  public findArtists(artistName, page, pageSize): Observable<Artist[]> {
+    return this.httpClient.get<Artist[]>(this.artistBaseUri, {params: { artist_name: artistName, page: page, pagesize: pageSize }});
   }
 
   public deleteArtist(artistId: number): Observable<{}> {
