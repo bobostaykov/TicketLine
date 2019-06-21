@@ -15,9 +15,18 @@
   }
 }
 
-.floorplanTickets{
+.floorplanTickets {
+  height: 72vh;
   width: 30%;
+  box-shadow: 0 1px 3px rgba(34, 25, 25, 0.4);
+
+  button {
+    background-color: #3f51b5;
+    margin: 0;
+    width: 100%;
+  }
 }
+
 
 .customerPagination{
   a{

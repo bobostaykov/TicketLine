@@ -10,6 +10,7 @@ import {TicketService} from '../../../services/ticket/ticket.service';
 import {TicketStatus} from '../../../datatype/ticket_status';
 import {TicketPost} from '../../../dtos/ticket-post';
 import {Ticket} from '../../../dtos/ticket';
+import {TicketSessionService} from '../../../services/ticket-session/ticket-session.service';
 
 @Component({
   selector: 'app-ticket-check',
@@ -39,11 +40,13 @@ export class TicketCheckReservationComponent implements OnInit {
   private amtTickets: number;
 
   constructor(private ticketService: TicketService, private ngbPaginationConfig: NgbPaginationConfig,
-              private cd: ChangeDetectorRef, private authService: AuthService) {}
+              private cd: ChangeDetectorRef, private authService: AuthService, private ticketSession: TicketSessionService) {}
 
   ngOnInit() {
-    this.ticket_seats = [];
-    this.ticket_sectors = [];
+    this.ticket_seats = this.ticketSession.getSeatTickets();
+    this.ticket_sectors = this.ticketSession.getSectorTickets();
+    this.ticket_customer = this.ticketSession.getCustomer();
+    this.ticket_show = this.ticketSession.getShow();
     this.submitted = false;
 
     if (this.ticket_status === TicketStatus.RESERVATED) {
@@ -72,7 +75,7 @@ export class TicketCheckReservationComponent implements OnInit {
 
   /**
    * Create all tickets given as TicketPost list.
-   * @param tickets tickets to be created
+   * parameter tickets: tickets to be created
    */
   createTicket() {
     this.tickets = [];
@@ -134,7 +137,7 @@ export class TicketCheckReservationComponent implements OnInit {
         window.open(fileURL, '_blank');
       },
       error => {
-        console.log('receipt error')
+        console.log('receipt error');
         this.defaultServiceErrorHandling(error);
       }
     );
@@ -150,7 +153,7 @@ export class TicketCheckReservationComponent implements OnInit {
         window.open(fileURL, '_blank');
       },
       error => {
-        console.log('cancellation receipt error')
+        console.log('cancellation receipt error');
         this.defaultServiceErrorHandling(error);
       }
     );
@@ -166,7 +169,7 @@ export class TicketCheckReservationComponent implements OnInit {
         window.open(fileURL, '_blank');
       },
       error => {
-        console.log('ticket pdf error')
+        console.log('ticket pdf error');
         this.defaultServiceErrorHandling(error);
       }
     );

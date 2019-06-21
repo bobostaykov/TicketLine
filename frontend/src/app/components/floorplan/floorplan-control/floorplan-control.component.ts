@@ -12,6 +12,7 @@ import {Show} from '../../../dtos/show';
 import {HallRequestParameter} from '../../../datatype/HallRequestParameter';
 import {debounceTime, distinctUntilChanged, switchMap} from 'rxjs/operators';
 import {LocationResultsService} from '../../../services/search-results/locations/location-results.service';
+import {TicketSessionService} from '../../../services/ticket-session/ticket-session.service';
 
 @Component({
   selector: 'app-floorplan-control',
@@ -44,17 +45,25 @@ export class FloorplanControlComponent implements OnInit {
   private tickets: Array<Seat | Sector> = [];
 
   constructor(private hallService: HallService, private locationResultsService: LocationResultsService,
-              private showResultsService: ShowResultsService) {
+              private showResultsService: ShowResultsService, private ticketsession: TicketSessionService) {
   }
 
   /**
    * run on initialization of component
    * initializes necessary form groups
+   * gets available data from ticketSession Service
    */
   ngOnInit(): void {
     this.buildSeatForm();
     this.buildSectorForm();
     this.buildHallForm();
+    // get show and hall parameter saved in ticketSession
+    if (this.ticketsession.getShow() && this.ticketsession.getShow().hall) {
+      this.createHallForm.patchValue({
+        'hallSelection': this.ticketsession.getShow().hall,
+        'showSelection': this.ticketsession.getShow()
+      });
+    }
   }
 
   /**
@@ -341,14 +350,6 @@ export class FloorplanControlComponent implements OnInit {
   }
 
   /**
-   * adds tickets to ticket list displayed on the right side of the screen and passed on to other components
-   * @param ticket to be added to the list
-   */
-  private addToTickets(ticket: Seat | Sector): void {
-    this.tickets.push(ticket);
-  }
-
-  /**
    * display function for show.
    * @param show string which is displayed as option in show selection menu
    * consists of the name of the show's associated event, the show date and the show time attributes
@@ -378,6 +379,7 @@ export class FloorplanControlComponent implements OnInit {
    * @param selectedShow for which to return entire entity from backend
    */
   private loadSelectedShow(selectedShow: Show): void {
+    console.log(selectedShow);
     this.showResultsService.findOneById(selectedShow.id).subscribe(
       show => {
         this.createHallForm.patchValue({
@@ -385,6 +387,7 @@ export class FloorplanControlComponent implements OnInit {
           'hallSelection': show.hall,
           'locationSelection': show.hall.location
         });
+        this.ticketsession.changeShow(show);
       },
       error => console.log(error)
     );

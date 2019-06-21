@@ -1,12 +1,17 @@
 <div id="ticket-container">
-  <h3 class="text-center bg-secondary py-2">Tickets</h3>
+  <div class="titlebox">
+    <h3>Tickets</h3>
+    <p>Step {{stepProgress}} of 3</p>
+  </div>
   <div class="ticket-list">
-    <div *ngFor="let ticket of tickets" class="ticket" (contextmenu)="displayContextmenu(ticket, $event)"
+    <div *ngFor="let ticket of ticketsession.getTickets()" class="ticket"
+         (contextmenu)="displayContextmenu(ticket, $event)"
          (click)="displayContextmenu(ticket, $event)">
       <div class="ticketContent">
         <div class="showtitle">
-          <p>Show Name</p>
+          <p>{{ticketsession.getShow()?.event.name}}</p>
         </div>
+        <p>{{ticketsession.getShow()?.date}}, {{ticketsession.getShow()?.time}}</p>
         <div class="ticketInfo">
           <div *ngIf="ticket.seatNumber">Seat<p>{{ticket.seatNumber}}</p></div>
           <div *ngIf="ticket.seatRow">Row<p>{{ticket.seatRow}}</p></div>

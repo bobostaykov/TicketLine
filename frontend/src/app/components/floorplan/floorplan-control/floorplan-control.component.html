@@ -173,11 +173,12 @@
 <!-- adds floorplan svg and ticket component to page -->
 <div [ngSwitch]="hallType" class="row">
   <app-floorplan-svg *ngSwitchCase="'seats'" class="floorplanSvg" [seats]="getSelectedHall().seats"
-                     (addTicket)="addToTickets($event)"></app-floorplan-svg>
+                     (addTicket)="ticketsession.saveSeatTicket($event)"></app-floorplan-svg>
   <app-floorplan-svg *ngSwitchCase="'sectors'" class="floorplanSvg" [sectors]="getSelectedHall().sectors"
-                     (addTicket)="addToTickets($event)"></app-floorplan-svg>
-  <div class="floorplanTickets" *ngIf="tickets && tickets.length">
-    <app-floorplan-ticket class="floorplanTickets" [tickets]="tickets"></app-floorplan-ticket>
-    <a mat-raised-button color="primary">Continue</a>
+                     (addTicket)="ticketsession.saveSectorTicket($event)"></app-floorplan-svg>
+  <div class="floorplanTickets" *ngIf="ticketsession.getTickets()?.length > 0">
+    <app-floorplan-ticket class="floorplanTickets" [stepProgress]="1"></app-floorplan-ticket>
+    <button mat-raised-button color="primary" [routerLink]="'/ticket'"
+            [disabled]="! ticketsession.getShow()">Continue</button>
   </div>
 </div>

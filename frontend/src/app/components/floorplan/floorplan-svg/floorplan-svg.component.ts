@@ -153,14 +153,20 @@ export class FloorplanSvgComponent implements OnInit {
    * hides/closes update form
    */
   private closeUpdateForm(): void {
-    document.getElementById('updateForm').style.display = 'none';
+    const updateForm = document.getElementById('updateForm');
+    if (updateForm) {
+      document.getElementById('updateForm').style.display = 'none';
+    }
   }
 
   /**
    * hides/closes context menu
    */
   private closeContext(): void {
-    document.getElementById('contextmenu').style.display = 'none';
+    const contextmenu = document.getElementById('contextmenu');
+    if (contextmenu) {
+      document.getElementById('contextmenu').style.display = 'none';
+    }
   }
 
   /**
@@ -217,6 +223,7 @@ export class FloorplanSvgComponent implements OnInit {
   private addToTicket(): void {
     if (this.selectedElement) {
       this.addTicket.emit(this.selectedElement);
+      this.closeContext();
     }
   }
 
@@ -250,9 +257,11 @@ export class FloorplanSvgComponent implements OnInit {
    */
   private svgDragInit(): void {
     const svg = document.getElementById('floorplan');
-    svg.addEventListener('mousemove', this._svgDrag);
-    document.addEventListener('mouseup', this._svgDragExit);
-    svg.classList.add('grabbing');
+    if (svg) {
+      svg.addEventListener('mousemove', this._svgDrag);
+      document.addEventListener('mouseup', this._svgDragExit);
+      svg.classList.add('grabbing');
+    }
   }
 
   /**
