@@ -3,6 +3,7 @@ package at.ac.tuwien.sepm.groupphase.backend.endpoint;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.location.LocationDTO;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
+import at.ac.tuwien.sepm.groupphase.backend.repository.projections.SimpleLocation;
 import at.ac.tuwien.sepm.groupphase.backend.service.LocationService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -11,12 +12,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.validation.constraints.Positive;
 import java.util.List;
 
 @RestController
@@ -38,6 +37,13 @@ public class LocationEndpoint {
         return locationService.findAll();
     }*/
 
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @ApiOperation(value = "Get one location by its id", authorizations = {@Authorization(value = "apiKey")})
+    public LocationDTO findOneById(@PathVariable("id") Long id){
+        LOGGER.info("Location Endpoint: GET location with id " + id);
+        return locationService.findOneById(id);
+    }
+
     @RequestMapping(method = RequestMethod.GET)
     @ApiOperation(value = "Get all shows filtered by location", authorizations = {@Authorization(value = "apiKey")})
     public Page<LocationDTO> findLocationsFiltered(
@@ -48,7 +54,7 @@ public class LocationEndpoint {
         @RequestParam(value = "postalCode", required = false) String postalCode,
         @RequestParam(value = "description", required = false) String description,
         @RequestParam(value = "page", required = false) Integer page,
-        @RequestParam(value = "pageSize", required = false) Integer pageSize
+        @RequestParam(value = "pageSize", required = false) @Positive Integer pageSize
     ) {
         try {
             if (page != null && name == null && country == null && city == null && postalCode == null && street == null && description == null) {
@@ -78,5 +84,12 @@ public class LocationEndpoint {
         } catch (NotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No locations are found: " + e.getMessage(), e);
         }
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/suggestions")
+    @ApiOperation(value = "Get search result suggestions for locations by returning only lcoation name and id", authorizations = {@Authorization(value = "apiKey")})
+    public List<SimpleLocation> getSearchResultSuggestions(@RequestParam String name){
+        LOGGER.info("GET location");
+        return locationService.findSearchResultSuggestions(name);
     }
 }

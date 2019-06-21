@@ -3,8 +3,11 @@ package at.ac.tuwien.sepm.groupphase.backend.repository;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.searchParameters.ShowSearchParametersDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Show;
+import at.ac.tuwien.sepm.groupphase.backend.repository.projections.SimpleShow;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+
+import java.util.List;
 
 public interface ShowRepositoryCustom {
 
@@ -20,4 +23,12 @@ public interface ShowRepositoryCustom {
      */
     Page<Show> findAllShowsFiltered(ShowSearchParametersDTO parameters, Pageable pageable);
 
+    /**
+     * Finds a list of shows containing event name, date and time passed as param
+     * @param eventName substring of name of event the show belongs to
+     * @param date substring of show date
+     * @param time substring of show time
+     * @return a list of shows with only id, date and time matching search criteria
+     */
+    List<Show> findByEventNameAndShowDateAndShowTime(String eventName, String date, String time);
 }

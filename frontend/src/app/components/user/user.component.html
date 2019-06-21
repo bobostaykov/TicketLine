@@ -59,14 +59,10 @@
               <input type="text" name="username" formControlName="username" class="form-control" id="inputUsername"
                      aria-describedby="usernameHelp" placeholder="Enter username">
               <div *ngIf="submitted && userForm.controls.username.errors" class="error">
-                <small class="form-text text-warning" *ngIf="userForm.controls.username.errors.required">Username is
-                  required!
-                </small>
+                <small class="form-text text-danger" *ngIf="userForm.controls.username.errors.required">Username is required!</small>
               </div>
               <div *ngIf="submitted && usernameError" class="error">
-                <small class="form-text text-warning">User with the same
-                  username already exists!
-                </small>
+                <small class="form-text text-danger">User with the same username already exists!</small>
               </div>
             </div>
 
@@ -75,14 +71,10 @@
               <input type="password" name="password" formControlName="password" class="form-control" id="inputPassword"
                      aria-describedby="passwordHelp" placeholder="Enter password">
               <div *ngIf="submitted && userForm.controls.password.errors" class="error">
-                <small class="form-text text-warning" *ngIf="userForm.controls.password.errors.required">Password is
-                  required!
-                </small>
+                <small class="form-text text-danger" *ngIf="userForm.controls.password.errors.required">Password is required!</small>
               </div>
               <div *ngIf="submitted && userForm.controls.password.value != null && userForm.controls.password.value.length < 8" class="error">
-                <small class="form-text text-warning">Password must
-                  be at least 8 characters long!
-                </small>
+                <small class="form-text text-danger">Password must be at least 8 characters long!</small>
               </div>
             </div>
 
@@ -91,14 +83,10 @@
               <input type="password" name="rePassword" formControlName="rePassword" class="form-control" id="inputRePassword"
                      aria-describedby="rePasswordHelp" placeholder="Re-enter password">
               <div *ngIf="submitted && userForm.controls.rePassword.value === userForm.controls.password.value && userForm.controls.rePassword.value === ''" class="error">
-                <small class="form-text text-warning">Password is
-                  required!
-                </small>
+                <small class="form-text text-danger">Password is required!</small>
               </div>
               <div *ngIf="submitted && userForm.controls.rePassword.value !== userForm.controls.password.value" class="error">
-                <small class="form-text text-warning">Passwords don't
-                  match!
-                </small>
+                <small class="form-text text-danger">Passwords don't match!</small>
               </div>
             </div>
 
@@ -108,9 +96,7 @@
                 <option *ngFor="let type of userTypes">{{type}}</option>
               </select>
               <div *ngIf="submitted && userForm.controls.type.errors" class="error">
-                <small class="form-text text-warning" *ngIf="userForm.controls.type.errors.required">Type is
-                  required!
-                </small>
+                <small class="form-text text-danger" *ngIf="userForm.controls.type.errors.required">Type is required!</small>
               </div>
             </div>
 
@@ -138,8 +124,8 @@
       </div>
       <div class="modal-body">
         <p>Are you sure?</p>
-        <button type="button" class="btn btn-default float-left" data-dismiss="modal">Cancel</button>
-        <button type="button" (click)="deleteUser(userToDelete)" class="btn btn-danger float-right" data-dismiss="modal">Delete</button>
+        <button type="button" (click)="deleteUser(userToDelete)" class="btn btn-danger float-left" data-dismiss="modal">Delete</button>
+        <button type="button" class="btn btn-default float-right" data-dismiss="modal">Cancel</button>
       </div>
     </div>
   </div>

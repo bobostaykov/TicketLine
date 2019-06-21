@@ -57,7 +57,7 @@
             <div class="form-group">
               <div class="form-group">
                 <label for="inputArtist">Artist</label>
-                <ngx-select-dropdown id="inputArtist" formControlName="artist" [(ngModel)]="selectedArtist" [config]="config" [options]="options"></ngx-select-dropdown>
+                <ngx-select-dropdown id="inputArtist" formControlName="artist" [config]="config" [options]="options"></ngx-select-dropdown>
               </div>
               <div *ngIf="submitted && createEventForm.controls.artist.errors" class="error">
                 <small class="form-text text-warning" *ngIf="createEventForm.controls.artist.errors.required">

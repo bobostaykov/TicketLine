@@ -16,6 +16,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.validation.constraints.Positive;
+
 @RestController
 @RequestMapping(value = "/users")
 @Api(value = "users")
@@ -33,7 +35,7 @@ public class UserEndpoint {
     @ApiOperation(value = "Get users", authorizations = {@Authorization(value = "apiKey")})
     public Page<UserDTO> getUsers(@RequestParam(value = "username") String username,
                                   @RequestParam(value = "page") Integer page,
-                                  @RequestParam(value = "pageSize", required = false) Integer pageSize) {
+                                  @RequestParam(value = "pageSize", required = false) @Positive Integer pageSize) {
         LOGGER.info("Get users");
         if (username.equals("null"))
             username = null;
@@ -108,7 +110,7 @@ public class UserEndpoint {
     @ApiOperation(value = "Get blocked users", authorizations = {@Authorization(value = "apiKey")})
     public Page<UserDTO> getBlockedUsers(@RequestParam(value = "username") String username,
                                          @RequestParam(value = "page", required = false) Integer page,
-                                         @RequestParam(value = "pageSize", required = false) Integer pageSize){
+                                         @RequestParam(value = "pageSize", required = false) @Positive Integer pageSize){
         LOGGER.info("Get blocked users");
         if (username.equals("null"))
             username = null;

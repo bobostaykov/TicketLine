@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.generator;
 
+import at.ac.tuwien.sepm.groupphase.backend.datatype.TicketStatus;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.location.LocationDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.ticket.TicketDTO;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
@@ -8,12 +9,10 @@ import com.itextpdf.text.pdf.BarcodeQRCode;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
-import org.apache.commons.io.IOUtils;
 import org.bouncycastle.jcajce.provider.digest.SHA3;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -36,23 +35,22 @@ public class PDFGeneratorImpl implements PDFGenerator{
     private static final Logger LOGGER = LoggerFactory.getLogger(PDFGeneratorImpl.class);
 
     @Value("${receipt.address}")
-    private static String TICKETLINE_ADDRESS;
+    private String TICKETLINE_ADDRESS;
 
-    public MultipartFile generateReceipt(List<TicketDTO> tickets, Boolean cancellation) throws DocumentException, IOException {
+    public byte[] generateReceipt(List<TicketDTO> tickets, Boolean cancellation) throws DocumentException {
         LOGGER.info("PDF Generator: Generate (cancellation) receipt for ticket(s)");
         if (tickets.size() < 1)
             throw new NotFoundException("Cannot create receipt for empty list of Tickets.");
         Double returnSum;
         Double sum = 0.0;
         Document receipt = new Document();
-        String fileName, justFileName;
+        /*String fileName, justFileName;
         if (cancellation)
             justFileName = "cancellation-receipt_" + LocalDateTime.now().toString() + ".pdf";
         else
             justFileName = "receipt_" + LocalDateTime.now().toString() + ".pdf";
-        fileName = RECEIPT_PATH + justFileName;
-        this.generatePathIfNotExists(RECEIPT_PATH);
-        OutputStream outputStream = new FileOutputStream(fileName);
+        fileName = RECEIPT_PATH + justFileName;*/
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         PdfWriter.getInstance(receipt, outputStream);
 
         receipt.addTitle("Ticketline" + (cancellation ? " cancellation" : "") + " receipt");
@@ -143,31 +141,28 @@ public class PDFGeneratorImpl implements PDFGenerator{
 
 
         // TODO: Use TICKETLINE_ADDRESS from application.yml here
-        Paragraph address = new Paragraph("Ticketline-Gasse 1a, 1010 Wien", font);
+        //Paragraph address = new Paragraph("Ticketline-Gasse 1a, 1010 Wien", font);
+        Paragraph address = new Paragraph(TICKETLINE_ADDRESS, font);
         receipt.add(address);
 
         receipt.close();
 
-        File file = new File(fileName);
-        FileInputStream input = new FileInputStream(file);
-        MultipartFile multipartPDF = new MockMultipartFile(justFileName,
-            file.getName(), "application/pdf", IOUtils.toByteArray(input));
-        return multipartPDF;
+        return outputStream.toByteArray();
     }
 
     @Override
-    public MultipartFile generateTicketPDF(List<TicketDTO> tickets) throws DocumentException, IOException {
+    public byte[] generateTicketPDF(List<TicketDTO> tickets) throws DocumentException, IOException, NoSuchAlgorithmException {
         LOGGER.info("PDF Generator: Generate PDF for ticket(s) and/or reservation(s)");
         int numberOfTickets = tickets.size();
         if (numberOfTickets < 1)
             throw new NotFoundException("Cannot create pdf for empty list of Tickets.");
         Document pdf = new Document();
-        String justFileName = "ticket_" + LocalDateTime.now().toString() + ".pdf";
+        /*String justFileName = "ticket_" + LocalDateTime.now().toString() + ".pdf";
         String fileName = TICKET_PATH + justFileName;
 
-        this.generatePathIfNotExists(TICKET_PATH);
+        this.generatePathIfNotExists(TICKET_PATH);*/
 
-        OutputStream outputStream = new FileOutputStream(fileName);
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         PdfWriter.getInstance(pdf, outputStream);
 
         pdf.addTitle("Ticketline Ticket");
@@ -186,11 +181,12 @@ public class PDFGeneratorImpl implements PDFGenerator{
 
         pdf.close();
 
-        File file = new File(fileName);
+        /*File file = new File(fileName);
         FileInputStream input = new FileInputStream(file);
         MultipartFile multipartPDF = new MockMultipartFile(justFileName,
             file.getName(), "application/pdf", IOUtils.toByteArray(input));
-        return multipartPDF;
+        return multipartPDF;*/
+        return outputStream.toByteArray();
     }
 
     /**
@@ -209,14 +205,17 @@ public class PDFGeneratorImpl implements PDFGenerator{
         String centsStr = Long.toString(100 + eurocents%100).substring(1);
         return plusMinus + eurocents / 100 + "," + centsStr + " €";
     }
-
+/*
     private void generatePathIfNotExists(String pathString) throws IOException {
         Path path = Paths.get(pathString);
         if (!Files.exists(path))
             Files.createDirectories(path);
     }
 
-    private void addTicketPage(TicketDTO ticket, Document doc) throws DocumentException {
+ */
+
+    private void addTicketPage(TicketDTO ticket, Document doc) throws DocumentException, NoSuchAlgorithmException {
+        Boolean buy = ticket.getStatus() == TicketStatus.SOLD;
         Font headlineFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 24, BaseColor.BLACK);
         Font font = FontFactory.getFont(FontFactory.HELVETICA, 16, BaseColor.BLACK);
         Font fontBold = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 16, BaseColor.BLACK);
@@ -228,9 +227,7 @@ public class PDFGeneratorImpl implements PDFGenerator{
         doc.add(Chunk.NEWLINE);
         doc.add(Chunk.NEWLINE);
 
-        //int[] widths = {3, 6, 2};
         PdfPTable table = new PdfPTable(1);
-        //table.setWidths(widths);
 
         PdfPCell eventName = new PdfPCell();
         eventName.setPhrase(new Phrase(ticket.getShow().getEvent().getName(), fontBold));
@@ -245,23 +242,32 @@ public class PDFGeneratorImpl implements PDFGenerator{
         showDate.setPhrase(new Phrase(ticket.getShow().getDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")) + " " +
             ticket.getShow().getTime().format(DateTimeFormatter.ofPattern("HH:mm")), fontBold));
         table.addCell(showDate);
-        if (ticket.getSectorNumber() != null) {
+        if (ticket.getSector() != null && ticket.getSector().getSectorNumber() != null) {
             PdfPCell sector = new PdfPCell();
-            sector.setPhrase(new Phrase("Sektor: " + ticket.getSectorNumber().toString(), fontBold));
+            sector.setPhrase(new Phrase("Sektor: " + ticket.getSector().getSectorNumber().toString(), fontBold));
             table.addCell(sector);
         }
         else {
             PdfPCell seat = new PdfPCell();
-            seat.setPhrase(new Phrase("Reihe: " + ticket.getRowNumber().toString() + "  Sitzplatz: " + ticket.getSeatNumber().toString(), fontBold));
+            seat.setPhrase(new Phrase("Reihe: " + ticket.getSeat().getSeatRow().toString() + "  Sitzplatz: " + ticket.getSeat().getSeatNumber().toString(), fontBold));
             table.addCell(seat);
         }
         PdfPCell price = new PdfPCell();
-        price.setPhrase(new Phrase("Preis: " + this.doubleToEuro(ticket.getPrice()), fontBold));
-        table.addCell(price);
-        PdfPCell qr = new PdfPCell();
-        qr.setImage(generateQrCode(ticket));
-        qr.setFixedHeight(200);
-        table.addCell(qr);
+        if (buy) {
+            price.setPhrase(new Phrase("Preis: " + this.doubleToEuro(ticket.getPrice()), fontBold));
+            table.addCell(price);
+            PdfPCell qr = new PdfPCell();
+            qr.setImage(generateQrCode(ticket));
+            qr.setFixedHeight(200);
+            table.addCell(qr);
+        }
+        else {
+            price.setPhrase(new Phrase("Preis (zu bezahlen): " + this.doubleToEuro(ticket.getPrice()), fontBold));
+            table.addCell(price);
+            PdfPCell reservationNumber = new PdfPCell();
+            reservationNumber.setPhrase(new Phrase("Reservierungsnummer: " + ticket.getReservationNumber().toString()));
+            table.addCell(reservationNumber);
+        }
 
         doc.add(table);
     }

@@ -1,9 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.repository;
 
 import at.ac.tuwien.sepm.groupphase.backend.datatype.TicketStatus;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Customer;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Show;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Ticket;
+import at.ac.tuwien.sepm.groupphase.backend.entity.*;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -56,6 +54,13 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
     List<Ticket> findAllByShow(List<Show> shows);
 
     /**
+     * Finds tickets for a single show by its id
+     * @param showId id of the show for which tickets should be found
+     * @return list of tickets associated with the show
+     */
+    List<Ticket> findAllByShowId(Long showId);
+
+    /**
      * Find ticket by given reservation number
      *
      * @param id of Ticket to be found
@@ -85,5 +90,23 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
      * @param id list of ids of Tickets to delete
      */
     void deleteByIdIn(List<Long> id);
+
+    /**
+     * Find all Tickets filtered by a given show and seat.
+     *
+     * @param show show to search tickets for
+     * @param seat seat to search tickets for
+     * @return
+     */
+    List<Ticket> findAllByShowAndSeat(Show show, Seat seat);
+
+    /**
+     * Find all Tickets filtered by a given show and sector.
+     *
+     * @param show show to search tickets for
+     * @param sector sector to search tickets for
+     * @return
+     */
+    List<Ticket> findAllByShowAndSector(Show show, Sector sector);
 
 }

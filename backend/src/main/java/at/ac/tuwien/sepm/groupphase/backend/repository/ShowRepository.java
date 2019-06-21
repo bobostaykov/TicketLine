@@ -9,6 +9,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ShowRepository extends JpaRepository<Show, Long>, ShowRepositoryCustom, PagingAndSortingRepository<Show, Long> {
@@ -29,6 +30,13 @@ public interface ShowRepository extends JpaRepository<Show, Long>, ShowRepositor
      * @return a page of the found shows
      */
     Page<Show> findAllByHall_Location_Id(Long locationID, Pageable pageable);
+
+    /**
+     * finds and returns Optional containing show with id matching param if found
+     * @param id of show to be found
+     * @return optional containing show if found
+     */
+    Optional<Show> findOneById(Long id);
 
     /**
      * Delete the show with the given id

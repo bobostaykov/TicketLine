@@ -45,7 +45,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Page<UserDTO> getUsers(String username, Integer page, @Positive Integer pageSize) throws ServiceException {
+    public Page<UserDTO> getUsers(String username, Integer page, Integer pageSize) throws ServiceException {
         if (username == null)
             LOGGER.info("Get all users");
         else
@@ -156,7 +156,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Page<UserDTO> getBlockedUsers(String username, Integer page, @Positive Integer pageSize) throws ServiceException {
+    public Page<UserDTO> getBlockedUsers(String username, Integer page, Integer pageSize) throws ServiceException {
         if (username == null)
             LOGGER.info("Getting all blocked users");
         else

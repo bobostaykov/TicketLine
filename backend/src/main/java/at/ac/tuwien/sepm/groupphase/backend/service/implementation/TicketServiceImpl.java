@@ -3,59 +3,135 @@ package at.ac.tuwien.sepm.groupphase.backend.service.implementation;
 import at.ac.tuwien.sepm.groupphase.backend.datatype.TicketStatus;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.TicketEndpoint;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.ticket.TicketDTO;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Customer;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Event;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Show;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Ticket;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.ticket.TicketPostDTO;
+import at.ac.tuwien.sepm.groupphase.backend.entity.*;
+import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.customer.CustomerMapper;
+import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.show.ShowMapper;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.ticket.TicketMapper;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
-import at.ac.tuwien.sepm.groupphase.backend.repository.CustomerRepository;
-import at.ac.tuwien.sepm.groupphase.backend.repository.EventRepository;
-import at.ac.tuwien.sepm.groupphase.backend.repository.ShowRepository;
-import at.ac.tuwien.sepm.groupphase.backend.repository.TicketRepository;
+import at.ac.tuwien.sepm.groupphase.backend.exception.TicketSoldOutException;
+import at.ac.tuwien.sepm.groupphase.backend.repository.*;
+import at.ac.tuwien.sepm.groupphase.backend.service.CustomerService;
 import at.ac.tuwien.sepm.groupphase.backend.service.TicketService;
 import at.ac.tuwien.sepm.groupphase.backend.service.generator.PDFGenerator;
 import com.itextpdf.text.DocumentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
-@ConfigurationProperties("receipt")
 public class TicketServiceImpl implements TicketService {
     private final TicketRepository ticketRepository;
     private final CustomerRepository customerRepository;
     private final EventRepository eventRepository;
     private final ShowRepository showRepository;
     private final TicketMapper ticketMapper;
+    private final ShowMapper showMapper;
+    private final CustomerMapper customerMapper;
+    private final CustomerService customerService;
+    private final SeatRepository seatRepository;
+    private final SectorRepository sectorRepository;
     private final PDFGenerator pdfGenerator;
+
+    private static final String RECEIPT_PATH = "receipt/";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TicketServiceImpl.class);
 
     public TicketServiceImpl(TicketRepository ticketRepository, CustomerRepository customerRepository,
-                             EventRepository eventRepository, TicketMapper ticketMapper,
-                             ShowRepository showRepository, PDFGenerator pdfGenerator) {
+                             EventRepository eventRepository, TicketMapper ticketMapper, ShowMapper showMapper,
+                             CustomerMapper customerMapper, CustomerService customerService,
+                             ShowRepository showRepository, SeatRepository seatRepository,
+                             SectorRepository sectorRepository, PDFGenerator pdfGenerator) {
         this.ticketRepository = ticketRepository;
         this.customerRepository = customerRepository;
         this.eventRepository = eventRepository;
         this.ticketMapper = ticketMapper;
+        this.showMapper = showMapper;
+        this.customerMapper = customerMapper;
+        this.customerService = customerService;
         this.showRepository = showRepository;
+        this.seatRepository = seatRepository;
+        this.sectorRepository = sectorRepository;
         this.pdfGenerator = pdfGenerator;
     }
 
     @Override
-    public TicketDTO postTicket(TicketDTO ticketDTO) {
+    public List<TicketDTO> postTicket(List<TicketPostDTO> ticketPostDTO) throws TicketSoldOutException {
         LOGGER.info("Ticket Service: Create Ticket");
-        return ticketMapper.ticketToTicketDTO(ticketRepository.save(ticketMapper.ticketDTOToTicket(ticketDTO)));
+        // Check if any of the requested tickets were already sold or reservated
+        for (TicketPostDTO current : ticketPostDTO) {
+            if (current.getSeat() != null) {
+                if (!this.ticketRepository.findAllByShowAndSeat(this.showRepository.getOne(current.getShow()),
+                    this.seatRepository.getOne(current.getSeat())).isEmpty()) {
+                    throw new TicketSoldOutException("Ticket for this seat is already sold, please choose another seat");
+                }
+            }
+            if (current.getSector() != null) {
+                if (this.ticketRepository.findAllByShowAndSector(this.showRepository.getOne(current.getShow()),
+                    this.sectorRepository.getOne(current.getSector())).size() ==
+                    this.showRepository.getOne(current.getShow()).getHall().getSeats().size()) {
+                    throw new TicketSoldOutException("Tickets for this sector are sold out, please choose another sector");
+                }
+            }
+        }
+
+        // Create each ticket
+        List<TicketDTO> created = new ArrayList<>();
+        for (TicketPostDTO current : ticketPostDTO) {
+            Customer customer = this.customerRepository.getOne(current.getCustomer());
+            if (customer == null) {
+                throw new NotFoundException("No Customer found with id " + current.getCustomer());
+            }
+            Show show = this.showRepository.getOne(current.getShow());
+            if (show == null) {
+                throw new NotFoundException("No Show found with id " + current.getShow());
+            }
+            if ((current.getSeat() == null && current.getSector() == null) || (current.getSeat() != null && current.getSector() != null)) {
+                throw new NotFoundException("Either seat or sector must be given.");
+            }
+            Seat seat = null;
+            Sector sector = null;
+            if (current.getSeat() != null) {
+                seat = this.seatRepository.findOneById(current.getSeat()).get();
+                if (!show.getHall().getSeats().contains(seat)) {
+                    throw new NotFoundException("Seat " + seat.getSeatNumber() + " in row " + seat.getSeatRow() +
+                        " not found in list of seats for this show!");
+                }
+            }
+            if (current.getSector() != null) {
+                sector = this.sectorRepository.getOne(current.getSector());
+                if (!show.getHall().getSectors().contains(sector)) {
+                    throw new NotFoundException("Sector " + sector.getSectorNumber() +
+                        " not found in list of sectors for this show!");
+                }
+            }
+            String uniqueReservationNo = null;
+            if (current.getStatus() == TicketStatus.RESERVATED) {
+                uniqueReservationNo = UUID.randomUUID().toString();
+            }
+            Ticket ticket = new Ticket().builder()
+                .status(current.getStatus())
+                .customer(customer)
+                .price(current.getPrice())
+                .show(show)
+                .seat(seat)
+                .sector(sector)
+                .reservationNo(uniqueReservationNo)
+                .build();
+            show.setTicketsSold(show.getTicketsSold() + 1);
+            showRepository.save(show);
+            /* TODO: test everthing, also test if incrementing ticketSold worked */
+            created.add(ticketMapper.ticketToTicketDTO(ticketRepository.save(ticket)));
+        }
+        return created;
     }
 
     @Override
@@ -115,7 +191,7 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public MultipartFile getReceipt(List<String> ticketIDs) throws DocumentException, IOException {
+    public byte[] getReceipt(List<String> ticketIDs) throws DocumentException, IOException {
         LOGGER.info("Ticket Service: Get receipt PDF for ticket(s) with id(s) " + ticketIDs.toString());
         List<TicketDTO> tickets = ticketMapper.ticketToTicketDTO(ticketRepository.findByIdIn(this.parseListOfIds(ticketIDs)));
         return pdfGenerator.generateReceipt(tickets, false);
@@ -123,7 +199,7 @@ public class TicketServiceImpl implements TicketService {
 
     @Override
     @Transactional
-    public MultipartFile deleteAndGetCancellationReceipt(List<String> ticketIDs) throws DocumentException, IOException{
+    public byte[] deleteAndGetCancellationReceipt(List<String> ticketIDs) throws DocumentException, IOException {
         LOGGER.info("Ticket Service: Delete Ticket(s) with id(s)" + ticketIDs.toString() + " and receive storno receipt");
         List<TicketDTO> tickets = ticketMapper.ticketToTicketDTO(ticketRepository.findByIdIn(this.parseListOfIds(ticketIDs)));
         ticketRepository.deleteByIdIn(this.parseListOfIds(ticketIDs));
@@ -131,8 +207,9 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public MultipartFile generateTicketPDF(List<TicketDTO> tickets) throws DocumentException, IOException, NoSuchAlgorithmException {
-        LOGGER.info("Ticket Service: Get a PDF for ticket(s) {}", tickets.toString());
+    public byte[] generateTicketPDF(List<String> ticketIDs) throws DocumentException, IOException, NoSuchAlgorithmException {
+        LOGGER.info("Ticket Service: Get a PDF for ticket(s) {}", ticketIDs.toString());
+        List<TicketDTO> tickets = ticketMapper.ticketToTicketDTO(ticketRepository.findByIdIn(this.parseListOfIds(ticketIDs)));
         return pdfGenerator.generateTicketPDF(tickets);
     }
 

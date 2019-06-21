@@ -10,6 +10,7 @@ import {LocationResultsService} from '../../services/search-results/locations/lo
 import {EventResultsService} from '../../services/search-results/events/event-results.service';
 import {Location} from '../../dtos/location';
 import {MatSnackBar} from '@angular/material';
+import {Time} from '@angular/common';
 
 @Component({
   selector: 'app-content-manager',
@@ -20,6 +21,9 @@ export class ContentManagerComponent implements OnInit {
 
   private showToDelete: number;
   private artistToDelete: number;
+
+  private showToUpdate: Show;
+  private artistToUpdate: Artist;
 
   private savedType: string;
   private savedName: string;
@@ -39,6 +43,16 @@ export class ContentManagerComponent implements OnInit {
   private searchName: string;
   private searchType: string;
   private searchForm: FormGroup;
+
+  // Update Artist
+  private updateArtistName: string;
+  private updateArtistForm: FormGroup;
+
+  // Update Show
+  private updateShowDate: Date;
+  private updateShowTime: Time;
+  private updateShowDescription: string;
+  private updateShowForm: FormGroup;
 
   private artists: Artist[];
   private shows: Show[];
@@ -94,6 +108,16 @@ export class ContentManagerComponent implements OnInit {
     this.searchForm = new FormGroup({
       searchName: new FormControl(),
       searchType: new FormControl()
+    });
+
+    this.updateArtistForm = new FormGroup({
+      updateArtistNameControl: new FormControl('', [Validators.required, Validators.maxLength(60)])
+    });
+
+    this.updateShowForm = new FormGroup({
+      updateShowDateControl: new FormControl(),
+      updateShowTimeControl: new FormControl(),
+      updateShowDescriptionControl: new FormControl()
     });
   }
 
@@ -214,26 +238,52 @@ export class ContentManagerComponent implements OnInit {
     this.showToDelete = showId;
   }
 
-  private deleteShow() {
-    this.showService.deleteShow(this.showToDelete).subscribe(
-      () => {},
-      error => { this.defaultServiceErrorHandling(error); },
-      () => { this.loadEntities(); }
-    );
-    this.showToDelete = null;
-  }
-
   private setArtistToDelete(artistId: number) {
     this.artistToDelete = artistId;
   }
 
-  private deleteArtist() {
-    this.artistService.deleteArtist(this.artistToDelete).subscribe(
+  private setShowToUpdate(show: Show) {
+    this.showToUpdate = show;
+  }
+
+  private setArtistToUpdate(artist: Artist) {
+    this.artistToUpdate = Object.assign({}, artist);
+  }
+
+  private updateArtist() {
+    console.log('ContentManager: updateArtist');
+    this.artistService.updateArtist(this.artistToUpdate).subscribe(
       () => {},
       error => { this.defaultServiceErrorHandling(error); },
       () => { this.loadEntities(); }
     );
-    this.artistToDelete = null;
+  }
+
+  private updateShow() {
+    console.log('ContentManager: updateShow');
+    this.showService.updateShow(this.showToUpdate).subscribe(
+      () => {},
+      error => { this.defaultServiceErrorHandling(error); },
+      () => { this.loadEntities(); this.showToUpdate = null; }
+    );
+  }
+
+  private deleteShow() {
+    console.log('ContentManager: deleteShow');
+    this.showService.deleteShow(this.showToDelete).subscribe(
+      () => {},
+      error => { this.defaultServiceErrorHandling(error); },
+      () => { this.loadEntities(); this.showToDelete = null; }
+    );
+  }
+
+  private deleteArtist() {
+    console.log('ContentManager: deleteArtist');
+    this.artistService.deleteArtist(this.artistToDelete).subscribe(
+      () => {},
+      error => { this.defaultServiceErrorHandling(error); },
+      () => { this.loadEntities(); this.artistToDelete = null; }
+    );
   }
 
   openSnackBar(message: string, css: string) {

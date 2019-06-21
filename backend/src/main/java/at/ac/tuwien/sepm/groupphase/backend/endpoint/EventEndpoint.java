@@ -18,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.validation.constraints.Positive;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -78,7 +79,7 @@ public class EventEndpoint {
                                                          @RequestParam(value = "duration", required = false) Integer duration,
                                                          @RequestParam(value = "artistName", required = false) String artistName,
                                                          @RequestParam(value = "page", required = false) Integer page,
-                                                         @RequestParam(value = "pageSize", required = false) Integer pageSize){
+                                                         @RequestParam(value = "pageSize", required = false) @Positive Integer pageSize){
         if (page!= null && eventName == null && eventType == null && content == null && description == null && duration == null && artistName == null) {
             LOGGER.info("Event Endpoint: findAll");
             try {
@@ -125,7 +126,7 @@ public class EventEndpoint {
     @RequestMapping(method = RequestMethod.GET, value = "/artist/{id}")
     public Page<EventDTO> findEventsFilteredByArtistID(@PathVariable Long id,
                                                        @RequestParam(value = "page", required = false) Integer page,
-                                                       @RequestParam(value = "pagesize", required = false) Integer pageSize) {
+                                                       @RequestParam(value = "pagesize", required = false) @Positive Integer pageSize) {
         LOGGER.info("Event Endpoint: findEventsFilteredByArtistID");
         try{
             return eventService.findEventsFilteredByArtistID(id, page, pageSize);

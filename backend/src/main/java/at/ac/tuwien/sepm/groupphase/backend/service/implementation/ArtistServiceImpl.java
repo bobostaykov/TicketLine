@@ -36,9 +36,6 @@ public class ArtistServiceImpl implements ArtistService {
 
     @Override
     public Page<ArtistDTO> findArtistsByName(String artistName, Integer page, Integer pageSize) {
-//        List<Artist> list = artistRepository.findByNameContainingIgnoreCase(artistName);
-//        LOGGER.error("\n\n\n" + list.get(0).getUsername() + "\n\n\n");
-//        return list;
         LOGGER.info("ArtistService: findArtistsByName");
         if(pageSize == null) {
             //default size
@@ -49,6 +46,12 @@ public class ArtistServiceImpl implements ArtistService {
         }
         Pageable pageable = PageRequest.of(page, pageSize);
         return artistRepository.findByNameContainingIgnoreCase(artistName, pageable).map(artistMapper::artistToArtistDTO);
+    }
+
+    @Override
+    public ArtistDTO updateArtist(ArtistDTO artistDTO) {
+        LOGGER.info("ArtistService: updateArtist");
+        return artistMapper.artistToArtistDTO(artistRepository.save(artistMapper.artistDTOToArtist(artistDTO)));
     }
 
     @Override
