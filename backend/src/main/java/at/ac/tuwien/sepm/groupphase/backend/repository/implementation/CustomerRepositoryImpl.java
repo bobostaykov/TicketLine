@@ -50,7 +50,7 @@ public class CustomerRepositoryImpl implements CustomerRepositoryCustom {
             predicates.add(cBuilder.like(cBuilder.lower(customerRoot.get(Customer_.name)), "%" + name.toLowerCase() + "%"));
         }
         if(firstName != null){
-            predicates.add(cBuilder.like(cBuilder.lower(customerRoot.get(Customer_.firstname)), "%" + name.toLowerCase() + "%"));
+            predicates.add(cBuilder.like(cBuilder.lower(customerRoot.get(Customer_.firstname)), "%" + firstName.toLowerCase() + "%"));
         }
         if(email != null){
             predicates.add(cBuilder.like(cBuilder.lower(customerRoot.get(Customer_.email)), "%" + email.toLowerCase() + "%"));
