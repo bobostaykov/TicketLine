@@ -2,7 +2,11 @@ package at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.ticket;
 
 import at.ac.tuwien.sepm.groupphase.backend.datatype.TicketStatus;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.customer.CustomerDTO;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.seat.SeatDTO;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.sector.SectorDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.show.ShowDTO;
+import at.ac.tuwien.sepm.groupphase.backend.entity.Seat;
+import at.ac.tuwien.sepm.groupphase.backend.entity.Sector;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -12,6 +16,9 @@ public class TicketDTO {
 
     @ApiModelProperty(name = "The automatically generated database id")
     private Long id;
+
+    @ApiModelProperty(name = "Reservation number for ticket reservations")
+    private String reservationNo;
 
     @ApiModelProperty(name = "The show this tickets was issued for")
     private ShowDTO show;
@@ -23,16 +30,21 @@ public class TicketDTO {
     private CustomerDTO customer;
 
     @ApiModelProperty(name = "The seat number of this ticket")
-    private Integer seatNumber;
-
-    @ApiModelProperty(name = "The row number of this ticket")
-    private Integer rowNumber;
+    private SeatDTO seat;
 
     @ApiModelProperty(name = "The sector number of this ticket")
-    private Integer sectorNumber;
+    private SectorDTO sector;
 
     @ApiModelProperty(name = "Status of the ticket (RESERVATED, SOLD)")
     private TicketStatus status;
+
+    public String getReservationNo() {
+        return reservationNo;
+    }
+
+    public void setReservationNo(String reservationNo) {
+        this.reservationNo = reservationNo;
+    }
 
     public void setId(Long id) {
         this.id = id;
@@ -66,33 +78,29 @@ public class TicketDTO {
         return customer;
     }
 
-    public void setSeatNumber(Integer seatNumber) {
-        this.seatNumber = seatNumber;
+    public void setSeat(SeatDTO seat) {
+        this.seat = seat;
     }
 
-    public Integer getSeatNumber() {
-        return seatNumber;
+    public SeatDTO getSeat() {
+        return seat;
     }
 
-    public void setRowNumber(Integer rowNumber) {
-        this.rowNumber = rowNumber;
+    public void setSector(SectorDTO sector) {
+        this.sector = sector;
     }
 
-    public Integer getRowNumber() {
-        return rowNumber;
-    }
-
-    public void setSectorNumber(Integer sectorNumber) {
-        this.sectorNumber = sectorNumber;
-    }
-
-    public Integer getSectorNumber() {
-        return sectorNumber;
+    public SectorDTO getSector() {
+        return sector;
     }
 
     public TicketStatus getStatus() {
         return status;
     }
+
+    public String getReservationNumber() {
+        return "Dummy number";
+    } // TODO: remove this on Ticket Refactoring - including reservation number
 
     public void setStatus(TicketStatus status) {
         this.status = status;
@@ -110,14 +118,17 @@ public class TicketDTO {
             ", price=" + price +
             ", customer=" + customer.toString() +
             ", status=" + status;
-        if (seatNumber != null) {
-            out = out + ", seatNumber=" + seatNumber;
+        if (seat != null && seat.getSeatNumber() != null) {
+            out = out + ", seatNumber=" + seat.getSeatNumber();
         }
-        if (rowNumber != null) {
-            out = out + ", rowNumber =" + rowNumber;
+        if (seat != null && seat.getSeatRow() != null) {
+            out = out + ", rowNumber =" + seat.getSeatRow();
         }
-        if (sectorNumber != null) {
-            out = out + ", sectorNumber =" + sectorNumber;
+        if (sector != null) {
+            out = out + ", sectorNumber =" + sector.getSectorNumber();
+        }
+        if (reservationNo != null) {
+            out = out + ", rservationNumber = " + reservationNo;
         }
         out = out + '}';
         return out;
@@ -134,10 +145,10 @@ public class TicketDTO {
         if (show != null ? !show.equals(ticketDTO.show) : ticketDTO.show != null) return false;
         if (price != null ? !price.equals(ticketDTO.price) : ticketDTO.price != null) return false;
         if (customer != null ? !customer.equals(ticketDTO.customer) : ticketDTO.customer != null) return false;
-        if (seatNumber != null ? !seatNumber.equals(ticketDTO.seatNumber) : ticketDTO.seatNumber != null) return false;
-        if (rowNumber != null ? !rowNumber.equals(ticketDTO.rowNumber) : ticketDTO.rowNumber != null) return false;
+        if (seat != null ? !seat.equals(ticketDTO.seat) : ticketDTO.seat != null) return false;
         if (status != null ? !status.equals(ticketDTO.status) : ticketDTO.status != null) return false;
-        return sectorNumber != null ? sectorNumber.equals(ticketDTO.sectorNumber) : ticketDTO.sectorNumber == null;
+        if (reservationNo != null ? !reservationNo.equals(ticketDTO.reservationNo) : ticketDTO.reservationNo != null) return false;
+        return sector != null ? sector.equals(ticketDTO.sector) : ticketDTO.sector == null;
     }
 
     @Override
@@ -146,26 +157,31 @@ public class TicketDTO {
         result = 31 * result + (show != null ? show.hashCode() : 0);
         result = 31 * result + (price != null ? price.hashCode() : 0);
         result = 31 * result + (customer != null ? customer.hashCode() : 0);
-        result = 31 * result + (seatNumber != null ? seatNumber.hashCode() : 0);
-        result = 31 * result + (rowNumber != null ? rowNumber.hashCode() : 0);
-        result = 31 * result + (sectorNumber != null ? sectorNumber.hashCode() : 0);
+        result = 31 * result + (seat != null ? seat.hashCode() : 0);
+        result = 31 * result + (sector != null ? sector.hashCode() : 0);
         result = 31 * result + (status != null ? status.hashCode() : 0);
+        result = 31 * result + (reservationNo != null ? reservationNo.hashCode() : 0);
         return result;
     }
 
     public static final class TicketDTOBuilder {
 
         private Long id;
+        private String reservationNo;
         private ShowDTO show;
         private Double price;
         private CustomerDTO customer;
-        private Integer seatNumber;
-        private Integer rowNumber;
-        private Integer sectorNumber;
+        private SeatDTO seat;
+        private SectorDTO sector;
         private TicketStatus status;
 
         public TicketDTOBuilder id(Long id) {
             this.id = id;
+            return this;
+        }
+
+        public TicketDTOBuilder reservationNo(String reservationNo) {
+            this.reservationNo = reservationNo;
             return this;
         }
 
@@ -183,20 +199,16 @@ public class TicketDTO {
             return this;
         }
 
-        public TicketDTOBuilder seatNumber(Integer seatNumber) {
-            this.seatNumber = seatNumber;
+        public TicketDTOBuilder seat(SeatDTO seat) {
+            this.seat = seat;
             return this;
         }
 
-        public TicketDTOBuilder rowNumber(Integer rowNumber) {
-            this.rowNumber = rowNumber;
+        public TicketDTOBuilder sector(SectorDTO sector) {
+            this.sector = sector;
             return this;
         }
 
-        public TicketDTOBuilder sectorNumber(Integer sectorNumber) {
-            this.sectorNumber = sectorNumber;
-            return this;
-        }
 
         public TicketDTOBuilder status(TicketStatus status) {
             this.status = status;
@@ -206,12 +218,12 @@ public class TicketDTO {
         public TicketDTO build() {
             TicketDTO ticketDTO = new TicketDTO();
             ticketDTO.setId(id);
+            ticketDTO.setReservationNo(reservationNo);
             ticketDTO.setShow(show);
             ticketDTO.setPrice(price);
             ticketDTO.setCustomer(customer);
-            ticketDTO.setSeatNumber(seatNumber);
-            ticketDTO.setRowNumber(rowNumber);
-            ticketDTO.setSectorNumber(sectorNumber);
+            ticketDTO.setSeat(seat);
+            ticketDTO.setSector(sector);
             ticketDTO.setStatus(status);
             return ticketDTO;
         }

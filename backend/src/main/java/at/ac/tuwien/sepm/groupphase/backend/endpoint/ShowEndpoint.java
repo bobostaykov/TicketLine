@@ -1,5 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint;
 
+import at.ac.tuwien.sepm.groupphase.backend.conversion.CaseInsensitiveEnumConverter;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.requestparameter.ShowRequestParameter;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.searchParameters.ShowSearchParametersDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.show.ShowDTO;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
@@ -12,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -20,6 +23,7 @@ import javax.validation.constraints.Positive;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 // TODO Class is unfinished
 @RestController
@@ -32,8 +36,22 @@ public class ShowEndpoint {
     private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
 
-    ShowEndpoint(ShowService showService){
+    ShowEndpoint(ShowService showService) {
         this.showService = showService;
+    }
+
+    // needed to correctly deserialize request parameter enums
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.registerCustomEditor(ShowRequestParameter.class, new CaseInsensitiveEnumConverter<>(ShowRequestParameter.class));
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @ApiOperation(value = "Get one show by its id", authorizations = {@Authorization(value = "apiKey")})
+    public ShowDTO findOneById(@PathVariable("id") Long id,
+                               @RequestParam(value = "include", required = false) List<ShowRequestParameter> include) {
+        LOGGER.info("Show Endpoint: Find one show by id " + id);
+        return showService.findOneById(id, include);
     }
 
     @RequestMapping(value = "/location/{id}", method = RequestMethod.GET)
@@ -108,6 +126,16 @@ public class ShowEndpoint {
         } catch (NotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No shows are found for the given parameters:" + e.getMessage(), e);
         }
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/suggestions")
+    @ApiOperation(value = "Get a list of search suggestions for shows filtered by event name, date and time", authorizations = {@Authorization(value = "apiKey")})
+    public List<ShowDTO> getSearchSuggestions(@RequestParam(required = false) String eventName,
+                                              @RequestParam(required = false) String date,
+                                              @RequestParam(required = false) String time) {
+        LOGGER.info("GET search suggestions for show with parameters eventName = " + eventName +
+            ", date = " + date + ", time = " + time);
+        return showService.findSearchResultSuggestions(eventName, date, time);
     }
 
 

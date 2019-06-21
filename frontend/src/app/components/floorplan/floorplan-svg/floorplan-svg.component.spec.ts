@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { FloorplanComponent } from './floorplan.component';
+import { FloorplanSvgComponent } from './floorplan-svg.component';
 
-describe('FloorplanComponent', () => {
-  let component: FloorplanComponent;
-  let fixture: ComponentFixture<FloorplanComponent>;
+describe('FloorplanSvgComponent', () => {
+  let component: FloorplanSvgComponent;
+  let fixture: ComponentFixture<FloorplanSvgComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ FloorplanComponent ]
+      declarations: [ FloorplanSvgComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(FloorplanComponent);
+    fixture = TestBed.createComponent(FloorplanSvgComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

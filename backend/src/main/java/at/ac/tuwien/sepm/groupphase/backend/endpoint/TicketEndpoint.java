@@ -1,6 +1,9 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.ticket.TicketDTO;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.ticket.TicketPostDTO;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
+import at.ac.tuwien.sepm.groupphase.backend.exception.TicketSoldOutException;
 import at.ac.tuwien.sepm.groupphase.backend.service.TicketService;
 import com.itextpdf.text.DocumentException;
 import io.swagger.annotations.Api;
@@ -10,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +23,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
-import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -28,18 +31,25 @@ import java.util.List;
 public class TicketEndpoint {
     private final TicketService ticketService;
     private static final Logger LOGGER = LoggerFactory.getLogger(TicketEndpoint.class);
+    private static final String PDF_ENDPOINT = "/printable";
 
     public TicketEndpoint(TicketService ticketService) {
         this.ticketService = ticketService;
     }
 
+
     @RequestMapping(method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(value = "Create a ticket", authorizations = {@Authorization(value = "apiKey")})
-    public TicketDTO create(@RequestBody TicketDTO ticketDTO) throws IOException, DocumentException, NoSuchAlgorithmException {
+    public List<TicketDTO> create(@RequestBody List<TicketPostDTO> ticketPostDTO) {
         LOGGER.info("Create Ticket");
-        TicketDTO ticketCreated = ticketService.postTicket(ticketDTO);
-        ticketService.generateTicketPDF(Collections.singletonList(ticketCreated)); // TODO: return pdf instead of tickets
-        return ticketCreated;
+        try {
+            return ticketService.postTicket(ticketPostDTO);
+        } catch (TicketSoldOutException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        } catch (NotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -56,28 +66,13 @@ public class TicketEndpoint {
         return ticketService.deleteOne(id);
     }
 
-    @RequestMapping(value = "/cancellation", method = RequestMethod.DELETE)
+    @RequestMapping(value = PDF_ENDPOINT + "/cancellation", method = RequestMethod.DELETE)
     @ApiOperation(value = "Delete Tickets by id and receive storno receipt", authorizations = {@Authorization(value = "apiKey")})
-    public ResponseEntity<Resource> deleteAndGetStornoReceipt(@RequestParam List<String> tickets) {
+    public ResponseEntity<byte[]> deleteAndGetStornoReceipt(@RequestParam List<String> tickets) throws IOException, DocumentException {
         LOGGER.info("Delete Ticket(s) with id(s)" + tickets.toString() + " and receive storno receipt");
-        MultipartFile pdf;
-        try {
-            pdf = ticketService.deleteAndGetCancellationReceipt(tickets);
-        } catch (Exception e) {
-            LOGGER.info(e.getMessage());
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        try {
-            return ResponseEntity
-                .ok()
-                .contentLength(pdf.getSize())
-                .contentType(
-                    MediaType.parseMediaType("application/pdf"))
-                .body(new InputStreamResource(pdf.getInputStream()));
-        } catch (IOException e) {
-            LOGGER.info(e.getMessage());
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        return new ResponseEntity<>(ticketService.deleteAndGetCancellationReceipt(tickets), headers, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
@@ -125,26 +120,19 @@ public class TicketEndpoint {
         }
     }
 
-    @RequestMapping(value = "/receipt", method = RequestMethod.GET)
+    @RequestMapping(value = PDF_ENDPOINT + "/receipt", method = RequestMethod.GET)
     @ApiOperation(value = "Get receipt PDF for list of tickets", authorizations = {@Authorization(value = "apiKey")})
-    public ResponseEntity<Resource> getReceiptPDF(@RequestParam List<String> tickets) {
-        MultipartFile pdf;
-        try {
-            pdf = ticketService.getReceipt(tickets);
-        } catch (Exception e) {
-            LOGGER.info(e.getMessage());
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        try {
-            return ResponseEntity
-                .ok()
-                .contentLength(pdf.getSize())
-                .contentType(
-                    MediaType.parseMediaType("application/pdf"))
-                .body(new InputStreamResource(pdf.getInputStream()));
-        } catch (IOException e) {
-            LOGGER.info(e.getMessage());
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<byte[]> getReceiptPDF(@RequestParam List<String> tickets) throws IOException, DocumentException {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        return new ResponseEntity<>(ticketService.getReceipt(tickets), headers, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = PDF_ENDPOINT + "/ticket", method = RequestMethod.GET)
+    @ApiOperation(value = "Get printable PDF for list of tickets", authorizations = {@Authorization(value = "apiKey")})
+    public ResponseEntity<byte[]> getTicketPDF(@RequestParam List<String> tickets) throws DocumentException, NoSuchAlgorithmException, IOException {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        return new ResponseEntity<>(ticketService.generateTicketPDF(tickets), headers, HttpStatus.OK);
     }
 }

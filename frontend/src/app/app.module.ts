@@ -16,7 +16,15 @@ import {httpInterceptorProviders} from './interceptors';
 import {Globals} from './global/globals';
 import { TopTenEventsComponent } from './components/events/top-ten-events/top-ten-events.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {MatButtonModule, MatCheckboxModule, MatInputModule, MatSelectModule, MatSnackBarModule} from '@angular/material';
+import {
+  MatButtonModule,
+  MatCheckboxModule,
+  MatInputModule,
+  MatSelectModule,
+  MatSnackBarModule,
+  MatRadioModule,
+  MatAutocompleteModule
+} from '@angular/material';
 import {NgxChartsModule} from '@swimlane/ngx-charts';
 import { SearchPageComponent } from './components/events/search page/search-page.component';
 import { ArtistResultsComponent } from './components/search-results/artists/artist-results.component';
@@ -25,11 +33,15 @@ import { EventsComponent } from './components/events/start page/events.component
 import { LocationResultsComponent } from './components/search-results/locations/location-results.component';
 import { Ng5SliderModule } from 'ng5-slider';
 import { EventResultsComponent } from './components/search-results/events/event-results.component';
-import {FloorplanControlComponent} from './components/floorplan-control/floorplan-control.component';
-import {FloorplanComponent} from './components/floorplan/floorplan.component';
+import {FloorplanControlComponent} from './components/floorplan/floorplan-control/floorplan-control.component';
+import {FloorplanSvgComponent} from './components/floorplan/floorplan-svg/floorplan-svg.component';
 import {CustomerComponent} from './components/customer/customer.component';
+import {TicketComponent} from './components/ticket/ticket.component';
 import {CustomerDialogComponent} from './components/customer-dialog/customer-dialog.component';
+import {TicketCheckReservationComponent} from './components/ticket/ticket-check/ticket-check.component';
+import { FloorplanTicketComponent } from './components/floorplan/floorplan-ticket/floorplan-ticket.component';
 import { BlockedUsersComponent } from './components/blocked-users/blocked-users.component';
+import { MinDirective } from './directives/min.directive';
 import { ContentManagerComponent } from './components/content-manager/content-manager.component';
 import { SelectDropDownModule } from 'ngx-select-dropdown';
 
@@ -50,10 +62,14 @@ import { SelectDropDownModule } from 'ngx-select-dropdown';
     LocationResultsComponent,
     EventResultsComponent,
     FloorplanControlComponent,
-    FloorplanComponent,
+    FloorplanSvgComponent,
     CustomerComponent,
+    TicketComponent,
     CustomerDialogComponent,
+    FloorplanTicketComponent,
+    MinDirective,
     BlockedUsersComponent,
+    TicketCheckReservationComponent,
     ContentManagerComponent
   ],
   imports: [
@@ -71,6 +87,8 @@ import { SelectDropDownModule } from 'ngx-select-dropdown';
     MatSnackBarModule,
     NgxChartsModule,
     Ng5SliderModule,
+    MatRadioModule,
+    MatAutocompleteModule,
     SelectDropDownModule
   ],
   providers: [httpInterceptorProviders, Globals],

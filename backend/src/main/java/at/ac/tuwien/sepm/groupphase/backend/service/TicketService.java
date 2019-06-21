@@ -1,8 +1,9 @@
 package at.ac.tuwien.sepm.groupphase.backend.service;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.ticket.TicketDTO;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.ticket.TicketPostDTO;
+import at.ac.tuwien.sepm.groupphase.backend.exception.TicketSoldOutException;
 import com.itextpdf.text.DocumentException;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
@@ -13,10 +14,10 @@ public interface TicketService {
     /**
      * Save a single ticket entry
      *
-     * @param ticketDTO ticket to be saved
+     * @param ticketDTO to be saved
      * @return saved ticket entry
      */
-    TicketDTO postTicket(TicketDTO ticketDTO);
+    List<TicketDTO> postTicket(List<TicketPostDTO> ticketDTO)  throws TicketSoldOutException;
 
     /**
      * Get all ticket entries
@@ -66,6 +67,30 @@ public interface TicketService {
      */
     List<TicketDTO> findAllFilteredByCustomerAndEvent(String customerName, String eventName);
 
+    /**
+     * Get one receipt PDF for the list of ticket IDs
+     *
+     * @param ticketIDs String List containg ticket IDs
+     * @return receipt PDF as MultipartFile
+     */
+    byte[] getReceipt(List<String> ticketIDs) throws DocumentException, IOException;
+
+    /**
+     * Delete ticket(s) by id and receive storno receipt
+     *
+     * @param tickets list of ticket ids
+     * @return Cancellation PDF receipt for deleted tickets as MultipartFile
+     */
+    byte[] deleteAndGetCancellationReceipt(List<String> tickets) throws DocumentException, IOException;
+
+    /**
+     * Generate PDF for list of tickets
+     *
+     * @param ticketIDs list of ticket-IDs
+     * @return PDF containing printable tickets
+     */
+    byte[] generateTicketPDF(List<String> ticketIDs) throws DocumentException, IOException, NoSuchAlgorithmException;
+
     // PINOS IMPLEMENTATION
     /**
      * Get all reservated tickets filtered by customer and show
@@ -76,28 +101,4 @@ public interface TicketService {
      * @return list of found tickets
      */
     //List<TicketDTO> findByCustomerNameAndShowWithStatusReservated(String surname, String firstname, ShowDTO show);
-
-    /**
-     * Get one receipt PDF for the list of ticket IDs
-     *
-     * @param ticketIDs String List containg ticket IDs
-     * @return receipt PDF as MultipartFile
-     */
-    MultipartFile getReceipt(List<String> ticketIDs) throws DocumentException, IOException;
-
-    /**
-     * Delete ticket(s) by id and receive storno receipt
-     *
-     * @param tickets list of ticket ids
-     * @return Cancellation PDF receipt for deleted tickets as MultipartFile
-     */
-    MultipartFile deleteAndGetCancellationReceipt(List<String> tickets) throws DocumentException, IOException;
-
-    /**
-     * Generate PDF for list of tickets
-     *
-     * @param tickets list of tickets
-     * @return PDF containing printable tickets
-     */
-    MultipartFile generateTicketPDF(List<TicketDTO> tickets) throws DocumentException, IOException, NoSuchAlgorithmException;
 }

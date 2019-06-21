@@ -12,10 +12,14 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Tuple;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -164,6 +168,44 @@ public class ShowRepositoryImpl implements ShowRepositoryCustom {
         int end = (start + pageable.getPageSize()) > showList.size() ? showList.size() : (start + pageable.getPageSize());
         Page<Show> pages = new PageImpl<Show>(showList.subList(start, end), pageable, showList.size());
         return pages;
+    }
+
+    public List<Show> findByEventNameAndShowDateAndShowTime(String eventName, String date, String time) {
+        LOGGER.info("Find shows filtered by eventName = " + eventName + " date containing \"" + date + "\" and " +
+            "time containing \"" + time + '\"');
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        List<Predicate> predicates = new ArrayList<>();
+        CriteriaQuery<Tuple> query = cb.createTupleQuery();
+        List<Order> orderBy = new ArrayList<>();
+        Root<Show> showRoot = query.from(Show.class);
+        Join<Show, Event> eventJoin = showRoot.join(Show_.event);
+        if (!StringUtils.isEmpty(eventName)) {
+            predicates.add(cb.like(cb.lower(eventJoin.get(Event_.name)), '%' + eventName.trim().toLowerCase() + '%'));
+            orderBy.add(cb.asc(eventJoin.get(Event_.name)));
+        }
+        if (!StringUtils.isEmpty(date)) {
+            predicates.add(cb.like(showRoot.get(Show_.DATE).as(String.class), '%' + date.trim() + '%'));
+            orderBy.add(cb.asc(showRoot.get(Show_.DATE)));
+        }
+        if (!StringUtils.isEmpty(time)) {
+            predicates.add(cb.like(showRoot.get(Show_.TIME).as(String.class), '%' + time.trim() + '%'));
+            orderBy.add(cb.asc(showRoot.get(Show_.TIME)));
+        }
+        query.multiselect(showRoot.get(Show_.id), eventJoin.get(Event_.name), showRoot.get(Show_.date), showRoot.get(Show_.time))
+            .where(predicates.toArray(new Predicate[predicates.size()])).orderBy(orderBy);
+        return em.createQuery(query).getResultStream()
+            .map(result -> {
+                return Show.builder()
+                    .id((Long) result.get(0))
+                    .event(
+                        Event.builder()
+                            .name((String) result.get(1))
+                            .build()
+                    )
+                    .date((LocalDate) result.get(2))
+                    .time((LocalTime) result.get(3))
+                    .build();
+            }).collect(Collectors.toList());
     }
 
     private static java.util.function.Predicate<Show> compareMaxPrice(Double maxPrice){

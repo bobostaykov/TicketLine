@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import {ResultsFor} from '../../../datatype/results_for';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {Globals} from '../../../global/globals';
 import {Observable} from 'rxjs';
@@ -95,5 +94,17 @@ export class ShowResultsService {
     parameters = postalCode ? parameters.append('postalCode', postalCode) : parameters;
     parameters = parameters.append('page', page);
     return this.httpClient.get<Show[]>(this.showBaseUri + '/filter', { params: parameters });
+  }
+
+  public getSearchSuggestions(eventName: string, date: string, time: string): Observable<Show[]> {
+    let parameters = new HttpParams();
+    parameters = eventName ? parameters.append('eventName', eventName) : parameters;
+    parameters = date ? parameters.append('date', date) : parameters;
+    parameters = time ? parameters.append('time', time) : parameters;
+    return this.httpClient.get<Show[]>(this.showBaseUri + '/suggestions', {params: parameters});
+  }
+
+  public findOneById(id: number): Observable<Show> {
+    return this.httpClient.get<Show>(this.showBaseUri + '/' + id);
   }
 }

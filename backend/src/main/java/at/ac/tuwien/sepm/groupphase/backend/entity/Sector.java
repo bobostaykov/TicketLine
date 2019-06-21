@@ -63,29 +63,25 @@ public class Sector {
         return "Sector{" +
             "id=" + id +
             ", sectorNumber=" + sectorNumber +
-            ", priceCategory='" + priceCategory + "\'" +
+            ", priceCategory=" + priceCategory +
             ", hall=" + hall +
             '}';
     }
 
     @Override
     public boolean equals(Object o) {
-        if(this == o) return  true;
-        if(o == null || getClass() != o.getClass()) return false;
+        if (this == o) return true;
+        if (!(o instanceof Sector)) return false;
         Sector sector = (Sector) o;
-        return Objects.equals(id, sector.getId()) &&
-            Objects.equals(sectorNumber, sector.getSectorNumber()) &&
-            Objects.equals(priceCategory, sector.getPriceCategory()) &&
-            Objects.equals(hall, sector.getHall());
+        return Objects.equals(getId(), sector.getId()) &&
+            Objects.equals(getSectorNumber(), sector.getSectorNumber()) &&
+            getPriceCategory() == sector.getPriceCategory() &&
+            Objects.equals(getHall(), sector.getHall());
     }
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (sectorNumber != null ? sectorNumber.hashCode() : 0);
-        result = 31 * result + (priceCategory != null ? priceCategory.hashCode() : 0);
-        result = 31 * result + (hall != null ? hall.hashCode() : 0);
-        return result;
+        return Objects.hash(getId(), getSectorNumber(), getPriceCategory(), getHall());
     }
 
     public static final class SectorBuilder{
