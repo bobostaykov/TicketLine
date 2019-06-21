@@ -45,8 +45,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Page<UserDTO> findAll(Integer page, @Positive Integer pageSize) throws ServiceException {
-        LOGGER.info("Find all users");
+    public Page<UserDTO> getUsers(String username, Integer page, @Positive Integer pageSize) throws ServiceException {
+        if (username == null)
+            LOGGER.info("Get all users");
+        else
+            LOGGER.info("Search users with " + username + " as a part of their username");
+
         try {
             if(pageSize == null){
                 pageSize = 10;
@@ -55,7 +59,10 @@ public class UserServiceImpl implements UserService {
                 throw new IllegalArgumentException("Not a valid page.");
             }
             Pageable pageable = PageRequest.of(page, pageSize);
-            return userRepository.findAll(pageable).map(userMapper::userToUserDTO);
+            if (username == null)
+                return userRepository.findAll(pageable).map(userMapper::userToUserDTO);
+            else
+                return userRepository.findByUsernameContainingIgnoreCase(username, pageable).map(userMapper::userToUserDTO);
         } catch (PersistenceException e) {
             throw new ServiceException(e.getMessage());
         }
@@ -137,6 +144,9 @@ public class UserServiceImpl implements UserService {
                 throw new ServiceException("Admin can't be blocked");
             }
             LoginAttempts loginAttempts = loginAttemptsFound.get();
+            if (loginAttempts.isBlocked()) {
+                throw new ServiceException("User already blocked");
+            }
             loginAttempts.setBlocked(true);
             loginAttemptsRepository.save(loginAttempts);
             LOGGER.info("Blocked user with id: " + userId);
@@ -146,8 +156,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Page<UserDTO> getAllBlockedUsers(Integer page, @Positive Integer pageSize) throws ServiceException{
-        LOGGER.info("Getting all blocked users");
+    public Page<UserDTO> getBlockedUsers(String username, Integer page, @Positive Integer pageSize) throws ServiceException {
+        if (username == null)
+            LOGGER.info("Getting all blocked users");
+        else
+            LOGGER.info("Search blocked users with " + username + " as a part of their username");
+
         try {
             if(pageSize == null){
                 pageSize = 10;
@@ -161,7 +175,14 @@ public class UserServiceImpl implements UserService {
             Comparator<LoginAttempts> comparator = Comparator.comparing(la -> la.getUser().getId());
             blockedUserAttempts.stream()
                 .sorted(comparator)
-                .forEach(loginAttempts -> users.add(userMapper.userToUserDTO(loginAttempts.getUser())));
+                .forEach(loginAttempts -> {
+                    if (username == null) {
+                        users.add(userMapper.userToUserDTO(loginAttempts.getUser()));
+                    } else {
+                        if (loginAttempts.getUser().getUsername().contains(username))
+                            users.add(userMapper.userToUserDTO(loginAttempts.getUser()));
+                    }
+                });
             int totalElements = users.size();
             int from = page * pageSize;
             int offset = page * pageSize + pageSize > totalElements ? (totalElements - page * pageSize) : pageSize;
@@ -175,4 +196,5 @@ public class UserServiceImpl implements UserService {
             throw new ServiceException(e.getMessage());
         }
     }
+
 }
