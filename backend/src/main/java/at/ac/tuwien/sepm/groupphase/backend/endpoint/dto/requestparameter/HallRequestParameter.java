@@ -1,4 +1,4 @@
-package at.ac.tuwien.sepm.groupphase.backend.datatype;
+package at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.requestparameter;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -11,5 +11,7 @@ public enum HallRequestParameter {
     @JsonProperty("name")
     NAME,
     @JsonProperty("location")
-    LOCATION
+    LOCATION,
+    @JsonProperty("simpleshows")
+    SIMPLESHOWS
 }
