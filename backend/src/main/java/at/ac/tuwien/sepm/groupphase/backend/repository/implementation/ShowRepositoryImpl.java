@@ -201,7 +201,7 @@ public class ShowRepositoryImpl implements ShowRepositoryCustom {
             predicates.add(cb.like(showRoot.get(Show_.TIME).as(String.class), '%' + time.trim() + '%'));
             orderBy.add(cb.asc(showRoot.get(Show_.TIME)));
         }
-        query.multiselect(eventJoin.get(Event_.id), eventJoin.get(Event_.name), showRoot.get(Show_.date), showRoot.get(Show_.time))
+        query.multiselect(showRoot.get(Show_.id), eventJoin.get(Event_.name), showRoot.get(Show_.date), showRoot.get(Show_.time))
             .where(predicates.toArray(new Predicate[predicates.size()])).orderBy(orderBy);
         return em.createQuery(query).getResultStream()
             .map(result -> {
