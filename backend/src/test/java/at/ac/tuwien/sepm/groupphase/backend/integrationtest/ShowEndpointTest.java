@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.integrationtest;
 
+import at.ac.tuwien.sepm.groupphase.backend.integrationtest.base.BaseIntegrationTest;
 import at.ac.tuwien.sepm.groupphase.backend.integrationtest.base.BaseIntegrationTestWithMockedUserCredentials;
 import at.ac.tuwien.sepm.groupphase.backend.repository.ShowRepository;
 import io.restassured.RestAssured;
@@ -13,7 +14,7 @@ import org.springframework.http.HttpStatus;
 import static org.hamcrest.core.Is.is;
 
 //TODO Unfinished Tests
-public class ShowEndpointTest extends BaseIntegrationTestWithMockedUserCredentials {
+public class ShowEndpointTest extends BaseIntegrationTest {
 
     private static final String SHOWS_ENDPOINT = "/shows";
     private static final String SHOWS_EVENT_NAME = "ent1";

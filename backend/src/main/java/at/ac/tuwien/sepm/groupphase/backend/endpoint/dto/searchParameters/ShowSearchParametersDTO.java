@@ -52,7 +52,18 @@ public class ShowSearchParametersDTO {
     @ApiModelProperty(name = "the street of the Location")
     @NotBlank
     private String street;
+    @ApiModelProperty(name = "name of the artist")
+    @NotBlank
+    private String artistName;
 
+
+    public String getArtistName() {
+        return artistName;
+    }
+
+    public void setArtistName(String artistName) {
+        this.artistName = artistName;
+    }
 
     public Long getEventId() {
         return eventId;
@@ -192,6 +203,8 @@ public class ShowSearchParametersDTO {
         private String city;
         private String postalCode;
         private String street;
+        private String artistName;
+
         public builder(){}
 
         public builder dateFrom(LocalDate dateFrom) {
@@ -284,9 +297,14 @@ public class ShowSearchParametersDTO {
             parametersDTO.setPriceInEuroFrom(priceInEuroFrom);
             parametersDTO.setPriceInEuroTo(priceInEuroTo);
             parametersDTO.setLocationName(locationName);
+            parametersDTO.setArtistName(artistName);
             return parametersDTO;
         }
 
+        public builder artistName(String artistName) {
+            this.artistName = artistName;
+            return this;
+        }
     }
 
     @Override
@@ -294,6 +312,7 @@ public class ShowSearchParametersDTO {
         return "ShowSearchParametersDTO{" +
             (eventId != null ? "eventId = " + eventId : "") +
             (dateFrom != null ? "dateFrom = " + dateFrom : "") +
+            (artistName != null ? "artistName = " + artistName: "") +
             (dateTo != null ? " dateTo = " + dateTo : "") +
             (timeFrom != null ? " timeFrom = " + timeFrom : "") +
             (timeTo != null ? " timeTo = " + timeTo : "") +
@@ -329,12 +348,13 @@ public class ShowSearchParametersDTO {
             Objects.equals(country, that.country) &&
             Objects.equals(city, that.city) &&
             Objects.equals(postalCode, that.postalCode) &&
-            Objects.equals(street, that.street);
+            Objects.equals(street, that.street) &&
+            Objects.equals(artistName, that.artistName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(eventId, dateFrom, dateTo, timeFrom, timeTo, priceInEuroFrom, priceInEuroTo, locationName, eventName, hallName, durationInMinutes, country, city, postalCode, street);
+        return Objects.hash(eventId, dateFrom, dateTo, timeFrom, timeTo, priceInEuroFrom, priceInEuroTo, locationName, eventName, hallName, durationInMinutes, country, city, postalCode, street, artistName);
     }
 }
 

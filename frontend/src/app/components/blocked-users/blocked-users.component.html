@@ -6,10 +6,22 @@
 </div>
 
 
+<div *ngIf="userUnblocked" class="alert alert-success alert-dismissible fade show" role="alert">
+  {{ unblockedUserMessage }}
+  <button type="button" (click)="vanishError()" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+
+
 <div class="mt-4 container">
+  <div class="row p-2 mb-2">
+    <button *ngIf="isAdmin()" type="button" class="btn btn-secondary btn-sm mr-4" routerLink="/user" routerLinkActive="active"  > Show all Users</button>
+  </div>
 
   <div class="row p-2 mb-4">
-    <button *ngIf="isAdmin()" type="button" class="btn btn-secondary btn-sm mr-4" routerLink="/user" routerLinkActive="active"  > Show all Users</button>
+    <input type="text" class="form-control search mr-4" [(ngModel)]="userToSearch" placeholder="Username">
+    <button (click)="loadBlockedUsers(userToSearch)" class="btn btn-secondary btn-sm search mr-4">Search</button>
   </div>
 </div>
 

@@ -4,14 +4,18 @@ import at.ac.tuwien.sepm.groupphase.backend.datatype.EventType;
 import at.ac.tuwien.sepm.groupphase.backend.datatype.PriceCategory;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.searchParameters.ShowSearchParametersDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.*;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.*;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDate;
@@ -22,6 +26,9 @@ import java.util.HashMap;
 @RunWith(SpringRunner.class)
 @DataJpaTest
 public class ShowRepositoryTest {
+
+    @Rule
+    public final ExpectedException exception = ExpectedException.none();
 
     @Autowired
     private  ShowRepository showRepository;
@@ -104,7 +111,7 @@ public class ShowRepositoryTest {
             hall2.setLocation(locationGermany);
             hall2 = hallRepository.save(hall2);
             event1.setArtist(artist1);
-            event2.setArtist(artist1);
+            event2.setArtist(artist2);
             event1 = eventRepository.save(event1);
             event2 = eventRepository.save(event2);
             show1.setHall(hall1); show1.setEvent(event1);
@@ -121,29 +128,36 @@ public class ShowRepositoryTest {
 
     @Test
     public void findShowsByStartDate(){
-        Page<Show> showPage = showRepository.findAllShowsFiltered(FROMDATE_ONLY_PARAMETERS, 0);
+        Page<Show> showPage = showRepository.findAllShowsFiltered(FROMDATE_ONLY_PARAMETERS, PageRequest.of(0,10));
         Assert.assertEquals(3, showPage.getContent().size());
         Assert.assertFalse(showPage.getContent().contains(show1));
     }
 
     @Test
     public void findShowsByEventName(){
-        Page<Show> showPage = showRepository.findAllShowsFiltered(NAME_ONLY_PARAMETERS, 0);
+        Page<Show> showPage = showRepository.findAllShowsFiltered(NAME_ONLY_PARAMETERS, PageRequest.of(0,10));
         Assert.assertTrue(showPage.hasContent());
         Assert.assertEquals(2 ,showPage.getContent().size());
     }
 
     @Test
+    public void findShowsByArtistName(){
+        Page<Show> showPage = showRepository.findAllShowsFiltered(ShowSearchParametersDTO.builder().artistName("hol").build(), PageRequest.of(0,10));
+     //   Assert.assertTrue(showPage.hasContent());
+        Assert.assertEquals(2 ,showPage.getContent().size());    }
+
+    @Test
     public void findShowsByStartDate_NoFittingStartDateInDatabase_givesNoResults(){
         ShowSearchParametersDTO PARAMETER_LATE_STARTDATE = new ShowSearchParametersDTO.builder().eventName(null).hallName(null).dateFrom(LocalDate.parse("16-03-2022", dateFormatter)).dateTo(null).priceInEuroFrom(null).priceInEuroTo(null).timeTo(null).timeFrom(null).build();
-        Page<Show> showPage = showRepository.findAllShowsFiltered(PARAMETER_LATE_STARTDATE, 0);
-        Assert.assertTrue(showPage.getContent().isEmpty());
+        exception.expect(NotFoundException.class);
+        Page<Show> showPage = showRepository.findAllShowsFiltered(PARAMETER_LATE_STARTDATE, PageRequest.of(0,10));
+
 
     }
 
     @Test
     public void findOneShowAndDontFindOthers(){
-        Page<Show> showPage = showRepository.findAllShowsFiltered(DETAILED_PARAMETERS, 0);
+        Page<Show> showPage = showRepository.findAllShowsFiltered(DETAILED_PARAMETERS, PageRequest.of(0,10));
         Assert.assertEquals(1, showPage.getContent().size());
         Assert.assertTrue(showPage.getContent().contains(show1));
     }
@@ -151,40 +165,41 @@ public class ShowRepositoryTest {
     @Test
     public void findShowByMaxDate(){
         ShowSearchParametersDTO parameters = new ShowSearchParametersDTO.builder().dateTo(LocalDate.parse("18-03-2020", dateFormatter)).build();
-        Page<Show> showPage = showRepository.findAllShowsFiltered(parameters, 0);
+        Page<Show> showPage = showRepository.findAllShowsFiltered(parameters, PageRequest.of(0,10));
         Assert.assertTrue(showPage.getContent().contains(show1));
         Assert.assertEquals(1, showPage.getContent().size());
     }
     @Test
     public void findShowByMinDate(){
         ShowSearchParametersDTO parameters = new ShowSearchParametersDTO.builder().dateFrom(LocalDate.parse("16-03-2020", dateFormatter)).build();
-        Page<Show> showPage = showRepository.findAllShowsFiltered(parameters, 0);
+        Page<Show> showPage = showRepository.findAllShowsFiltered(parameters, PageRequest.of(0,10));
         Assert.assertEquals(4, showPage.getContent().size());
         parameters.setDateFrom(LocalDate.parse("29-03-2020", dateFormatter));
-        showPage = showRepository.findAllShowsFiltered(parameters, 0);
+        showPage = showRepository.findAllShowsFiltered(parameters, PageRequest.of(0,10));
         Assert.assertEquals(3, showPage.getContent().size());
         Assert.assertFalse(showPage.getContent().contains(show1));
         parameters.setDateFrom(LocalDate.parse("16-03-2023", dateFormatter));
-        showPage = showRepository.findAllShowsFiltered(parameters, 0);
-        Assert.assertTrue(showPage.getContent().isEmpty());
+        exception.expect(NotFoundException.class);
+        showPage = showRepository.findAllShowsFiltered(parameters, PageRequest.of(0,10));
     }
 
     @Test
     public void findShowByHallName(){
         ShowSearchParametersDTO SuccessParameters = new ShowSearchParametersDTO.builder().hallName(hall1.getName()).build();
         ShowSearchParametersDTO FailureParameters = new ShowSearchParametersDTO.builder().hallName("not contained").build();
-        Page<Show> showPage = showRepository.findAllShowsFiltered(SuccessParameters, 0);
+        Page<Show> showPage = showRepository.findAllShowsFiltered(SuccessParameters, PageRequest.of(0,10));
         Assert.assertEquals(3, showPage.getContent().size());
-        showPage = showRepository.findAllShowsFiltered(FailureParameters, 0);
-        Assert.assertEquals(0, showPage.getContent().size());
+        exception.expect(NotFoundException.class);
+        showPage = showRepository.findAllShowsFiltered(FailureParameters, PageRequest.of(0,10));
+
     }
     @Test
     public void findShowByDuration(){
         ShowSearchParametersDTO SuccessParameters = new ShowSearchParametersDTO.builder().durationInMinutes(190).build();
         ShowSearchParametersDTO FailureParameters = new ShowSearchParametersDTO.builder().durationInMinutes(400).build();
-        Page<Show> showPage = showRepository.findAllShowsFiltered(SuccessParameters,0);
+        Page<Show> showPage = showRepository.findAllShowsFiltered(SuccessParameters,PageRequest.of(0,10));
         Assert.assertEquals(2, showPage.getContent().size());
-        showPage = showRepository.findAllShowsFiltered(FailureParameters,0);
+        showPage = showRepository.findAllShowsFiltered(FailureParameters,PageRequest.of(0,10));
         Assert.assertEquals(2, showPage.getContent().size());
         Assert.assertTrue(showPage.getContent().contains(show3));
         Assert.assertTrue(showPage.getContent().contains(show4));
@@ -194,58 +209,58 @@ public class ShowRepositoryTest {
     public void findShowByLocationName(){
         ShowSearchParametersDTO SuccessParameters = new ShowSearchParametersDTO.builder().locationName("CheZ").build();
         ShowSearchParametersDTO FailureParameters = new ShowSearchParametersDTO.builder().locationName("N8chtschicht").build();
-        Page<Show> showPage = showRepository.findAllShowsFiltered(SuccessParameters,0);
+        Page<Show> showPage = showRepository.findAllShowsFiltered(SuccessParameters,PageRequest.of(0,10));
         Assert.assertEquals(1, showPage.getContent().size());
         Assert.assertTrue(showPage.getContent().contains(show4));
-        showPage = showRepository.findAllShowsFiltered(FailureParameters,0);
-        Assert.assertEquals(0, showPage.getContent().size());
+        exception.expect(NotFoundException.class);
+        showPage = showRepository.findAllShowsFiltered(FailureParameters,PageRequest.of(0,10));
     }
     @Test
     public void findShowByCountry(){
         ShowSearchParametersDTO SuccessParameters = new ShowSearchParametersDTO.builder().country("austRia").build();
         ShowSearchParametersDTO FailureParameters = new ShowSearchParametersDTO.builder().country("United Kingdom").build();
-        Page<Show> showPage = showRepository.findAllShowsFiltered(SuccessParameters,0);
+        Page<Show> showPage = showRepository.findAllShowsFiltered(SuccessParameters,PageRequest.of(0,10));
         Assert.assertEquals(3, showPage.getContent().size());
         Assert.assertTrue(showPage.getContent().contains(show1));
         Assert.assertTrue(showPage.getContent().contains(show2));
         Assert.assertTrue(showPage.getContent().contains(show3));
-        showPage = showRepository.findAllShowsFiltered(FailureParameters,0);
-        Assert.assertEquals(0, showPage.getContent().size());
+        exception.expect(NotFoundException.class);
+        showPage = showRepository.findAllShowsFiltered(FailureParameters,PageRequest.of(0,10));
     }
     @Test
     public void findShowByPostalCode(){
         ShowSearchParametersDTO SuccessParameters = new ShowSearchParametersDTO.builder().postalcode("53129").build();
         ShowSearchParametersDTO FailureParameters = new ShowSearchParametersDTO.builder().postalcode("53115").build();
-        Page<Show> showPage = showRepository.findAllShowsFiltered(SuccessParameters,0);
+        Page<Show> showPage = showRepository.findAllShowsFiltered(SuccessParameters,PageRequest.of(0,10));
         Assert.assertEquals(1, showPage.getContent().size());
         Assert.assertTrue(showPage.getContent().contains(show4));
-        showPage = showRepository.findAllShowsFiltered(FailureParameters,0);
-        Assert.assertEquals(0, showPage.getContent().size());
+        exception.expect(NotFoundException.class);
+        showPage = showRepository.findAllShowsFiltered(FailureParameters,PageRequest.of(0,10));
     }
     @Test
     public void  findShowCityName(){
         ShowSearchParametersDTO SuccessParameters = new ShowSearchParametersDTO.builder().city("Bonn").build();
         ShowSearchParametersDTO FailureParameters = new ShowSearchParametersDTO.builder().city("Berlin").build();
-        Page<Show> showPage = showRepository.findAllShowsFiltered(SuccessParameters,0);
+        Page<Show> showPage = showRepository.findAllShowsFiltered(SuccessParameters,PageRequest.of(0,10));
         Assert.assertEquals(1, showPage.getContent().size());
         Assert.assertTrue((showPage.getContent().contains(show4)));
-        showPage = showRepository.findAllShowsFiltered(FailureParameters,0);
-        Assert.assertEquals(0, showPage.getContent().size());
+        exception.expect(NotFoundException.class);
+        showPage = showRepository.findAllShowsFiltered(FailureParameters,PageRequest.of(0,10));
     }
     @Test
     public void findShowByStreetName(){
         ShowSearchParametersDTO SuccessParameters = new ShowSearchParametersDTO.builder().street("ErmekEil").build();
         ShowSearchParametersDTO FailureParameters = new ShowSearchParametersDTO.builder().street("Endenicher Allee").build();
-        Page<Show> showPage = showRepository.findAllShowsFiltered(SuccessParameters,0);
+        Page<Show> showPage = showRepository.findAllShowsFiltered(SuccessParameters,PageRequest.of(0,10));
         Assert.assertEquals(1, showPage.getContent().size());
         Assert.assertTrue(showPage.getContent().contains(show4));
-        showPage = showRepository.findAllShowsFiltered(FailureParameters,0);
-        Assert.assertEquals(0, showPage.getContent().size());
+        exception.expect(NotFoundException.class);
+        showPage = showRepository.findAllShowsFiltered(FailureParameters,PageRequest.of(0,10));
     }
     @Test
     public void findShowsByEventId(){
         ShowSearchParametersDTO SuccessParameters = new ShowSearchParametersDTO.builder().eventId(event1.getId()).build();
-        Page<Show> showPage = showRepository.findAllShowsFiltered(SuccessParameters,0);
+        Page<Show> showPage = showRepository.findAllShowsFiltered(SuccessParameters,PageRequest.of(0,10));
         Assert.assertEquals(2, showPage.getContent().size());
         Assert.assertTrue(showPage.getContent().contains(show1));
         Assert.assertTrue(showPage.getContent().contains(show2));
@@ -253,7 +268,7 @@ public class ShowRepositoryTest {
     @Test
     public void foundShowsAreOrderedCorrectly_byDateAndTime(){
         ShowSearchParametersDTO SuccessParameters = new ShowSearchParametersDTO.builder().build();
-        Page<Show> showPage = showRepository.findAllShowsFiltered(SuccessParameters,0);
+        Page<Show> showPage = showRepository.findAllShowsFiltered(SuccessParameters,PageRequest.of(0,10));
         Assert.assertEquals(4, showPage.getContent().size());
         Assert.assertEquals(show1, showPage.getContent().get(0));
         Assert.assertEquals(show2, showPage.getContent().get(1));
@@ -265,25 +280,26 @@ public class ShowRepositoryTest {
     public void findShowByMaxPrice_filtersCorrectly_andIsOrderedCorrectly(){
         ShowSearchParametersDTO successParameters = new ShowSearchParametersDTO.builder().priceInEuroTo(30).build();
         ShowSearchParametersDTO failureParameters = new ShowSearchParametersDTO.builder().priceInEuroTo(50).build();
-        Page<Show> showPage = showRepository.findAllShowsFiltered(successParameters,0);
+        Page<Show> showPage = showRepository.findAllShowsFiltered(successParameters,PageRequest.of(0,10));
         Assert.assertEquals(3, showPage.getContent().size());
         Assert.assertEquals(show1, showPage.getContent().get(0));
         Assert.assertEquals(show2, showPage.getContent().get(1));
         Assert.assertEquals(show3, showPage.getContent().get(2));
-        showPage = showRepository.findAllShowsFiltered(failureParameters,0);
-        Assert.assertEquals(0 ,showPage.getContent().size());
+        exception.expect(NotFoundException.class);
+        showPage = showRepository.findAllShowsFiltered(failureParameters,PageRequest.of(0,10));
+
     }
     @Test
     public void findShowByMinPrice_filtersCorrectly_andIsOrderedCorrectly(){
         ShowSearchParametersDTO successParameters = new ShowSearchParametersDTO.builder().priceInEuroFrom(30).build();
         ShowSearchParametersDTO failureParameters = new ShowSearchParametersDTO.builder().priceInEuroFrom(50).build();
-        Page<Show> showPage = showRepository.findAllShowsFiltered(successParameters,0);
+        Page<Show> showPage = showRepository.findAllShowsFiltered(successParameters,PageRequest.of(0,10));
         Assert.assertEquals(3, showPage.getContent().size());
         Assert.assertEquals(show1, showPage.getContent().get(0));
         Assert.assertEquals(show2, showPage.getContent().get(1));
         Assert.assertEquals(show3, showPage.getContent().get(2));
-        showPage = showRepository.findAllShowsFiltered(failureParameters,0);
-        Assert.assertEquals(0 ,showPage.getContent().size());
+        exception.expect(NotFoundException.class);
+        showPage = showRepository.findAllShowsFiltered(failureParameters,PageRequest.of(0,10));
     }
 
 

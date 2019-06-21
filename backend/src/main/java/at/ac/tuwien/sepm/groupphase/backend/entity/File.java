@@ -7,8 +7,7 @@ import java.util.Objects;
 public class File {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "seq_dbfile_id")
-    @SequenceGenerator(name = "seq_dbfile_id", sequenceName = "seq_dbfile_id")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
     private String fileName;

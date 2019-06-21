@@ -3,6 +3,7 @@ package at.ac.tuwien.sepm.groupphase.backend.exception;
 import com.itextpdf.text.DocumentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -114,6 +115,14 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
             ex.getStatus(),ex.getLocalizedMessage(), error);
         return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
     }
+
+    @ExceptionHandler({DataIntegrityViolationException.class})
+    private ResponseEntity<Object> handleDataIntegrityViolationException(DataIntegrityViolationException ex, WebRequest request){
+        String error = "Data Integrity Violation: Error = " + ex.getMessage();
+        ApiError apiError = new ApiError(
+            HttpStatus.BAD_REQUEST,ex.getLocalizedMessage(), error);
+        return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
+    }
     /*
 
     @ExceptionHandler({MissingServletRequestParameterException.class})
@@ -128,6 +137,7 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler({Exception.class})
     protected ResponseEntity<Object> defaultExceptionHandler(Exception ex, WebRequest request) {
+        LOGGER.info(ex.getClass().getCanonicalName() + "is thrown!");
         ApiError apiError = new ApiError(
             HttpStatus.INTERNAL_SERVER_ERROR, ex.getLocalizedMessage(), "Error occured");
         return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());

@@ -1,7 +1,10 @@
-.delete-user-modal{
-  width:25%;
-  min-width: 200px;
-  margin: auto;
+mat-form-field {
+  margin-right: 5px;
+}
+
+.table td {
+  max-width: 200px;
+  word-wrap: break-word;
 }
 
 .justify-content-center {
@@ -30,11 +33,3 @@ a:last-child {
   padding: 4px 16px; font-size: 20px;
 }
 
-input.search {
-  width: 240px;
-  height: 34px;
-}
-
-button.search {
-  height: 32px;
-}

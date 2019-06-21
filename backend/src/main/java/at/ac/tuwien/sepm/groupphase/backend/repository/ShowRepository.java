@@ -26,7 +26,7 @@ public interface ShowRepository extends JpaRepository<Show, Long>, ShowRepositor
      * Find all shows by location id
      *
      * @param locationID id of the location to search for
-     * @param pageable   a special parameter to apply pagination
+     * @param pageable a special parameter to apply pagination
      * @return a page of the found shows
      */
     Page<Show> findAllByHall_Location_Id(Long locationID, Pageable pageable);
@@ -37,4 +37,10 @@ public interface ShowRepository extends JpaRepository<Show, Long>, ShowRepositor
      * @return optional containing show if found
      */
     Optional<Show> findOneById(Long id);
+
+    /**
+     * Delete the show with the given id
+     * @param showId of the show to delete
+     */
+    void deleteById(Long showId);
 }

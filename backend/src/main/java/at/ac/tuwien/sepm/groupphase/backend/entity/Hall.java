@@ -10,8 +10,7 @@ public class Hall {
 
     @Id
     @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "seq_hall_id")
-    @SequenceGenerator(name = "seq_hall_id", sequenceName = "seq_hall_id")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @Column(nullable = false, length = 64)

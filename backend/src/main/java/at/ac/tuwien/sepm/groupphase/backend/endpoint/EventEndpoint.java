@@ -71,16 +71,18 @@ public class EventEndpoint {
     @RequestMapping(method = RequestMethod.GET)
     @ApiOperation(value = "Get all events", authorizations = {@Authorization(value = "apiKey")})
     public Page<EventDTO> findEventsFilteredByAttributes(@RequestParam(value = "eventName", required = false) String eventName,
+                                                         @RequestParam(value = "locationName", required = false) String locationName,
                                                          @RequestParam(value = "eventType", required = false) String eventType,
                                                          @RequestParam(value = "content", required = false) String content,
                                                          @RequestParam(value = "description", required = false) String description,
                                                          @RequestParam(value = "duration", required = false) Integer duration,
                                                          @RequestParam(value = "artistName", required = false) String artistName,
-                                                         @RequestParam(value = "page", required = false) Integer page) {
+                                                         @RequestParam(value = "page", required = false) Integer page,
+                                                         @RequestParam(value = "pageSize", required = false) Integer pageSize){
         if (page!= null && eventName == null && eventType == null && content == null && description == null && duration == null && artistName == null) {
             LOGGER.info("Event Endpoint: findAll");
             try {
-                return eventService.findAll(page);
+                return eventService.findAll(page, pageSize);
             } catch (ServiceException e) {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
             }
@@ -104,9 +106,10 @@ public class EventEndpoint {
                     .setArtistName(artistName)
                     .setDescription(description)
                     .setEventType(eventTypeConv)
+                    .setLocationName(locationName)
                     .build();
                 LOGGER.info("Event Endpoint: findEventsFilteredByAttributes" + parameters.toString());
-                Page<EventDTO> page1 = eventService.findAllFiltered(parameters, page);
+                Page<EventDTO> page1 = eventService.findAllFiltered(parameters, page, pageSize);
                 LOGGER.debug("Event Endpoint: " + page1.getContent().toString());
                 return page1;
             }catch (IllegalArgumentException e) {
@@ -120,10 +123,12 @@ public class EventEndpoint {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/artist/{id}")
-    public Page<EventDTO> findEventsFilteredByArtistID(@PathVariable Long id, @RequestParam(value = "page", required = false) Integer page) {
+    public Page<EventDTO> findEventsFilteredByArtistID(@PathVariable Long id,
+                                                       @RequestParam(value = "page", required = false) Integer page,
+                                                       @RequestParam(value = "pagesize", required = false) Integer pageSize) {
         LOGGER.info("Event Endpoint: findEventsFilteredByArtistID");
         try{
-            return eventService.findEventsFilteredByArtistID(id, page);
+            return eventService.findEventsFilteredByArtistID(id, page, pageSize);
         }catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error while looking for events by that artist: " + e.getMessage(), e);
         }catch (ServiceException e) {

@@ -10,11 +10,15 @@ import {ActivatedRoute} from '@angular/router';
 })
 export class ArtistResultsComponent implements OnInit {
 
+  private page: number = 0;
+  private pages: Array<number>;
+  private dataReady: boolean = false;
+
   private error: boolean = false;
   private errorMessage: string = '';
+
   private artists: Artist[] = [];
   private artistName: string;
-  private loaded: boolean = false;
 
   constructor(private artistResultsService: ArtistResultsService, private route: ActivatedRoute) { }
 
@@ -23,15 +27,38 @@ export class ArtistResultsComponent implements OnInit {
     this.loadArtists();
   }
 
-
   private loadArtists() {
-    this.artistResultsService.findArtists(this.artistName).subscribe(
-      (artists: Artist[]) => { this.artists = artists; },
-      error => { this.defaultServiceErrorHandling(error); },
-      () => { this.loaded = true; }
+    this.artistResultsService.findArtists(this.artistName, this.page).subscribe(
+      result => {
+        this.artists = result['content'];
+        this.pages = new Array(result['totalPages']);
+      },
+      error => {this.defaultServiceErrorHandling(error); },
+      () => { this.dataReady = true; }
     );
   }
 
+  private setPage(i, event: any) {
+    event.preventDefault();
+    this.page = i;
+    this.loadArtists();
+  }
+
+  private previousPage(event: any) {
+    event.preventDefault();
+    if (this.page > 0 ) {
+      this.page--;
+      this.loadArtists();
+    }
+  }
+
+  private nextPage(event: any) {
+    event.preventDefault();
+    if (this.page < this.pages.length - 1) {
+      this.page++;
+      this.loadArtists();
+    }
+  }
 
   private defaultServiceErrorHandling(error: any) {
     console.log(error);

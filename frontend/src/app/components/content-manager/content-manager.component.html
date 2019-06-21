@@ -1,0 +1,227 @@
+<div *ngIf="isAdmin()">
+  <form [formGroup]="addForm" (ngSubmit)="addContent()">
+    <mat-form-field appearance="outline">
+      <mat-select id="add_type" placeholder="Select" formControlName="addType" [(ngModel)]="addType">
+        <mat-option>-- None --</mat-option>
+        <mat-option value="Artist">Artist</mat-option>
+        <mat-option value="Event">Event</mat-option>
+        <mat-option value="Location">Location</mat-option>
+        <mat-option value="Show">Show</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <button mat-raised-button id="add_content" color="primary">Add</button>
+  </form>
+
+
+  <form [formGroup]="searchForm" (ngSubmit)="searchContent()">
+    <mat-form-field appearance="outline">
+      <mat-label>Name</mat-label>
+      <input matInput type="text" id="search_name" placeholder="Name" formControlName="searchName"
+             [(ngModel)]="searchName">
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-select id="search_type" placeholder="Select" formControlName="searchType" [(ngModel)]="searchType">
+        <mat-option>-- None --</mat-option>
+        <mat-option value="Artist">Artist</mat-option>
+        <mat-option value="Event">Event</mat-option>
+        <mat-option value="Location">Location</mat-option>
+        <mat-option value="Show">Show</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <button mat-raised-button id="search_content" color="primary">Search</button>
+  </form>
+
+
+  <div *ngIf="dataReady && pages.length > 0">
+    <h3 class="mt-5">Results:</h3>
+
+    <!------------------------ Location --------------------------------->
+    <table class="table mt-4" *ngIf="savedType === 'Location'">
+      <thead>
+      <tr>
+        <th *ngFor="let head of locationHeaders" scope="col">{{head}}</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let location of locations">
+        <td class="align-middle">{{location.locationName}}</td>
+        <td class="align-middle">{{location.country}}</td>
+        <td class="align-middle">{{location.city}}</td>
+        <td class="align-middle">{{location.postalCode}}</td>
+        <td class="align-middle">{{location.street}}</td>
+        <td class="align-middle">{{location.description}}</td>
+        <td class="align-middle">Edit</td>
+        <td class="align-middle">Delete</td>
+      </tr>
+      </tbody>
+    </table>
+
+    <!------------------------ Show --------------------------------->
+    <table class="table mt-4" *ngIf="savedType === 'Show'">
+      <thead>
+      <tr>
+        <th *ngFor="let head of showHeaders" scope="col">{{head}}</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let show of shows">
+        <td class="align-middle">{{show.event.name}}</td>
+        <td class="align-middle">{{show.date | date:'mediumDate'}} {{show.time}}</td>
+        <td class="align-middle">{{show.hall.name}}</td>
+        <td class="align-middle">{{show.description}}</td>
+        <td class="align-middle">{{show.ticketsSold}}</td>
+        <td><button type="button" class="btn btn-secondary btn-sm m-2" data-toggle="modal" data-target="#update-show-modal" (click)="setShowToUpdate(show)">Edit</button></td>
+        <td class="align-middle"><img (click)="setShowToDelete(show.id)" data-toggle="modal" data-target="#delete-show-modal" src="../../../assets/trash.png" width="25" height="25" alt="delete"></td>
+      </tr>
+      </tbody>
+    </table>
+
+    <!-- Modal to update show -->
+    <div class="modal fade" id="update-show-modal" tabindex="-1" role="dialog" aria-labelledby="Update show modal" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Update Show</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <app-customer-dialog title="Update Show"></app-customer-dialog>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal to delete show -->
+    <div class="modal fade" id="delete-show-modal" tabindex="-1" role="dialog" aria-labelledby="Delete show modal" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Delete show</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>Are you sure?</p>
+            <button type="button" (click)="deleteShow()" class="btn btn-danger float-left" data-dismiss="modal">Delete</button>
+            <button type="button" class="btn btn-default float-right" data-dismiss="modal">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!------------------------ Event --------------------------------->
+    <table class="table mt-4" *ngIf="savedType === 'Event'">
+      <thead>
+      <tr>
+        <th *ngFor="let head of eventHeaders" scope="col">{{head}}</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let event of events">
+        <td class="align-middle">{{event.name}}</td>
+        <td class="align-middle">{{event.eventType}}</td>
+        <td class="align-middle" *ngIf="event.artist !== undefined">{{event.artist.name}}</td>
+        <td class="align-middle" *ngIf="event.artist === undefined"></td>
+        <td class="align-middle">{{event.durationInMinutes}}</td>
+        <td class="align-middle">{{event.description}}</td>
+        <td class="align-middle">{{event.content}}</td>
+        <td class="align-middle">Edit</td>
+        <td class="align-middle">Delete</td>
+      </tr>
+      </tbody>
+    </table>
+
+    <!------------------------ Artist --------------------------------->
+    <table class="table mt-4" *ngIf="savedType === 'Artist'">
+      <thead>
+      <tr>
+        <th *ngFor="let head of artistHeaders" scope="col">{{head}}</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let artist of artists">
+        <td class="align-middle">{{artist.name}}</td>
+        <td><button type="button" class="btn btn-secondary btn-sm m-2" data-toggle="modal" data-target="#update-artist-modal" (click)="setArtistToUpdate(artist)">Edit</button></td>
+        <td class="align-middle"><img (click)="setArtistToDelete(artist.id)" data-toggle="modal" data-target="#delete-artist-modal" src="../../../assets/trash.png" width="25" height="25" alt="Delete"></td>
+      </tr>
+      </tbody>
+    </table>
+
+    <!-- Modal to update artist -->
+    <div *ngIf="artistToUpdate !== undefined" class="modal fade" id="update-artist-modal" tabindex="-1" role="dialog" aria-labelledby="Update artist modal" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Update Artist</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form class="form" [formGroup]="updateArtistForm" (ngSubmit)="updateArtist()">
+              <div class="form-group">
+                <label for="update_artist_name">Artist Name</label>
+                <input type="text" id="update_artist_name" formControlName="updateArtistNameControl" class="form-control"
+                       placeholder="Enter a name" [(ngModel)]="artistToUpdate.name">
+                <div *ngIf="updateArtistForm.controls['updateArtistNameControl'].hasError('required')" class="error">
+                  <small class="form-text text-danger">Name is required!</small>
+                </div>
+                <div *ngIf="updateArtistForm.controls['updateArtistNameControl'].hasError('maxlength')" class="error">
+                  <small class="form-text text-danger">Name can be at most 60 characters!</small>
+                </div>
+                <div *ngIf="false" class="error">
+                  <small class="form-text text-danger">Artist with the same name already exists!</small>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button [disabled]="updateArtistForm.invalid" type="button" (click)="updateArtist()" class="btn btn-danger float-left" data-dismiss="modal">Update Artist</button>
+            <button type="button" class="btn btn-default float-right" data-dismiss="modal">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal to delete artist -->
+    <div class="modal fade" id="delete-artist-modal" tabindex="-1" role="dialog" aria-labelledby="Delete artist modal" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Delete artist</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>Are you sure?</p>
+            <button type="button" (click)="deleteArtist()" class="btn btn-danger float-left" data-dismiss="modal">Delete</button>
+            <button type="button" class="btn btn-default float-right" data-dismiss="modal">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!------------------------ Pagination --------------------------------->
+    <div class="justify-content-center" style="padding-bottom: 15px" *ngIf="pages.length > 1">
+      <ul class="nav nav-pills">
+        <li class="nav-item">
+          <a class="nav-link" href="" (click)="previousPage($event)">«</a>
+        </li>
+        <li class="nav-item" *ngFor="let p of pages; let i = index">
+          <a class="nav-link" href="" (click)="setPage(i, $event)" [ngClass]="{'active': i == page}">{{i}}</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="" (click)="nextPage($event)">»</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <h3 class="mt-5" *ngIf="dataReady && pages.length === 0">No Results</h3>
+</div>

@@ -1,8 +1,7 @@
-<h1 class="mt-5" *ngIf="loaded && artistName !== null && artists.length !== 0">Events - Search Results for Artist '{{artistName}}'</h1>
-<h1 class="mt-5" *ngIf="loaded && artistName !== null && artists.length === 0">Events - No Results for Artist '{{artistName}}'</h1>
-<h1 class="mt-5" *ngIf="loaded && artistName === null && artists.length === 0">Events - No Results</h1>
-
-<table *ngIf="loaded && artists.length !== 0" class="table mt-4" style="width: 40%">
+<div *ngIf="dataReady && pages.length > 0">
+  <h1 class="mt-5" *ngIf="artists.length !== 0">Artists - Results for chosen name</h1>
+  <h1 class="mt-5" *ngIf="artists.length === 0 ">Artists - No Results</h1>
+<table class="table mt-4" style="width: 40%">
   <thead>
     <tr>
       <th>Artist Name</th>
@@ -14,3 +13,18 @@
     </tr>
   </tbody>
 </table>
+
+<div class="justify-content-center" style="padding-bottom: 15px" *ngIf="pages.length > 1">
+  <ul class="nav nav-pills">
+    <li class="nav-item">
+      <a class="nav-link" href="" (click)="previousPage($event)">«</a>
+    </li>
+    <li class="nav-item" *ngFor="let p of pages; let i = index">
+      <a class="nav-link" href="" (click)="setPage(i, $event)" [ngClass]="{'active': i == page}">{{i}}</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="" (click)="nextPage($event)">»</a>
+    </li>
+  </ul>
+</div>
+</div>

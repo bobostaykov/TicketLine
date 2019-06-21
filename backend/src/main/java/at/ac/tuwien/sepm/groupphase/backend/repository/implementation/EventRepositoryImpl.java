@@ -38,7 +38,7 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
 
     @Override
 
-    public Page<Event> findAllEventsFiltered(EventSearchParametersDTO parameters, Integer page) throws PersistenceException {
+    public Page<Event> findAllEventsFiltered(EventSearchParametersDTO parameters, Pageable pageable) throws PersistenceException {
 
         LOGGER.info("Find Events filtered by: " + parameters.toString());
 
@@ -84,38 +84,11 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
         int pageSize = 10;
         int totalElements = eventList.size();
 
-        typedQuery.setFirstResult(page * pageSize);
-        typedQuery.setMaxResults(pageSize);
-        Pageable pageable = PageRequest.of(page, pageSize);
-        eventList = typedQuery.getResultList();
 
-        return new PageImpl<>(eventList, pageable, totalElements);
+        int start = (int)pageable.getOffset();
+        int end = (start + pageable.getPageSize()) > eventList.size() ? eventList.size() : (start + pageable.getPageSize());
+        Page<Event> pages = new PageImpl<Event>(eventList.subList(start, end), pageable, eventList.size());
+        return pages;
     }
-    /*
-    @Query("SELECT e.name, SUM(s.ticketsSold) FROM Show s, Event e WHERE s.event = e.id AND MONTHNAME(s.date) IN :monthsSet AND e.eventType IN :categoriesSet GROUP BY s.event ORDER BY SUM(s.ticketsSold) DESC")
-     */
 
-
-    @Override
-    public List<Object> findTopTenEvents2(Set<String> monthsSet, Set<EventType> categoriesSet) {
-/*
-        CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
-        List<Predicate> predicates = new ArrayList<>();
-        CriteriaQuery<Event> query = criteriaBuilder.createQuery(Event.class);
-        Root<Event> eventRoot = query.from(Event.class);
-        Root<Show> showRoot = query.from(Show.class);
-        Join<Show, Event> showEventJoin = showRoot.join(Show_.event);
-        for (EventType eventType: categoriesSet) {
-            predicates.add(criteriaBuilder.equal(showEventJoin.get(Event_.eventType), eventType));
-        }
-        for (String:
-             ) {
-
-        }
-
- */
-        //todo create topTenMethod
-        return null;
-
-    }
 }

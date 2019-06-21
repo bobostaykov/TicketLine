@@ -15,6 +15,7 @@ export class EventResultsComponent implements OnInit {
   private dataReady: boolean = false;
 
   private artistID: number;
+  private artistName: string;
   private eventName: string;
   private eventType: string;
   private content: string;
@@ -47,6 +48,7 @@ export class EventResultsComponent implements OnInit {
         this.loadEventsFilteredByAttributes(
           this.eventName = this.route.snapshot.queryParamMap.get('eventName'),
           this.eventType = this.route.snapshot.queryParamMap.get('eventType'),
+          this.artistName = this.route.snapshot.queryParamMap.get('artistName'),
           this.content = this.route.snapshot.queryParamMap.get('content'),
           this.description = this.route.snapshot.queryParamMap.get('description'),
           this.page
@@ -66,6 +68,7 @@ export class EventResultsComponent implements OnInit {
         this.loadEventsFilteredByAttributes(
           this.eventName,
           this.eventType,
+          this.artistName,
           this.content,
           this.description,
           this.page
@@ -110,9 +113,9 @@ export class EventResultsComponent implements OnInit {
     );
   }
 
-  private loadEventsFilteredByAttributes(eventName, eventType, content, description, page: number) {
+  private loadEventsFilteredByAttributes(eventName, eventType, artistName, content, description, page: number) {
     console.log('Component Event-Results: loadEventsFilteredByAttributes');
-    this.eventResultsService.findEventsFilteredByAttributes(eventName, eventType, content, description, page).subscribe(
+    this.eventResultsService.findEventsFilteredByAttributes(eventName, eventType, artistName, content, description, page).subscribe(
       result => {
         this.events = result['content'];
         this.pages = new Array(result['totalPages']);

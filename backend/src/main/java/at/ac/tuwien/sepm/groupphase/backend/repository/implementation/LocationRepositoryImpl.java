@@ -34,21 +34,26 @@ public class LocationRepositoryImpl implements LocationRepositoryCustom {
     }
 
     @Override
-    public Page<Location> findLocationsFiltered(String country, String city, String street, String postalCode, String description, Integer page) {
+    public Page<Location> findLocationsFiltered(String name, String country, String city, String street, String postalCode, String description, Pageable pageable) {
 
         LOGGER.info("Location Repository Impl: findLocationsFiltered");
+        LOGGER.debug("name: " + name);
         LOGGER.debug("country: " + country);
         LOGGER.debug("city: " + city);
         LOGGER.debug("street: " + street);
         LOGGER.debug("postalCode: " + postalCode);
         LOGGER.debug("description: " + description);
-        LOGGER.debug("page: " + page);
+        LOGGER.debug("page: " + pageable.getPageNumber());
+        LOGGER.debug("pageSize: " + pageable.getPageSize());
 
         CriteriaBuilder cBuilder = entityManager.getCriteriaBuilder();
         List<Predicate> predicates = new ArrayList<>();
         CriteriaQuery<Location> criteriaQuery = cBuilder.createQuery(Location.class);
         Root<Location> location = criteriaQuery.from(Location.class);
 
+        if (name != null) {
+            predicates.add(cBuilder.like(cBuilder.lower(location.get(Location_.locationName)), "%" + name.toLowerCase() + "%"));
+        }
         if (country != null) {
             predicates.add(cBuilder.like(cBuilder.lower(location.get(Location_.country)), "%" + country.toLowerCase() + "%"));
         }
@@ -73,12 +78,10 @@ public class LocationRepositoryImpl implements LocationRepositoryCustom {
             throw new NotFoundException("No locations are found with those parameters");
         }
 
-        int pageSize = 10;
         int totalElements = locationList.size();
 
-        typedQuery.setFirstResult(page * pageSize);
-        typedQuery.setMaxResults(pageSize);
-        Pageable pageable = PageRequest.of(page, pageSize);
+        typedQuery.setFirstResult(pageable.getPageNumber() * pageable.getPageSize());
+        typedQuery.setMaxResults(pageable.getPageSize());
         locationList = typedQuery.getResultList();
 
         return new PageImpl<>(locationList, pageable, totalElements);

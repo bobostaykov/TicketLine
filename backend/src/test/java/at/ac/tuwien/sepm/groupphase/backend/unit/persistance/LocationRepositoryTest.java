@@ -10,6 +10,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.List;
@@ -40,7 +41,7 @@ public class LocationRepositoryTest {
 
     @Test
     public void searchByMultipleParameters() {
-        locationPage = locationRepository.findLocationsFiltered("a", null, "street", null, null, 0);
+        locationPage = locationRepository.findLocationsFiltered(null,"a", null, "street", null, null, PageRequest.of(0,10));
         Assert.assertEquals(2, locationPage.getContent().size());
         Assert.assertEquals(1, locationPage.getTotalPages());
         Assert.assertTrue(locationPage.getContent().contains(location1));
@@ -49,12 +50,12 @@ public class LocationRepositoryTest {
 
     @Test(expected = NotFoundException.class)
     public void searchForNonExistingLocation_ThrowsNotFoundException() throws NotFoundException {
-        locationRepository.findLocationsFiltered("NOT FOUND", null, null, null, null, 0);
+        locationRepository.findLocationsFiltered(null,"NOT FOUND", null, null, null, null, PageRequest.of(0,10));
     }
 
     @Test
     public void searchByCountry() {
-        locationPage = locationRepository.findLocationsFiltered("austria", null, null, null, null, 0);
+        locationPage = locationRepository.findLocationsFiltered(null,"austria", null, null, null, null, PageRequest.of(0,10));
         Assert.assertEquals(2, locationPage.getContent().size());
         Assert.assertEquals(1, locationPage.getTotalPages());
         Assert.assertTrue(locationPage.getContent().contains(location1));
@@ -63,7 +64,7 @@ public class LocationRepositoryTest {
 
     @Test
     public void searchByCity() {
-        locationPage = locationRepository.findLocationsFiltered(null, "i", null, null, null, 0);
+        locationPage = locationRepository.findLocationsFiltered(null,null, "i", null, null, null, PageRequest.of(0,10));
         Assert.assertEquals(2, locationPage.getContent().size());
         Assert.assertEquals(1, locationPage.getTotalPages());
         Assert.assertTrue(locationPage.getContent().contains(location1));
@@ -72,7 +73,7 @@ public class LocationRepositoryTest {
 
     @Test
     public void searchByStreet() {
-        locationPage = locationRepository.findLocationsFiltered(null, null, "0", null, null, 0);
+        locationPage = locationRepository.findLocationsFiltered(null,null, null, "0", null, null, PageRequest.of(0,10));
         Assert.assertEquals(2, locationPage.getContent().size());
         Assert.assertEquals(1, locationPage.getTotalPages());
         Assert.assertTrue(locationPage.getContent().contains(location1));
@@ -81,7 +82,7 @@ public class LocationRepositoryTest {
 
     @Test
     public void searchByPostalCode() {
-        locationPage = locationRepository.findLocationsFiltered(null, null, null, "5555", null, 0);
+        locationPage = locationRepository.findLocationsFiltered(null,null, null, null, "5555", null, PageRequest.of(0,10));
         Assert.assertEquals(1, locationPage.getContent().size());
         Assert.assertEquals(1, locationPage.getTotalPages());
         Assert.assertTrue(locationPage.getContent().contains(location2));
@@ -89,7 +90,7 @@ public class LocationRepositoryTest {
 
     @Test
     public void searchByDescription() {
-        locationPage = locationRepository.findLocationsFiltered(null, null, null, null, "oww", 0);
+        locationPage = locationRepository.findLocationsFiltered(null,null, null, null, null, "oww", PageRequest.of(0,10));
         Assert.assertEquals(1, locationPage.getContent().size());
         Assert.assertEquals(1, locationPage.getTotalPages());
         Assert.assertTrue(locationPage.getContent().contains(location2));

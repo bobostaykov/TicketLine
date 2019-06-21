@@ -6,8 +6,7 @@ import java.time.LocalDate;
 @Entity
 public class Customer {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "seq_customer_id")
-    @SequenceGenerator(name = "seq_customer_id", sequenceName = "seq_customer_id")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @Column(nullable = false, name = "name")

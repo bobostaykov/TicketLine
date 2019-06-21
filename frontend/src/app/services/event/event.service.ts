@@ -7,7 +7,7 @@ import {ResultsFor} from '../../datatype/results_for';
 import {Event} from '../../dtos/event';
 import {TopTenDetails} from '../../dtos/top-ten-details';
 
-// TODO public or default methods
+// TODO Combine this EventService with EventResultsService
 
 @Injectable({
   providedIn: 'root'

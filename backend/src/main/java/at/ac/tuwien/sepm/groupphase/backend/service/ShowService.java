@@ -4,6 +4,7 @@ import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.requestparameter.ShowRe
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.searchParameters.ShowSearchParametersDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.show.ShowDTO;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -55,7 +56,7 @@ public interface ShowService {
      * @return a list of Shows that matches the specified criteria
      * @throws ServiceException is thrown if something went wrong in the process
      */
-    Page<ShowDTO> findAllShowsFiltered(ShowSearchParametersDTO searchParameters, Integer page) throws ServiceException;
+    Page<ShowDTO> findAllShowsFiltered(ShowSearchParametersDTO searchParameters, Integer page, Integer pageSize) throws ServiceException;
 
     /**
      * Find all shows filtered by location id
@@ -65,7 +66,7 @@ public interface ShowService {
      * @return a page of the found shows
      * @throws ServiceException is thrown if something went wrong in the process
      */
-    Page<ShowDTO> findAllShowsFilteredByLocationID(Long id, Integer page) throws ServiceException;
+    Page<ShowDTO> findAllShowsFilteredByLocationID(Long id, Integer page, Integer pageSize) throws ServiceException;
 
     /**
      * Finds a list of search suggestions for show and returns Simple Show projection containing id, eventName, date and time
@@ -85,4 +86,12 @@ public interface ShowService {
      * @return show with id matching param
      */
     ShowDTO findOneById(Long id, List<ShowRequestParameter> include);
+    /**
+     * Delete the show with the given id
+     *
+     * @param showId of the show to delete
+     * @throws ServiceException if the id is not found
+     * @throws DataIntegrityViolationException if the entity can't be deleted because it's referenced by another one
+     */
+    void deleteById(Long showId) throws ServiceException, DataIntegrityViolationException;
 }

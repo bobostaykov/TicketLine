@@ -9,8 +9,7 @@ import java.util.Objects;
 public class Seat {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "seq_seat_id")
-    @SequenceGenerator(name = "seq_seat_id", sequenceName = "seq_seat_id")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @Column(nullable = false)

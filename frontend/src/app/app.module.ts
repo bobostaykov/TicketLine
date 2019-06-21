@@ -36,12 +36,15 @@ import { EventResultsComponent } from './components/search-results/events/event-
 import {FloorplanControlComponent} from './components/floorplan/floorplan-control/floorplan-control.component';
 import {FloorplanSvgComponent} from './components/floorplan/floorplan-svg/floorplan-svg.component';
 import {CustomerComponent} from './components/customer/customer.component';
+import {TicketComponent} from './components/ticket/ticket.component';
 import {CustomerDialogComponent} from './components/customer-dialog/customer-dialog.component';
 import {TicketCheckReservationComponent} from './components/ticket/ticket-check/ticket-check.component';
 import { FloorplanTicketComponent } from './components/floorplan/floorplan-ticket/floorplan-ticket.component';
 import { BlockedUsersComponent } from './components/blocked-users/blocked-users.component';
 import { MinDirective } from './directives/min.directive';
 import {TicketComponent} from './components/ticket/ticket.component';
+import { ContentManagerComponent } from './components/content-manager/content-manager.component';
+import { SelectDropDownModule } from 'ngx-select-dropdown'
 
 @NgModule({
   declarations: [
@@ -62,12 +65,13 @@ import {TicketComponent} from './components/ticket/ticket.component';
     FloorplanControlComponent,
     FloorplanSvgComponent,
     CustomerComponent,
+    TicketComponent,
     CustomerDialogComponent,
     FloorplanTicketComponent,
     MinDirective,
     BlockedUsersComponent,
     TicketCheckReservationComponent,
-    TicketComponent
+    ContentManagerComponent
   ],
   imports: [
     BrowserModule,
@@ -86,6 +90,10 @@ import {TicketComponent} from './components/ticket/ticket.component';
     Ng5SliderModule,
     MatRadioModule,
     MatAutocompleteModule
+    SelectDropDownModule
+  ],
+  entryComponents: [
+    CustomerDialogComponent
   ],
   providers: [httpInterceptorProviders, Globals],
   bootstrap: [AppComponent]

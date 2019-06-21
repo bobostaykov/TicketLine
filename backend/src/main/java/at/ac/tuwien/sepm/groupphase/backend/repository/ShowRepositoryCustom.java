@@ -5,6 +5,7 @@ import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.searchParameters.ShowSe
 import at.ac.tuwien.sepm.groupphase.backend.entity.Show;
 import at.ac.tuwien.sepm.groupphase.backend.repository.projections.SimpleShow;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -17,10 +18,10 @@ public interface ShowRepositoryCustom {
      *                   hall: name
      *                   Location: country, city, postal code, street,
      *                   Show: start- and end-Date (start date defaults on current date), start and end-time, min and max price
-     * @param page number of the particular page to return, portion of the result
+     * @param pageable number of the particular page to return, portion of the result, as well as size of the page
      * @return Page of shows that matches the criteria ordered by date
      */
-    Page<Show> findAllShowsFiltered(ShowSearchParametersDTO parameters, Integer page);
+    Page<Show> findAllShowsFiltered(ShowSearchParametersDTO parameters, Pageable pageable);
 
     /**
      * Finds a list of shows containing event name, date and time passed as param

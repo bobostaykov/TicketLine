@@ -4,6 +4,7 @@ import at.ac.tuwien.sepm.groupphase.backend.datatype.EventType;
 import at.ac.tuwien.sepm.groupphase.backend.datatype.PriceCategory;
 import at.ac.tuwien.sepm.groupphase.backend.entity.*;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.show.ShowMapper;
+import at.ac.tuwien.sepm.groupphase.backend.integrationtest.base.BaseIntegrationTest;
 import at.ac.tuwien.sepm.groupphase.backend.integrationtest.base.BaseIntegrationTestWithMockedUserCredentials;
 import at.ac.tuwien.sepm.groupphase.backend.repository.*;
 import io.restassured.RestAssured;
@@ -11,6 +12,7 @@ import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -24,7 +26,7 @@ import java.util.List;
 
 import static org.hamcrest.core.Is.is;
 
-public class ShowIntegrationTest extends BaseIntegrationTestWithMockedUserCredentials {
+public class ShowIntegrationTest extends BaseIntegrationTest {
     private static final String SHOWS_SEARCH_ENDPOINT = "/shows/filter?";
 
     @Autowired
@@ -113,21 +115,22 @@ public class ShowIntegrationTest extends BaseIntegrationTestWithMockedUserCreden
     private static final String SEARCH_DATETO_QUERY = "dateTo=";
     private static final String SEARCH_TIMEFROM_QUERY = "timeFrom=";
     private static final String SEARCH_TIMETO_QUERY = "timeTo=";
-    private static final String SEARCH_EVENTID_QUERY= "eventId=";
+    private static final String SEARCH_EVENTID_QUERY = "eventId=";
 
-    private static final String SEARCH_EVENTNAME_QUERY= "eventName=";
-    private static final String SEARCH_HALLNAME_QUERY= "hallName=";
-    private static final String SEARCH_DURATION_QUERY= "duration=";
-    private static final String SEARCH_COUNTRY_QUERY= "country=";
-    private static final String SEARCH_CITY_QUERY= "city=";
+    private static final String SEARCH_EVENTNAME_QUERY = "eventName=";
+    private static final String SEARCH_HALLNAME_QUERY = "hallName=";
+    private static final String SEARCH_DURATION_QUERY = "duration=";
+    private static final String SEARCH_COUNTRY_QUERY = "country=";
+    private static final String SEARCH_CITY_QUERY = "city=";
+    private static final String SEARCH_ARTISTNAME_QUERY = "artistName=";
 
-    private static final String SEARCH_STREET_QUERY= "street=";
-    private static final String SEARCH_HOUSENR_QUERY= "houseNr=";
-    private static final String SEARCH_LOCATIONAME_QUERY= "locationName=";
-    private static final String SEARCH_MINPRICE_QUERY= "minPrice=";
-    private static final String SEARCH_MAXPRICE_QUERY= "maxPrice=";
+    private static final String SEARCH_STREET_QUERY = "street=";
+    private static final String SEARCH_HOUSENR_QUERY = "houseNr=";
+    private static final String SEARCH_LOCATIONAME_QUERY = "locationName=";
+    private static final String SEARCH_MINPRICE_QUERY = "minPrice=";
+    private static final String SEARCH_MAXPRICE_QUERY = "maxPrice=";
 
-    private static final String SEARCH_POSTALCODE_QUERY= "postalCode=";
+    private static final String SEARCH_POSTALCODE_QUERY = "postalCode=";
 
     private static final String DATE_1 = "2020-03-18";
     private static final String DATE_2 = "2022-03-18";
@@ -195,16 +198,27 @@ public class ShowIntegrationTest extends BaseIntegrationTestWithMockedUserCreden
     }
 
     @Test
-    public void searchShowsByMaxDate_returnsCorrectNumberOfShows(){
+    public void findShowsByArtistName_findsFittingEvents(){
+        Response response = RestAssured
+            .given()
+            .contentType(ContentType.JSON)
+            .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
+            .when().get(SHOWS_SEARCH_ENDPOINT + SEARCH_ARTISTNAME_QUERY + ARTIST_NAME_1 + "&page=0")
+            .then().extract().response();
+        Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
+        List<Show> shows = response.jsonPath().getList("content");
+        Assert.assertEquals(shows.size(), 2);
+    }
+
+    @Test
+    public void searchShowsByMaxDate_givenNoMatchingCriteria_throwsNotFoundException(){
         Response response = RestAssured
             .given()
             .contentType(ContentType.JSON)
             .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
             .when().get(SHOWS_SEARCH_ENDPOINT + SEARCH_DATEFROM_QUERY + DATE_2 + "&page=0")
             .then().extract().response();
-        Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
-        List<Show> shows = response.jsonPath().getList("content");
-        Assert.assertEquals(shows.size(), 0);
+        Assert.assertThat(response.getStatusCode(), is(HttpStatus.NOT_FOUND.value()));
     }
 
     @Test
@@ -247,6 +261,7 @@ public class ShowIntegrationTest extends BaseIntegrationTestWithMockedUserCreden
     }
 
     @Test
+    @Ignore
     public void searchShowsByCityName_returnsCorrectNumberOfShows(){
         Response response = RestAssured
             .given()

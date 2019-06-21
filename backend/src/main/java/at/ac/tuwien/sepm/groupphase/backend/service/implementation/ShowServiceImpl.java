@@ -14,6 +14,7 @@ import org.hibernate.service.spi.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -23,6 +24,7 @@ import javax.persistence.PersistenceException;
 import java.util.List;
 
 import static org.springframework.util.CollectionUtils.isEmpty;
+import javax.validation.constraints.Positive;
 
 //TODO Class is unfinished
 @Service
@@ -34,7 +36,7 @@ public class ShowServiceImpl implements ShowService {
     @Autowired
     private TicketRepository ticketRepository;
     @Autowired
-    private ShowMapper showMapper;
+    private  ShowMapper showMapper;
     private static final Logger LOGGER = LoggerFactory.getLogger(ShowServiceImpl.class);
 
     public ShowServiceImpl(ShowRepository showRepository, ShowMapper showMapper, TicketRepository ticketRepository) {
@@ -42,39 +44,13 @@ public class ShowServiceImpl implements ShowService {
         this.ticketRepository = ticketRepository;
         this.showMapper = showMapper;
     }
-
-    public ShowServiceImpl() {
-    }
-
-    /*
-    @Override
-    public Page<ShowDTO> findAllShowsFilteredByEventName(String eventName, Integer page) {
-        LOGGER.info("Find all shows filtered by event id");
-        try {
-            int pageSize = 10;
-            if(page < 0) {
-                throw new IllegalArgumentException("Not a valid page.");
-            }
-            Pageable pageable = PageRequest.of(page, pageSize);
-            Page<Show> page1 = showRepository.findAllShowsFilteredByEventName(eventName, pageable);
-            LOGGER.debug("PageToString: " + page1.toString());
-            LOGGER.debug("TotalElements: " + page1.getTotalElements());
-            LOGGER.debug("TotalPages: " + page1.getTotalPages());
-            LOGGER.debug("Content: " + page1.getContent());
-            LOGGER.debug("Size: " + page1.getContent().size());
-            return page1.map(showMapper::showToShowDTO);
-        } catch (PersistenceException e) {
-            throw new ServiceException(e.getMessage(), e);
-        }
-    }
-    */
-
+    public ShowServiceImpl(){}
     @Override
     public Page<ShowDTO> findAll(Integer page) throws ServiceException {
         LOGGER.info("Show Service: Find all shows");
         try {
             int pageSize = 10;
-            if (page < 0) {
+            if(page < 0) {
                 throw new IllegalArgumentException("Not a valid page.");
             }
             Pageable pageable = PageRequest.of(page, pageSize);
@@ -85,25 +61,31 @@ public class ShowServiceImpl implements ShowService {
     }
 
     @Override
-    public Page<ShowDTO> findAllShowsFiltered(ShowSearchParametersDTO parameters, Integer page) throws ServiceException {
-        try {
+    public Page<ShowDTO> findAllShowsFiltered(ShowSearchParametersDTO parameters, Integer page, @Positive Integer pageSize) throws ServiceException {
+        try{
             LOGGER.info("Show Service: Find all shows filtered by :" + parameters.toString());
-            if (page != null && page < 0) {
+            if(pageSize == null){
+                pageSize = 10;
+            }
+            if(page < 0) {
                 throw new IllegalArgumentException("Not a valid page.");
             }
-            return showRepository.findAllShowsFiltered(parameters, page).map(showMapper::showToShowDTO);
-        } catch (PersistenceException e) {
+            Pageable pageable = PageRequest.of(page, pageSize);
+            return showRepository.findAllShowsFiltered(parameters, pageable).map(showMapper::showToShowDTO);
+        }catch (PersistenceException e){
             throw new ServiceException(e.getMessage(), e);
         }
 
     }
 
     @Override
-    public Page<ShowDTO> findAllShowsFilteredByLocationID(Long locationID, Integer page) {
+    public Page<ShowDTO> findAllShowsFilteredByLocationID(Long locationID, Integer page, @Positive Integer pageSize) {
         LOGGER.info("Show Service: Find all shows filtered by location id");
         try {
             if (locationID < 0) throw new IllegalArgumentException("The location id is negative");
-            int pageSize = 10;
+            if(pageSize == null){
+                pageSize = 10;
+            }
             if (page < 0) {
                 throw new IllegalArgumentException("Not a valid page.");
             }
@@ -142,25 +124,15 @@ public class ShowServiceImpl implements ShowService {
         }
         return showDTO;
     }
-    /*
-    private static Predicate<ShowDTO> compareMinPrice(Double minPrice){
-        return show -> show.getPricePattern()
-            .getPriceMapping()
-            .values()
-            .stream()
-            .min(Comparator
-                .comparingDouble(Double :: doubleValue))
-            .get() > minPrice;
+
+    @Override
+    public void deleteById(Long showId) throws ServiceException, DataIntegrityViolationException {
+        LOGGER.info("ShowService: deleteById " + showId);
+        try {
+            showRepository.deleteById(showId);
+        } catch (PersistenceException e) {
+            throw new ServiceException(e.getMessage());
+        }
     }
 
-    private static Predicate<ShowDTO> compareMaxPrice(Double maxPrice){
-        return show -> show.getPricePattern()
-            .getPriceMapping()
-            .values()
-            .stream()
-            .min(Comparator
-                .comparingDouble(Double::doubleValue))
-            .get() > maxPrice;
-    }
-     */
 }
