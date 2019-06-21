@@ -1,4 +1,4 @@
-package at.ac.tuwien.sepm.groupphase.backend.datagenerator;
+package at.ac.tuwien.sepm.groupphase.backend.datagenerator.demo;
 
 /**
  * A common Data Generator Interface for all generators

@@ -4,6 +4,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ComponentScan("at.ac.tuwien.sepm.groupphase.backend.datagenerator.demo")
-public class DataGeneratorConfiguration {
+@ComponentScan("at.ac.tuwien.sepm.groupphase.backend.datagenerator.performanceTest")
+public class PerformanceTestDataGeneratorConfiguration {
 }

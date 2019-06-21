@@ -11,7 +11,8 @@ import java.util.Objects;
 public class Show {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @SequenceGenerator(name = "show_seq", initialValue = 1, allocationSize = 50)
+    @GeneratedValue(generator = "show_seq")
     private Long id;
 
     @ManyToOne(fetch = FetchType.EAGER)

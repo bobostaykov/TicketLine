@@ -8,8 +8,9 @@ import java.util.Map;
 @Entity
 public class PricePattern {
 
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Id
+    @SequenceGenerator(name = "pricepattern_seq", initialValue = 1, allocationSize = 50)
+    @GeneratedValue(generator = "pricepattern_seq")
     private Long id;
 
     @Column(name = "name")
@@ -47,10 +48,16 @@ public class PricePattern {
     }
 
     public static class PricePatternBuilder {
+        private Long id;
         private String name;
         private Map<PriceCategory, Double> priceMapping;
 
         private PricePatternBuilder(){}
+
+        public PricePatternBuilder setId(Long id) {
+            this.id = id;
+            return this;
+        }
 
         public PricePatternBuilder setName(String name) {
             this.name = name;
@@ -64,6 +71,7 @@ public class PricePattern {
 
         public PricePattern createPricePattern() {
             PricePattern pricePattern = new PricePattern();
+            pricePattern.setId(id);
             pricePattern.setPriceMapping(priceMapping);
             pricePattern.setName(name);
             return pricePattern;

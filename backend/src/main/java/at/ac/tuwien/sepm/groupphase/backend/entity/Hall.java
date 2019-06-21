@@ -10,7 +10,8 @@ public class Hall {
 
     @Id
     @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @SequenceGenerator(name = "hall_seq", initialValue = 1, allocationSize = 50)
+    @GeneratedValue(generator = "hall_seq")
     private Long id;
 
     @Column(nullable = false, length = 64)

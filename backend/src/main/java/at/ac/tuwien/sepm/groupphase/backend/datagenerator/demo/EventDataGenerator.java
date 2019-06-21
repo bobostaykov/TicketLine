@@ -1,4 +1,4 @@
-package at.ac.tuwien.sepm.groupphase.backend.datagenerator;
+package at.ac.tuwien.sepm.groupphase.backend.datagenerator.demo;
 
 import at.ac.tuwien.sepm.groupphase.backend.datatype.EventType;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Event;
@@ -26,9 +26,9 @@ public class EventDataGenerator implements DataGenerator{
     @Override
     public void generate(){
         if(eventRepository.count() > 0){
-            LOGGER.info("Artists already generated");
+            LOGGER.info("Events already generated");
         }else {
-            LOGGER.info("Generating artists");
+            LOGGER.info("Generating events");
             Event event1 = Event.builder().id(1L).name("Balloons N Ribbons").durationInMinutes(180).eventType(EventType.FESTIVAL).artist(artistRepository.getOne(1L)).description("description").content("content").build();
             Event event2 = Event.builder().id(2L).name("MemoriesMade").durationInMinutes(180).eventType(EventType.MOVIE).artist(null).description("COMING SOON").content("content").build();
             Event event3 = Event.builder().id(3L).name("Lucky Charms").durationInMinutes(180).eventType(EventType.CONCERT).artist(artistRepository.getOne(1L)).description("description").content("content").build();

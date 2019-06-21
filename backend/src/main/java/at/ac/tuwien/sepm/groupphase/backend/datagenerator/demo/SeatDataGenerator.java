@@ -1,7 +1,6 @@
-package at.ac.tuwien.sepm.groupphase.backend.datagenerator;
+package at.ac.tuwien.sepm.groupphase.backend.datagenerator.demo;
 
 import at.ac.tuwien.sepm.groupphase.backend.datatype.PriceCategory;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Hall;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Seat;
 import at.ac.tuwien.sepm.groupphase.backend.repository.HallRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.SeatRepository;
@@ -14,7 +13,7 @@ import java.util.Arrays;
 
 @Profile("generateData")
 @Component
-public class SeatDataGenerator implements DataGenerator{
+public class SeatDataGenerator implements DataGenerator {
 
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
     private final SeatRepository seatRepository;

@@ -1,4 +1,4 @@
-package at.ac.tuwien.sepm.groupphase.backend.datagenerator;
+package at.ac.tuwien.sepm.groupphase.backend.datagenerator.demo;
 
 import at.ac.tuwien.sepm.groupphase.backend.entity.Artist;
 import at.ac.tuwien.sepm.groupphase.backend.repository.ArtistRepository;

@@ -8,7 +8,8 @@ import java.util.Objects;
 public class Location {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @SequenceGenerator(name = "location_seq", initialValue = 1, allocationSize = 50)
+    @GeneratedValue(generator = "location_seq")
     private Long id;
 
     @Column(nullable = false, name = "locationName")
