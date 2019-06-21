@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.validation.constraints.Positive;
 import java.util.List;
 
 @RestController
@@ -48,7 +49,7 @@ public class LocationEndpoint {
         @RequestParam(value = "postalCode", required = false) String postalCode,
         @RequestParam(value = "description", required = false) String description,
         @RequestParam(value = "page", required = false) Integer page,
-        @RequestParam(value = "pageSize", required = false) Integer pageSize
+        @RequestParam(value = "pageSize", required = false) @Positive Integer pageSize
     ) {
         try {
             if (page != null && name == null && country == null && city == null && postalCode == null && street == null && description == null) {

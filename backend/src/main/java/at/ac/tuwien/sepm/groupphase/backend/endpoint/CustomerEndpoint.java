@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.validation.constraints.Positive;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -68,7 +69,7 @@ public class CustomerEndpoint {
         @RequestParam(value = "email", required = false) String email,
         @RequestParam(value = "birthday", required = false) String birthday_str,
         @RequestParam(value = "page", required = false) Integer page,
-        @RequestParam(value = "pagesize", required = false) Integer pageSize) {
+        @RequestParam(value = "pagesize", required = false) @Positive Integer pageSize) {
 
         boolean filterData = !(id == null && name == null && firstname == null && email == null && birthday_str == null);
         LocalDate birthday = null;

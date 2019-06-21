@@ -29,7 +29,7 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
-    public Page<LocationDTO> findLocationsFiltered(String name, String country, String city, String street, String postalCode, String description, Integer page, @Positive Integer pageSize) throws ServiceException {
+    public Page<LocationDTO> findLocationsFiltered(String name, String country, String city, String street, String postalCode, String description, Integer page, Integer pageSize) throws ServiceException {
         LOGGER.info("Location Service: findLocationsFiltered()");
         try {
             if (name != null && name.equals("")) name = null;

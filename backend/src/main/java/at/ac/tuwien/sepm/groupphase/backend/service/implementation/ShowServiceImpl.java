@@ -50,7 +50,7 @@ public class ShowServiceImpl implements ShowService {
     }
 
     @Override
-    public Page<ShowDTO> findAllShowsFiltered(ShowSearchParametersDTO parameters, Integer page, @Positive Integer pageSize) throws ServiceException {
+    public Page<ShowDTO> findAllShowsFiltered(ShowSearchParametersDTO parameters, Integer page, Integer pageSize) throws ServiceException {
         try{
             LOGGER.info("Show Service: Find all shows filtered by :" + parameters.toString());
             if(pageSize == null){
@@ -68,7 +68,7 @@ public class ShowServiceImpl implements ShowService {
     }
 
     @Override
-    public Page<ShowDTO> findAllShowsFilteredByLocationID(Long locationID, Integer page, @Positive Integer pageSize) {
+    public Page<ShowDTO> findAllShowsFilteredByLocationID(Long locationID, Integer page, Integer pageSize) {
         LOGGER.info("Show Service: Find all shows filtered by location id");
         try {
             if (locationID < 0) throw new IllegalArgumentException("The location id is negative");

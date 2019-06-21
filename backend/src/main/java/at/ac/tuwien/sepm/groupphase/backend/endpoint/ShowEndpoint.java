@@ -16,6 +16,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.validation.constraints.Positive;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -39,7 +40,7 @@ public class ShowEndpoint {
     @ApiOperation(value = "Get list of all shows filtered by location id", authorizations = {@Authorization(value = "apiKey")})
     public Page<ShowDTO> findAllShowsFilteredByLocationID(@PathVariable("id") Long locationID,
                                                           @RequestParam(value = "page", required = false) Integer page,
-                                                          @RequestParam(value = "pageSize", required = false) Integer pageSize){
+                                                          @RequestParam(value = "pageSize", required = false) @Positive Integer pageSize){
         LOGGER.info("Show Endpoint:  Get all shows filtered by location with id " + locationID);
         try{
             return showService.findAllShowsFilteredByLocationID(locationID, page, pageSize);
@@ -71,7 +72,7 @@ public class ShowEndpoint {
                                                            @RequestParam(value = "postalCode", required = false) String postalCode,
                                                            @RequestParam(value = "street", required = false) String street,
                                                            @RequestParam(value = "page", required = false) Integer page,
-                                                           @RequestParam(value = "pageSize", required = false) Integer pageSize)
+                                                           @RequestParam(value = "pageSize", required = false) @Positive Integer pageSize)
     {
         try {
             LOGGER.debug("\neventName: " + eventName + "\nhallName: " + hallName + "\nminPrice: " + minPrice + "\nmaxPrice: " + maxPrice +

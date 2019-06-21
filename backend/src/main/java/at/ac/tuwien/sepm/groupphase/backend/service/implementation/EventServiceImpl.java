@@ -74,7 +74,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public Page<EventDTO> findAll(Integer page, @Positive Integer pageSize) throws ServiceException {
+    public Page<EventDTO> findAll(Integer page, Integer pageSize) throws ServiceException {
         LOGGER.info("Find all events");
         try {
             if(pageSize == null){
@@ -91,7 +91,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public Page<EventDTO> findAllFiltered(EventSearchParametersDTO parameters, Integer page, @Positive Integer pageSize) throws ServiceException{
+    public Page<EventDTO> findAllFiltered(EventSearchParametersDTO parameters, Integer page, Integer pageSize) throws ServiceException{
         LOGGER.info("Find all events filtered by some attributes: " + parameters.toString());
         try{
             if(pageSize == null){
@@ -110,7 +110,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public Page<EventDTO> findEventsFilteredByArtistID(Long id, Integer page, @Positive Integer pageSize) throws ServiceException{
+    public Page<EventDTO> findEventsFilteredByArtistID(Long id, Integer page, Integer pageSize) throws ServiceException{
         LOGGER.info("Event Service: findEventsFilteredByArtistID");
         try{
             if(pageSize == null){

@@ -28,7 +28,7 @@ export class ArtistResultsComponent implements OnInit {
   }
 
   private loadArtists() {
-    this.artistResultsService.findArtists(this.artistName, this.page, null).subscribe(
+    this.artistResultsService.findArtists(this.artistName, this.page).subscribe(
       result => {
         this.artists = result['content'];
         this.pages = new Array(result['totalPages']);

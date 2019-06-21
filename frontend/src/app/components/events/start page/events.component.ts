@@ -94,7 +94,7 @@ export class EventsComponent implements OnInit {
   }
 
   private loadArtists() {
-    this.artistResultsService.findArtists('', this.page, 100).subscribe(
+    this.artistResultsService.findArtists('-1', this.page).subscribe(
       (artists: Artist[]) => { this.options = this.artistArrayToStringArray(artists); },
       error => { this.defaultServiceErrorHandling(error); }
     );
