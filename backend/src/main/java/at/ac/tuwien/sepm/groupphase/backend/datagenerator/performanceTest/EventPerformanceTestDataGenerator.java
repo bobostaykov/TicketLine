@@ -39,17 +39,17 @@ public class EventPerformanceTestDataGenerator extends PerformanceTestDataGenera
         if(eventRepository.count() > 0){
             LOGGER.info("Events already generated");
         }else {
-            LOGGER.info("Generating events");
+            LOGGER.info("Generating {} events", NUM_OF_EVENTS);
             List<Event> events = new ArrayList<>();
             for(Long id = 1L; id <= NUM_OF_EVENTS; id++) {
                 events.add(Event.builder()
                     .id(id)
-                    .name(faker.letterify("Event #####"))
+                    .name(faker.letterify("Event ???????"))
                     .eventType(getRandomEventType())
                     .artist(artistRepository.getOne(customMod(id, NUM_OF_ARTISTS)))
-                    .durationInMinutes(RANDOM.nextInt(MAX_EVENT_DURATION_IN_MINUTES))
-                    .description(faker.letterify("##################"))
-                    .content(faker.letterify("##################"))
+                    .durationInMinutes(RANDOM.nextInt(MAX_EVENT_DURATION_IN_MINUTES-MIN_EVENT_DURATION_IN_MINUTES)+MIN_EVENT_DURATION_IN_MINUTES)
+                    .description(faker.letterify("?????????????????"))
+                    .content(faker.letterify("?????????????????"))
                     .build());
             }
             eventRepository.saveAll(events);

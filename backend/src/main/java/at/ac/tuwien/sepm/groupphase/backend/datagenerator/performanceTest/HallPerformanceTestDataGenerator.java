@@ -35,42 +35,38 @@ public class HallPerformanceTestDataGenerator extends PerformanceTestDataGenerat
         if(hallRepository.count() > 0){
             LOGGER.info("Halls already generated");
         }else {
-            LOGGER.info("Generating halls");
+            LOGGER.info("Generating {} halls", NUM_OF_HALLS);
             List<Hall> halls = new ArrayList<>();
+            List<Seat> seats;
+            List<Sector> sectors;
             for(Long id = 1L; id <= NUM_OF_HALLS; id++) {
                 Boolean seatsOrSectors = id % 2 == 0;
-                List<Seat> seats = seatsOrSectors ? new ArrayList<>() : null;
-                List<Sector> sectors = seatsOrSectors ? null : new ArrayList<>();
+                seats = seatsOrSectors ? new ArrayList<>() : null;
+                sectors = seatsOrSectors ? null : new ArrayList<>();
                 if (seatsOrSectors) {
                     for (Long seatId = 1L; seatId <= NUM_OF_SEATS_PER_HALL; seatId++)
                         seats.add(Seat.builder()
-                            .id(seatId)
                             .priceCategory(seatId % 3 == 0 ? PriceCategory.CHEAP : seatId % 3 == 1 ? PriceCategory.AVERAGE : PriceCategory.EXPENSIVE)
                             .seatNumber(customModInt(seatId, NUM_OF_SEAT_ROWS_PER_HALL))
                             .seatRow(Math.toIntExact((seatId-1) / NUM_OF_SEAT_ROWS_PER_HALL + 1))
-                            .hall(hallRepository.getOne(customMod(seatId, NUM_OF_HALLS)))
-                        .build());
+                            .hall(hallRepository.getOne(customMod(id, NUM_OF_HALLS)))
+                            .build());
                 }
                 else {
                     for (Long sectorId = 1L; sectorId <= NUM_OF_SECTORS_PER_HALL; sectorId++)
                         sectors.add(Sector.builder()
-                            .id(sectorId)
                             .priceCategory(sectorId % 3 == 0 ? PriceCategory.CHEAP : sectorId % 3 == 1 ? PriceCategory.AVERAGE : PriceCategory.EXPENSIVE)
                             .sectorNumber(Math.toIntExact(customMod(sectorId, NUM_OF_SECTORS_PER_HALL)))
-                            .hall(hallRepository.getOne(customMod(sectorId, NUM_OF_HALLS)))
+                            .hall(hallRepository.getOne(customMod(id, NUM_OF_HALLS)))
                             .build());
                 }
                 halls.add(Hall.builder()
                     .id(id)
-                    .location(locationRepository.getOne((id-1) % NUM_OF_LOCATIONS + 1))
-                    .name(faker.bothify("HALL #####"))
+                    .location(locationRepository.getOne(customMod(id, NUM_OF_LOCATIONS)))
+                    .name(faker.bothify("HALL ????????"))
                     .seats(seatsOrSectors ? seats : null)
                     .sectors(seatsOrSectors ? null : sectors)
                     .build());
-            }
-            for (Hall h:
-                 halls) {
-                LOGGER.info(h.toString());
             }
             hallRepository.saveAll(halls);
         }

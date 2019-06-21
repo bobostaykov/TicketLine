@@ -30,7 +30,7 @@ public class CustomerPerformanceTestDataGenerator extends PerformanceTestDataGen
         if(customerRepository.count() > 0){
             LOGGER.info("Customers already generated");
         }else {
-            LOGGER.info("Generating customers");
+            LOGGER.info("Generating {} customers", NUM_OF_CUSTOMERS);
             List<Customer> customers = new ArrayList<>();
             for(Long id = 1L; id <= NUM_OF_CUSTOMERS; id++) {
                 customers.add(Customer.builder()

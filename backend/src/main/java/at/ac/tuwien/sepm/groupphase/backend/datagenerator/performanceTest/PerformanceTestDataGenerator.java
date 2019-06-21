@@ -42,5 +42,6 @@ public abstract class PerformanceTestDataGenerator {
     final static int NUM_OF_SECTORS_PER_HALL = 10;
 
     final static int MAX_EVENT_DURATION_IN_MINUTES = 120;
+    final static int MIN_EVENT_DURATION_IN_MINUTES = 30;
     final static Double TICKET_PRICE = 10.0;
 }

@@ -28,7 +28,7 @@ public class LocationPerformanceTestDataGenerator extends PerformanceTestDataGen
         if(locationRepository.count() > 0){
             LOGGER.info("Locations already generated");
         }else {
-            LOGGER.info("Generating locations");
+            LOGGER.info("Generating {} locations", NUM_OF_LOCATIONS);
             List<Location> locations = new ArrayList<>();
             for(Long id = 1L; id <= NUM_OF_LOCATIONS; id++) {
                 locations.add(Location.builder()
@@ -38,6 +38,7 @@ public class LocationPerformanceTestDataGenerator extends PerformanceTestDataGen
                     .city(faker.address().city())
                     .postalCode(faker.numerify("####"))
                     .street(faker.address().streetAddress())
+                    .description(faker.letterify("Description: ?????????????????"))
                     .build());
             }
             locationRepository.saveAll(locations);

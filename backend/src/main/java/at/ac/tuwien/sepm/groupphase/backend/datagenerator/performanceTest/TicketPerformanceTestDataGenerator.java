@@ -40,7 +40,7 @@ public class TicketPerformanceTestDataGenerator extends PerformanceTestDataGener
         if(ticketRepository.count() > 0){
             LOGGER.info("Tickets already generated");
         }else {
-            LOGGER.info("Generating tickets");
+            LOGGER.info("Generating {} tickets", NUM_OF_TICKETS);
             List<Ticket> tickets = new ArrayList<>();
             for(Long id = 1L; id <= NUM_OF_TICKETS; id++) {
                 tickets.add(Ticket.builder()

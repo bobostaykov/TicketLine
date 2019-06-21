@@ -11,6 +11,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Profile("generatePerformanceTestData")
 @Component
@@ -37,14 +39,19 @@ public class UserPerformanceTestDataGenerator extends PerformanceTestDataGenerat
         if(userRepository.count() > 0){
             LOGGER.info("Users already generated");
         }else {
-            LOGGER.info("Generating users");
-            for(Long id = 1L; id <= NUM_OF_USERS; id++) {
-                userRepository.createUser(User.builder()
-                    .id(id)
+            LOGGER.info("Generating {} users", NUM_OF_USERS);
+            User user = User.builder().username(USER_NAME).password(passwordEncoder.encode(USER_PASSWORD)).type(UserType.SELLER).userSince(LocalDateTime.now()).build();
+            User admin = User.builder().username(ADMIN_NAME).password(passwordEncoder.encode(ADMIN_PASSWORD)).type(UserType.ADMIN).userSince(LocalDateTime.now()).build();
+            userRepository.createUser(user);
+            userRepository.createUser(admin);
+            List<User> users = new ArrayList<>();
+            for(Long id = 3L; id <= NUM_OF_USERS; id++) {
+                User u = User.builder()
                     .type(id % 2 == 0 ? UserType.ADMIN : UserType.SELLER).username(faker.name().username().toLowerCase())
                     .password(passwordEncoder.encode(faker.bothify(BOTHIFY_PASSWORD_STRING)))
                     .userSince(LocalDateTime.now())
-                    .build());
+                    .build();
+                userRepository.createUser(u);
             }
         }
     }

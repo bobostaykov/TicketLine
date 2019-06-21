@@ -29,8 +29,7 @@ public class ArtistPerformanceTestDataGenerator extends PerformanceTestDataGener
         if(artistRepository.count() > 0){
             LOGGER.info("Artists already generated");
         }else {
-            LOGGER.info("Generating artists");
-
+            LOGGER.info("Generating {} artists", NUM_OF_ARTISTS);
             List<Artist> artists = new ArrayList<>();
             for(Long id = 1L; id <= NUM_OF_ARTISTS; id++) {
                 artists.add(Artist.builder()
