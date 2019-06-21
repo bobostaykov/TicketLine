@@ -30,7 +30,7 @@ export class TicketCheckReservationComponent implements OnInit {
   private priceTotal: number;
 
   private tickets: TicketPost[] = [];
-  private createdTickets: Ticket[];
+  private createdTickets: Ticket[] = [];
   private seatsStr: String[] = [];
   private rowStr: String[] = [];
   private sectorStr: String [] = [];
@@ -91,13 +91,14 @@ export class TicketCheckReservationComponent implements OnInit {
         this.tickets.push(currentTicket);
       }
     }
+
     this.vanishError();
     this.addTicket(this.tickets);
   }
 
   /**
-   * Sends news creation request
-   * @param news the news which should be created
+   * Sends ticket(s) creation request
+   * @param tickets the ticket(s) which should be created
    */
   addTicket(tickets: TicketPost[]) {
     if (tickets.length > 0) {
@@ -115,6 +116,61 @@ export class TicketCheckReservationComponent implements OnInit {
     }
   }
 
+  private getIdsOfCreatedTickets(): Number[] {
+    const ticketIDs: Number[] = []; /*Number[this.createdTickets.length];*/
+    for (let i = 0; i < this.createdTickets.length; i++) {
+      ticketIDs[i] = this.createdTickets[i].id;
+    }
+    return ticketIDs;
+  }
+
+  /**
+   * Sends receipt request
+   */
+  getReceipt() {
+    this.ticketService.getReceiptPdf(this.getIdsOfCreatedTickets()).subscribe(
+      res => {
+        const fileURL = URL.createObjectURL(res);
+        window.open(fileURL, '_blank');
+      },
+      error => {
+        console.log('receipt error')
+        this.defaultServiceErrorHandling(error);
+      }
+    );
+  }
+
+  /**
+   * Sends deletion and cancellation receipt request
+   */
+  getCancellationReceipt() {
+    this.ticketService.getCancellationReceiptPdf(this.getIdsOfCreatedTickets()).subscribe(
+      res => {
+        const fileURL = URL.createObjectURL(res);
+        window.open(fileURL, '_blank');
+      },
+      error => {
+        console.log('cancellation receipt error')
+        this.defaultServiceErrorHandling(error);
+      }
+    );
+  }
+
+  /**
+   * Sends ticket pdf request
+   */
+  getTicketPdf() {
+    this.ticketService.getTicketPdf(this.getIdsOfCreatedTickets()).subscribe(
+      res => {
+        const fileURL = URL.createObjectURL(res);
+        window.open(fileURL, '_blank');
+      },
+      error => {
+        console.log('ticket pdf error')
+        this.defaultServiceErrorHandling(error);
+      }
+    );
+  }
 
   /**
    * Returns true if the authenticated user is an admin
