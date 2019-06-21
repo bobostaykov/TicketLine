@@ -33,6 +33,8 @@ export class TicketSessionService {
    */
   saveSeatTicket(seat: Seat) {
     if (!this.ticket_seats.some(s => seat === s)) {
+      // TODO: implement correct price mapping
+      seat.price = 10;
       this.ticket_sectors = this.ticket_sectors.length > 0 ? [] : this.ticket_sectors;
       this.ticket_seats.push(seat);
     }
@@ -46,6 +48,8 @@ export class TicketSessionService {
    */
   saveSectorTicket(sector: Sector) {
     if (!this.ticket_sectors.some(s => sector === s)) {
+      // TODO: implement correct price mapping
+      sector.price = 10;
       this.ticket_seats = this.ticket_seats.length > 0 ? [] : this.ticket_seats;
       this.ticket_sectors.push(sector);
     }

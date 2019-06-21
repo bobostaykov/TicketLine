@@ -42,9 +42,8 @@ import {TicketCheckReservationComponent} from './components/ticket/ticket-check/
 import { FloorplanTicketComponent } from './components/floorplan/floorplan-ticket/floorplan-ticket.component';
 import { BlockedUsersComponent } from './components/blocked-users/blocked-users.component';
 import { MinDirective } from './directives/min.directive';
-import {TicketComponent} from './components/ticket/ticket.component';
 import { ContentManagerComponent } from './components/content-manager/content-manager.component';
-import { SelectDropDownModule } from 'ngx-select-dropdown'
+import { SelectDropDownModule } from 'ngx-select-dropdown';
 
 @NgModule({
   declarations: [
@@ -89,7 +88,7 @@ import { SelectDropDownModule } from 'ngx-select-dropdown'
     NgxChartsModule,
     Ng5SliderModule,
     MatRadioModule,
-    MatAutocompleteModule
+    MatAutocompleteModule,
     SelectDropDownModule
   ],
   entryComponents: [
