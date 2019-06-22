@@ -28,7 +28,7 @@
           <mat-form-field appearance="standard">
             <label for="seatPrice" class="sr-only">Seat Price</label>
             <select matNativeControl id="seatPrice" formControlName="seatPrice" aria-labelledby="seat price selection">
-              <option *ngFor="let price of priceCategories">{{price}}</option>
+              <option *ngFor="let price of priceCategories">Price: {{getPrice(price)}} €</option>
             </select>
             <mat-error>Seat Price must be set!</mat-error>
           </mat-form-field>

@@ -384,6 +384,7 @@ export class FloorplanControlComponent implements OnInit {
           'hallSelection': show.hall,
           'locationSelection': show.hall.location
         });
+        console.log(show);
         this.ticketsession.changeShow(show);
       },
       error => console.log(error)
@@ -438,6 +439,11 @@ export class FloorplanControlComponent implements OnInit {
         'showSelection': null,
       });
     }
+  }
+
+  private getPrice(priceCategory: string): number | string {
+    const show = this.createHallForm.get('showSelection').value;
+    return show && show.pricePattern ? show.pricePattern.priceMapping[priceCategory] + ' €' : priceCategory.toString();
   }
 
   /**
