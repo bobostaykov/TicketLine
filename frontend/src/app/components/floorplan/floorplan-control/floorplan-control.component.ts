@@ -83,7 +83,7 @@ export class FloorplanControlComponent implements OnInit {
         for (let number = Math.min(value.seatNumberStart, value.seatNumberEnd); number <= Math.max(value.seatNumberStart, value.seatNumberEnd); number++) {
           // only add seat if seat with same number and row does not already exist
           if (!this.getSelectedHall().seats.some(seat => seat.seatRow === row && seat.seatNumber === number)) {
-            this.getSelectedHall().seats.push(new Seat(null, number, row, value.seatPrice, null));
+            this.getSelectedHall().seats.push(new Seat(null, number, row, value.seatPrice, null, null));
           }
         }
       }
@@ -109,7 +109,7 @@ export class FloorplanControlComponent implements OnInit {
       for (let number = Math.min(value.sectorNumberStart, value.sectorNumberEnd); number <= Math.max(value.sectorNumberStart, value.sectorNumberEnd); number++) {
         // only add sector if a sector with the same number does not already exist
         if (!this.getSelectedHall().sectors.some(sector => sector.sectorNumber === number)) {
-          this.getSelectedHall().sectors.push(new Sector(null, number, value.sectorPrice, null));
+          this.getSelectedHall().sectors.push(new Sector(null, number, value.sectorPrice, null, null));
         }
       }
       this.addSectorsForm.reset({

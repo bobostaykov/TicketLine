@@ -1,4 +1,4 @@
 export enum TicketStatus {
-  RESERVATED,
-  SOLD
+  RESERVATED = 'reservated',
+  SOLD = 'sold'
 }

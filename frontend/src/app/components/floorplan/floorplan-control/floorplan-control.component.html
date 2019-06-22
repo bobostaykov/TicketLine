@@ -174,6 +174,7 @@
 <div class="row">
   <app-floorplan-svg class="floorplanSvg"
                      [seats]="getSelectedHall().seats" [sectors]="getSelectedHall().sectors"
+                     [hallType]="hallType"
                      (addSeatTicket)="ticketsession.saveSeatTicket($event)"
                      (addSectorTicket)="ticketsession.saveSectorTicket($event)"></app-floorplan-svg>
   <div class="floorplanTickets" *ngIf="ticketsession.getTickets()?.length > 0">

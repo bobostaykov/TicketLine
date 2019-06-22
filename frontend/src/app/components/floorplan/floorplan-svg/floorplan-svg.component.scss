@@ -4,38 +4,36 @@
 
 #svg-container {
   width: 90%;
+  height: 60vh;
+  min-height: 500px;
   border-radius: 7px;
   overflow: hidden;
-  position: relative;
 
   svg {
-    position:  absolute;
     cursor: grab;
-    top: 20px;
-    left: 20px;
-    bottom: 20px;
-    right: 20px;
-  }
 
-  path {
-    fill-opacity: 0.5;
-    cursor: pointer;
-  }
+    &.grabbing {
+      cursor: grabbing;
+    }
 
-  path:hover, .active {
-    fill-opacity: 1;
-  }
+    path {
+      cursor: pointer;
+      fill-opacity: 0.5;
 
-  .grabbing {
-    cursor: grabbing;
+      &:hover, &.active {
+        fill-opacity: 0.7;
+      }
+    }
+
+    &.ticket {
+      fill-opacity: 1;
+      stroke: #000000;
+      stroke-linejoin: round;
+      stroke-width: 1;
+    }
   }
 }
 
-#svg-container:before{
-  content: "";
-  display: block;
-  padding-top: 70%;
-}
 
 #svg-container:hover, #updateForm:hover ~ #svg-container, #contextmenu:hover ~ #svg-container {
   outline: none;

@@ -2,6 +2,7 @@ import {AfterViewInit, Component, DoCheck, EventEmitter, Input, IterableDiffers,
 import {Seat} from '../../../dtos/seat';
 import {Sector} from '../../../dtos/sector';
 import {PriceCategory} from '../../../dtos/priceCategory';
+import {TicketStatus} from '../../../datatype/ticket_status';
 
 @Component({
   selector: 'app-floorplan-svg',
@@ -13,6 +14,8 @@ export class FloorplanSvgComponent implements OnInit, DoCheck, AfterViewInit {
   // seats and sectors are passed as input arguments. One of them should always be empty
   @Input() private seats?: Seat[];
   @Input() private sectors?: Sector[];
+  // hallType as input to decide whether seats or sectors are drawn
+  @Input() private hallType: string;
   // event emitters to add ticket for selected seat or sector
   @Output() private addSeatTicket: EventEmitter<Seat> = new EventEmitter<Seat>();
   @Output() private addSectorTicket: EventEmitter<Sector> = new EventEmitter<Sector>();
@@ -32,7 +35,8 @@ export class FloorplanSvgComponent implements OnInit, DoCheck, AfterViewInit {
   // HTML/SVG representation of currently selected element
   private activeElement: HTMLElement;
   // used for template update form
-  private updateElementModel: Seat | Sector;
+  private updateElementModel: Seat | Sector = this.hallType === 'seats' ? new Seat(null, null, null, null, null, null)
+    : new Sector(null, null, null, null, null);
   // updateSubmissionError is displayed if seat/sector with given number/row already exists in the hall
   private updateSubmissionError: boolean = false;
   private updateSubmissionMessage: string = '';
@@ -68,13 +72,13 @@ export class FloorplanSvgComponent implements OnInit, DoCheck, AfterViewInit {
    * detects changes to seat or sector arrays and draws or removes changed elements accordingly
    */
   ngDoCheck(): void {
-    if (this.seats && this.seats.length) {
+    if (this.hallType === 'seats') {
       const changes = this.iterableDiffer.diff(this.seats);
       if (changes) {
         changes.forEachAddedItem(record => this.drawSeatPath(record.item));
         changes.forEachRemovedItem(record => this.removeSeatPath(record.item));
       }
-    } else if (this.sectors && this.sectors.length) {
+    } else if (this.hallType === 'sectors') {
       const changes = this.iterableDiffer.diff(this.sectors);
       if (changes) {
         changes.forEachAddedItem(record => this.drawSectorPath(record.item));
@@ -91,13 +95,19 @@ export class FloorplanSvgComponent implements OnInit, DoCheck, AfterViewInit {
   private drawSeatPath(seat: Seat): HTMLElement {
     const seatElement = this.renderer.createElement('path', 'svg');
     this.renderer.setAttribute(seatElement, 'id', 'seat' + seat.seatRow + seat.seatNumber);
-    const xPos = (seat.seatNumber - 1) * 1.2 * 10 + Math.floor(seat.seatNumber / 15) * 10;
-    const yPos = (seat.seatRow - 1) * 1.2 * 10 + Math.floor(seat.seatRow / 10) * 10;
-    this.renderer.setAttribute(seatElement, 'd', 'M ' + xPos + ' ' + yPos + ' h 10 v 10 h -10 Z');
+    const xPos = (seat.seatNumber) * 1.2 * 10 + Math.floor(seat.seatNumber / 15) * 10;
+    const yPos = (seat.seatRow) * 1.2 * 10 + Math.floor(seat.seatRow / 10) * 10;
+    let path: string = 'M ' + xPos + ' ' + yPos + ' h 10 v 10 h -10 Z';
     this.renderer.setAttribute(seatElement, 'fill', this.getColor(seat));
     this.renderer.listen(seatElement, 'click', (event) => this.displayUpdateForm(seat, event.target));
     this.renderer.listen(seatElement, 'contextmenu', (event) => this.displayContext(seat, event));
     this.renderer.appendChild(this.svgElement, seatElement);
+    // display ticket differently if status is set
+    if (seat.ticketStatus) {
+      this.renderer.addClass(seatElement, 'ticket');
+      path += seat.ticketStatus === TicketStatus.SOLD ? ' l 10 10 m -10 0 l 10 -10' : '';
+    }
+    this.renderer.setAttribute(seatElement, 'd', path);
     return seatElement;
   }
 
@@ -113,12 +123,16 @@ export class FloorplanSvgComponent implements OnInit, DoCheck, AfterViewInit {
     const width = this.originalWidth / 3.2;
     const xPos = ((sector.sectorNumber - 1) % 3) * (width + gap);
     const yPos = Math.floor((sector.sectorNumber - 1) / 3) * (50 + gap);
-    this.renderer.setAttribute(sectorElement, 'd', 'M ' + xPos + ' ' + yPos + ' h ' + width + ' v 50 h ' + (-width) + ' Z');
+    let path: string = 'M ' + xPos + ' ' + yPos + ' h ' + width + ' v 50 h ' + (-width) + ' Z';
     this.renderer.setAttribute(sectorElement, 'fill', this.getColor(sector));
     this.renderer.listen(sectorElement, 'click', (event) => this.displayUpdateForm(sector, event.target));
     this.renderer.listen(sectorElement, 'contextmenu', (event => this.displayContext(sector, event)));
-    console.log(sectorElement);
-    console.log(this.svgElement);
+    // display ticket differently if status is set
+    if (sector.ticketStatus) {
+      this.renderer.addClass(sectorElement, 'ticket');
+      path += sector.ticketStatus === TicketStatus.SOLD ? ' l ' + width + ' 50 m 0 -50 l ' + (-width) + ' 50' : '';
+    }
+    this.renderer.setAttribute(sectorElement, 'd', path);
     this.renderer.appendChild(this.svgElement, sectorElement);
     return sectorElement;
   }
@@ -129,7 +143,11 @@ export class FloorplanSvgComponent implements OnInit, DoCheck, AfterViewInit {
    */
   private removeSeatPath(seat: Seat): void {
     const id: string = 'seat' + seat.seatRow + seat.seatNumber;
-    this.renderer.removeChild(this.svgElement, document.getElementById(id));
+    const path = document.getElementById(id);
+    // NOTE: using renderer to remove elements here for some reason did not always work
+    if (path) {
+      this.svgElement.removeChild(path);
+    }
   }
 
   /**
@@ -139,6 +157,10 @@ export class FloorplanSvgComponent implements OnInit, DoCheck, AfterViewInit {
   private removeSectorPath(sector: Sector): void {
     const id: string = 'sector' + sector.sectorNumber;
     this.renderer.removeChild(this.svgElement, document.getElementById(id));
+    const path = document.getElementById(id);
+    if (path) {
+      this.svgElement.removeChild(path);
+    }
   }
 
   /**
@@ -171,8 +193,8 @@ export class FloorplanSvgComponent implements OnInit, DoCheck, AfterViewInit {
     this.closeUpdateForm();
     const target = event.target as HTMLElement;
     const rectEvent = target.getBoundingClientRect();
-    this.renderer.setStyle(this.contextmenu, 'left', rectEvent.left + 'px');
-    this.renderer.setStyle(this.contextmenu, 'top', rectEvent.bottom + 'px');
+    this.renderer.setStyle(this.contextmenu, 'left', window.scrollX + rectEvent.left + 'px');
+    this.renderer.setStyle(this.contextmenu, 'top', window.scrollY + rectEvent.bottom + 'px');
     this.renderer.setStyle(this.contextmenu, 'display', 'inline-block');
     this.setActiveElement(element, target);
     if (this.disableListenerContext) {

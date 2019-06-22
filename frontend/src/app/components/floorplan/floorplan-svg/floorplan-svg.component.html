@@ -2,7 +2,7 @@
 <div id="updateForm">
   <form #updateForm="ngForm" (ngSubmit)="updateForm.valid && updateSelectedElement()">
     <!-- disable row if elements are sectors -->
-    <div class="row mx-2" *ngIf="seats && seats.length">
+    <div class="row mx-2" *ngIf="hallType === 'seats'">
       <!-- form field to update seat row -->
       <mat-form-field appearance="standard" class="col-6" hideRequiredMarker>
         <mat-label class="pr-4">Row</mat-label>
@@ -27,7 +27,7 @@
       </mat-form-field>
     </div>
     <!-- disable row if elements are seats -->
-    <div class="row mx-2" *ngIf="sectors && sectors.length">
+    <div class="row mx-2" *ngIf="hallType === 'secotrs'">
       <!-- form field to update sector number -->
       <mat-form-field appearance="standard" class="col-10" hideRequiredMarker>
         <mat-label class="pr-4" matPrefix>Sector Number</mat-label>
@@ -64,10 +64,10 @@
 <div id="contextmenu" class="dropdown-menu shadow-sm">
   <button class="btn dropdown-item" (click)="displayUpdateForm(selectedElement, activeElement)">Update</button>
   <button class="btn dropdown-item" (click)="deleteSelectedElement()">Delete</button>
-  <button *ngIf="this.seats && this.seats.length" class="btn dropdown-item" (click)="addAsSeatTicket()">
+  <button *ngIf="hallType === 'seats'" class="btn dropdown-item" (click)="addAsSeatTicket()">
     Add To Ticket
   </button>
-  <button *ngIf="this.sectors && this.sectors.length" class="btn dropdown-item" (click)="addAsSectorTicket()">
+  <button *ngIf="hallType === 'sectors'" class="btn dropdown-item" (click)="addAsSectorTicket()">
     Add To Ticket
   </button>
 </div>
