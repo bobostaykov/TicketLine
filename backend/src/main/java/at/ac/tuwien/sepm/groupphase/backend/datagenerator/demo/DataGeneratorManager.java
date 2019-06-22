@@ -35,6 +35,7 @@ public class DataGeneratorManager implements ApplicationContextAware {
         context.getBean(EventDataGenerator.class).generate();
         context.getBean(LocationDataGenerator.class).generate();
         context.getBean(HallDataGenerator.class).generate();
+        context.getBean(PricePatternDataGenerator.class).generate();
         context.getBean(EventDataGenerator.class).generate();
         context.getBean(ShowDataGenerator.class).generate();
         context.getBean(CustomerDataGenerator.class).generate();
