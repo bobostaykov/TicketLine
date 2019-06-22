@@ -15,6 +15,11 @@ import {UserService} from '../../services/user/user.service';
 })
 export class NewsComponent implements OnInit {
 
+
+  private page: number = 0;
+  private pages: Array<number>;
+  private dataReady: boolean = false;
+
   error: boolean = false;
   errorMessage: string = '';
   image: File;
@@ -38,6 +43,29 @@ export class NewsComponent implements OnInit {
 
   ngOnInit() {
     this.loadNews();
+  }
+
+
+  private setPage(i, event: any) {
+    event.preventDefault();
+    this.page = i;
+    this.loadNews();
+  }
+
+  private previousPage(event: any) {
+    event.preventDefault();
+    if (this.page > 0 ) {
+      this.page--;
+      this.loadNews();
+    }
+  }
+
+  private nextPage(event: any) {
+    event.preventDefault();
+    if (this.page < this.pages.length - 1) {
+      this.page++;
+      this.loadNews();
+    }
   }
 
   /**
@@ -163,28 +191,32 @@ export class NewsComponent implements OnInit {
 
   private loadNews() {
     if (this.showReadNews === true) {
-      console.log('True');
+      console.log('showReadNews: True');
     } else {
-      console.log('False');
+      console.log('showReadNews: False');
     }
 
     if (this.showReadNews === true) {
-      this.newsService.getAllNews().subscribe(
-        (news: News[]) => {
-          this.news = news;
+      this.newsService.getAllNews(this.page).subscribe(
+        result => {
+          this.news = result['content'];
+          this.pages = new Array(result['totalPages']);
         },
         error => {
           this.defaultServiceErrorHandling(error);
-        }
+        },
+      () => { this.dataReady = true; }
       );
     } else {
-      this.newsService.getUnreadNews().subscribe(
-        (news: News[]) => {
-          this.news = news;
+      this.newsService.getUnreadNews(this.page).subscribe(
+        result => {
+          this.news = result['content'];
+          this.pages = new Array(result['totalPages']);
         },
         error => {
           this.defaultServiceErrorHandling(error);
-        }
+        },
+        () => { this.dataReady = true; }
       );
     }
   }

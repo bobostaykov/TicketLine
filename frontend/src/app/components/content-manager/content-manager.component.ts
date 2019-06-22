@@ -264,7 +264,7 @@ export class ContentManagerComponent implements OnInit {
     this.showService.updateShow(this.showToUpdate).subscribe(
       () => {},
       error => { this.defaultServiceErrorHandling(error); },
-      () => { this.loadEntities(); this.showToUpdate = null; }
+      () => { this.loadEntities(); }
     );
   }
 
