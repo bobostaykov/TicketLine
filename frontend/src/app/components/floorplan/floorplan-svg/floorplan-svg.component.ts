@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {AfterViewInit, Component, DoCheck, EventEmitter, Input, IterableDiffers, OnInit, Output, Renderer2} from '@angular/core';
 import {Seat} from '../../../dtos/seat';
 import {Sector} from '../../../dtos/sector';
 import {PriceCategory} from '../../../dtos/priceCategory';
@@ -8,144 +8,209 @@ import {PriceCategory} from '../../../dtos/priceCategory';
   templateUrl: './floorplan-svg.component.html',
   styleUrls: ['./floorplan-svg.component.scss']
 })
-export class FloorplanSvgComponent implements OnInit {
-  // component can be used to display either seats or sectors which are passed as input element
+export class FloorplanSvgComponent implements OnInit, DoCheck, AfterViewInit {
+
+  // seats and sectors are passed as input arguments. One of them should always be empty
   @Input() private seats?: Seat[];
   @Input() private sectors?: Sector[];
-  // event emitter to add ticket for selected seat or sector
-  @Output() private addTicket: EventEmitter<Seat | Sector> = new EventEmitter<Seat | Sector>();
+  // event emitters to add ticket for selected seat or sector
+  @Output() private addSeatTicket: EventEmitter<Seat> = new EventEmitter<Seat>();
+  @Output() private addSectorTicket: EventEmitter<Sector> = new EventEmitter<Sector>();
   // properties necessary to adjust svg viebox on zoom/mousedrag
   private viewboxPosX: number = 0;
   private viewboxPosY: number = 0;
   private viewboxWidth: number = 300;
-  // initial svg viewbox
+  // used to represent original width of viewbox which is necessary to correctly draw sectors
+  private originalWidth: number = this.viewboxWidth;
+  // initial svg viewbox. Used for property binding
   private viewbox: string = '0 0 300 300';
   // list of priceCategories to loop through in select fields
   // noinspection JSMismatchedCollectionQueryUpdate
   private priceCategories: string[] = Object.keys(PriceCategory);
-  // on update operation updateElementModel is changed and then assigned to selected element
+  // currently selected element
   private selectedElement: Seat | Sector;
-  private updateElementModel: Seat | Sector = this.seats ? new Seat(null, null, null, null, null) : new Sector(null, null, null, null);
+  // HTML/SVG representation of currently selected element
+  private activeElement: HTMLElement;
+  // used for template update form
+  private updateElementModel: Seat | Sector;
   // updateSubmissionError is displayed if seat/sector with given number/row already exists in the hall
   private updateSubmissionError: boolean = false;
   private updateSubmissionMessage: string = '';
-  // event handlers for mousedrag as well as closing update/context menu
-  private _svgDrag = this.svgDrag.bind(this);
-  private _svgDragExit = this.svgDragExit.bind(this);
-  private _closeMenusClick = this.onCloseMenusClick.bind(this);
+  // html elements often used within this component. Initialized on viewinit
+  private svgElement: HTMLElement;
+  private updateForm: HTMLElement;
+  private contextmenu: HTMLElement;
+  // needed to disable event listeners
+  private disableListenerUpdate: Function;
+  private disableListenerContext: Function;
+  private disableMousemoveListener: Function;
+  private disableMouseupListener: Function;
+  // detects changes for seat/sector arrays
+  private iterableDiffer;
 
-  constructor() {
+  constructor(private _iterableDiffers: IterableDiffers, private renderer: Renderer2) {
+    this.iterableDiffer = _iterableDiffers.find([]).create(null);
   }
 
   ngOnInit() {
   }
 
   /**
-   * gets string for d attribute of svg path element depicting a seat
-   * @param seat for which to return path attribute
+   * initializes class variable html elements
    */
-  private getSeatPath(seat: Seat): string {
-    return 'M' + this.getSeatXPos(seat) + ' ' + this.getSeatYPos(seat) +
-      'h ' + this.getSeatWidthAndHeight() + ' v ' + this.getSeatWidthAndHeight() + ' h ' + -this.getSeatWidthAndHeight() + ' Z';
+  ngAfterViewInit(): void {
+    this.svgElement = document.getElementById('floorplan');
+    this.updateForm = document.getElementById('updateForm');
+    this.contextmenu = document.getElementById('contextmenu');
   }
 
   /**
-   * gets string for d attribut of svg path element depicting a sector
-   * @param sector for which to return path attribute
+   * detects changes to seat or sector arrays and draws or removes changed elements accordingly
    */
-  private getSectorPath(sector: Sector): string {
-    return 'M' + this.getSectorXPos(sector) + ' ' + this.getSectorYPos(sector) + 'h ' +
-      this.getSectorWidth() + ' v ' + this.getSectorHeight() + ' h ' + (-this.getSectorWidth()) + ' Z';
-  }
-
-  /**
-   * get color of seat or sector passed as parameter
-   * color depends on the priceCategory of the seat
-   * @param elem for which to return color
-   */
-  private getColor(elem: Seat | Sector): string {
-    return elem.priceCategory === PriceCategory.Cheap ? '#2fb207' : (elem.priceCategory === PriceCategory.Average ? '#129ded' : '#db0611');
-  }
-
-  /**
-   * initializes operation to display update form for selected seat
-   * @param seat for which to display update form
-   */
-  private displaySeatUpdateForm(seat: Seat): void {
-    this.selectedElement = seat;
-    const xPos = this.getSeatXPos(seat);
-    const yPos = this.getSeatYPos(seat);
-    const seatWidthAndHeight = this.getSeatWidthAndHeight();
-    this.displayUpdateForm(xPos, yPos, seatWidthAndHeight, seatWidthAndHeight);
-  }
-
-  /**
-   * initializes operation to display update form for selected sector
-   * @param sector for which to display update form
-   */
-  private displaySectorUpdateForm(sector: Sector): void {
-    this.selectedElement = sector;
-    const xPos = this.getSectorXPos(sector);
-    const yPos = this.getSectorYPos(sector);
-    const sectorWidth = this.getSectorWidth();
-    const sectorHeight = this.getSectorHeight();
-    this.displayUpdateForm(xPos, yPos, sectorWidth, sectorHeight);
-  }
-
-  /**
-   * calculates position of selected seat or sector and displays update form near it
-   * NOTE: This calculation is necessary because we want to display update form correctly even if no click event is available
-   * to get the correct position
-   * @param xPos svg coordinate of seat or sector displayed as path element
-   * @param yPos svg coordinate of seat or sector displayed as path element
-   * @param elementWidth of seat or sector path element in svg coordinates
-   * @param elementHeight of seat or sector path element in svg coordinates
-   */
-  private displayUpdateForm(xPos: number, yPos: number, elementWidth: number, elementHeight: number): void {
-    const svg = document.getElementById('floorplan');
-    if (svg instanceof SVGSVGElement) {
-      // close contextmenu so it is not active at the same time
-      this.closeContext();
-      const updateForm = document.getElementById('updateForm');
-      updateForm.style.display = 'inline-block';
-      const rectForm = updateForm.getBoundingClientRect();
-      const rectSvg = svg.getBoundingClientRect();
-      const svgpx = svg.getCTM().a;
-      updateForm.style.left = rectSvg.left + svgpx * (xPos - this.viewboxPosX) - rectForm.width / 2 + elementWidth * svgpx / 2 + 'px';
-      updateForm.style.top = rectSvg.top + svgpx * (yPos - this.viewboxPosY) + elementHeight * svgpx + 20 + window.scrollY + 'px';
-      this.updateElementModel = {...this.selectedElement};
-      document.addEventListener('click', this._closeMenusClick);
+  ngDoCheck(): void {
+    if (this.seats && this.seats.length) {
+      const changes = this.iterableDiffer.diff(this.seats);
+      if (changes) {
+        changes.forEachAddedItem(record => this.drawSeatPath(record.item));
+        changes.forEachRemovedItem(record => this.removeSeatPath(record.item));
+      }
+    } else if (this.sectors && this.sectors.length) {
+      const changes = this.iterableDiffer.diff(this.sectors);
+      if (changes) {
+        changes.forEachAddedItem(record => this.drawSectorPath(record.item));
+        changes.forEachRemovedItem(record => this.removeSectorPath(record.item));
+      }
     }
   }
 
   /**
-   * displays contextmenu for selected seat or sector element near mouse event
-   * @param element seat or sector for which contextmenu is displayed
-   * @param event mouse event containing position of selected seat or sector
+   * draws representation of a seat as svg path element and appends it to floorplan svg
+   * sets up event listeners for the element
+   * @param seat to be drawn
    */
-  private displayContext(element: Seat | Sector, event: MouseEvent): void {
-    event.preventDefault();
-    // close update form so it is not displayed at the same time
-    this.closeUpdateForm();
-    const rectEvent = (event.target as HTMLElement).getBoundingClientRect();
-    const context = document.getElementById('contextmenu');
-    context.style.left = rectEvent.left + 'px';
-    context.style.top = rectEvent.bottom + 'px';
-    context.style.display = 'inline-block';
-    this.selectedElement = element;
-    document.addEventListener('click', this._closeMenusClick);
+  private drawSeatPath(seat: Seat): HTMLElement {
+    const seatElement = this.renderer.createElement('path', 'svg');
+    this.renderer.setAttribute(seatElement, 'id', 'seat' + seat.seatRow + seat.seatNumber);
+    const xPos = (seat.seatNumber - 1) * 1.2 * 10 + Math.floor(seat.seatNumber / 15) * 10;
+    const yPos = (seat.seatRow - 1) * 1.2 * 10 + Math.floor(seat.seatRow / 10) * 10;
+    this.renderer.setAttribute(seatElement, 'd', 'M ' + xPos + ' ' + yPos + ' h 10 v 10 h -10 Z');
+    this.renderer.setAttribute(seatElement, 'fill', this.getColor(seat));
+    this.renderer.listen(seatElement, 'click', (event) => this.displayUpdateForm(seat, event.target));
+    this.renderer.listen(seatElement, 'contextmenu', (event) => this.displayContext(seat, event));
+    this.renderer.appendChild(this.svgElement, seatElement);
+    return seatElement;
   }
 
   /**
-   * event listener function which closes update form or contextmenu on click anywhere but the form itself or a seat/sector path element
-   * @param event mouse click event
+   * draws representation of a sector as svg path element and appends it to the floorplan svg
+   * sets up event listeners for the element
+   * @param sector to be drawn
+   */
+  private drawSectorPath(sector: Sector): HTMLElement {
+    const sectorElement = this.renderer.createElement('path', 'svg');
+    this.renderer.setAttribute(sectorElement, 'id', 'sector' + sector.sectorNumber);
+    const gap = this.originalWidth / 32;
+    const width = this.originalWidth / 3.2;
+    const xPos = ((sector.sectorNumber - 1) % 3) * (width + gap);
+    const yPos = Math.floor((sector.sectorNumber - 1) / 3) * (50 + gap);
+    this.renderer.setAttribute(sectorElement, 'd', 'M ' + xPos + ' ' + yPos + ' h ' + width + ' v 50 h ' + (-width) + ' Z');
+    this.renderer.setAttribute(sectorElement, 'fill', this.getColor(sector));
+    this.renderer.listen(sectorElement, 'click', (event) => this.displayUpdateForm(sector, event.target));
+    this.renderer.listen(sectorElement, 'contextmenu', (event => this.displayContext(sector, event)));
+    console.log(sectorElement);
+    console.log(this.svgElement);
+    this.renderer.appendChild(this.svgElement, sectorElement);
+    return sectorElement;
+  }
+
+  /**
+   * removes svg path used to represent a seat
+   * @param seat associated with the path element to be removed
+   */
+  private removeSeatPath(seat: Seat): void {
+    const id: string = 'seat' + seat.seatRow + seat.seatNumber;
+    this.renderer.removeChild(this.svgElement, document.getElementById(id));
+  }
+
+  /**
+   * removes svg path used to represent a sector
+   * @param sector assoicated with the path element to be removed
+   */
+  private removeSectorPath(sector: Sector): void {
+    const id: string = 'sector' + sector.sectorNumber;
+    this.renderer.removeChild(this.svgElement, document.getElementById(id));
+  }
+
+  /**
+   * displays update form near selected element and sets up updateElementModel with parameters to update selected element
+   * @param element for which update form should be displayed
+   * @param eventTarget target of click event used to get position of the element's path representation
+   */
+  displayUpdateForm(element: Seat | Sector, eventTarget: HTMLElement): boolean | void {
+    this.closeContext();
+    this.renderer.setStyle(this.updateForm, 'display', 'inline-block');
+    const rectForm = this.updateForm.getBoundingClientRect();
+    const rectEvent = eventTarget.getBoundingClientRect();
+    this.renderer.setStyle(this.updateForm, 'left', window.scrollX + rectEvent.left - rectForm.width / 2 + rectEvent.width / 2 + 'px');
+    this.renderer.setStyle(this.updateForm, 'top', window.scrollY + rectEvent.bottom + 20 + 'px');
+    this.updateElementModel = {...element};
+    this.setActiveElement(element, eventTarget);
+    if (this.disableListenerUpdate) {
+      this.disableListenerUpdate();
+    }
+    this.disableListenerUpdate = this.renderer.listen('document', 'click', (evt) => this.onCloseMenusClick(evt));
+  }
+
+  /**
+   * displays contextmenu near selected element
+   * @param element for which contextmenu should be displayed
+   * @param event click event used to get position of the element's path representation
+   */
+  private displayContext(element: Seat | Sector, event: MouseEvent): void {
+    event.preventDefault();
+    this.closeUpdateForm();
+    const target = event.target as HTMLElement;
+    const rectEvent = target.getBoundingClientRect();
+    this.renderer.setStyle(this.contextmenu, 'left', rectEvent.left + 'px');
+    this.renderer.setStyle(this.contextmenu, 'top', rectEvent.bottom + 'px');
+    this.renderer.setStyle(this.contextmenu, 'display', 'inline-block');
+    this.setActiveElement(element, target);
+    if (this.disableListenerContext) {
+      this.disableListenerContext();
+    }
+    this.disableListenerContext = this.renderer.listen('document', 'click', (evt) => this.onCloseMenusClick(evt));
+  }
+
+  /**
+   * sets a specific element as active
+   * by setting selectedElement and its SVG/HTML representation activeElement
+   * also adds css class active to activeElement
+   * @param elem to be set to selectedElement
+   * @param elemHTML to be set to activeElement
+   */
+  private setActiveElement(elem: Seat | Sector, elemHTML: HTMLElement) {
+    if (this.activeElement) {
+      this.renderer.removeClass(this.activeElement, 'active');
+    }
+    this.selectedElement = elem;
+    this.activeElement = elemHTML;
+    if (this.activeElement) {
+      this.renderer.addClass(this.activeElement, 'active');
+    }
+  }
+
+  /**
+   * handles click event to close update and context menus
+   * closes those menus on click if target is anything but those menus themselves
+   * @param event click to handle and check target
    */
   private onCloseMenusClick(event: Event): void {
+    console.log('Document Listener called');
     const target = event.target as HTMLElement;
     if (!(target.tagName === 'path' || target.closest('#updateForm') || target.closest('#contextmenu'))) {
       this.closeUpdateForm();
       this.closeContext();
-      document.removeEventListener('click', this._closeMenusClick);
+      this.setActiveElement(null, null);
     }
   }
 
@@ -153,19 +218,64 @@ export class FloorplanSvgComponent implements OnInit {
    * hides/closes update form
    */
   private closeUpdateForm(): void {
-    const updateForm = document.getElementById('updateForm');
-    if (updateForm) {
-      document.getElementById('updateForm').style.display = 'none';
+    this.renderer.setStyle(this.updateForm, 'display', 'none');
+    if (this.disableListenerUpdate) {
+      this.disableListenerUpdate();
     }
   }
 
   /**
-   * hides/closes context menu
+   * hides/closes contextmenu
    */
   private closeContext(): void {
-    const contextmenu = document.getElementById('contextmenu');
-    if (contextmenu) {
-      document.getElementById('contextmenu').style.display = 'none';
+    this.renderer.setStyle(this.contextmenu, 'display', 'none');
+    if (this.disableListenerContext) {
+      this.disableListenerContext();
+    }
+  }
+
+  /**
+   * updates seat or sector element with parameters found in updateElementModel
+   * displays update form wherever selectedElement with updated parameters reappears
+   */
+  private updateSelectedElement(): void {
+    // check if selected element and updateElementModel have a value other than null/undefiend
+    if (this.selectedElement && this.updateElementModel) {
+      // check if currently displaying seat array in which case selectedElement must also be seat
+      if (this.seats && this.seats.length) {
+        const updateElement = this.updateElementModel as Seat;
+        const selectedElement = this.selectedElement as Seat;
+        // if seat with updatedElement's number and row already exists display error message
+        if (this.seats.some(seat => seat !== selectedElement &&
+          seat.seatNumber === updateElement.seatNumber &&
+          seat.seatRow === updateElement.seatRow)) {
+          this.updateSubmissionError = true;
+          this.updateSubmissionMessage = 'A Seat with row ' + updateElement.seatRow +
+            ' and number ' + updateElement.seatNumber + ' already exists!';
+        } else {
+          // remove old svg path of selected element, update selected element, draw new path and display updateForm again
+          this.removeSeatPath(selectedElement);
+          Object.assign(selectedElement, updateElement);
+          this.displayUpdateForm(selectedElement, this.drawSeatPath(selectedElement));
+          this.updateSubmissionError = false;
+        }
+        // check if currently displayingg sector array in which case selectedElement must also be sector
+      } else if (this.sectors && this.sectors.length) {
+        const updateElement = this.updateElementModel as Sector;
+        const selectedElement = this.selectedElement as Sector;
+        // if sector with updatedElement's sector number already exists display error message
+        if (this.sectors.some(sector => sector !== selectedElement &&
+          sector.sectorNumber === updateElement.sectorNumber)) {
+          this.updateSubmissionError = true;
+          this.updateSubmissionMessage = 'A Sector with number ' + updateElement.sectorNumber + ' already exists!';
+        } else {
+          // remove old svg path of selected element, update selected element, draw new path and display updateForm again
+          this.removeSectorPath(selectedElement);
+          Object.assign(selectedElement, updateElement);
+          this.displayUpdateForm(selectedElement, this.drawSectorPath(selectedElement));
+          this.updateSubmissionError = false;
+        }
+      }
     }
   }
 
@@ -184,51 +294,39 @@ export class FloorplanSvgComponent implements OnInit {
   }
 
   /**
-   * updates seat or sector element with parameters found in updateElementModel
-   * displays update form wherever selectedElement with updated parameters reappears
+   * emits event for selectedElement to parent component so it can add selectedElement to seat tickets array
    */
-  private updateSelectedElement(): void {
-    if (this.selectedElement && this.updateElementModel) {
-      if (this.seats && this.seats.length) {
-        const updateElement = this.updateElementModel as Seat;
-        if (this.seats.some(seat => seat !== this.selectedElement &&
-          seat.seatNumber === updateElement.seatNumber &&
-          seat.seatRow === updateElement.seatRow)) {
-          this.updateSubmissionError = true;
-          this.updateSubmissionMessage = 'A Seat with row ' + updateElement.seatRow +
-            ' and number ' + updateElement.seatNumber + ' already exists!';
-        } else {
-          Object.assign(this.selectedElement, updateElement);
-          this.updateSubmissionError = false;
-          this.displaySeatUpdateForm(this.selectedElement as Seat);
-        }
-      } else if (this.sectors && this.sectors.length) {
-        const updateElement = this.updateElementModel as Sector;
-        if (this.sectors.some(sector => sector !== this.selectedElement &&
-          sector.sectorNumber === updateElement.sectorNumber)) {
-          this.updateSubmissionError = true;
-          this.updateSubmissionMessage = 'A Sector with number ' + updateElement.sectorNumber + ' already exists!';
-        } else {
-          Object.assign(this.selectedElement, updateElement);
-          this.updateSubmissionError = false;
-          this.displaySectorUpdateForm(this.selectedElement as Sector);
-        }
-      }
-    }
-  }
-
-  /**
-   * emits event for selectedElement to parent component so it can add selectedElement to tickets array
-   */
-  private addToTicket(): void {
+  private addAsSeatTicket(): void {
     if (this.selectedElement) {
-      this.addTicket.emit(this.selectedElement);
+      this.addSeatTicket.emit(this.selectedElement as Seat);
       this.closeContext();
     }
   }
 
   /**
+   * emits event for selectedElement to parent component so it can add selectedElement to sector tickets array
+   */
+  private addAsSectorTicket(): void {
+    if (this.selectedElement) {
+      this.addSectorTicket.emit(this.selectedElement as Sector);
+      this.closeContext();
+    }
+  }
+
+
+  /**
+   * get color of seat or sector passed as parameter
+   * color depends on the priceCategory of the seat
+   * @param elem for which to return color
+   */
+  private getColor(elem: Seat | Sector): string {
+    return elem.priceCategory === PriceCategory.Cheap ? '#2fb207' : (elem.priceCategory === PriceCategory.Average ? '#129ded' : '#db0611');
+  }
+
+
+  /**
    * allows users to zoom in by adjusting svg viewbox
+   * also closes updateForm and contextmenu because their positions wouldn't make sense otherwise
    * @param event mousewheel event used to zoom
    */
   private zoom(event) {
@@ -236,11 +334,14 @@ export class FloorplanSvgComponent implements OnInit {
     this.viewboxWidth = event.deltaY > 0 ? this.viewboxWidth * 1.05 : this.viewboxWidth / 1.05;
     this.viewboxWidth = this.viewboxWidth < 300 ? 300 : (this.viewboxWidth > 1310 ? 1310 : this.viewboxWidth);
     this.viewbox = this.viewboxPosX + ' ' + this.viewboxPosY + ' ' + this.viewboxWidth + ' ' + this.viewboxWidth;
+    this.closeUpdateForm();
+    this.closeContext();
   }
 
   /**
    * called on mousemove event after mousedown in svg
    * allows users to change viewbox by dragging it
+   * also closes updateForm and contextmenu because their positions wouldn't make sense otherwise
    * @param event mousemove event used to drag viewbox
    */
   private svgDrag(event: MouseEvent): void {
@@ -249,94 +350,33 @@ export class FloorplanSvgComponent implements OnInit {
     this.viewboxPosX = this.viewboxPosX < 0 ? 0 : this.viewboxPosX;
     this.viewboxPosY = this.viewboxPosY < 0 ? 0 : this.viewboxPosY;
     this.viewbox = this.viewboxPosX + ' ' + this.viewboxPosY + ' ' + this.viewboxWidth + ' ' + this.viewboxWidth;
+    this.closeUpdateForm();
+    this.closeContext();
   }
 
   /**
    * called on mousedown event  in svg
    * initializes viewbox drag on mousemove by adding eventlisteners to mousemove event and mouseup event to end mousedrag
+   * also adds class 'grabbing' to svg to display cursor: grabbing
    */
   private svgDragInit(): void {
-    const svg = document.getElementById('floorplan');
-    if (svg) {
-      svg.addEventListener('mousemove', this._svgDrag);
-      document.addEventListener('mouseup', this._svgDragExit);
-      svg.classList.add('grabbing');
-    }
+    this.disableMousemoveListener = this.renderer.listen(this.svgElement, 'mousemove', (event) => this.svgDrag(event));
+    this.disableMouseupListener = this.renderer.listen('document', 'mouseup', () => this.svgDragExit());
+    this.renderer.addClass(this.svgElement, 'grabbing');
   }
 
   /**
    * called on mouseup event in svg
-   * ends viewbox dragging by removing mousemove event listener
+   * ends viewbox dragging by removing mousemove and mouseup event listeners
+   * also removes class 'grabbing' from svg to display cursor: grabbing
    */
   private svgDragExit(): void {
-    const svg = document.getElementById('floorplan');
-    if (svg) {
-      svg.removeEventListener('mousemove', this._svgDrag);
-      svg.classList.remove('grabbing');
+    if (this.disableMousemoveListener) {
+      this.disableMousemoveListener();
     }
-  }
-
-  /**
-   * getter function
-   * calculates the x position of a given seat element from its number
-   * @param seat for which x position is to be calculated
-   */
-  private getSeatXPos(seat: Seat): number {
-    return (seat.seatNumber - 1) * 1.2 * 10 + Math.floor(seat.seatNumber / 15) * 10;
-  }
-
-  /**
-   * getter function
-   * calculates the y position of a given seat element from its number
-   * @param seat for which y position is to be calculated
-   */
-  private getSeatYPos(seat: Seat): number {
-    return (seat.seatRow - 1) * 1.2 * 10 + Math.floor(seat.seatRow / 10) * 10;
-  }
-
-  /**
-   * getter function
-   * calculates the x position of a given sector element from its number
-   * @param sector for which x position is to be calculated
-   */
-  private getSectorXPos(sector: Sector): number {
-    return ((sector.sectorNumber - 1) % 3) * (this.getSectorWidth() + this.getSectorGap());
-  }
-
-  /**
-   * getter function
-   * calculates the y position of a given sector element from its number
-   * @param sector for which y position is to be calculated
-   */
-  private getSectorYPos(sector: Sector): number {
-    return Math.floor((sector.sectorNumber - 1) / 3) * (this.getSectorHeight() + this.getSectorGap());
-  }
-
-  /**
-   * gets number which is used both for width and height of a path element depicting a seat
-   */
-  private getSeatWidthAndHeight(): number {
-    return 10;
-  }
-
-  /**
-   * gets number which is used for height of a path element depicting a sector
-   */
-  private getSectorHeight(): number {
-    return 50;
-  }
-
-  /**
-   * gets number which is used for width of a path element depicting a sector
-   */
-  private getSectorWidth(): number {
-    return this.viewboxWidth / 3.2;
-  }
-
-  /**
-   * calculates gap found along the x-axis of the svg between different sectors
-   */
-  private getSectorGap(): number {
-    return this.viewboxWidth / 32;
+    if (this.disableMouseupListener) {
+      this.disableMouseupListener();
+    }
+    this.renderer.removeClass(this.svgElement, 'grabbing');
   }
 }
