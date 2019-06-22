@@ -19,6 +19,7 @@ import at.ac.tuwien.sepm.groupphase.backend.service.ticketExpirationHandler.Tick
 import at.ac.tuwien.sepm.groupphase.backend.service.ticketExpirationHandler.TicketExpirationHandlerImpl;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.BDDMockito;
 import org.mockito.Mockito;
 
 import java.time.LocalDate;
@@ -259,7 +260,8 @@ public class TicketServiceTest {
         Mockito.when(showRepository.findAllByEvent(TEST_EVENT_LIST)).thenReturn(TEST_SHOW_LIST);
         Mockito.when(ticketRepository.findAllByCustomer(TEST_CUSTOMER1_LIST)).thenReturn(TEST_TICKET_LIST_BY_CUSTOMER);
         Mockito.when(ticketRepository.findAllByShow(TEST_SHOW_LIST)).thenReturn(TEST_TICKET_LIST_BY_SHOW);
-        //Mockito.when(ticketExpirationHandler.setExpiredReservatedTicketsToStatusExpired(Mockito.any(ShowDTO.class));
+        Mockito.when(ticketExpirationHandler.setExpiredReservatedTicketsToStatusExpired(TEST_TICKET_LIST_DTO)).thenReturn(TEST_TICKET_LIST_DTO);
+        //BDDMockito.given(ticketExpirationHandler.setExpiredReservatedTicketsToStatusExpired(any(ShowDTO.class));
         List<TicketDTO> result = ticketService.findAllFilteredByCustomerAndEvent(TEST_CUSTOMER_NAME1, TEST_EVENT_NAME);
         assertEquals(result, TEST_TICKET_LIST_DTO);
     }

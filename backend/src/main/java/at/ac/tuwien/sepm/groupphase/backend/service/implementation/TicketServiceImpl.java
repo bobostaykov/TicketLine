@@ -182,15 +182,20 @@ public class TicketServiceImpl implements TicketService {
         List<Customer> customers = customerRepository.findAllByName(customerName);
         List<Event> events =  eventRepository.findAllByName(eventName);
         List<Show> shows = showRepository.findAllByEvent(events);
-        List<TicketDTO> result1 = new ArrayList<>();
-        List<TicketDTO> result2 = new ArrayList<>();
+        List<Ticket> result1 = new ArrayList<>();
+        List<Ticket> result2 = new ArrayList<>();
         if (customerName != null) {
-            result1 = ticketExpirationHandler.setExpiredReservatedTicketsToStatusExpired(ticketMapper.ticketToTicketDTO(ticketRepository.findAllByCustomer(customers)));
+            result1 = ticketRepository.findAllByCustomer(customers);
+            //result1 = ticketExpirationHandler.setExpiredReservatedTicketsToStatusExpired(ticketMapper.ticketToTicketDTO(ticketRepository.findAllByCustomer(customers)));
         }
         if (eventName != null) {
-            result2 = ticketExpirationHandler.setExpiredReservatedTicketsToStatusExpired(ticketMapper.ticketToTicketDTO(ticketRepository.findAllByShow(shows)));
+            result2 = ticketRepository.findAllByShow(shows);
+            //result2 = ticketExpirationHandler.setExpiredReservatedTicketsToStatusExpired(ticketMapper.ticketToTicketDTO(ticketRepository.findAllByShow(shows)));
         }
-        return this.difference(result1, result2);
+        List<Ticket> result = this.difference(result1, result2);
+        List<TicketDTO> res = ticketExpirationHandler.setExpiredReservatedTicketsToStatusExpired(ticketMapper.ticketToTicketDTO(result));
+        return res;
+        //return /*ticketExpirationHandler.setExpiredReservatedTicketsToStatusExpired(*/ticketMapper.ticketToTicketDTO(this.difference(result1, result2));
     }
 
     @Override
@@ -238,9 +243,9 @@ public class TicketServiceImpl implements TicketService {
      * @param list2 list of tickets
      * @return conjunction of list1 and list2
      */
-    private List<TicketDTO> difference(List<TicketDTO> list1, List<TicketDTO> list2) {
-        List<TicketDTO> result = new ArrayList<>();
-        for (TicketDTO ticket : list1) {
+    private List<Ticket> difference(List<Ticket> list1, List<Ticket> list2) {
+        List<Ticket> result = new ArrayList<>();
+        for (Ticket ticket : list1) {
             if(list2.contains(ticket)) {
                 result.add(ticket);
             }

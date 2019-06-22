@@ -88,7 +88,7 @@ public class TicketExpirationHandlerImpl implements TicketExpirationHandler {
         if(ticket.getStatus() == TicketStatus.SOLD || !this.checkIfShowStartsInLessThan30Minutes(ticket.getShow()))
             return ticket;
         ticket.setStatus(TicketStatus.EXPIRED);
-        ticketRepository.save(ticketMapper.ticketDTOToTicket(ticket));
+        ticketMapper.ticketToTicketDTO(ticketRepository.save(ticketMapper.ticketDTOToTicket(ticket)));
         return ticket;
     }
 
