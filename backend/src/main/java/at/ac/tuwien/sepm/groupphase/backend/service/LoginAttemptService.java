@@ -1,8 +1,5 @@
 package at.ac.tuwien.sepm.groupphase.backend.service;
 
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.user.UserDTO;
-import at.ac.tuwien.sepm.groupphase.backend.entity.User;
-
 public interface LoginAttemptService {
     /**
      * checks if Username exists. If exists:

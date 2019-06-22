@@ -2,16 +2,24 @@ package at.ac.tuwien.sepm.groupphase.backend.repository.implementation;
 
 import at.ac.tuwien.sepm.groupphase.backend.datatype.EventType;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.searchParameters.EventSearchParametersDTO;
-import at.ac.tuwien.sepm.groupphase.backend.entity.*;
-
+import at.ac.tuwien.sepm.groupphase.backend.entity.Artist;
+import at.ac.tuwien.sepm.groupphase.backend.entity.Artist_;
+import at.ac.tuwien.sepm.groupphase.backend.entity.Event;
+import at.ac.tuwien.sepm.groupphase.backend.entity.Event_;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.EventRepositoryCustom;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,9 +38,10 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
 
     @Override
 
-    public List<Event> findAllEventsFiltered(EventSearchParametersDTO parameters) throws PersistenceException {
+    public Page<Event> findAllEventsFiltered(EventSearchParametersDTO parameters, Pageable pageable) throws PersistenceException {
 
         LOGGER.info("Find Events filtered by: " + parameters.toString());
+
         CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
         List<Predicate> predicates = new ArrayList<>();
         em.getMetamodel();
@@ -66,34 +75,20 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
 
         query.select(eventRoot).where(predicates.toArray(new Predicate[predicates.size()]));
         query.orderBy(criteriaBuilder.asc(eventRoot.get(Event_.eventType))).orderBy(criteriaBuilder.asc(eventRoot.get(Event_.name)));
-        List results = em.createQuery(query).getResultList();
-        return results;
-    }
-    /*
-    @Query("SELECT e.name, SUM(s.ticketsSold) FROM Show s, Event e WHERE s.event = e.id AND MONTHNAME(s.date) IN :monthsSet AND e.eventType IN :categoriesSet GROUP BY s.event ORDER BY SUM(s.ticketsSold) DESC")
-     */
 
-
-    @Override
-    public List<Object> findTopTenEvents2(Set<String> monthsSet, Set<EventType> categoriesSet) {
-/*
-        CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
-        List<Predicate> predicates = new ArrayList<>();
-        CriteriaQuery<Event> query = criteriaBuilder.createQuery(Event.class);
-        Root<Event> eventRoot = query.from(Event.class);
-        Root<Show> showRoot = query.from(Show.class);
-        Join<Show, Event> showEventJoin = showRoot.join(Show_.event);
-        for (EventType eventType: categoriesSet) {
-            predicates.add(criteriaBuilder.equal(showEventJoin.get(Event_.eventType), eventType));
+        TypedQuery typedQuery = em.createQuery(query);
+        List<Event> eventList = typedQuery.getResultList();
+        if (eventList.isEmpty()) {
+            throw new NotFoundException("No events are found with those parameters");
         }
-        for (String:
-             ) {
+        int pageSize = 10;
+        int totalElements = eventList.size();
 
-        }
 
- */
-        //todo create topTenMethod
-        return null;
-
+        int start = (int)pageable.getOffset();
+        int end = (start + pageable.getPageSize()) > eventList.size() ? eventList.size() : (start + pageable.getPageSize());
+        Page<Event> pages = new PageImpl<Event>(eventList.subList(start, end), pageable, eventList.size());
+        return pages;
     }
+
 }

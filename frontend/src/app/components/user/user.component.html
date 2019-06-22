@@ -6,12 +6,40 @@
 </div>
 
 
+<div *ngIf="userBlocked" class="alert alert-success alert-dismissible fade show" role="alert">
+  {{ blockedUserMessage }}
+  <button type="button" (click)="vanishError()" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+
+
+<div *ngIf="cantBlockAdmin" class="alert alert-warning alert-dismissible fade show" role="alert">
+  {{ cantBlockAdminMessage }}
+  <button type="button" (click)="vanishError()" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+
+
+<div *ngIf="userAlreadyBlocked" class="alert alert-warning alert-dismissible fade show" role="alert">
+  {{ userAlreadyBlockedMessage }}
+  <button type="button" (click)="vanishError()" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+
+
 <div class="mt-4 container">
 
-  <div class="row p-2 mb-4">
+  <div class="row p-2 mb-2">
     <button *ngIf="isAdmin()" (click)="clearForm()" type="button" class="btn btn-secondary btn-sm mr-4" data-toggle="modal" data-target=".create-user-modal">Add user</button>
     <button *ngIf="isAdmin()" class="btn btn-secondary btn-sm mr-4" routerLink="/blocked" routerLinkActive="active">Show blocked Users</button>
+  </div>
 
+  <div class="row p-2 mb-4">
+    <input type="text" class="form-control search mr-4" [(ngModel)]="userToSearch" placeholder="Username">
+    <button (click)="loadUsers(userToSearch)" class="btn btn-secondary btn-sm search mr-4">Search</button>
   </div>
 
   <div class="modal fade create-user-modal" tabindex="-1" role="dialog" aria-labelledby="Create user modal" aria-hidden="true">
@@ -31,14 +59,10 @@
               <input type="text" name="username" formControlName="username" class="form-control" id="inputUsername"
                      aria-describedby="usernameHelp" placeholder="Enter username">
               <div *ngIf="submitted && userForm.controls.username.errors" class="error">
-                <small class="form-text text-warning" *ngIf="userForm.controls.username.errors.required">Username is
-                  required!
-                </small>
+                <small class="form-text text-danger" *ngIf="userForm.controls.username.errors.required">Username is required!</small>
               </div>
               <div *ngIf="submitted && usernameError" class="error">
-                <small class="form-text text-warning">User with the same
-                  username already exists!
-                </small>
+                <small class="form-text text-danger">User with the same username already exists!</small>
               </div>
             </div>
 
@@ -47,14 +71,10 @@
               <input type="password" name="password" formControlName="password" class="form-control" id="inputPassword"
                      aria-describedby="passwordHelp" placeholder="Enter password">
               <div *ngIf="submitted && userForm.controls.password.errors" class="error">
-                <small class="form-text text-warning" *ngIf="userForm.controls.password.errors.required">Password is
-                  required!
-                </small>
+                <small class="form-text text-danger" *ngIf="userForm.controls.password.errors.required">Password is required!</small>
               </div>
-              <div *ngIf="submitted && userForm.controls.password.value.length < 8 && userForm.controls.password.value.length > 0" class="error">
-                <small class="form-text text-warning">Password must
-                  be at least 8 characters long!
-                </small>
+              <div *ngIf="submitted && userForm.controls.password.value != null && userForm.controls.password.value.length < 8" class="error">
+                <small class="form-text text-danger">Password must be at least 8 characters long!</small>
               </div>
             </div>
 
@@ -63,30 +83,20 @@
               <input type="password" name="rePassword" formControlName="rePassword" class="form-control" id="inputRePassword"
                      aria-describedby="rePasswordHelp" placeholder="Re-enter password">
               <div *ngIf="submitted && userForm.controls.rePassword.value === userForm.controls.password.value && userForm.controls.rePassword.value === ''" class="error">
-                <small class="form-text text-warning">Password is
-                  required!
-                </small>
+                <small class="form-text text-danger">Password is required!</small>
               </div>
               <div *ngIf="submitted && userForm.controls.rePassword.value !== userForm.controls.password.value" class="error">
-                <small class="form-text text-warning">Passwords don't
-                  match!
-                </small>
+                <small class="form-text text-danger">Passwords don't match!</small>
               </div>
             </div>
 
             <div class="form-group">
               <label for="inputType">Type</label>
-              <input type="text" name="type" formControlName="type" class="form-control" id="inputType"
-                        aria-describedby="typeHelp" placeholder="Enter type (ADMIN/SELLER)">
+              <select name="type" formControlName="type" class="form-control" id="inputType" aria-describedby="typeHelp" [(ngModel)]="selectedUserType">
+                <option *ngFor="let type of userTypes">{{type}}</option>
+              </select>
               <div *ngIf="submitted && userForm.controls.type.errors" class="error">
-                <small class="form-text text-warning" *ngIf="userForm.controls.type.errors.required">Type is
-                  required!
-                </small>
-              </div>
-              <div *ngIf="submitted && userForm.controls.type.value!=='ADMIN' && userForm.controls.type.value!=='SELLER'" class="error">
-                <small class="form-text text-warning">Type is
-                  either ADMIN or SELLER!
-                </small>
+                <small class="form-text text-danger" *ngIf="userForm.controls.type.errors.required">Type is required!</small>
               </div>
             </div>
 
@@ -103,6 +113,25 @@
 </div>
 
 
+<div class="modal fade delete-user-modal" tabindex="-1" role="dialog" aria-labelledby="Delete user modal" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Delete user</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure?</p>
+        <button type="button" (click)="deleteUser(userToDelete)" class="btn btn-danger float-left" data-dismiss="modal">Delete</button>
+        <button type="button" class="btn btn-default float-right" data-dismiss="modal">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="dataReady">
 <table class="table">
   <thead>
     <tr>
@@ -111,15 +140,29 @@
   </thead>
   <tbody>
     <tr *ngFor="let user of users">
-      <th scope="row" class="align-middle">{{user.id}}</th>
       <td class="align-middle">{{user.username}}</td>
-      <td class="align-middle">{{user.type}}</td>
-      <td class="align-middle">{{user.userSince}}</td>
-      <td class="align-middle">{{user.lastLogin}}</td>
-      <td class="align-middle"><img (click)="deleteUser(user.id)" src="../../../assets/trash.png" width="25" height="25" alt="delete"></td>
-      <td *ngif= "userIsAdmin(user)" class="align-middle"><button mat-raised-button (click)="blockUser(user.id)"  >block user</button> </td>
-      <td *ngif= "userIsAdmin(user)" class="align-middle"><button mat-raised-button (click)="blockUser(user.id)" data toggle="modal" data-target=".change-password-modal"  >change password </button></td>
+      <td class="align-middle">{{user.type.toString().slice(0,1) + user.type.toString().slice(1,user.type.toString().length).toLowerCase()}}</td>
+      <td class="align-middle">{{user.userSince | date:"dd/MM/yyyy HH:mm"}}</td>
+      <td class="align-middle" *ngIf="user.lastLogin">{{user.lastLogin | date:"dd/MM/yyyy HH:mm"}}</td>
+      <td class="align-middle" *ngIf="!user.lastLogin">Never logged in</td>
+      <td class="align-middle"><img (click)="setUserToDelete(user.id)" data-toggle="modal" data-target=".delete-user-modal" src="../../../assets/trash.png" width="25" height="25" alt="delete"></td>
+      <td class="align-middle"><button mat-raised-button (click)="blockUser(user.id)">block user</button></td>
     </tr>
-  <div> id= </div>
   </tbody>
 </table>
+
+  <hr class="hr-bold">
+  <div class="justify-content-center" *ngIf="pages.length > 1">
+    <ul class="nav nav-pills">
+      <li class="nav-item">
+        <a class="nav-link" href="" (click)="previousPage($event)">«</a>
+      </li>
+      <li class="nav-item" *ngFor="let p of pages; let i = index">
+        <a class="nav-link" href="" (click)="setPage(i, $event)" [ngClass]="{'active': i == page}">{{i}}</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="" (click)="nextPage($event)">»</a>
+      </li>
+    </ul>
+  </div>
+</div>

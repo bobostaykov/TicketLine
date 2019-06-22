@@ -5,8 +5,9 @@ import {Observable} from 'rxjs';
 import {EventTickets} from '../../dtos/event_tickets';
 import {ResultsFor} from '../../datatype/results_for';
 import {Event} from '../../dtos/event';
+import {TopTenDetails} from '../../dtos/top-ten-details';
 
-// TODO public or default methods
+// TODO Combine this EventService with EventResultsService
 
 @Injectable({
   providedIn: 'root'
@@ -18,16 +19,22 @@ export class EventService {
   constructor(private httpClient: HttpClient, private globals: Globals) { }
 
   /**
-   * Get top ten events from backend
+   * Create event
    */
-  public getTopTenEvents(monthsArray: string[], categoriesArray: string[]): Observable<EventTickets[]> {
-    console.log('Get top 10 events');
-    return this.httpClient.get<EventTickets[]>(this.eventBaseUri + '/topten',
-      {params: { months: monthsArray.join(','), categories: categoriesArray.join(',') }});
+  public createEvent(event: Event): Observable<Event> {
+    console.log('Create event');
+    return this.httpClient.post<Event>(this.eventBaseUri, event);
   }
 
   /**
-   * Get all events that apply to a specific eventType of search term (resultsFor: ARTIST, EVENT, LOCATION) from backend
+   * Get top ten events from backend
+   */
+  public getTopTenEvents(monthsCats: TopTenDetails): Observable<EventTickets[]> {
+    console.log('Get top 10 events');
+    return this.httpClient.post<EventTickets[]>(this.eventBaseUri + '/topten', monthsCats);
+  }
+
+  /**   * Get all events that apply to a specific eventType of search term (resultsFor: ARTIST, EVENT, LOCATION) from backend
    * If resultsFor === ResultsFor.LOCATION, name_or_id will be the location's id, otherwise it will be the name of the event/artist
    */
   /*
@@ -40,9 +47,9 @@ export class EventService {
   /**
    * Get all events from backend
    */
-  public getAllEvents(): Observable<Event[]> {
+  public getAllEvents(page: number): Observable<Event[]> {
     console.log('Get all events');
-    return this.httpClient.get<Event[]>(this.eventBaseUri);
+    return this.httpClient.get<Event[]>(this.eventBaseUri + '/?page=' + page);
   }
 
 }

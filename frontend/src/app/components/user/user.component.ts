@@ -12,13 +12,27 @@ import {UserType} from '../../datatype/user_type';
 })
 export class UserComponent implements OnInit {
 
-  error: boolean = false;
-  errorMessage: string = '';
-  users: User[];
-  userForm: FormGroup;
-  submitted: boolean = false;
-  usernameError: boolean = false;
-  headElements = ['Id', 'Name', 'Type', 'User Since', 'Last Login', 'Remove', 'Block'];
+  private page: number = 0;
+  private pages: Array<number>;
+  private dataReady: boolean = false;
+
+  private error: boolean = false;
+  private userBlocked: boolean = false;
+  private userAlreadyBlocked: boolean = false;
+  private cantBlockAdmin: boolean = false;
+  private errorMessage: string = '';
+  private blockedUserMessage: string = 'User was successfully blocked!';
+  private cantBlockAdminMessage: string = 'Can\'t block admin!';
+  private userAlreadyBlockedMessage: string = 'User already blocked!';
+  private users: User[];
+  private userForm: FormGroup;
+  private submitted: boolean = false;
+  private usernameError: boolean = false;
+  private headElements = ['Username', 'Type', 'User Since', 'Last Login', 'Remove', 'Block'];
+  private userTypes = ['Admin', 'Seller'];
+  private selectedUserType: string = null;
+  private userToDelete: number = null;
+  private userToSearch: string = null;
 
   constructor(private authService: AuthService, private userService: UserService, private formBuilder: FormBuilder) {
     this.userForm = this.formBuilder.group({
@@ -30,17 +44,61 @@ export class UserComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.loadUsers();
+    this.loadUsers(null);
   }
 
   /**
    * Load all users from the backend
    */
-  private loadUsers() {
-    this.userService.getAllUsers().subscribe(
-      (users: User[]) => { this.users = users; },
-      error => { this.defaultServiceErrorHandling(error); }
+  private loadUsers(username: string) {
+    console.log('Get users');
+    this.userService.getUsers(username, this.page).subscribe(
+      result => {
+        this.users = result['content'];
+        this.pages = new Array(result['totalPages']);
+      },
+      error => {
+        this.defaultServiceErrorHandling(error);
+      },
+      () => {
+        this.dataReady = true;
+      }
     );
+  }
+
+  /**
+   * Sets page number to the chosen i
+   * @param i number of the page to get
+   * @param event to handle
+   */
+  private setPage(i, event: any) {
+    event.preventDefault();
+    this.page = i;
+    this.loadUsers(null);
+  }
+
+  /**
+   * Sets page number to the previous one and calls the last method
+   * @param event o handle
+   */
+  private previousPage(event: any) {
+    event.preventDefault();
+    if (this.page > 0 ) {
+      this.page--;
+      this.loadUsers(null);
+    }
+  }
+
+  /**
+   * Sets page number to the next one and calls the last method
+   * @param event to handle
+   */
+  private nextPage(event: any) {
+    event.preventDefault();
+    if (this.page < this.pages.length - 1) {
+      this.page++;
+      this.loadUsers(null);
+    }
   }
 
   /**
@@ -51,13 +109,14 @@ export class UserComponent implements OnInit {
     this.submitted = true;
     this.usernameError = false;
     if (this.userForm.valid
-      && (this.userForm.controls.type.value === 'ADMIN' || this.userForm.controls.type.value === 'SELLER')
-      && this.userForm.controls.rePassword.value === this.userForm.controls.password.value) {
+      && this.userForm.controls.rePassword.value === this.userForm.controls.password.value
+      && this.selectedUserType != null) {
       const user: User = new User(null,
         this.userForm.controls.username.value,
         this.userForm.controls.password.value,
-        this.userForm.controls.type.value,
+        UserType[this.selectedUserType.toUpperCase()],
         new Date().toISOString(),
+        null,
         null
       );
       this.createUser(user);
@@ -76,7 +135,7 @@ export class UserComponent implements OnInit {
     this.userService.createUser(user).subscribe(
       (newUser: User) => { if (newUser.id === -1) { this.usernameError = true; } },
       error => { this.defaultServiceErrorHandling(error); },
-      () => { this.loadUsers(); }
+      () => { this.loadUsers(null); }
     );
   }
 
@@ -87,8 +146,8 @@ export class UserComponent implements OnInit {
   private blockUser(userId: number) {
     this.userService.blockUser(userId).subscribe(
       () => {},
-      err => { this.errorMessage = 'cant block admin'},
-      () => { this.loadUsers(); }
+      error => { this.handleBlockError(error); },
+      () => { this.loadUsers(this.userToSearch); this.showUserBlockedMessage(); }
     );
   }
 
@@ -97,11 +156,16 @@ export class UserComponent implements OnInit {
   }
 
   private deleteUser(userId: number) {
+    this.userToDelete = null;
     this.userService.deleteUser(userId).subscribe(
       () => {},
       error => { this.defaultServiceErrorHandling(error); },
-      () => { this.loadUsers(); }
+      () => { this.loadUsers(null); }
     );
+  }
+
+  private setUserToDelete(userId: number) {
+    this.userToDelete = userId;
   }
 
   /**
@@ -117,10 +181,9 @@ export class UserComponent implements OnInit {
     if (error.error.news !== 'No message available') {
       this.errorMessage = error.error.news;
     } else if (error.error.httpRequestStatusCode === 404) {
-      this.errorMessage = 'could not block user';
+      this.errorMessage = 'Could not block user';
     } else {
       this.errorMessage = error.error.error;
-
     }
   }
 
@@ -138,6 +201,29 @@ export class UserComponent implements OnInit {
 
   private delay(ms: number) {
     return new Promise( resolve => setTimeout(resolve, ms) );
+  }
+
+  private handleBlockError(error: any) {
+    if (error.error.errors[0].includes('Admin')) {
+      this.showCantBlockAdminMessage();
+    } else if (error.error.errors[0].includes('already')) {
+      this.showUserAlreadyBlockedMessage();
+    }
+  }
+
+  private showUserBlockedMessage() {
+    this.userBlocked = true;
+    setTimeout(() => this.userBlocked = false, 5000);
+  }
+
+  private showCantBlockAdminMessage() {
+    this.cantBlockAdmin = true;
+    setTimeout(() => this.cantBlockAdmin = false, 5000);
+  }
+
+  private showUserAlreadyBlockedMessage() {
+    this.userAlreadyBlocked = true;
+    setTimeout(() => this.userAlreadyBlocked = false, 5000);
   }
 
 }

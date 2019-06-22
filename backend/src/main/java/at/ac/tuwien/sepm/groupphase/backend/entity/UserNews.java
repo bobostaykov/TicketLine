@@ -8,8 +8,7 @@ import javax.persistence.*;
 public class UserNews {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "seq_news_id")
-    @SequenceGenerator(name = "seq_news_id", sequenceName = "seq_news_id")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @ApiModelProperty(readOnly = true, name = "userId")

@@ -14,13 +14,18 @@ import at.ac.tuwien.sepm.groupphase.backend.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.PersistenceException;
+import javax.validation.constraints.Positive;
 import java.util.ArrayList;
 import java.util.Comparator;
 import javax.persistence.PersistenceException;
-import javax.xml.bind.ValidationException;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,7 +39,6 @@ public class UserServiceImpl implements UserService {
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
     private final LoginAttemptsRepository loginAttemptsRepository;
 
-
     public UserServiceImpl(UserRepository userRepository, UserMapper userMapper, PasswordEncoder passwordEncoder, LoginAttemptsRepository loginAttemptsRepository) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
@@ -43,10 +47,24 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDTO> findAll() throws ServiceException {
-        LOGGER.info("Find all users");
+    public Page<UserDTO> getUsers(String username, Integer page, Integer pageSize) throws ServiceException {
+        if (username == null)
+            LOGGER.info("Get all users");
+        else
+            LOGGER.info("Search users with " + username + " as a part of their username");
+
         try {
-            return userMapper.userToUserDTO(userRepository.findAll());
+            if(pageSize == null){
+                pageSize = 10;
+            }
+            if(page < 0) {
+                throw new IllegalArgumentException("Not a valid page.");
+            }
+            Pageable pageable = PageRequest.of(page, pageSize);
+            if (username == null)
+                return userRepository.findAll(pageable).map(userMapper::userToUserDTO);
+            else
+                return userRepository.findByUsernameContainingIgnoreCase(username, pageable).map(userMapper::userToUserDTO);
         } catch (PersistenceException e) {
             throw new ServiceException(e.getMessage());
         }
@@ -62,12 +80,11 @@ public class UserServiceImpl implements UserService {
     public UserDTO createUser(UserDTO userDTO) throws ServiceException {
         try {
 
-            if(!userRepository.findOneByUsername(userDTO.getUsername()).isPresent()){
-            LOGGER.info("Create user with name: " + userDTO.getUsername());
+            if(userRepository.findOneByUsername(userDTO.getUsername()).isEmpty()){
+                LOGGER.info("Create user with name: " + userDTO.getUsername());
                 userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword()));
                 LOGGER.info("Setting password");
-                UserDTO dto =  userMapper.userToUserDTO(userRepository.createUser(userMapper.userDTOToUser(userDTO)));
-                return dto;
+                return userMapper.userToUserDTO(userRepository.createUser(userMapper.userDTOToUser(userDTO)));
             }else {
                 return UserDTO.builder().id(-1L).build();
             }
@@ -78,12 +95,12 @@ public class UserServiceImpl implements UserService {
     }
 
     public UserDTO findUserByName(String userName) throws NotFoundException{
-        LOGGER.info("finding user with username: " + userName);
+        LOGGER.info("Finding user with username: " + userName);
         Optional<User> found = userRepository.findOneByUsername(userName);
         if (found.isPresent()){
             return userMapper.userToUserDTO(found.get());
         }else {
-            throw new NotFoundException("could not find User with username: " + userName);
+            throw new NotFoundException("Could not find User with username: " + userName);
         }
 
     }
@@ -126,27 +143,60 @@ public class UserServiceImpl implements UserService {
         Optional<LoginAttempts> loginAttemptsFound = loginAttemptsRepository.findById(userId);
         if(loginAttemptsFound.isPresent()){
             if(loginAttemptsFound.get().getUser().getType().equals(UserType.ADMIN)){
-                throw new ServiceException("admin cant be blocked");
+                throw new ServiceException("Admin can't be blocked");
             }
             LoginAttempts loginAttempts = loginAttemptsFound.get();
+            if (loginAttempts.isBlocked()) {
+                throw new ServiceException("User already blocked");
+            }
             loginAttempts.setBlocked(true);
             loginAttemptsRepository.save(loginAttempts);
-            LOGGER.info("blocked user with id: " + userId);
+            LOGGER.info("Blocked user with id: " + userId);
             return true;
         }else
-            throw new NotFoundException("could not find user with id "+ userId);
+            throw new NotFoundException("Could not find user with id "+ userId);
     }
 
     @Override
-    public List<UserDTO> getAllBlockedUsers() {
-        LOGGER.info("getting all blocked users");
-        List<LoginAttempts> blockedUserAttempts = loginAttemptsRepository.getAllByBlockedTrue();
-        List<UserDTO> users = new ArrayList<>();
-        Comparator<LoginAttempts> comparator = Comparator.comparing(la -> la.getUser().getId());
-        blockedUserAttempts.stream()
-            .sorted(comparator)
-            .forEach(loginAttempts -> users.add(userMapper.userToUserDTO(loginAttempts.getUser())));
-        return users;
+    public Page<UserDTO> getBlockedUsers(String username, Integer page, Integer pageSize) throws ServiceException {
+        if (username == null)
+            LOGGER.info("Getting all blocked users");
+        else
+            LOGGER.info("Search blocked users with " + username + " as a part of their username");
+
+        try {
+            if(pageSize == null){
+                pageSize = 10;
+            }
+            if(page < 0) {
+                throw new IllegalArgumentException("Not a valid page.");
+            }
+            Pageable pageable = PageRequest.of(page, pageSize);
+            List<LoginAttempts> blockedUserAttempts = loginAttemptsRepository.getAllByBlockedTrue();
+            List<UserDTO> users = new ArrayList<>();
+            Comparator<LoginAttempts> comparator = Comparator.comparing(la -> la.getUser().getId());
+            blockedUserAttempts.stream()
+                .sorted(comparator)
+                .forEach(loginAttempts -> {
+                    if (username == null) {
+                        users.add(userMapper.userToUserDTO(loginAttempts.getUser()));
+                    } else {
+                        if (loginAttempts.getUser().getUsername().contains(username))
+                            users.add(userMapper.userToUserDTO(loginAttempts.getUser()));
+                    }
+                });
+            int totalElements = users.size();
+            int from = page * pageSize;
+            int offset = page * pageSize + pageSize > totalElements ? (totalElements - page * pageSize) : pageSize;
+            List<UserDTO> sublist = users.subList(from, from + offset);
+            Page<UserDTO> result = new PageImpl<>(sublist, pageable, totalElements);
+            LOGGER.debug(result.getContent().toString());
+            LOGGER.debug("totalElem: " + result.getTotalElements());
+            LOGGER.debug("totalPages: " + result.getTotalPages());
+            return result;
+        } catch (PersistenceException e) {
+            throw new ServiceException(e.getMessage());
+        }
     }
 
     @Override
@@ -165,4 +215,5 @@ public class UserServiceImpl implements UserService {
             throw new NotFoundException("could not find user with id: " + passwordChangeRequest.getId());
         }
     }
+
 }

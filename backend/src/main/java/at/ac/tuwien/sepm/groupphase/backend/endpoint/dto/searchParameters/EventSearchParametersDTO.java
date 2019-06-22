@@ -18,15 +18,17 @@ public class EventSearchParametersDTO {
     private String artistName;
     @NotBlank
     private String description;
-    private EventType eventType;
 
-    public EventSearchParametersDTO(String name, Integer durationInMinutes, String content, String artistName, String description, EventType eventType) {
+    private EventType eventType;
+    private String locationName;
+    public EventSearchParametersDTO(String name, Integer durationInMinutes, String content, String artistName, String description, EventType eventType, String locationName) {
         this.name = name;
         this.durationInMinutes = durationInMinutes;
         this.content = content;
         this.artistName = artistName;
         this.description = description;
         this.eventType = eventType;
+        this.locationName = locationName;
     }
 
     public String getName() {
@@ -79,6 +81,14 @@ public class EventSearchParametersDTO {
         this.eventType = eventType;
     }
 
+    public String getLocationName() {
+        return locationName;
+    }
+
+    public void setLocationName(String locationName) {
+        this.locationName = locationName;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -89,12 +99,13 @@ public class EventSearchParametersDTO {
             Objects.equals(content, that.content) &&
             Objects.equals(artistName, that.artistName) &&
             Objects.equals(description, that.description) &&
-            eventType == that.eventType;
+            eventType == that.eventType &&
+            Objects.equals(locationName, that.locationName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, durationInMinutes, content, artistName, description, eventType);
+        return Objects.hash(name, durationInMinutes, content, artistName, description, eventType, locationName);
     }
 
     @Override
@@ -106,11 +117,13 @@ public class EventSearchParametersDTO {
             ", artistName='" + artistName + '\'' +
             ", description='" + description + '\'' +
             ", eventType=" + eventType +
+            ", locationName='" + locationName + '\'' +
             '}';
     }
 
     public static class EventSearchParametersDTOBuilder {
         private String name;
+        private String locationName;
         private Integer durationInMinutes;
         private String content;
         private String artistName;
@@ -147,9 +160,13 @@ public class EventSearchParametersDTO {
             this.eventType = eventType;
             return this;
         }
+        public EventSearchParametersDTOBuilder setLocationName (String locationName){
+            this.locationName = locationName;
+            return this;
+        }
 
         public EventSearchParametersDTO build() {
-            return new EventSearchParametersDTO(name, durationInMinutes, content, artistName, description, eventType);
+            return new EventSearchParametersDTO(name, durationInMinutes, content, artistName, description, eventType, locationName);
         }
     }
 }

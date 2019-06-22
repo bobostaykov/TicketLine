@@ -3,7 +3,6 @@ package at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.location;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-import javax.validation.constraints.Size;
 import java.util.Objects;
 
 @ApiModel(value = "LocationDTO")

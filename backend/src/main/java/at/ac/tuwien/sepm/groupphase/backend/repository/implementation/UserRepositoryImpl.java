@@ -5,7 +5,6 @@ import at.ac.tuwien.sepm.groupphase.backend.entity.LoginAttempts_;
 import at.ac.tuwien.sepm.groupphase.backend.entity.User;
 import at.ac.tuwien.sepm.groupphase.backend.entity.User_;
 import at.ac.tuwien.sepm.groupphase.backend.repository.UserRepositoryCustom;
-import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +31,7 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
 
     @Override
     public User createUser(User user) {
+        LOGGER.debug("UserRepositoryImpl: createUser");
         LoginAttempts loginAttempts = LoginAttempts.builder().setAttempts(0).setBlocked(false).setUser(user).build();
         loginAttempts.setUserSynch(user);
         entityManager.persist(user);
@@ -40,6 +40,7 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
 
     @Override
     public List<User> findAllBlockedUsers() {
+        LOGGER.debug("UserRepositoryImpl: findAllBlockedUsers");
         CriteriaBuilder cBuilder = entityManager.getCriteriaBuilder();
         //Sammlung der Bedingungen
         List<Predicate> predicates = new ArrayList<>();

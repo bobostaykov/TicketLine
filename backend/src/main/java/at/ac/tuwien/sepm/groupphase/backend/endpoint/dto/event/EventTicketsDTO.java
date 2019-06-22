@@ -37,9 +37,11 @@ public class EventTicketsDTO {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        EventTicketsDTO that = (EventTicketsDTO) o;
-        return eventName.equals(that.eventName) &&
-            ticketsSold.equals(that.ticketsSold);
+
+        EventTicketsDTO eventTicketsDTO = (EventTicketsDTO) o;
+
+        if (ticketsSold != null ? !ticketsSold.equals(eventTicketsDTO.ticketsSold) : eventTicketsDTO.ticketsSold != null) return false;
+        return eventName != null ? eventName.equals(eventTicketsDTO.eventName) : eventTicketsDTO.eventName == null;
     }
 
     @Override

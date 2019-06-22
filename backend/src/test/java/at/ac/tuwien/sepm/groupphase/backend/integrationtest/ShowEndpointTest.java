@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.integrationtest;
 
 import at.ac.tuwien.sepm.groupphase.backend.integrationtest.base.BaseIntegrationTest;
+import at.ac.tuwien.sepm.groupphase.backend.integrationtest.base.BaseIntegrationTestWithMockedUserCredentials;
 import at.ac.tuwien.sepm.groupphase.backend.repository.ShowRepository;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;

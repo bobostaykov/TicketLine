@@ -2,26 +2,29 @@ package at.ac.tuwien.sepm.groupphase.backend.integrationtest;
 
 import at.ac.tuwien.sepm.groupphase.backend.datatype.EventType;
 import at.ac.tuwien.sepm.groupphase.backend.datatype.PriceCategory;
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.searchParameters.ShowSearchParametersDTO;
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.show.ShowDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.*;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.show.ShowMapper;
 import at.ac.tuwien.sepm.groupphase.backend.integrationtest.base.BaseIntegrationTest;
+import at.ac.tuwien.sepm.groupphase.backend.integrationtest.base.BaseIntegrationTestWithMockedUserCredentials;
 import at.ac.tuwien.sepm.groupphase.backend.repository.*;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
-import org.junit.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import static org.hamcrest.core.Is.is;
 import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+
+import static org.hamcrest.core.Is.is;
 
 public class ShowIntegrationTest extends BaseIntegrationTest {
     private static final String SHOWS_SEARCH_ENDPOINT = "/shows/filter?";
@@ -92,40 +95,42 @@ public class ShowIntegrationTest extends BaseIntegrationTest {
     private final LocalTime SHOW_TIME_4 = LocalTime.parse( "10:30", timeFormatter);
     private static final String SHOW_DESCRIPTION_1_3 = "description";
     private static final String SHOW_DESCRIPTION_4 = "Top-Abend";
-    Location locationAustria;
-    Location locationGermany;
-    Artist artist1;
-    Artist artist2;
-    Hall hall1;
-    Hall hall2;
-    Event event1;
-    Event event2;
-    Show show1;
-    Show show2;
-    Show show3;
-    Show show4;
-    PricePattern pricePattern1;
-    PricePattern pricePattern2;
+
+    private Location locationAustria;
+    private Location locationGermany;
+    private Artist artist1;
+    private Artist artist2;
+    private Hall hall1;
+    private Hall hall2;
+    private Event event1;
+    private Event event2;
+    private Show show1;
+    private Show show2;
+    private Show show3;
+    private Show show4;
+    private PricePattern pricePattern1;
+    private PricePattern pricePattern2;
 
     private static final String SEARCH_DATEFROM_QUERY = "dateFrom=";
     private static final String SEARCH_DATETO_QUERY = "dateTo=";
     private static final String SEARCH_TIMEFROM_QUERY = "timeFrom=";
     private static final String SEARCH_TIMETO_QUERY = "timeTo=";
-    private static final String SEARCH_EVENTID_QUERY= "eventId=";
+    private static final String SEARCH_EVENTID_QUERY = "eventId=";
 
-    private static final String SEARCH_EVENTNAME_QUERY= "eventName=";
-    private static final String SEARCH_HALLNAME_QUERY= "hallName=";
-    private static final String SEARCH_DURATION_QUERY= "duration=";
-    private static final String SEARCH_COUNTRY_QUERY= "country=";
-    private static final String SEARCH_CITY_QUERY= "city=";
+    private static final String SEARCH_EVENTNAME_QUERY = "eventName=";
+    private static final String SEARCH_HALLNAME_QUERY = "hallName=";
+    private static final String SEARCH_DURATION_QUERY = "duration=";
+    private static final String SEARCH_COUNTRY_QUERY = "country=";
+    private static final String SEARCH_CITY_QUERY = "city=";
+    private static final String SEARCH_ARTISTNAME_QUERY = "artistName=";
 
-    private static final String SEARCH_STREET_QUERY= "street=";
-    private static final String SEARCH_HOUSENR_QUERY= "houseNr=";
-    private static final String SEARCH_LOCATIONAME_QUERY= "locationName=";
-    private static final String SEARCH_MINPRICE_QUERY= "minPrice=";
-    private static final String SEARCH_MAXPRICE_QUERY= "maxPrice=";
+    private static final String SEARCH_STREET_QUERY = "street=";
+    private static final String SEARCH_HOUSENR_QUERY = "houseNr=";
+    private static final String SEARCH_LOCATIONAME_QUERY = "locationName=";
+    private static final String SEARCH_MINPRICE_QUERY = "minPrice=";
+    private static final String SEARCH_MAXPRICE_QUERY = "maxPrice=";
 
-    private static final String SEARCH_POSTALCODE_QUERY= "postalCode=";
+    private static final String SEARCH_POSTALCODE_QUERY = "postalCode=";
 
     private static final String DATE_1 = "2020-03-18";
     private static final String DATE_2 = "2022-03-18";
@@ -167,89 +172,92 @@ public class ShowIntegrationTest extends BaseIntegrationTest {
 
     @Test
     public void findShowsByStartDate_findsCorrectNumberOfFittingEvents(){
-        String query = SHOWS_SEARCH_ENDPOINT+ SEARCH_DATEFROM_QUERY + DATE_1;
-            Response response = RestAssured
-                .given()
-                .contentType(ContentType.JSON)
-                .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
-                .when().get(SHOWS_SEARCH_ENDPOINT + SEARCH_DATEFROM_QUERY + DATE_1)
-                .then().extract().response();
+        Response response = RestAssured
+            .given()
+            .contentType(ContentType.JSON)
+            .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
+            .when().get(SHOWS_SEARCH_ENDPOINT + SEARCH_DATEFROM_QUERY + DATE_1 + "&page=0")
+            .then().extract().response();
+        response.print();
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
-        List<Show> shows = response.jsonPath().getList("$");
-        Assert.assertTrue(shows.size() == 3);
+        List<Show> shows = response.jsonPath().getList("content");
+        Assert.assertEquals(shows.size(), 3);
     }
-
-
 
     @Test
     public void findShowsByEventName_findsFittingEvents(){
-        String query = SHOWS_SEARCH_ENDPOINT+ SEARCH_EVENTNAME_QUERY + DATE_1;
         Response response = RestAssured
             .given()
             .contentType(ContentType.JSON)
             .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
-            .when().get(SHOWS_SEARCH_ENDPOINT + SEARCH_EVENTNAME_QUERY + NAME_1)
+            .when().get(SHOWS_SEARCH_ENDPOINT + SEARCH_EVENTNAME_QUERY + NAME_1 + "&page=0")
             .then().extract().response();
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
-        List<Show> shows = response.jsonPath().getList("$");
-        Assert.assertTrue(shows.size() == 2);
+        List<Show> shows = response.jsonPath().getList("content");
+        Assert.assertEquals(shows.size(), 2);
     }
 
     @Test
-    public void repositoryTest(){
-        ShowSearchParametersDTO parametersDTO = ShowSearchParametersDTO.builder().eventName("irthday").build();
-        List<Show> shows = showRepository.findAllShowsFiltered(ShowSearchParametersDTO.builder().eventName("irthday").build());
-        System.out.println("fu");
-        Assert.assertTrue(!shows.isEmpty());
-    }
-
-    @Test
-    public void searchShowsByMaxDate_returnsCorrectNumberOfshows(){
-        String query = SHOWS_SEARCH_ENDPOINT+ SEARCH_DATEFROM_QUERY + DATE_1;
+    public void findShowsByArtistName_findsFittingEvents(){
         Response response = RestAssured
             .given()
             .contentType(ContentType.JSON)
             .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
-            .when().get(SHOWS_SEARCH_ENDPOINT + SEARCH_DATEFROM_QUERY + DATE_2)
+            .when().get(SHOWS_SEARCH_ENDPOINT + SEARCH_ARTISTNAME_QUERY + ARTIST_NAME_1 + "&page=0")
             .then().extract().response();
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
-        List<Show> shows = response.jsonPath().getList("$");
-        Assert.assertTrue(shows.size() == 0);
+        List<Show> shows = response.jsonPath().getList("content");
+        Assert.assertEquals(shows.size(), 2);
     }
+
+    @Test
+    public void searchShowsByMaxDate_givenNoMatchingCriteria_throwsNotFoundException(){
+        Response response = RestAssured
+            .given()
+            .contentType(ContentType.JSON)
+            .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
+            .when().get(SHOWS_SEARCH_ENDPOINT + SEARCH_DATEFROM_QUERY + DATE_2 + "&page=0")
+            .then().extract().response();
+        Assert.assertThat(response.getStatusCode(), is(HttpStatus.NOT_FOUND.value()));
+    }
+
+    @Test
     public void searchShowsByHallName_returnsCorrectNumberOfShows() {
         Response response = RestAssured
             .given()
             .contentType(ContentType.JSON)
             .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
-            .when().get(SHOWS_SEARCH_ENDPOINT + SEARCH_DATEFROM_QUERY + HALL_NAME_1)
+            .when().get(SHOWS_SEARCH_ENDPOINT + SEARCH_HALLNAME_QUERY + HALL_NAME_1 + "&page=0")
             .then().extract().response();
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
-        List<Show> shows = response.jsonPath().getList("$");
-        Assert.assertTrue(shows.size() == 3);
+        List<Show> shows = response.jsonPath().getList("content");
+        Assert.assertEquals(shows.size(), 3);
     }
+
     @Test
     public void searchShowsByDuration_returnsCorrectNumberOfShows(){
         Response response = RestAssured
             .given()
             .contentType(ContentType.JSON)
             .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
-            .when().get(SHOWS_SEARCH_ENDPOINT + SEARCH_DURATION_QUERY + EVENT_DURATION_1)
+            .when().get(SHOWS_SEARCH_ENDPOINT + SEARCH_DURATION_QUERY + EVENT_DURATION_1 + "&page=0")
             .then().extract().response();
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
-        List<Show> shows = response.jsonPath().getList("$");
-        Assert.assertTrue(shows.size() == 2);
+        List<Show> shows = response.jsonPath().getList("content");
+        Assert.assertEquals(shows.size(), 2);
     }
+
     @Test
     public void searchShowsByLocationName_returnsCorrectNumberOfShows(){
         Response response = RestAssured
             .given()
             .contentType(ContentType.JSON)
             .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
-            .when().get(SHOWS_SEARCH_ENDPOINT + SEARCH_LOCATIONAME_QUERY + LOCATION_NAME_SEARCH_1)
+            .when().get(SHOWS_SEARCH_ENDPOINT + SEARCH_LOCATIONAME_QUERY + LOCATION_NAME_SEARCH_1 + "&page=0")
             .then().extract().response();
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
-        List<Show> shows = response.jsonPath().getList("$");
-        Assert.assertTrue(shows.size() == 1);
+        List<Show> shows = response.jsonPath().getList("content");
+        Assert.assertEquals(shows.size(), 1);
     }
 
     @Test
@@ -259,94 +267,75 @@ public class ShowIntegrationTest extends BaseIntegrationTest {
             .given()
             .contentType(ContentType.JSON)
             .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
-            .when().get(SHOWS_SEARCH_ENDPOINT + SEARCH_CITY_QUERY + locationGermany.getCity())
+            .when().get(SHOWS_SEARCH_ENDPOINT + SEARCH_CITY_QUERY + locationGermany.getCity() + "&page=0")
             .then().extract().response();
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
-        List<Show> shows = response.jsonPath().getList("$");
-        Assert.assertTrue(shows.size() == 1);
+        List<Show> shows = response.jsonPath().getList("content");
+        Assert.assertEquals(shows.size(), 1);
     }
+
     @Test
-    @Ignore
     public void searchShowsByStreet_returnsCorrectNumberOfShows(){
         Response response = RestAssured
             .given()
             .contentType(ContentType.JSON)
             .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
-            .when().get(SHOWS_SEARCH_ENDPOINT + SEARCH_STREET_QUERY + LOCATION_STREET_2)
+            .when().get(SHOWS_SEARCH_ENDPOINT + SEARCH_STREET_QUERY + LOCATION_STREET_2 + "&page=0")
             .then().extract().response();
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
-        List<Show> shows = response.jsonPath().getList("$");
-        Assert.assertTrue(shows.size() == 3);
+        List<Show> shows = response.jsonPath().getList("content");
+        Assert.assertEquals(shows.size(), 1);
     }
+
     @Test
-    @Ignore
     public void searchShowsByPostalCode_returnsCorrectNumberOfShows(){
         Response response = RestAssured
             .given()
             .contentType(ContentType.JSON)
             .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
-            .when().get(SHOWS_SEARCH_ENDPOINT + SEARCH_POSTALCODE_QUERY + locationGermany.getPostalCode())
+            .when().get(SHOWS_SEARCH_ENDPOINT + SEARCH_POSTALCODE_QUERY + locationGermany.getPostalCode() + "&page=0")
             .then().extract().response();
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
-        List<Show> shows = response.jsonPath().getList("$");
-        Assert.assertTrue(shows.size() == 1);
+        List<Show> shows = response.jsonPath().getList("content");
+        Assert.assertEquals(shows.size(), 1);
     }
+
     @Test
     public void searchShowsByCountry_returnsCorrectNumberOfShows(){
         Response response = RestAssured
             .given()
             .contentType(ContentType.JSON)
             .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
-            .when().get(SHOWS_SEARCH_ENDPOINT + SEARCH_COUNTRY_QUERY + LOCATION_COUNTRY_2)
+            .when().get(SHOWS_SEARCH_ENDPOINT + SEARCH_COUNTRY_QUERY + LOCATION_COUNTRY_2 + "&page=0")
             .then().extract().response();
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
-        List<Show> shows = response.jsonPath().getList("$");
-        Assert.assertTrue(shows.size() == 1);
-    }
-    @Test
-    @Ignore
-    public void searchShowsByEventId_returnsCorrectNumberOfShows(){
-        Response response = RestAssured
-            .given()
-            .contentType(ContentType.JSON)
-            .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
-            .when().get(SHOWS_SEARCH_ENDPOINT + SEARCH_EVENTID_QUERY + event1.getId())
-            .then().extract().response();
-        Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
-        List<Show> shows = response.jsonPath().getList("$");
-        Assert.assertTrue(shows.size() == 2);
+        List<Show> shows = response.jsonPath().getList("content");
+        Assert.assertEquals(shows.size(), 1);
     }
 
     @Test
-    @Ignore
     public void searchShowsByMinPrice_returnsCorrectNumberOfShows(){
         Response response = RestAssured
             .given()
             .contentType(ContentType.JSON)
             .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
-            .when().get(SHOWS_SEARCH_ENDPOINT + SEARCH_MINPRICE_QUERY + MIN_PRICE)
+            .when().get(SHOWS_SEARCH_ENDPOINT + SEARCH_MINPRICE_QUERY + MIN_PRICE + "&page=0")
             .then().extract().response();
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
-        List<Show> shows = response.jsonPath().getList("$");
-        Assert.assertTrue(shows.size() == 3);
+        List<Show> shows = response.jsonPath().getList("content");
+        Assert.assertEquals(shows.size(), 3);
     }
+
     @Test
     public void searchShowsByMaxPrice_returnsCorrectNumberOfShows(){
         Response response = RestAssured
             .given()
             .contentType(ContentType.JSON)
             .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
-            .when().get(SHOWS_SEARCH_ENDPOINT + SEARCH_MAXPRICE_QUERY + MAX_PRICE)
+            .when().get(SHOWS_SEARCH_ENDPOINT + SEARCH_MAXPRICE_QUERY + MAX_PRICE + "&page=0")
             .then().extract().response();
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
-        List<Show> shows = response.jsonPath().getList("$");
-        Assert.assertTrue(shows.size() == 3);
+        List<Show> shows = response.jsonPath().getList("content");
+        Assert.assertEquals(shows.size(), 3);
     }
-
-
-
 }
-
-
-
-

@@ -13,18 +13,20 @@ export class EventResultsService {
 
   constructor(private httpClient: HttpClient, private globals: Globals) { }
 
-  public findEventsFilteredByArtistID(id): Observable<Event[]> {
+  public findEventsFilteredByArtistID(id, page): Observable<Event[]> {
     console.log('Service Event-Results: findEventsFilteredByArtistID');
-    return this.httpClient.get<Event[]>(this.eventBaseUri + '/artist/' + id);
+    return this.httpClient.get<Event[]>(this.eventBaseUri + '/artist/' + id, {params: {page: page}});
   }
 
-  public findEventsFilteredByAttributes(eventName, eventType, content, description): Observable<Event[]> {
+  public findEventsFilteredByAttributes(eventName, eventType, artistName, content, description, page): Observable<Event[]> {
     console.log('Service Event-Results: findEventsFilteredByAttributes');
     let parameters = new HttpParams();
     parameters = eventName ? parameters.append('eventName', eventName) : parameters;
     parameters = content ? parameters.append('content', content) : parameters;
+    parameters = artistName ? parameters.append('artistName', artistName) : parameters;
     parameters = description ? parameters.append('description', description) : parameters;
     parameters = eventType ? parameters.append('eventType', eventType) : parameters;
+    parameters = parameters.append('page', page);
     return this.httpClient.get<Event[]>(this.eventBaseUri, { params: parameters });
   }
 }

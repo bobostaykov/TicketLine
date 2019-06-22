@@ -1,19 +1,28 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint;
 
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.show.ShowDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.ticket.TicketDTO;
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.ticket.TicketDTO;
-import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.ticket.TicketMapper;
-import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.ticket.TicketPostDTO;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
+import at.ac.tuwien.sepm.groupphase.backend.exception.TicketSoldOutException;
 import at.ac.tuwien.sepm.groupphase.backend.service.TicketService;
+import com.itextpdf.text.DocumentException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 @RestController
@@ -22,16 +31,24 @@ import java.util.List;
 public class TicketEndpoint {
     private final TicketService ticketService;
     private static final Logger LOGGER = LoggerFactory.getLogger(TicketEndpoint.class);
+    private static final String PDF_ENDPOINT = "/printable";
 
     public TicketEndpoint(TicketService ticketService) {
         this.ticketService = ticketService;
     }
 
     @RequestMapping(method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(value = "Create a ticket", authorizations = {@Authorization(value = "apiKey")})
-    public TicketDTO create(@RequestBody TicketDTO ticketDTO) {
+    public List<TicketDTO> create(@RequestBody List<TicketPostDTO> ticketPostDTO) {
         LOGGER.info("Create Ticket");
-        return ticketService.postTicket(ticketDTO);
+        try {
+            return ticketService.postTicket(ticketPostDTO);
+        } catch (TicketSoldOutException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        } catch (NotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -48,24 +65,33 @@ public class TicketEndpoint {
         return ticketService.deleteOne(id);
     }
 
+    @RequestMapping(value = PDF_ENDPOINT + "/cancellation", method = RequestMethod.DELETE)
+    @ApiOperation(value = "Delete Tickets by id and receive storno receipt", authorizations = {@Authorization(value = "apiKey")})
+    public ResponseEntity<byte[]> deleteAndGetStornoReceipt(@RequestParam List<String> tickets) throws IOException, DocumentException {
+        LOGGER.info("Delete Ticket(s) with id(s)" + tickets.toString() + " and receive storno receipt");
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        return new ResponseEntity<>(ticketService.deleteAndGetCancellationReceipt(tickets), headers, HttpStatus.OK);
+    }
+
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    @ApiOperation(value = "Find Ticket", authorizations = {@Authorization(value = "apiKey")})
+    @ApiOperation(value = "Find Ticket by id", authorizations = {@Authorization(value = "apiKey")})
     public TicketDTO findById(@PathVariable Long id) {
-        LOGGER.info("Find Ticket with id " + id);
+        LOGGER.info("Ticket Endpoint: Find Ticket with id " + id);
         return ticketService.findOne(id);
     }
 
     @RequestMapping(value = "/buy/{id}", method = RequestMethod.PUT, produces = "application/json")
-    @ApiOperation(value = "Buy reservated Ticket", authorizations = {@Authorization(value = "apiKey")})
+    @ApiOperation(value = "Buy reservated Ticket by id", authorizations = {@Authorization(value = "apiKey")})
     public TicketDTO buyReservatedTicket(@PathVariable Long id) {
-        LOGGER.info("Buy Ticket with id " + id);
+        LOGGER.info("Ticket Endpoint: Buy Ticket with id " + id);
         return ticketService.changeStatusToSold(id);
     }
 
     @RequestMapping(value = "/reservated/{id}", method = RequestMethod.GET)
-    @ApiOperation(value = "Find reservated Ticket", authorizations = {@Authorization(value = "apiKey")})
+    @ApiOperation(value = "Find reservated Ticket by id", authorizations = {@Authorization(value = "apiKey")})
     public TicketDTO findReservatedById(@PathVariable Long id) {
-        LOGGER.info("Find reservated Ticket with id " + id);
+        LOGGER.info("Ticket Endpoint: Find reservated Ticket with id " + id);
         return ticketService.findOneReservated(id);
     }
 
@@ -83,13 +109,31 @@ public class TicketEndpoint {
 
     // PINO: added value = "filter" to avoid GET method crash with findAll()
     @RequestMapping(value = "/filter", method = RequestMethod.GET)
-    @ApiOperation(value = "Get all tickets filtered", authorizations = {@Authorization(value = "apiKey")})
+    @ApiOperation(value = "Find all tickets filtered by customer name and event name", authorizations = {@Authorization(value = "apiKey")})
     public List<TicketDTO> findTicketFilteredByCustomerAndEvent(@RequestParam(value = "customerName", required = false) String customerName,
                                                                 @RequestParam(value = "eventName", required = false) String eventName) {
+        LOGGER.info("Ticket Endpoint: Find all tickets filtered by customer with name {} and event with name {}", customerName, eventName);
         if (customerName == null && eventName == null) {
             return ticketService.findAll();
         } else {
             return ticketService.findAllFilteredByCustomerAndEvent(customerName, eventName);
         }
+    }
+
+    @RequestMapping(value = PDF_ENDPOINT + "/receipt", method = RequestMethod.GET)
+    @ApiOperation(value = "Get receipt PDF for list of tickets", authorizations = {@Authorization(value = "apiKey")})
+    public ResponseEntity<byte[]> getReceiptPDF(@RequestParam List<String> tickets) throws IOException, DocumentException {
+        LOGGER.info("Ticket Endpoint: Get receipt PDF for ticket(s) with id(s) " + tickets.toString());
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        return new ResponseEntity<>(ticketService.getReceipt(tickets), headers, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = PDF_ENDPOINT + "/ticket", method = RequestMethod.GET)
+    @ApiOperation(value = "Get printable PDF for list of tickets", authorizations = {@Authorization(value = "apiKey")})
+    public ResponseEntity<byte[]> getTicketPDF(@RequestParam List<String> tickets) throws DocumentException, NoSuchAlgorithmException, IOException {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        return new ResponseEntity<>(ticketService.generateTicketPDF(tickets), headers, HttpStatus.OK);
     }
 }

@@ -10,8 +10,8 @@ public class Artist {
 
     @Id
     @Column(name="id")
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "seq_artist_id")
-    @SequenceGenerator(name = "seq_artist_id", sequenceName = "seq_artist_id")
+    @SequenceGenerator(name = "artist_seq", initialValue = 1, allocationSize = 50)
+    @GeneratedValue(generator = "artist_seq")
     private Long id;
 
     @Column(nullable = false)

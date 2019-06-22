@@ -1,31 +1,39 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.hall;
 
+import at.ac.tuwien.sepm.groupphase.backend.annotation.SeatsXorSectorsConstraint;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.location.LocationDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.seat.SeatDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.sector.SectorDTO;
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Objects;
 
 @ApiModel(value = "HallDTO", description = "A DTO to transfer hall entities between backend and frontend")
+@SeatsXorSectorsConstraint(message = "Exactly one of either seats or sectors must be set")
 public class HallDTO {
 
     @ApiModelProperty(name = "The automatically generated database id")
     private Long id;
 
     @ApiModelProperty(name = "The name of the hall", required = true)
+    @NotBlank(message = "Hall name was not set")
     private String name;
 
     @ApiModelProperty(name = "The location of the hall", required = true)
+    @NotNull(message = "Hall Location was not set")
     private LocationDTO location;
 
     @ApiModelProperty(name = "List of seats in the hall")
+    @Valid
     private List<SeatDTO> seats;
 
     @ApiModelProperty(name = "List of sectors in the hall")
+    @Valid
     private List<SectorDTO> sectors;
 
     public String getName() {

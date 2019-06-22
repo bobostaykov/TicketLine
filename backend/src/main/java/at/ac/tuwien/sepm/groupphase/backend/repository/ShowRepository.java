@@ -2,25 +2,17 @@ package at.ac.tuwien.sepm.groupphase.backend.repository;
 
 import at.ac.tuwien.sepm.groupphase.backend.entity.Event;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Show;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
-//TODO Class is unfinished
 @Repository
-public interface ShowRepository extends JpaRepository<Show, Long>, ShowRepositoryCustom {
-
-    /**
-     * Finds all shows filtered by event name
-     *
-     * @param eventName name of event
-     * @return a list of found shows matching the criteria
-     */
-    @Query(value = "SELECT s FROM Show s JOIN Event e WHERE e.name = :eventName")
-    List<Show> findAllShowsFilteredByEventName(@Param("eventName") String eventName);
+public interface ShowRepository extends JpaRepository<Show, Long>, ShowRepositoryCustom, PagingAndSortingRepository<Show, Long> {
 
     /**
      * Find all shows filtered by event
@@ -30,13 +22,25 @@ public interface ShowRepository extends JpaRepository<Show, Long>, ShowRepositor
      */
     List<Show> findAllByEvent(List<Event> events);
 
-
-    /*
-     * Finds all shows filtered by location id
+    /**
+     * Find all shows by location id
      *
-     * @param locationID id of location by which to filter the shows
-     * @return a list of found shows matching the criteria
+     * @param locationID id of the location to search for
+     * @param pageable a special parameter to apply pagination
+     * @return a page of the found shows
      */
-    //List<Show> findAllByLocationID(Integer locationID);
+    Page<Show> findAllByHall_Location_Id(Long locationID, Pageable pageable);
 
+    /**
+     * finds and returns Optional containing show with id matching param if found
+     * @param id of show to be found
+     * @return optional containing show if found
+     */
+    Optional<Show> findOneById(Long id);
+
+    /**
+     * Delete the show with the given id
+     * @param showId of the show to delete
+     */
+    void deleteById(Long showId);
 }

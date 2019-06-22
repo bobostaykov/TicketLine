@@ -1,0 +1,92 @@
+<!-- div containing form to update selected seat or sector -->
+<div id="updateForm">
+  <form #updateForm="ngForm" (ngSubmit)="updateForm.valid && updateSelectedElement()">
+    <div class="row mx-2" *ngIf="seats !== undefined">
+      <!-- form field to update seat row -->
+      <mat-form-field appearance="standard" class="col-6" hideRequiredMarker>
+        <mat-label class="pr-4">Row</mat-label>
+        <label for="seatRow" class="sr-only">Seat Row</label>
+        <input matInput id="seatRow" type="number" aria-labelledby="Seat Row" class="text-right"
+               name="seatRow" [(ngModel)]="updateElementModel.seatRow" #seatRow="ngModel"
+               required min="1" appMin="1"/>
+        <mat-error *ngIf="seatRow.hasError('required')">Row must be set!</mat-error>
+        <mat-error *ngIf="seatRow.hasError('min')">Must be greater <span class="text-nowrap">than 0!</span>
+        </mat-error>
+      </mat-form-field>
+      <!-- form field to update seat number -->
+      <mat-form-field appearance="standard" class="col-6" hideRequiredMarker>
+        <mat-label class="pr-4">Number</mat-label>
+        <label for="seatNumber" class="sr-only">Number</label>
+        <input matInput id="seatNumber" type="number" aria-labelledby="Seat Number" class="text-right"
+               name="seatNumber" [(ngModel)]="updateElementModel.seatNumber" #seatNumber="ngModel"
+               required min="1" appMin="1"/>
+        <mat-error *ngIf="seatNumber.hasError('required')">Number must be set!</mat-error>
+        <mat-error *ngIf="seatNumber.hasError('min')">Must be greater <span class="text-nowrap">than 0!</span>
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <div class="row mx-2" *ngIf="sectors !== undefined">
+      <!-- form field to update sector number -->
+      <mat-form-field appearance="standard" class="col-10" hideRequiredMarker>
+        <mat-label class="pr-4" matPrefix>Sector Number</mat-label>
+        <label for="sectorNumber" class="sr-only">Sector Number</label>
+        <input matInput id="sectorNumber" type="number" aria-labelledby="Sector Number" class="text-right"
+               name="sectorNumber" [(ngModel)]="updateElementModel.sectorNumber" #sectorNumber="ngModel"
+               required min="1" appMin="1"/>
+        <mat-error *ngIf="sectorNumber.hasError('required')">Sector number must be set!</mat-error>
+        <mat-error *ngIf="sectorNumber.hasError('min')">Must be greater <span class="text-nowrap">than 0!</span>
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <div class="row mx-2">
+      <!-- form field to update seat or sector price category -->
+      <mat-form-field appearance="standard" class="col-6">
+        <label for="priceCategory" class="sr-only">Price Category</label>
+        <select matNativeControl id="priceCategory" aria-labelledby="Price Category"
+                name="seatPrice" [(ngModel)]="updateElementModel.priceCategory" required>
+          <option *ngFor="let price of priceCategories">{{price}}</option>
+        </select>
+        <mat-error>Price Category is required!</mat-error>
+      </mat-form-field>
+      <div class="col-6 d-flex align-items-end">
+        <!-- button submitting update form -->
+        <button mat-raised-button type="submit" color="primary" [disabled]="updateForm.invalid">Update</button>
+      </div>
+    </div>
+    <!-- displays error message after submit if seat or sector with given row/number already exists in the hall -->
+    <small class="form-text text-danger mt-2 col-12" *ngIf="updateSubmissionError">{{updateSubmissionMessage}}</small>
+  </form>
+</div>
+
+<!-- div containing context menu for delete, ticket, update operations -->
+<div id="contextmenu" class="dropdown-menu shadow-sm">
+  <button *ngIf="seats" class="btn dropdown-item" (click)="displaySeatUpdateForm(selectedElement)">Update</button>
+  <button *ngIf="sectors" class="btn dropdown-item" (click)="displaySectorUpdateForm(selectedElement)">Update</button>
+  <button class="btn dropdown-item" (click)="deleteSelectedElement()">Delete</button>
+  <button class="btn dropdown-item" (click)="addToTicket()">Add To Ticket</button>
+</div>
+
+<div id="svg-container">
+  <!-- draws a floor plan with seats -->
+  <svg id="floorplan" *ngIf="seats"
+       [attr.viewBox]="this.viewbox"
+       (mousedown)="svgDragInit()"
+       (mousewheel)="zoom($event)" >
+    <path *ngFor="let seat of seats"
+          [attr.d]="getSeatPath(seat)"
+          [attr.fill]="getColor(seat)"
+          (click)="displaySeatUpdateForm(seat)"
+          (contextmenu)="displayContext(seat, $event)"></path>
+  </svg>
+  <!-- draws a floor plan with sectors -->
+  <svg id="floorplan" *ngIf="sectors"
+       [attr.viewBox]="this.viewbox"
+       (mousedown)="svgDragInit()"
+       (mousewheel)="zoom($event)" >
+    <path *ngFor="let sector of sectors"
+          [attr.d]="getSectorPath(sector)"
+          [attr.fill]="getColor(sector)"
+          (click)="displaySectorUpdateForm(sector)"
+          (contextmenu)="displayContext(sector, $event)"></path>
+  </svg>
+</div>

@@ -34,17 +34,19 @@ export class CustomerService {
 
   /**
    * returns all customers found in the backend database as Observable
+   * @param page the number of the page to get
    */
-  findAllCustomers(): Observable<Customer[]> {
+  findAllCustomers(page): Observable<Customer[]> {
     console.log('Getting all customers from backend');
-    return this.httpClient.get<Customer[]>(this.customerBaseUri);
+    return this.httpClient.get<Customer[]>(this.customerBaseUri, {params: {page: page}});
   }
 
   /**
    * Gets all customers from backend that fit search parameters
    * @param customer dto containing search parameters
+   * @param page the number of the requested page
    */
-  searchCustomers(customer: Customer): Observable<Customer[]> {
+  searchCustomers(customer: Customer, page): Observable<Customer[]> {
     console.log('Getting all customers from search parameters: ' + JSON.stringify(customer));
     let parameters = new HttpParams();
     parameters = customer.id ? parameters.append('id', customer.id.toString()) : parameters;
@@ -55,6 +57,7 @@ export class CustomerService {
       const date: string[] = customer.birthday.split('-');
       parameters = parameters.append('birthday', date[2] + '.' + date[1] + '.' + date[0]);
     }
+    parameters = parameters.append('page', page);
     return this.httpClient.get<Customer[]>(this.customerBaseUri, {params: parameters});
   }
 }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
 @ApiModel(value = "DetailedNewsDTO", description = "A detailed DTO for news entries via rest")
@@ -18,10 +19,12 @@ public class DetailedNewsDTO {
     private LocalDateTime publishedAt;
 
     @ApiModelProperty(required = true, name = "The title of the news")
+    @NotBlank(message = "title may not be blank")
     @JsonProperty("title")
     private String title;
 
     @ApiModelProperty(required = true, name = "The text content of the news")
+    @NotBlank(message = "text may not be blank")
     @JsonProperty("text")
     private String text;
 

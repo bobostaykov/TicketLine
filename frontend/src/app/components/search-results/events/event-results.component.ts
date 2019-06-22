@@ -10,12 +10,22 @@ import {Event} from '../../../dtos/event';
 })
 export class EventResultsComponent implements OnInit {
 
-  private page: number = 1;
-  private pageSize: number = 10;
+  private page: number = 0;
+  private pages: Array<number>;
   private dataReady: boolean = false;
+
+  private artistID: number;
+  private artistName: string;
+  private eventName: string;
+  private eventType: string;
+  private content: string;
+  private description: string;
+
   private error: boolean = false;
   private errorMessage: string = '';
+
   private resultsFor: string;
+
   private events: Event[];
   private headers: string[] = [
     'Name',
@@ -32,14 +42,16 @@ export class EventResultsComponent implements OnInit {
     console.log(this.resultsFor);
     switch (this.resultsFor) {
       case 'ARTIST':
-        this.loadEventsFilteredByArtist( this.route.snapshot.queryParamMap.get('id'));
+        this.artistID = +this.loadEventsFilteredByArtist( this.route.snapshot.queryParamMap.get('id'), this.page);
         break;
       case 'ATTRIBUTES':
         this.loadEventsFilteredByAttributes(
-          this.route.snapshot.queryParamMap.get('eventName'),
-          this.route.snapshot.queryParamMap.get('eventType'),
-          this.route.snapshot.queryParamMap.get('content'),
-          this.route.snapshot.queryParamMap.get('description')
+          this.eventName = this.route.snapshot.queryParamMap.get('eventName'),
+          this.eventType = this.route.snapshot.queryParamMap.get('eventType'),
+          this.artistName = this.route.snapshot.queryParamMap.get('artistName'),
+          this.content = this.route.snapshot.queryParamMap.get('content'),
+          this.description = this.route.snapshot.queryParamMap.get('description'),
+          this.page
         );
         break;
       default:
@@ -47,19 +59,67 @@ export class EventResultsComponent implements OnInit {
     }
   }
 
-  private loadEventsFilteredByArtist(id) {
+  private loadEvents() {
+    switch (this.resultsFor) {
+      case 'ARTIST':
+        this.loadEventsFilteredByArtist(this.artistID, this.page);
+        break;
+      case 'ATTRIBUTES':
+        this.loadEventsFilteredByAttributes(
+          this.eventName,
+          this.eventType,
+          this.artistName,
+          this.content,
+          this.description,
+          this.page
+        );
+        break;
+      default:
+        this.defaultServiceErrorHandling('No results for this type');
+    }
+  }
+
+  private setPage(i, event: any) {
+    event.preventDefault();
+    this.page = i;
+    this.loadEvents();
+  }
+
+  private previousPage(event: any) {
+    event.preventDefault();
+    if (this.page > 0 ) {
+      this.page--;
+      this.loadEvents();
+    }
+  }
+
+  private nextPage(event: any) {
+    event.preventDefault();
+    if (this.page < this.pages.length - 1) {
+      this.page++;
+      this.loadEvents();
+    }
+  }
+
+  private loadEventsFilteredByArtist(id, page: number) {
     console.log('Component Event-Results: loadEventsFilteredByArtist');
-    this.eventResultsService.findEventsFilteredByArtistID(id).subscribe(
-      (events: Event[]) => {this.events = events; },
+    this.eventResultsService.findEventsFilteredByArtistID(id, page).subscribe(
+      result => {
+        this.events = result['content'];
+        this.pages = new Array(result['totalPages']);
+      },
       error => {this.defaultServiceErrorHandling(error); },
       () => { this.dataReady = true; }
     );
   }
 
-  private loadEventsFilteredByAttributes(eventName, eventType, content, description) {
+  private loadEventsFilteredByAttributes(eventName, eventType, artistName, content, description, page: number) {
     console.log('Component Event-Results: loadEventsFilteredByAttributes');
-    this.eventResultsService.findEventsFilteredByAttributes(eventName, eventType, content, description).subscribe(
-      (events: Event[]) => {this.events = events; },
+    this.eventResultsService.findEventsFilteredByAttributes(eventName, eventType, artistName, content, description, page).subscribe(
+      result => {
+        this.events = result['content'];
+        this.pages = new Array(result['totalPages']);
+      },
       error => {this.defaultServiceErrorHandling(error); },
       () => { this.dataReady = true; }
     );

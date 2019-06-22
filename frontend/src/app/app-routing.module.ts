@@ -12,11 +12,13 @@ import {ArtistResultsComponent} from './components/search-results/artists/artist
 import {EventsComponent} from './components/events/start page/events.component';
 import {LocationResultsComponent} from './components/search-results/locations/location-results.component';
 import {EventResultsComponent} from './components/search-results/events/event-results.component';
-import {FloorplanControlComponent} from './components/floorplan-control/floorplan-control.component';
+import {FloorplanControlComponent} from './components/floorplan/floorplan-control/floorplan-control.component';
 import {CustomerComponent} from './components/customer/customer.component';
+import {TicketComponent} from './components/ticket/ticket.component';
+import {TicketCheckReservationComponent} from './components/ticket/ticket-check/ticket-check.component';
 import {BlockedUsersComponent} from './components/blocked-users/blocked-users.component';
+import {ContentManagerComponent} from './components/content-manager/content-manager.component';
 
-// TODO Refactor Names: ShowResultsComponent -> ShowResultsComponent; the same for LocationComponent; in Service as well
 const routes: Routes = [
   {path: '', component: HomeComponent},
   {path: 'login', component: LoginComponent},
@@ -30,7 +32,12 @@ const routes: Routes = [
   {path: 'events/search/results/shows', canActivate: [AuthGuard], component: ShowResultsComponent},
   {path: 'events/search/results/locations', canActivate: [AuthGuard], component: LocationResultsComponent},
   {path: 'events/search/results/events', canActivate: [AuthGuard], component: EventResultsComponent},
+  {path: 'ticket', canActivate: [AuthGuard], component: TicketComponent},
+  {path: 'ticket-check', canActivate: [AuthGuard], component: TicketCheckReservationComponent},
   {path: 'floorplan', canActivate: [AuthGuard], component: FloorplanControlComponent},
+  {path: 'ticket', canActivate: [AuthGuard], component: TicketComponent},
+  {path: 'manager', canActivate: [AuthGuard], component: ContentManagerComponent},
+  {path: 'ticket-check', canActivate: [AuthGuard], component: TicketCheckReservationComponent},
   {path: 'blocked', canActivate: [AuthGuard], component: BlockedUsersComponent}
 ];
 

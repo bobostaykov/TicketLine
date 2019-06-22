@@ -1,7 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.entity;
 
 import javax.persistence.*;
-import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
@@ -12,8 +11,8 @@ import java.util.Objects;
 public class Show {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "seq_show_id")
-    @SequenceGenerator(name = "seq_show_id", sequenceName = "seq_show_id")
+    @SequenceGenerator(name = "show_seq", initialValue = 1, allocationSize = 50)
+    @GeneratedValue(generator = "show_seq")
     private Long id;
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -123,6 +122,20 @@ public class Show {
     @Override
     public int hashCode() {
         return Objects.hash(id, event, time, date, hall, description, ticketsSold);
+    }
+
+    @Override
+    public String toString() {
+        return "Show{" +
+            "id=" + id +
+            ", event=" + event +
+            ", time=" + time +
+            ", date=" + date +
+            ", hall=" + hall +
+            ", description='" + description + '\'' +
+            ", ticketsSold=" + ticketsSold +
+            ", pricePattern=" + pricePattern +
+            '}';
     }
 
     public static final class ShowBuilder {

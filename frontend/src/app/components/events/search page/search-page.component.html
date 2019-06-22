@@ -1,83 +1,7 @@
 <h1 class="mt-5" align="center">Search Page</h1>
 
-<h3 class="mt-5">Search for events by artist:</h3>
-<form [formGroup]="artistForm" (ngSubmit)="submitArtistForm()">
-  <mat-form-field appearance="outline">
-    <mat-label>Artist Name</mat-label>
-    <input matInput type="text" id="artist_name" formControlName="artist_name" placeholder="Artist Name"
-           [(ngModel)]="artistName">
-    <mat-error *ngIf="hasError('artist_name', 'required')">Artist name is required</mat-error>
-    <mat-error *ngIf="hasError('artist_name', 'maxlength')">Artist name should be less than 60 characters</mat-error>
-  </mat-form-field>
-  <p>
-    <button mat-raised-button id="search_artist" color="primary">Search</button>
-  </p>
-</form>
-
-<h3 class="mt-5">Search for specific locations:</h3>
-<form [formGroup]="locationForm" (ngSubmit)="searchByLocation()">
-  <mat-form-field appearance="outline">
-    <mat-label>Country</mat-label>
-    <mat-select id="location_country" formControlName="locationCountry" placeholder="Country" [(ngModel)]="locationCountry">
-      <mat-option>-- None --</mat-option>
-      <mat-option *ngFor="let country of countries" [value]="country">{{country}}</mat-option>
-    </mat-select>
-  </mat-form-field>
-  <mat-form-field appearance="outline">
-    <mat-label>City</mat-label>
-    <input matInput type="text" id="location_city" formControlName="locationCity" placeholder="City" [(ngModel)]="locationCity">
-  </mat-form-field>
-  <mat-form-field appearance="outline">
-    <mat-label>Street</mat-label>
-    <input matInput type="text" id="location_street" formControlName="locationStreet" placeholder="Street" [(ngModel)]="locationStreet">
-  </mat-form-field>
-  <mat-form-field appearance="outline" hintLabel="Max 16 characters">
-    <mat-label>Zip</mat-label>
-    <input matInput #input maxlength="16" type="text" id="location_postal_code" formControlName="locationPostalCode"
-           placeholder="Zip" [(ngModel)]="locationPostalCode">
-    <mat-hint align="end">{{input.value?.length || 0}}/16</mat-hint>
-  </mat-form-field>
-  <mat-form-field appearance="outline">
-    <mat-label>Description</mat-label>
-    <input matInput type="text" id="location_description" formControlName="locationDescription"
-           placeholder="Description"
-           [(ngModel)]="locationDescription">
-  </mat-form-field>
-  <p>
-    <button mat-raised-button id="btn_search_by_location" color="primary">Search</button>
-  </p>
-</form>
-
-<h3 class="mt-5">Search for events by name and category:</h3>
-<form [formGroup]="eventForm" (ngSubmit)="searchByEventAttributes()">
-  <mat-form-field appearance="outline">
-    <mat-label>Name</mat-label>
-    <input matInput type="text" id="event_name" formControlName="eventName" placeholder="Name" [(ngModel)]="eventName">
-  </mat-form-field>
-  <mat-form-field appearance="outline">
-    <mat-label>Type</mat-label>
-    <mat-select id="event_type" formControlName="eventType" placeholder="Type" [(ngModel)]="eventType">
-      <mat-option>-- None --</mat-option>
-      <mat-option *ngFor="let type of eventTypeKeys" [value]="type">{{type}}</mat-option>
-    </mat-select>
-  </mat-form-field>
-  <mat-form-field appearance="outline">
-    <mat-label>Content</mat-label>
-    <input matInput type="text" id="event_content" formControlName="eventContent" placeholder="Content"
-           [(ngModel)]="eventContent">
-  </mat-form-field>
-  <mat-form-field appearance="outline">
-    <mat-label>Description</mat-label>
-    <input matInput type="text" id="event_description" formControlName="eventDescription" placeholder="Description"
-           [(ngModel)]="eventDescription">
-  </mat-form-field>
-  <p>
-    <button mat-raised-button id="btn_searchByEvent" color="primary">Search</button>
-  </p>
-</form>
-
-<h3 class="mt-5">Search for specific shows:</h3>
-<form [formGroup]="showForm" (ngSubmit)="searchForSpecificShows()">
+<h3 class="mt-5">Search for shows:</h3>
+<form [formGroup]="showForm" (ngSubmit)="searchForShows()">
   <div>
     <mat-form-field appearance="outline">
       <mat-label>Event Name</mat-label>
@@ -85,8 +9,23 @@
              [(ngModel)]="showEventName">
     </mat-form-field>
     <mat-form-field appearance="outline">
+      <mat-label>Event Type</mat-label>
+      <mat-select type="text" id="show_event_type" formControlName="showEventType" placeholder="Event Type"
+             [(ngModel)]="showEventType">
+        <mat-option>-- None --</mat-option>
+        <mat-option *ngFor="let type of eventTypeKeys" [value]="type">{{type}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+  <div>
+    <mat-form-field appearance="outline">
+      <mat-label>Artist Name</mat-label>
+      <input matInput type="text" id="show_artist_name" formControlName="showArtistName" placeholder="Artist Name"
+             [(ngModel)]="showArtistName">
+    </mat-form-field>
+    <mat-form-field appearance="outline">
       <mat-label>Hall Name</mat-label>
-      <input matInput type="text" id="hall_name" formControlName="hallName" placeholder="Hall Name"
+      <input matInput type="text" id="show_hall_name" formControlName="hallName" placeholder="Hall Name"
              [(ngModel)]="hallName">
     </mat-form-field>
   </div>
@@ -124,6 +63,10 @@
   <div>
     <p><mat-label>Location:</mat-label></p>
     <mat-form-field appearance="outline">
+      <mat-label>Location Name</mat-label>
+      <input matInput type="text" id="show_location_name" formControlName="showLocationName" placeholder="Location Name" [(ngModel)]="showLocationName">
+    </mat-form-field>
+    <mat-form-field appearance="outline">
       <mat-label>Country</mat-label>
       <mat-select id="show_country" formControlName="showCountry" placeholder="Country" [(ngModel)]="showCountry">
         <mat-option>-- None --</mat-option>
@@ -148,5 +91,96 @@
   </div>
   <p>
     <button mat-raised-button id="btn_search_for_specific_shows" color="primary">Search</button>
+  </p>
+</form>
+
+
+
+<h3 class="mt-5">Search for events:</h3>
+<form [formGroup]="eventForm" (ngSubmit)="searchForEvents()">
+  <mat-form-field appearance="outline">
+    <mat-label>Name</mat-label>
+    <input matInput type="text" id="event_name" formControlName="eventName" placeholder="Name" [(ngModel)]="eventName">
+  </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>Type</mat-label>
+    <mat-select id="event_type" formControlName="eventType" placeholder="Type" [(ngModel)]="eventType">
+      <mat-option>-- None --</mat-option>
+      <mat-option *ngFor="let type of eventTypeKeys" [value]="type">{{type}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>Artist Name</mat-label>
+    <input matInput type="text" id="event_artist_name" formControlName="eventArtistName" placeholder="ArtistName"
+           [(ngModel)]="eventArtistName">
+  </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>Content</mat-label>
+    <input matInput type="text" id="event_content" formControlName="eventContent" placeholder="Content"
+           [(ngModel)]="eventContent">
+  </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>Description</mat-label>
+    <input matInput type="text" id="event_description" formControlName="eventDescription" placeholder="Description"
+           [(ngModel)]="eventDescription">
+  </mat-form-field>
+  <p>
+    <button mat-raised-button id="btn_searchByEvent" color="primary">Search</button>
+  </p>
+</form>
+
+
+
+<h3 class="mt-5">Search for locations:</h3>
+<form [formGroup]="locationForm" (ngSubmit)="searchForLocations()">
+  <mat-form-field appearance="outline">
+    <mat-label>Name</mat-label>
+    <input matInput type="text" id="location_name" formControlName="locationName" placeholder="Name" [(ngModel)]="locationName">
+  </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>Country</mat-label>
+    <mat-select id="location_country" formControlName="locationCountry" placeholder="Country" [(ngModel)]="locationCountry">
+      <mat-option>-- None --</mat-option>
+      <mat-option *ngFor="let country of countries" [value]="country">{{country}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>City</mat-label>
+    <input matInput type="text" id="location_city" formControlName="locationCity" placeholder="City" [(ngModel)]="locationCity">
+  </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>Street</mat-label>
+    <input matInput type="text" id="location_street" formControlName="locationStreet" placeholder="Street" [(ngModel)]="locationStreet">
+  </mat-form-field>
+  <mat-form-field appearance="outline" hintLabel="Max 16 characters">
+    <mat-label>Zip</mat-label>
+    <input matInput #input maxlength="16" type="text" id="location_postal_code" formControlName="locationPostalCode"
+           placeholder="Zip" [(ngModel)]="locationPostalCode">
+    <mat-hint align="end">{{input.value?.length || 0}}/16</mat-hint>
+  </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>Description</mat-label>
+    <input matInput type="text" id="location_description" formControlName="locationDescription"
+           placeholder="Description"
+           [(ngModel)]="locationDescription">
+  </mat-form-field>
+  <p>
+    <button mat-raised-button id="btn_search_by_location" color="primary">Search</button>
+  </p>
+</form>
+
+
+
+<h3 class="mt-5">Search for artists:</h3>
+<form [formGroup]="artistForm" (ngSubmit)="searchForArtists()">
+  <mat-form-field appearance="outline">
+    <mat-label>Artist Name</mat-label>
+    <input matInput type="text" id="artist_name" formControlName="artist_name" placeholder="Artist Name"
+           [(ngModel)]="artistName">
+    <mat-error *ngIf="hasError('artist_name', 'required')">Artist name is required</mat-error>
+    <mat-error *ngIf="hasError('artist_name', 'maxlength')">Artist name should be less than 60 characters</mat-error>
+  </mat-form-field>
+  <p>
+    <button mat-raised-button id="search_artist" color="primary">Search</button>
   </p>
 </form>

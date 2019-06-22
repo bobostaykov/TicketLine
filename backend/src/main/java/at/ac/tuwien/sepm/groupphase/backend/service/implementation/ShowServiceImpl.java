@@ -1,24 +1,30 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.implementation;
 
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.requestparameter.ShowRequestParameter;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.searchParameters.ShowSearchParametersDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.show.ShowDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Show;
+import at.ac.tuwien.sepm.groupphase.backend.entity.Ticket;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.show.ShowMapper;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.ShowRepository;
+import at.ac.tuwien.sepm.groupphase.backend.repository.TicketRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.ShowService;
-
 import org.hibernate.service.spi.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.PersistenceException;
-import javax.persistence.criteria.CriteriaBuilder;
-import java.util.Comparator;
 import java.util.List;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
+
+import static org.springframework.util.CollectionUtils.isEmpty;
+import javax.validation.constraints.Positive;
 
 //TODO Class is unfinished
 @Service
@@ -28,91 +34,105 @@ public class ShowServiceImpl implements ShowService {
     @Autowired
     private ShowRepository showRepository;
     @Autowired
+    private TicketRepository ticketRepository;
+    @Autowired
     private  ShowMapper showMapper;
     private static final Logger LOGGER = LoggerFactory.getLogger(ShowServiceImpl.class);
 
-    public ShowServiceImpl(ShowRepository showRepository, ShowMapper showMapper) {
+    public ShowServiceImpl(ShowRepository showRepository, ShowMapper showMapper, TicketRepository ticketRepository) {
         this.showRepository = showRepository;
+        this.ticketRepository = ticketRepository;
         this.showMapper = showMapper;
     }
     public ShowServiceImpl(){}
-
-
     @Override
-    public List<ShowDTO> findAllShows() throws at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException {
-        return showMapper.showToShowDTO(showRepository.findAll());
-    }
-
-    @Override
-    public List<ShowDTO> findAllShowsFilteredByEventName(String eventName) {
-        LOGGER.info("Find all shows filtered by event id");
-        try {
-            return showMapper.showToShowDTO(showRepository.findAllShowsFilteredByEventName(eventName));
-        } catch (PersistenceException e) {
-            throw new ServiceException(e.getMessage(), e);
-        }
-    }
-
-    @Override
-    public List<ShowDTO> findAll() {
+    public Page<ShowDTO> findAll(Integer page) throws ServiceException {
         LOGGER.info("Show Service: Find all shows");
-        try{
-            return showMapper.showToShowDTO(showRepository.findAll());
-        } catch (PersistenceException e) {
-            throw new ServiceException(e.getMessage(), e);
-        }
-    }
-/*
-    @Override
-    public List<Show> findAllShowsFilteredByLocationID(Integer locationID) {
-        LOGGER.info("Find all shows filtered by location id");
         try {
-            if (locationID < 0) throw new IllegalArgumentException("The location id is negative");
-            return showRepository.findAllByLocationID(locationID);
+            int pageSize = 10;
+            if(page < 0) {
+                throw new IllegalArgumentException("Not a valid page.");
+            }
+            Pageable pageable = PageRequest.of(page, pageSize);
+            return showRepository.findAll(pageable).map(showMapper::showToShowDTO);
         } catch (PersistenceException e) {
-            throw new ServiceException(e.getMessage(), e);
+            throw new ServiceException(e.getMessage());
         }
     }
-*/
+
     @Override
-    public List<ShowDTO> findAllShowsFiltered(ShowSearchParametersDTO parameters) throws ServiceException {
+    public Page<ShowDTO> findAllShowsFiltered(ShowSearchParametersDTO parameters, Integer page, Integer pageSize) throws ServiceException {
         try{
-            LOGGER.info("Find all shows filtered by :" + parameters.toString());
-
-            List<ShowDTO> showList = showMapper.showToShowDTO(showRepository.findAllShowsFiltered(parameters));
-            return showList;
-
+            LOGGER.info("Show Service: Find all shows filtered by :" + parameters.toString());
+            if(pageSize == null){
+                pageSize = 10;
+            }
+            if(page < 0) {
+                throw new IllegalArgumentException("Not a valid page.");
+            }
+            Pageable pageable = PageRequest.of(page, pageSize);
+            return showRepository.findAllShowsFiltered(parameters, pageable).map(showMapper::showToShowDTO);
         }catch (PersistenceException e){
             throw new ServiceException(e.getMessage(), e);
         }
 
     }
 
+    @Override
+    public Page<ShowDTO> findAllShowsFilteredByLocationID(Long locationID, Integer page, Integer pageSize) {
+        LOGGER.info("Show Service: Find all shows filtered by location id");
+        try {
+            if (locationID < 0) throw new IllegalArgumentException("The location id is negative");
+            if(pageSize == null){
+                pageSize = 10;
+            }
+            if (page < 0) {
+                throw new IllegalArgumentException("Not a valid page.");
+            }
+            Pageable pageable = PageRequest.of(page, pageSize);
+            return showRepository.findAllByHall_Location_Id(locationID, pageable).map(showMapper::showToShowDTO);
+        } catch (PersistenceException e) {
+            throw new ServiceException(e.getMessage(), e);
+        }
+    }
 
     @Override
-    public List<ShowDTO> findAllShowsFilteredByLocation(String country, String city, String postalcode, String street) {
-        LOGGER.info("Find all shows filtered by location");
-        return null;
-    }
-    /*
-    private static Predicate<ShowDTO> compareMinPrice(Double minPrice){
-        return show -> show.getPricePattern()
-            .getPriceMapping()
-            .values()
-            .stream()
-            .min(Comparator
-                .comparingDouble(Double :: doubleValue))
-            .get() > minPrice;
+    public List<ShowDTO> findSearchResultSuggestions(String eventName, String date, String time) {
+        LOGGER.info("Show Service: Find shows matching eventName = " + eventName + ", date = " + date + ", time = " + time);
+        return showMapper.showToShowDTO(showRepository.findByEventNameAndShowDateAndShowTime(eventName, date, time));
     }
 
-    private static Predicate<ShowDTO> compareMaxPrice(Double maxPrice){
-        return show -> show.getPricePattern()
-            .getPriceMapping()
-            .values()
-            .stream()
-            .min(Comparator
-                .comparingDouble(Double::doubleValue))
-            .get() > maxPrice;
+    @Override
+    public ShowDTO findOneById(Long id, List<ShowRequestParameter> include) {
+        Show show = showRepository.findOneById(id).orElseThrow(NotFoundException::new);
+        ShowDTO showDTO = showMapper.showToShowDTO(show);
+        if (include != null && include.contains(ShowRequestParameter.TICKETS)) {
+            List<Ticket> tickets = ticketRepository.findAllByShowId(showDTO.getId());
+            if (!isEmpty(showDTO.getHall().getSeats())) {
+                for (Ticket ticket : tickets) {
+                    // set ticket status for ever seat associated with the show that has already been sold or reserved
+                    showDTO.getHall().getSeats().stream()
+                        .filter(seatDTO -> seatDTO.getId().equals(ticket.getSeat().getId()))
+                        .findFirst().ifPresent(seatDTO -> seatDTO.setTicketStatus(ticket.getStatus()));
+                }
+            } else if (!isEmpty(showDTO.getHall().getSectors())) {
+                for (Ticket ticket : tickets)
+                    showDTO.getHall().getSectors().stream()
+                        .filter(sectorDTO -> sectorDTO.getId().equals(ticket.getSector().getId()))
+                        .findFirst().ifPresent(sectorDTO -> sectorDTO.setTicketStatus(ticket.getStatus()));
+            }
+        }
+        return showDTO;
     }
-     */
+
+    @Override
+    public void deleteById(Long showId) throws ServiceException, DataIntegrityViolationException {
+        LOGGER.info("ShowService: deleteById " + showId);
+        try {
+            showRepository.deleteById(showId);
+        } catch (PersistenceException e) {
+            throw new ServiceException(e.getMessage());
+        }
+    }
+
 }

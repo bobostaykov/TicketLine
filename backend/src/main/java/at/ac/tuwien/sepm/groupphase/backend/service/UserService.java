@@ -4,17 +4,19 @@ import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.PasswordChangeRequest;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.user.UserDTO;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
 
 public interface UserService {
 
     /**
-     * Find all user entries.
+     * Get all users or search by username, depending on whether username == null
      *
-     * @return all users
+     * @param username string to search by
+     * @param page number of the requested page
+     * @param pageSize size of the requested Page
+     * @return page of the found users
      */
-    List<UserDTO> findAll() throws ServiceException;
+    Page<UserDTO> getUsers(String username, Integer page, Integer pageSize) throws ServiceException;
 
     /**
      * Find a single user entry by id.
@@ -64,8 +66,11 @@ public interface UserService {
 
 
     /**
-     * Get all users
-     * @return a List with users that are currently blocked
+     * Get all blocked users or search by username, depending on whether username == null
+     * @param username string to search by
+     * @param page number of the requested page
+     * @param pageSize size of the requested page
+     * @return a page with users that are currently blocked
      */
     List<UserDTO> getAllBlockedUsers();
 
@@ -74,4 +79,5 @@ public interface UserService {
      * @param passwordChangeRequest contains the id and the new password
      */
     void changePassword(PasswordChangeRequest passwordChangeRequest) throws ServiceException;
+    Page<UserDTO> getBlockedUsers(String username, Integer page, Integer pageSize) throws ServiceException;
 }

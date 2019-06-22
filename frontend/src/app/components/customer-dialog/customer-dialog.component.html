@@ -1,5 +1,5 @@
 <!-- dialog to search for, add and update customers -->
-<form #customerForm="ngForm" class="form" (ngSubmit)="customerForm.valid && onSubmit()">
+<form #customerForm="ngForm" class="form">
   <div class="form-group" *ngIf="title === 'Search Customers'">
     <label for="customerId">ID</label>
     <input id="customerId" type="number" name="id" class="form-control"
@@ -59,5 +59,5 @@
       Valid date of birth is required!
     </div>
   </div>
-  <button type="submit" class="btn btn-success float-right" [disabled]="customerForm.invalid">{{title}}</button>
+  <button class="btn btn-success float-right" data-dismiss="modal" (click)="customerForm.valid && onSubmit()" [disabled]="customerForm.invalid">{{title}}</button>
 </form>

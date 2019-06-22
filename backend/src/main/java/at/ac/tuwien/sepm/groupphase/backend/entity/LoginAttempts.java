@@ -1,5 +1,4 @@
 package at.ac.tuwien.sepm.groupphase.backend.entity;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import javax.persistence.*;
 import java.util.Objects;

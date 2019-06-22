@@ -96,17 +96,18 @@ public class EventDTO {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         EventDTO eventDTO = (EventDTO) o;
-        return id.equals(eventDTO.id) &&
+        return Objects.equals(id, eventDTO.id) &&
             name.equals(eventDTO.name) &&
             eventType == eventDTO.eventType &&
             Objects.equals(description, eventDTO.description) &&
             Objects.equals(content, eventDTO.content) &&
-            Objects.equals(artist, eventDTO.artist);
+            durationInMinutes.equals(eventDTO.durationInMinutes) &&
+            artist.equals(eventDTO.artist);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, eventType, description, content, artist);
+        return Objects.hash(id, name, eventType, description, content, durationInMinutes, artist);
     }
 
     @Override
@@ -117,6 +118,7 @@ public class EventDTO {
             ", eventType=" + eventType +
             ", description='" + description + '\'' +
             ", content='" + content + '\'' +
+            ", durationInMinutes=" + durationInMinutes +
             ", artist=" + artist +
             '}';
     }

@@ -1,10 +1,8 @@
 package at.ac.tuwien.sepm.groupphase.backend.entity;
 
 import at.ac.tuwien.sepm.groupphase.backend.datatype.UserType;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -15,8 +13,7 @@ import java.util.List;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "seq_user_id")
-    @SequenceGenerator(name = "seq_user_id", sequenceName = "seq_user_id")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @Column(nullable = false, unique = true)
@@ -42,9 +39,6 @@ public class User {
 
     @OneToOne(mappedBy =  "user",cascade = { CascadeType.ALL}, orphanRemoval = true, optional = false)
     private LoginAttempts loginAttempts;
-
-
-
 
 
     public User() {

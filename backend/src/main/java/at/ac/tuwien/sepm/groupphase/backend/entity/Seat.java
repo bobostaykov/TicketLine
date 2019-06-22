@@ -9,8 +9,7 @@ import java.util.Objects;
 public class Seat {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "seq_seat_id")
-    @SequenceGenerator(name = "seq_seat_id", sequenceName = "seq_seat_id")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @Column(nullable = false)
@@ -23,7 +22,7 @@ public class Seat {
     private PriceCategory priceCategory;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="hall_id", nullable = false)
+    @JoinColumn(name = "hall_id", nullable = false)
     private Hall hall;
 
     public Long getId() {
@@ -58,7 +57,7 @@ public class Seat {
         this.priceCategory = priceCategory;
     }
 
-    public static SeatBuilder builder(){
+    public static SeatBuilder builder() {
         return new SeatBuilder();
     }
 
@@ -83,8 +82,8 @@ public class Seat {
 
     @Override
     public boolean equals(Object o) {
-        if(this == o) return  true;
-        if(o == null || getClass() != o.getClass()) return false;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         Seat seat = (Seat) o;
         return Objects.equals(id, seat.getId()) &&
             Objects.equals(seatNumber, seat.getSeatNumber()) &&
@@ -95,49 +94,45 @@ public class Seat {
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (seatNumber != null ? seatNumber.hashCode() : 0);
-        result = 31 * result + (seatRow != null ? seatRow.hashCode() : 0);
-        result = 31 * result + (priceCategory != null ? priceCategory.hashCode() : 0);
-        result = 31 * result + (hall != null ? hall.hashCode() : 0);
-        return result;
+        return Objects.hash(id, seatNumber, seatRow, priceCategory, hall);
     }
 
-    public static final class SeatBuilder{
+    public static final class SeatBuilder {
         private Long id;
         private Integer seatNumber;
         private Integer seatRow;
         private PriceCategory priceCategory;
         private Hall hall;
 
-        private SeatBuilder(){}
+        private SeatBuilder() {
+        }
 
-        public SeatBuilder id(Long id){
+        public SeatBuilder id(Long id) {
             this.id = id;
             return this;
         }
 
-        public SeatBuilder seatNumber(Integer seatNumber){
+        public SeatBuilder seatNumber(Integer seatNumber) {
             this.seatNumber = seatNumber;
             return this;
         }
 
-        public SeatBuilder seatRow(Integer seatRow){
+        public SeatBuilder seatRow(Integer seatRow) {
             this.seatRow = seatRow;
             return this;
         }
 
-        public SeatBuilder priceCategory(PriceCategory priceCategory){
+        public SeatBuilder priceCategory(PriceCategory priceCategory) {
             this.priceCategory = priceCategory;
             return this;
         }
 
-        public SeatBuilder hall(Hall hall){
+        public SeatBuilder hall(Hall hall) {
             this.hall = hall;
             return this;
         }
 
-        public Seat build(){
+        public Seat build() {
             Seat seat = new Seat();
             seat.setId(id);
             seat.setSeatNumber(seatNumber);

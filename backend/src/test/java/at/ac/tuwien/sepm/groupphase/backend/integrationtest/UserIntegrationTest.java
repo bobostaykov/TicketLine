@@ -10,19 +10,15 @@ import at.ac.tuwien.sepm.groupphase.backend.entity.User;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.user.UserMapper;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.integrationtest.base.BaseIntegrationTest;
+import at.ac.tuwien.sepm.groupphase.backend.integrationtest.base.BaseIntegrationTestWithMockedUserCredentials;
 import at.ac.tuwien.sepm.groupphase.backend.repository.LoginAttemptsRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.UserRepository;
-import at.ac.tuwien.sepm.groupphase.backend.security.AuthenticationConstants;
 import at.ac.tuwien.sepm.groupphase.backend.service.HeaderTokenAuthenticationService;
 import at.ac.tuwien.sepm.groupphase.backend.service.UserService;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
-import org.assertj.core.util.Strings;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.rules.ExpectedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -32,8 +28,6 @@ import org.springframework.security.authentication.InternalAuthenticationService
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.core.Is.is;
@@ -80,16 +74,6 @@ public class UserIntegrationTest extends BaseIntegrationTest {
 
     @Before
     public void setUp(){
-        validAdminTokenWithPrefix2 = Strings
-            .join(
-                AuthenticationConstants.TOKEN_PREFIX,
-                authenticationService.authenticate("admin", "password").getCurrentToken())
-            .with(" ");
-        validUserTokenWithPrefix2 = Strings
-            .join(
-                AuthenticationConstants.TOKEN_PREFIX,
-                authenticationService.authenticate("user", "password").getCurrentToken())
-            .with(" ");
         try {
             if(userRepository.findOneByUsername(TEST_USER_NAME_1).isEmpty()){
                 testUser1 = userMapper.userDTOToUser(userService.createUser(UserDTO.builder()
@@ -120,10 +104,11 @@ public class UserIntegrationTest extends BaseIntegrationTest {
         }
 
     }
+
     @Test
     public void AuthenticationWithCorrectCredentials_resultsInNotNullToken(){
         AuthenticationToken token = authenticationService.authenticate(TEST_USER_NAME_1, TEST_USER_PASS_1);
-        Assert.assertTrue(token != null);
+        Assert.assertNotNull(token);
     }
 
     @Test
@@ -131,9 +116,11 @@ public class UserIntegrationTest extends BaseIntegrationTest {
         thrown.expect(BadCredentialsException.class);
         AuthenticationToken token = authenticationService.authenticate(TEST_USER_NAME_1, TEST_USER_PASS_2);
     }
+
     @Test
     public void AuthenticationWithCorrectCredentialsAndBlockedUser_resultsInNoAuthentication() throws ServiceException {
         thrown.expect(InternalAuthenticationServiceException.class);
+        userService.unblockUser(testUser1.getId());
         userService.blockUser(testUser1.getId());
         LoginAttempts attempts = loginAttemptsRepository.findById(testUser1.getId()).get();
         Assert.assertThat(attempts.isBlocked(), is(true));
@@ -142,13 +129,14 @@ public class UserIntegrationTest extends BaseIntegrationTest {
         userService.unblockUser(testUser1.getId());
         Assert.assertThat(attempts.isBlocked(), is(false));
     }
+
     @Test
     public void blockUserAsAdmin_resultsInUserBeingBlocked(){
         Response response = RestAssured
             .given()
             .contentType(ContentType.JSON)
-            .headers(HttpHeaders.AUTHORIZATION, validAdminTokenWithPrefix2)
-            .when().put(USER_ENDPOINT + BLOCKED_USER_PATH + SPECIFIC_USER_PATH, testUser1.getId());
+            .headers(HttpHeaders.AUTHORIZATION, validAdminTokenWithPrefix)
+            .when().put(USER_ENDPOINT + BLOCKED_USER_PATH + "/" + testUser1.getId());
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
         LoginAttempts attempts = loginAttemptsRepository.findById(testUser1.getId()).get();
         Assert.assertThat(attempts.isBlocked(), is(true));
@@ -157,46 +145,51 @@ public class UserIntegrationTest extends BaseIntegrationTest {
         attempts = loginAttemptsRepository.findById(testUser1.getId()).get();
         Assert.assertThat(attempts.isBlocked(), is(false));
     }
+
     @Test
     public void blockUserAsUser_resultsInNoAuthorization(){
         Response response = RestAssured
             .given()
             .contentType(ContentType.JSON)
-            .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix2)
+            .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
             .when().put(USER_ENDPOINT + BLOCKED_USER_PATH + SPECIFIC_USER_PATH, testUser1.getId())
             .then().extract().response();
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.FORBIDDEN.value()));
 
     }
+
     @Test
     public void unblockUserAsUser_resultsInNoAuthorization() {
         Response response = RestAssured
             .given()
             .contentType(ContentType.JSON)
-            .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix2)
+            .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
             .when().put(USER_ENDPOINT + BLOCKED_USER_PATH + UNBLOCK_USER_PATH + testUser1.getId())
             .then().extract().response();
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.FORBIDDEN.value()));
     }
+
     @Test
     public void getBlockedUsersAsUser_resultsInNoAuthorization() {
         Response response = RestAssured
             .given()
             .contentType(ContentType.JSON)
-            .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix2)
-            .when().get(USER_ENDPOINT + BLOCKED_USER_PATH )
+            .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
+            .when().get(USER_ENDPOINT + BLOCKED_USER_PATH + "?username=null")
             .then().extract().response();
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.FORBIDDEN.value()));
     }
+
     @Test
     public void unblockUserAsAdmin_resultsInUserBeingUnblocked() throws ServiceException {
+        userService.unblockUser(testUser1.getId());
         userService.blockUser(testUser1.getId());
         LoginAttempts attempts = loginAttemptsRepository.findById(testUser1.getId()).get();
         Assert.assertThat(attempts.isBlocked(), is(true));
         Response response = RestAssured
             .given()
             .contentType(ContentType.JSON)
-            .headers(HttpHeaders.AUTHORIZATION, validAdminTokenWithPrefix2)
+            .headers(HttpHeaders.AUTHORIZATION, validAdminTokenWithPrefix)
             .when().put(USER_ENDPOINT + BLOCKED_USER_PATH + UNBLOCK_USER_PATH + testUser1.getId())
             .then().extract().response();
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
@@ -204,6 +197,7 @@ public class UserIntegrationTest extends BaseIntegrationTest {
         Assert.assertThat(attempts.isBlocked(), is(false));
 
     }
+
     @Test
     public void authenticationOfUserWithBadCredentials_raisesAttemptsCounter(){
         userService.unblockUser(testUser1.getId());
@@ -215,6 +209,7 @@ public class UserIntegrationTest extends BaseIntegrationTest {
         LoginAttempts attempts = loginAttemptsRepository.findById(testUser1.getId()).get();
         Assert.assertTrue(attempts.getNumberOfAttempts() > 0);
     }
+
     @Test
     public void authenticationOfUserWithGoodCredentials_setsCounterBackToZero(){
         LoginAttempts attempts = loginAttemptsRepository.findById(testUser1.getId()).get();
@@ -224,6 +219,7 @@ public class UserIntegrationTest extends BaseIntegrationTest {
         attempts = loginAttemptsRepository.findById(testUser1.getId()).get();
         Assert.assertEquals(0, attempts.getNumberOfAttempts() );
     }
+
     @Test
     public void authenticationOfAdminWithBadCredentials_doesNotChangeCounter(){
         LoginAttempts attempts = loginAttemptsRepository.findById(testUser2.getId()).get();
@@ -236,16 +232,18 @@ public class UserIntegrationTest extends BaseIntegrationTest {
         attempts = loginAttemptsRepository.findById(testUser2.getId()).get();
         Assert.assertEquals(0, attempts.getNumberOfAttempts());
     }
+
     @Test
     public void unblockingUserAsAdminWithInvalidId_returnsNotFound(){
         Response response = RestAssured
             .given()
             .contentType(ContentType.JSON)
-            .headers(HttpHeaders.AUTHORIZATION, validAdminTokenWithPrefix2)
+            .headers(HttpHeaders.AUTHORIZATION, validAdminTokenWithPrefix)
             .when().put(USER_ENDPOINT + BLOCKED_USER_PATH + UNBLOCK_USER_PATH + INVALID_ID)
             .then().extract().response();
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.NOT_FOUND.value()));
     }
+
     @Test
     public void blockingAdminAsAdmin_returnsBadRequest(){
         Response response = RestAssured
@@ -256,24 +254,37 @@ public class UserIntegrationTest extends BaseIntegrationTest {
             .then().extract().response();
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.BAD_REQUEST.value()));
     }
+
     @Test
-    public void gettingAllBlockedUsersAsAdmin_returnsListWithBlockedUsers() throws ServiceException {
+    public void gettingAllBlockedUsersAsAdmin_returnsPageWithBlockedUsers() throws ServiceException {
         userService.blockUser(testUser1.getId());
         LoginAttempts attempts = loginAttemptsRepository.findById(testUser1.getId()).get();
-        Assert.assertThat(attempts.isBlocked(), is(true));
+        Assert.assertTrue(attempts.isBlocked());
+
         Response response = RestAssured
             .given()
             .contentType(ContentType.JSON)
             .headers(HttpHeaders.AUTHORIZATION, validAdminTokenWithPrefix)
-            .when().get(USER_ENDPOINT + BLOCKED_USER_PATH )
+            .when().get(USER_ENDPOINT + BLOCKED_USER_PATH + "?username=null&page=0")
             .then().extract().response();
-        User equalUser = userRepository.findById(testUser1.getId()).get();
-        Assert.assertThat(Arrays.asList(response.as(UserDTO[].class)), is(Collections.singletonList(userMapper.userToUserDTO(equalUser))));
+
+        Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
+
+        UserDTO readValue = response.jsonPath().getList("content", UserDTO.class).get(0);
+        UserDTO expectedUser = userMapper.userToUserDTO(userRepository.findById(testUser1.getId()).get());
+
+        Assert.assertNotNull(readValue);
+        Assert.assertEquals(readValue.getId(), expectedUser.getId());
+        Assert.assertEquals(readValue.getUsername(), expectedUser.getUsername());
+        Assert.assertEquals(readValue.getPassword(), expectedUser.getPassword());
+        Assert.assertEquals(readValue.getType(), expectedUser.getType());
+        Assert.assertEquals(readValue.getLastLogin(), expectedUser.getLastLogin());
+        Assert.assertEquals(readValue.getUserSince(), expectedUser.getUserSince());
+        Assert.assertTrue(readValue.getReadNews().isEmpty());
+
         //reset
         userService.unblockUser(testUser1.getId());
         attempts = loginAttemptsRepository.findById(testUser1.getId()).get();
-        Assert.assertThat(attempts.isBlocked(), is(false));
+        Assert.assertFalse(attempts.isBlocked());
     }
-
-
 }
