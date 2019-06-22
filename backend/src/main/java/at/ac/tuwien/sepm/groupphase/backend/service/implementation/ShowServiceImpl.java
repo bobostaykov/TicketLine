@@ -10,6 +10,7 @@ import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.ShowRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.TicketRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.ShowService;
+import at.ac.tuwien.sepm.groupphase.backend.service.ticketExpirationHandler.TicketExpirationHandler;
 import org.hibernate.service.spi.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,14 +38,18 @@ public class ShowServiceImpl implements ShowService {
     private TicketRepository ticketRepository;
     @Autowired
     private  ShowMapper showMapper;
+    private final TicketExpirationHandler ticketExpirationHandler;
     private static final Logger LOGGER = LoggerFactory.getLogger(ShowServiceImpl.class);
 
-    public ShowServiceImpl(ShowRepository showRepository, ShowMapper showMapper, TicketRepository ticketRepository) {
+    public ShowServiceImpl(ShowRepository showRepository, ShowMapper showMapper, TicketRepository ticketRepository,
+                           TicketExpirationHandler ticketExpirationHandler) {
         this.showRepository = showRepository;
         this.ticketRepository = ticketRepository;
         this.showMapper = showMapper;
+        this.ticketExpirationHandler = ticketExpirationHandler;
     }
-    public ShowServiceImpl(){}
+
+    //public ShowServiceImpl(){}
     @Override
     public Page<ShowDTO> findAll(Integer page) throws ServiceException {
         LOGGER.info("Show Service: Find all shows");
@@ -107,6 +112,7 @@ public class ShowServiceImpl implements ShowService {
         Show show = showRepository.findOneById(id).orElseThrow(NotFoundException::new);
         ShowDTO showDTO = showMapper.showToShowDTO(show);
         if (include != null && include.contains(ShowRequestParameter.TICKETS)) {
+            ticketExpirationHandler.setExpiredReservatedTicketsToStatusExpiredForSpecificShow(showDTO);
             List<Ticket> tickets = ticketRepository.findAllByShowId(showDTO.getId());
             if (!isEmpty(showDTO.getHall().getSeats())) {
                 for (Ticket ticket : tickets) {

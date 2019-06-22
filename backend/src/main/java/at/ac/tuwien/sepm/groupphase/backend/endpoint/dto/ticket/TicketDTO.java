@@ -35,7 +35,7 @@ public class TicketDTO {
     @ApiModelProperty(name = "The sector number of this ticket")
     private SectorDTO sector;
 
-    @ApiModelProperty(name = "Status of the ticket (RESERVATED, SOLD)")
+    @ApiModelProperty(name = "Status of the ticket (RESERVATED, SOLD, EXPIRED)")
     private TicketStatus status;
 
     public String getReservationNo() {

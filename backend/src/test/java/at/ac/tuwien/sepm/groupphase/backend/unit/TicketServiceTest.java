@@ -3,8 +3,11 @@ package at.ac.tuwien.sepm.groupphase.backend.unit;
 import at.ac.tuwien.sepm.groupphase.backend.datatype.EventType;
 import at.ac.tuwien.sepm.groupphase.backend.datatype.PriceCategory;
 import at.ac.tuwien.sepm.groupphase.backend.datatype.TicketStatus;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.show.ShowDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.ticket.TicketDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.*;
+import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.show.ShowMapper;
+import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.show.ShowMapperImpl;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.ticket.TicketMapper;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.ticket.TicketMapperImpl;
 import at.ac.tuwien.sepm.groupphase.backend.repository.CustomerRepository;
@@ -12,6 +15,8 @@ import at.ac.tuwien.sepm.groupphase.backend.repository.EventRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.ShowRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.TicketRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.implementation.TicketServiceImpl;
+import at.ac.tuwien.sepm.groupphase.backend.service.ticketExpirationHandler.TicketExpirationHandler;
+import at.ac.tuwien.sepm.groupphase.backend.service.ticketExpirationHandler.TicketExpirationHandlerImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -28,6 +33,8 @@ public class TicketServiceTest {
     private EventRepository eventRepository;
     private ShowRepository showRepository;
     private TicketRepository ticketRepository;
+    private ShowMapper showMapper;
+    private TicketExpirationHandler ticketExpirationHandler;
 
     private TicketServiceImpl ticketService;
     private TicketMapper ticketMapper = new TicketMapperImpl();
@@ -127,10 +134,13 @@ public class TicketServiceTest {
         this.eventRepository = Mockito.mock(EventRepository.class);
         this.showRepository = Mockito.mock(ShowRepository.class);
         this.ticketRepository = Mockito.mock(TicketRepository.class);
+        this.ticketExpirationHandler = Mockito.mock(TicketExpirationHandler.class);
+
+        this.showMapper = new ShowMapperImpl();
 
         this.ticketService = new TicketServiceImpl(this.ticketRepository, this.customerRepository, this.eventRepository,
-            this.ticketMapper, null, null, null,  this.showRepository,
-            null, null, null);
+            this.ticketMapper, this.showRepository, null, null,  null,
+            this.ticketExpirationHandler, showMapper);
 
         TEST_ARTIST = Artist.builder()
             .id(TEST_ARTIST_ID)
@@ -249,6 +259,7 @@ public class TicketServiceTest {
         Mockito.when(showRepository.findAllByEvent(TEST_EVENT_LIST)).thenReturn(TEST_SHOW_LIST);
         Mockito.when(ticketRepository.findAllByCustomer(TEST_CUSTOMER1_LIST)).thenReturn(TEST_TICKET_LIST_BY_CUSTOMER);
         Mockito.when(ticketRepository.findAllByShow(TEST_SHOW_LIST)).thenReturn(TEST_TICKET_LIST_BY_SHOW);
+        //Mockito.when(ticketExpirationHandler.setExpiredReservatedTicketsToStatusExpired(Mockito.any(ShowDTO.class));
         List<TicketDTO> result = ticketService.findAllFilteredByCustomerAndEvent(TEST_CUSTOMER_NAME1, TEST_EVENT_NAME);
         assertEquals(result, TEST_TICKET_LIST_DTO);
     }

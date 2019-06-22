@@ -9,13 +9,11 @@ import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.show.ShowMapper;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.show.ShowMapperImpl;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.ticket.TicketMapper;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.ticket.TicketMapperImpl;
-import at.ac.tuwien.sepm.groupphase.backend.repository.CustomerRepository;
-import at.ac.tuwien.sepm.groupphase.backend.repository.EventRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.ShowRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.TicketRepository;
-import at.ac.tuwien.sepm.groupphase.backend.service.implementation.TicketServiceImpl;
 import at.ac.tuwien.sepm.groupphase.backend.service.ticketExpirationHandler.TicketExpirationHandler;
 import at.ac.tuwien.sepm.groupphase.backend.service.ticketExpirationHandler.TicketExpirationHandlerImpl;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -26,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static net.bytebuddy.matcher.ElementMatchers.is;
 import static org.junit.Assert.assertEquals;
 
 public class TicketExpirationHandlerTest {
@@ -34,17 +33,19 @@ public class TicketExpirationHandlerTest {
     private TicketExpirationHandler ticketExpirationHandler;
     private TicketMapper ticketMapper = new TicketMapperImpl();
     private ShowMapper showMapper = new ShowMapperImpl();
+    private ShowRepository showRepository;
 
     private Artist TEST_ARTIST;
     private Event TEST_EVENT;
     private List<Event> TEST_EVENT_LIST;
-    private Show TEST_SHOW;
+    private Show TEST_SHOW_EXPIRED;
+    private Show TEST_SHOW_NOT_EXPIRED;
     private List<Show> TEST_SHOW_LIST;
     private Customer TEST_CUSTOMER1;
     private Customer TEST_CUSTOMER2;
     private List<Customer> TEST_CUSTOMER1_LIST;
-    private Ticket TEST_TICKET1;
-    private Ticket TEST_TICKET2;
+    private Ticket TEST_TICKET_EXPIRED;
+    private Ticket TEST_TICKET_NOT_EXPIRED;
     private List<Ticket> TEST_TICKET_LIST;
     private List<TicketDTO> TEST_TICKET_LIST_DTO;
     private List<Ticket> TEST_TICKET_LIST_BY_CUSTOMER;
@@ -96,11 +97,17 @@ public class TicketExpirationHandlerTest {
     private Long TEST_HALL_ID = 6L;
     private String TEST_HALL_NAME = "hall_test_name";
 
-    private Long TEST_SHOW_ID = 7L;
-    private LocalTime TEST_SHOW_TIME = LocalTime.of(19,30,0,0);
-    private LocalDate TEST_SHOW_DATE = LocalDate.of(2019,7,12);
-    private String TEST_SHOW_DESCRIPTION = "show_test_description";
-    private Long TEST_SHOW_TICKET_SOLD = 0L;
+    private Long TEST_SHOW_ID_1 = 7L;
+    private LocalTime TEST_SHOW_TIME_1 = LocalTime.now().plusMinutes(25);
+    private LocalDate TEST_SHOW_DATE_1 = LocalDate.now();
+    private String TEST_SHOW_DESCRIPTION_1 = "show_test_description";
+    private Long TEST_SHOW_TICKET_SOLD_1 = 0L;
+
+    private Long TEST_SHOW_ID_2 = 8L;
+    private LocalTime TEST_SHOW_TIME_2 = LocalTime.now().plusMinutes(40);
+    private LocalDate TEST_SHOW_DATE_2 = LocalDate.now();
+    private String TEST_SHOW_DESCRIPTION_2 = "show_test_description";
+    private Long TEST_SHOW_TICKET_SOLD_2 = 0L;
 
     private Long TEST_CUSTOMER_ID1 = 8L;
     private Long TEST_CUSTOMER_ID2 = 9L;
@@ -117,7 +124,7 @@ public class TicketExpirationHandlerTest {
     private Double TEST_TICKET_PRICE1 = 143.99;
     private Integer TEST_TICKET_SEAT_NO1 = 44;
     private Integer TEST_TICKET_ROW_NO1 = 25;
-    private TicketStatus TEST_TICKET_STATUS1 = TicketStatus.SOLD;
+    private TicketStatus TEST_TICKET_STATUS1 = TicketStatus.RESERVATED;
 
     private Long TEST_TICKET_ID2 = 12L;
     private Double TEST_TICKET_PRICE2 = 15.50;
@@ -127,8 +134,9 @@ public class TicketExpirationHandlerTest {
     @Before
     public void before() {
         this.ticketRepository = Mockito.mock(TicketRepository.class);
+        this.showRepository = Mockito.mock(ShowRepository.class);
 
-        this.ticketExpirationHandler = new TicketExpirationHandlerImpl(this.ticketRepository, this.ticketMapper, this.showMapper);
+        this.ticketExpirationHandler = new TicketExpirationHandlerImpl(this.ticketRepository, this.ticketMapper, this.showMapper, this.showRepository);
 
         TEST_ARTIST = Artist.builder()
             .id(TEST_ARTIST_ID)
@@ -198,26 +206,35 @@ public class TicketExpirationHandlerTest {
             .email(TEST_CUSTOMER_EMAIL2)
             .birthday(TEST_CUSTOMER_BIRTHDAY2)
             .build();
-        TEST_SHOW = Show.builder()
-            .id(TEST_SHOW_ID)
+        TEST_SHOW_EXPIRED = Show.builder()
+            .id(TEST_SHOW_ID_1)
             .event(TEST_EVENT)
             .hall(TEST_HALL)
-            .time(TEST_SHOW_TIME)
-            .date(TEST_SHOW_DATE)
-            .description(TEST_SHOW_DESCRIPTION)
-            .ticketsSold(TEST_SHOW_TICKET_SOLD)
+            .time(TEST_SHOW_TIME_1)
+            .date(TEST_SHOW_DATE_1)
+            .description(TEST_SHOW_DESCRIPTION_1)
+            .ticketsSold(TEST_SHOW_TICKET_SOLD_1)
             .build();
-        TEST_TICKET1 = Ticket.builder()
+        TEST_SHOW_NOT_EXPIRED = Show.builder()
+            .id(TEST_SHOW_ID_2)
+            .event(TEST_EVENT)
+            .hall(TEST_HALL)
+            .time(TEST_SHOW_TIME_2)
+            .date(TEST_SHOW_DATE_2)
+            .description(TEST_SHOW_DESCRIPTION_2)
+            .ticketsSold(TEST_SHOW_TICKET_SOLD_2)
+            .build();
+        TEST_TICKET_EXPIRED = Ticket.builder()
             .id(TEST_TICKET_ID1)
-            .show(TEST_SHOW)
+            .show(TEST_SHOW_EXPIRED)
             .customer(TEST_CUSTOMER1)
             .price(TEST_TICKET_PRICE1)
             .seat(TEST_SEAT1)
             .status(TEST_TICKET_STATUS1)
             .build();
-        TEST_TICKET2 = Ticket.builder()
+        TEST_TICKET_NOT_EXPIRED = Ticket.builder()
             .id(TEST_TICKET_ID2)
-            .show(TEST_SHOW)
+            .show(TEST_SHOW_NOT_EXPIRED)
             .customer(TEST_CUSTOMER2)
             .price(TEST_TICKET_PRICE2)
             .sector(TEST_SECTOR)
@@ -228,34 +245,46 @@ public class TicketExpirationHandlerTest {
         TEST_EVENT_LIST = new ArrayList<>();
         TEST_EVENT_LIST.add(TEST_EVENT);
         TEST_SHOW_LIST = new ArrayList<>();
-        TEST_SHOW_LIST.add(TEST_SHOW);
+        TEST_SHOW_LIST.add(TEST_SHOW_EXPIRED);
+        TEST_SHOW_LIST.add(TEST_SHOW_NOT_EXPIRED);
         TEST_TICKET_LIST = new ArrayList<>();
-        TEST_TICKET_LIST.add(TEST_TICKET1);
+        TEST_TICKET_LIST.add(TEST_TICKET_EXPIRED);
+        TEST_TICKET_LIST.add(TEST_TICKET_NOT_EXPIRED);
         TEST_TICKET_LIST_DTO = new ArrayList<>();
-        TEST_TICKET_LIST_DTO.add(ticketMapper.ticketToTicketDTO(TEST_TICKET1));
+        TEST_TICKET_LIST_DTO.add(ticketMapper.ticketToTicketDTO(TEST_TICKET_EXPIRED));
         TEST_TICKET_LIST_BY_CUSTOMER = new ArrayList<>();
-        TEST_TICKET_LIST_BY_CUSTOMER.add(TEST_TICKET1);
+        TEST_TICKET_LIST_BY_CUSTOMER.add(TEST_TICKET_EXPIRED);
         TEST_TICKET_LIST_BY_SHOW = new ArrayList<>();
-        TEST_TICKET_LIST_BY_SHOW.add(TEST_TICKET1);
-        TEST_TICKET_LIST_BY_SHOW.add(TEST_TICKET2);
+        TEST_TICKET_LIST_BY_SHOW.add(TEST_TICKET_EXPIRED);
+        TEST_TICKET_LIST_BY_SHOW.add(TEST_TICKET_NOT_EXPIRED);
     }
 
     @Test
-    public void setExpiredReservatedTicketsToExpired() {
-        Mockito.when(ticketRepository.findAllByShowAndStatus(TEST_SHOW, TicketStatus.RESERVATED)).thenReturn(Collections.singletonList(TEST_TICKET2));
-        //List<TicketDTO> result = ticketExpirationHandler.setExpiredReservatedTicketsToStatusExpired(showMapper.showToShowDTO(TEST_SHOW));
-    }
-/*
-    @Test
-    public void testFindAllFilteredByCustomerAndEvent_Successfull() {
-        Mockito.when(customerRepository.findAllByName(TEST_CUSTOMER_NAME1)).thenReturn(TEST_CUSTOMER1_LIST);
-        Mockito.when(eventRepository.findAllByName(TEST_EVENT_NAME)).thenReturn(TEST_EVENT_LIST);
-        Mockito.when(showRepository.findAllByEvent(TEST_EVENT_LIST)).thenReturn(TEST_SHOW_LIST);
-        Mockito.when(ticketRepository.findAllByCustomer(TEST_CUSTOMER1_LIST)).thenReturn(TEST_TICKET_LIST_BY_CUSTOMER);
-        Mockito.when(ticketRepository.findAllByShow(TEST_SHOW_LIST)).thenReturn(TEST_TICKET_LIST_BY_SHOW);
-        List<TicketDTO> result = ticketService.findAllFilteredByCustomerAndEvent(TEST_CUSTOMER_NAME1, TEST_EVENT_NAME);
-        assertEquals(result, TEST_TICKET_LIST_DTO);
+    public void setSpecificExpiredReservatedTicketToExpired() {
+        Mockito.when(ticketRepository.findAllByShowAndStatus(TEST_SHOW_EXPIRED, TicketStatus.RESERVATED)).thenReturn(Collections.singletonList(TEST_TICKET_NOT_EXPIRED));
+        Mockito.when(showRepository.findAll()).thenReturn(TEST_SHOW_LIST);
+        TicketDTO result = ticketExpirationHandler.setExpiredReservatedTicketsToStatusExpired(ticketMapper.ticketToTicketDTO(TEST_TICKET_EXPIRED));
+        Assert.assertEquals(result.getStatus(), TicketStatus.EXPIRED);
     }
 
- */
+    @Test
+    public void setSpecificNotExpiredReservatedTicketNotToExpired() {
+        Mockito.when(ticketRepository.findAllByShowAndStatus(TEST_SHOW_EXPIRED, TicketStatus.RESERVATED)).thenReturn(Collections.singletonList(TEST_TICKET_NOT_EXPIRED));
+        Mockito.when(showRepository.findAll()).thenReturn(TEST_SHOW_LIST);
+        TicketDTO result = ticketExpirationHandler.setExpiredReservatedTicketsToStatusExpired(ticketMapper.ticketToTicketDTO(TEST_TICKET_NOT_EXPIRED));
+        Assert.assertEquals(result.getStatus(), TEST_TICKET_NOT_EXPIRED.getStatus());
+    }
+
+    @Test
+    public void setListOfExpiredReservatedTicketToExpired() {
+        Mockito.when(ticketRepository.findAllByShowAndStatus(TEST_SHOW_EXPIRED, TicketStatus.RESERVATED)).thenReturn(Collections.singletonList(TEST_TICKET_NOT_EXPIRED));
+        Mockito.when(showRepository.findAll()).thenReturn(TEST_SHOW_LIST);
+        List<TicketDTO> result = ticketExpirationHandler.setExpiredReservatedTicketsToStatusExpired(ticketMapper.ticketToTicketDTO(TEST_TICKET_LIST));
+        int countExpiredTickets = 0;
+        for (TicketDTO t: result) {
+            if(t.getStatus()==TicketStatus.EXPIRED)
+                countExpiredTickets++;
+        }
+        Assert.assertEquals(countExpiredTickets, 1);
+    }
 }

@@ -9,6 +9,7 @@ import com.itextpdf.text.DocumentException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
+import io.swagger.models.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.InputStreamResource;
@@ -18,9 +19,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
@@ -111,11 +114,12 @@ public class TicketEndpoint {
     // PINO: added value = "filter" to avoid GET method crash with findAll()
     @RequestMapping(value = "/filter", method = RequestMethod.GET)
     @ApiOperation(value = "Find all tickets filtered by customer name and event name", authorizations = {@Authorization(value = "apiKey")})
-    public List<TicketDTO> findTicketFilteredByCustomerAndEvent(@RequestParam(value = "customerName", required = false) String customerName,
-                                                                @RequestParam(value = "eventName", required = false) String eventName) {
+    public List<TicketDTO> findTicketFilteredByCustomerAndEvent(@RequestParam(value = "customerName", required = false) @NotNull String customerName,
+                                                                @RequestParam(value = "eventName", required = false) @NotNull String eventName) {
         LOGGER.info("Ticket Endpoint: Find all tickets filtered by customer with name {} and event with name {}", customerName, eventName);
         if (customerName == null && eventName == null) {
-            return ticketService.findAll();
+            //return ticketService.findAll();
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Provide either customerName or eventName");
         } else {
             return ticketService.findAllFilteredByCustomerAndEvent(customerName, eventName);
         }

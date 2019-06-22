@@ -16,5 +16,27 @@ public interface TicketExpirationHandler {
      *
      * @param showDTO Show to check and set expired reservated tickets to expired
      */
-    void setExpiredReservatedTicketsToStatusExpired(ShowDTO showDTO);
+    void setExpiredReservatedTicketsToStatusExpiredForSpecificShow(ShowDTO showDTO);
+
+    /**
+     * Check if reservated ticket is expired and sets status to EXPIRED
+     *
+     * @param ticket Ticket to check expiration status
+     * @return Checked and maybe updated ticket
+     */
+    TicketDTO setExpiredReservatedTicketsToStatusExpired(TicketDTO ticket);
+
+    /**
+     * Check if reservated tickets are expired and sets status to EXPIRED
+     *
+     * @param tickets List of tickets to check expiration status
+     * @return Updated list of tickets
+     */
+    List<TicketDTO> setExpiredReservatedTicketsToStatusExpired(List<TicketDTO> tickets);
+
+    /**
+     * Check if reservated tickets are expired and sets status to EXPIRED for all tickets
+     *
+     */
+    void setAllExpiredReservatedTicketsToStatusExpired();
 }

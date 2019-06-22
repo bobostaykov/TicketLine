@@ -14,6 +14,7 @@ import at.ac.tuwien.sepm.groupphase.backend.repository.*;
 import at.ac.tuwien.sepm.groupphase.backend.service.CustomerService;
 import at.ac.tuwien.sepm.groupphase.backend.service.TicketService;
 import at.ac.tuwien.sepm.groupphase.backend.service.generator.PDFGenerator;
+import at.ac.tuwien.sepm.groupphase.backend.service.ticketExpirationHandler.TicketExpirationHandler;
 import com.itextpdf.text.DocumentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,33 +35,31 @@ public class TicketServiceImpl implements TicketService {
     private final EventRepository eventRepository;
     private final ShowRepository showRepository;
     private final TicketMapper ticketMapper;
-    private final ShowMapper showMapper;
-    private final CustomerMapper customerMapper;
-    private final CustomerService customerService;
     private final SeatRepository seatRepository;
     private final SectorRepository sectorRepository;
     private final PDFGenerator pdfGenerator;
+    private final TicketExpirationHandler ticketExpirationHandler;
+    private final ShowMapper showMapper;
 
     private static final String RECEIPT_PATH = "receipt/";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TicketServiceImpl.class);
 
     public TicketServiceImpl(TicketRepository ticketRepository, CustomerRepository customerRepository,
-                             EventRepository eventRepository, TicketMapper ticketMapper, ShowMapper showMapper,
-                             CustomerMapper customerMapper, CustomerService customerService,
+                             EventRepository eventRepository, TicketMapper ticketMapper,
                              ShowRepository showRepository, SeatRepository seatRepository,
-                             SectorRepository sectorRepository, PDFGenerator pdfGenerator) {
+                             SectorRepository sectorRepository, PDFGenerator pdfGenerator,
+                             TicketExpirationHandler ticketExpirationHandler, ShowMapper showMapper) {
         this.ticketRepository = ticketRepository;
         this.customerRepository = customerRepository;
         this.eventRepository = eventRepository;
         this.ticketMapper = ticketMapper;
-        this.showMapper = showMapper;
-        this.customerMapper = customerMapper;
-        this.customerService = customerService;
         this.showRepository = showRepository;
         this.seatRepository = seatRepository;
         this.sectorRepository = sectorRepository;
         this.pdfGenerator = pdfGenerator;
+        this.ticketExpirationHandler = ticketExpirationHandler;
+        this.showMapper = showMapper;
     }
 
     @Override
@@ -137,13 +136,16 @@ public class TicketServiceImpl implements TicketService {
     @Override
     public List<TicketDTO> findAll() {
         LOGGER.info("Ticket Service: Get all tickets");
+        ticketExpirationHandler.setAllExpiredReservatedTicketsToStatusExpired();
         return ticketMapper.ticketToTicketDTO(ticketRepository.findAllByOrderByIdAsc());
     }
 
     @Override
     public TicketDTO findOne(Long id) {
-        LOGGER.info("Ticket Service: Create Ticket");
-        return ticketMapper.ticketToTicketDTO(ticketRepository.findOneById(id).orElseThrow(NotFoundException::new));
+        LOGGER.info("Ticket Service: Find Ticket with id {}", id);
+        TicketDTO ticketDTO = ticketMapper.ticketToTicketDTO(ticketRepository.findOneById(id).orElseThrow(NotFoundException::new));
+        ticketDTO = ticketExpirationHandler.setExpiredReservatedTicketsToStatusExpired(ticketDTO);
+        return ticketDTO;
     }
 
     @Override
@@ -156,8 +158,9 @@ public class TicketServiceImpl implements TicketService {
 
     @Override
     public TicketDTO findOneReservated(Long id) {
-        LOGGER.info("Ticket Service: Create Ticket by id {} with status = {}", id, TicketStatus.RESERVATED);
-        return ticketMapper.ticketToTicketDTO(ticketRepository.findOneByIdAndStatus(id, TicketStatus.RESERVATED).orElseThrow(NotFoundException::new));
+        LOGGER.info("Ticket Service: Find Ticket by id {} with status = {}", id, TicketStatus.RESERVATED);
+        TicketDTO ticketDTO = ticketMapper.ticketToTicketDTO(ticketRepository.findOneByIdAndStatus(id, TicketStatus.RESERVATED).orElseThrow(NotFoundException::new));
+        return ticketExpirationHandler.setExpiredReservatedTicketsToStatusExpired(ticketDTO);
     }
 
     @Override
@@ -179,15 +182,15 @@ public class TicketServiceImpl implements TicketService {
         List<Customer> customers = customerRepository.findAllByName(customerName);
         List<Event> events =  eventRepository.findAllByName(eventName);
         List<Show> shows = showRepository.findAllByEvent(events);
-        List<Ticket> result1 = new ArrayList<>();
-        List<Ticket> result2 = new ArrayList<>();
+        List<TicketDTO> result1 = new ArrayList<>();
+        List<TicketDTO> result2 = new ArrayList<>();
         if (customerName != null) {
-            result1 = ticketRepository.findAllByCustomer(customers);
+            result1 = ticketExpirationHandler.setExpiredReservatedTicketsToStatusExpired(ticketMapper.ticketToTicketDTO(ticketRepository.findAllByCustomer(customers)));
         }
         if (eventName != null) {
-            result2 = ticketRepository.findAllByShow(shows);
+            result2 = ticketExpirationHandler.setExpiredReservatedTicketsToStatusExpired(ticketMapper.ticketToTicketDTO(ticketRepository.findAllByShow(shows)));
         }
-        return ticketMapper.ticketToTicketDTO(this.difference(result1, result2));
+        return this.difference(result1, result2);
     }
 
     @Override
@@ -209,7 +212,7 @@ public class TicketServiceImpl implements TicketService {
     @Override
     public byte[] generateTicketPDF(List<String> ticketIDs) throws DocumentException, IOException, NoSuchAlgorithmException {
         LOGGER.info("Ticket Service: Get a PDF for ticket(s) {}", ticketIDs.toString());
-        List<TicketDTO> tickets = ticketMapper.ticketToTicketDTO(ticketRepository.findByIdIn(this.parseListOfIds(ticketIDs)));
+        List<TicketDTO> tickets = ticketExpirationHandler.setExpiredReservatedTicketsToStatusExpired(ticketMapper.ticketToTicketDTO(ticketRepository.findByIdIn(this.parseListOfIds(ticketIDs))));
         return pdfGenerator.generateTicketPDF(tickets);
     }
 
@@ -235,9 +238,9 @@ public class TicketServiceImpl implements TicketService {
      * @param list2 list of tickets
      * @return conjunction of list1 and list2
      */
-    private List<Ticket> difference(List<Ticket> list1, List<Ticket> list2) {
-        List<Ticket> result = new ArrayList<>();
-        for (Ticket ticket : list1) {
+    private List<TicketDTO> difference(List<TicketDTO> list1, List<TicketDTO> list2) {
+        List<TicketDTO> result = new ArrayList<>();
+        for (TicketDTO ticket : list1) {
             if(list2.contains(ticket)) {
                 result.add(ticket);
             }
