@@ -118,8 +118,7 @@ public class TicketEndpoint {
                                                                 @RequestParam(value = "eventName", required = false) @NotNull String eventName) {
         LOGGER.info("Ticket Endpoint: Find all tickets filtered by customer with name {} and event with name {}", customerName, eventName);
         if (customerName == null && eventName == null) {
-            //return ticketService.findAll();
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Provide either customerName or eventName");
+            return ticketService.findAll();
         } else {
             return ticketService.findAllFilteredByCustomerAndEvent(customerName, eventName);
         }
