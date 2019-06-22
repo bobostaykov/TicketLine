@@ -1,4 +1,5 @@
 import { PriceCategory } from './priceCategory';
+import {TicketStatus} from '../datatype/ticket_status';
 
 export class Seat {
   constructor(
@@ -6,6 +7,7 @@ export class Seat {
     public seatNumber: number,
     public seatRow: number,
     public priceCategory: PriceCategory,
-    public price: number) {
+    public price: number,
+    public ticketStatus: TicketStatus) {
   }
 }
