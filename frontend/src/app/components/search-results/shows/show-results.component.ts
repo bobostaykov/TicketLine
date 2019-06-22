@@ -14,7 +14,8 @@ import {Hall} from '../../../dtos/hall';
 export class ShowResultsComponent implements OnInit {
 
   private page: number = 0;
-  private pages: Array<number>;
+  private totalPages: number;
+  private pageRange: Array<number> = [];
   private dataReady: boolean = false;
 
   private minPrice: number;
@@ -134,9 +135,37 @@ export class ShowResultsComponent implements OnInit {
 
   private nextPage(event: any) {
     event.preventDefault();
-    if (this.page < this.pages.length - 1) {
+    if (this.page < this.totalPages - 1) {
       this.page++;
       this.loadShows();
+    }
+  }
+
+  /**
+   * Determines the page numbers which will be shown in the clickable menu
+   */
+  private setPagesRange() {
+    this.pageRange = []; // nullifies the array
+    if (this.totalPages <= 11) {
+      for (let i = 0; i < this.totalPages; i++) {
+        this.pageRange.push(i);
+      }
+    } else {
+      if (this.page <= 5) {
+        for (let i = 0; i <= 10; i++) {
+          this.pageRange.push(i);
+        }
+      }
+      if (this.page > 5 && this.page < this.totalPages - 5) {
+        for (let i = this.page - 5; i <= this.page + 5; i++) {
+          this.pageRange.push(i);
+        }
+      }
+      if (this.page >= this.totalPages - 5) {
+        for (let i = this.totalPages - 10; i < this.totalPages; i++) {
+          this.pageRange.push(i);
+        }
+      }
     }
   }
 
@@ -145,7 +174,8 @@ export class ShowResultsComponent implements OnInit {
     this.showService.findShowsFilteredByEventName(eventName, page).subscribe(
       result => {
         this.shows = result['content'];
-        this.pages = new Array(result['totalPages']);
+        this.totalPages = result['totalPages'];
+        this.setPagesRange();
       },
       error => {this.defaultServiceErrorHandling(error); },
       () => { this.dataReady = true; }
@@ -157,7 +187,8 @@ export class ShowResultsComponent implements OnInit {
     this.showService.findShowsFilteredByLocationID(id, page).subscribe(
       result => {
         this.shows = result['content'];
-        this.pages = new Array(result['totalPages']);
+        this.totalPages = result['totalPages'];
+        this.setPagesRange();
 
       },
       error => {this.defaultServiceErrorHandling(error); },
@@ -172,8 +203,8 @@ export class ShowResultsComponent implements OnInit {
       duration, locationName, country, city, street, postalCode, page).subscribe(
       result => {
         this.shows = result['content'];
-        this.pages = new Array(result['totalPages']);
-        console.log(result);
+        this.totalPages = result['totalPages'];
+        this.setPagesRange();
         },
       error => {this.defaultServiceErrorHandling(error); },
       () => { this.dataReady = true; }

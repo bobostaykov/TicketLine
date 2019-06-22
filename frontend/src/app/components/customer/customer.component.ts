@@ -130,23 +130,25 @@ export class CustomerComponent implements OnInit {
    */
   private setPagesRange() {
     this.pageRange = []; // nullifies the array
-
-    if (this.page <= 5) {
-      for (let i = 0; i <= 10; i++) {
-        console.log('<= 5');
+    if (this.totalPages <= 11) {
+      for (let i = 0; i < this.totalPages; i++) {
         this.pageRange.push(i);
       }
-    }
-    if (this.page > 5 && this.page < this.totalPages - 5) {
-      for (let i = this.page - 5; i <= this.page + 5; i++) {
-        console.log('> 5 && < 95');
-        this.pageRange.push(i);
+    } else {
+      if (this.page <= 5) {
+        for (let i = 0; i <= 10; i++) {
+          this.pageRange.push(i);
+        }
       }
-    }
-    if (this.page >= this.totalPages - 5) {
-      for (let i = this.totalPages - 10; i < this.totalPages; i++) {
-        console.log('>= 95');
-        this.pageRange.push(i);
+      if (this.page > 5 && this.page < this.totalPages - 5) {
+        for (let i = this.page - 5; i <= this.page + 5; i++) {
+          this.pageRange.push(i);
+        }
+      }
+      if (this.page >= this.totalPages - 5) {
+        for (let i = this.totalPages - 10; i < this.totalPages; i++) {
+          this.pageRange.push(i);
+        }
       }
     }
   }
