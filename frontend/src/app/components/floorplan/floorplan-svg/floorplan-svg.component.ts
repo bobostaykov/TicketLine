@@ -121,7 +121,6 @@ export class FloorplanSvgComponent implements OnInit, DoCheck, AfterViewInit {
     this.renderer.appendChild(this.svgElement, seatElement);
     // display ticket differently if status is set
     if (seat.ticketStatus) {
-      console.log('NOW WITH THE TICKET STATUS');
       this.renderer.addClass(seatElement, 'ticket');
       path += seat.ticketStatus === TicketStatus.SOLD ? ' l 10 10 m -10 0 l 10 -10' : '';
     }

@@ -193,8 +193,8 @@
 <!-- adds floorplan svg and ticket component to page -->
 <div class="row">
   <app-floorplan-svg class="floorplanSvgWidth"
-                     [ngClass]="{'w-100 pr-0': ! ticketSession.getTickets().length}"
-                     [seats]="getSelectedHall().seats" [sectors]="getSelectedHall().sectors"
+                     [ngClass]="{'w-100 pr-0': ! ticketSession.getTickets()?.length}"
+                     [seats]="getSelectedHall()?.seats" [sectors]="getSelectedHall()?.sectors"
                      [hallType]="hallType"
                      [editingEnabled]="editingEnabled"
                      [priceMapping]="getSelectedShow()?.pricePattern?.priceMapping"></app-floorplan-svg>

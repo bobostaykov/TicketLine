@@ -426,7 +426,7 @@ export class FloorplanControlComponent implements OnInit {
         this.createHallForm.patchValue({
           'showSelection': show,
           'hallSelection': show.hall,
-          'locationSelection': show.hall.location
+          'locationSelection': show.hall.location,
         });
         this.ticketSession.changeShow(show);
         this.editingEnabled = false;
@@ -443,15 +443,18 @@ export class FloorplanControlComponent implements OnInit {
       location => {
         let hall = this.getSelectedHall();
         let show = this.getSelectedShow();
+        let hallName = this.createHallForm.get('hallName').value;
         if (hall !== this.newHall && hall.location) {
           hall = hall.location.id === location.id ? hall : null;
           show = hall ? show : null;
+          hallName = hall ? hall.name : null;
           this.ticketSession.changeShow(show);
         }
         this.createHallForm.patchValue({
           'locationSelection': location,
           'hallSelection': hall,
-          'showSelection': show
+          'showSelection': show,
+          'hallName': hallName
         });
       }
     );
@@ -470,7 +473,8 @@ export class FloorplanControlComponent implements OnInit {
           this.createHallForm.patchValue({
             'hallSelection': hall,
             'locationSelection': hall.location,
-            'showSelection': show
+            'showSelection': show,
+            'hallName': hall.name
           });
           if (hall.seats && hall.seats.length > 0) {
             this.hallType = 'seats';
@@ -483,6 +487,7 @@ export class FloorplanControlComponent implements OnInit {
     } else {
       this.createHallForm.patchValue({
         'showSelection': null,
+        'hallName': null
       });
       this.editingEnabled = true;
     }
