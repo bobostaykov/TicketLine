@@ -9,10 +9,11 @@ import {HallService} from '../../../services/hall/hall.service';
 import {ShowResultsService} from '../../../services/search-results/shows/show-results.service';
 import {Observable, Subject} from 'rxjs';
 import {Show} from '../../../dtos/show';
-import {HallRequestParameter} from '../../../datatype/HallRequestParameter';
+import {HallRequestParameter} from '../../../datatype/requestParameters/HallRequestParameter';
 import {debounceTime, distinctUntilChanged, switchMap} from 'rxjs/operators';
 import {LocationResultsService} from '../../../services/search-results/locations/location-results.service';
 import {TicketSessionService} from '../../../services/ticket-session/ticket-session.service';
+import {ShowRequestParameter} from '../../../datatype/requestParameters/ShowRequestParameter';
 
 @Component({
   selector: 'app-floorplan-control',
@@ -22,7 +23,7 @@ import {TicketSessionService} from '../../../services/ticket-session/ticket-sess
 export class FloorplanControlComponent implements OnInit {
 
   // initialization of new hall entity which users can edit and persist to backend
-  private newHall: Hall = new Hall(null, 'New Hall', null, [], []);
+  private newHall: Hall = new Hall(null, 'New Hall', null, [], [], true);
   // observables containing search suggestions for halls, locations and shows respectively
   private halls$: Observable<Hall[]>;
   private locations$: Observable<Location[]>;
@@ -188,7 +189,8 @@ export class FloorplanControlComponent implements OnInit {
       values.floorplanName,
       values.locationSelection,
       values.hallSelection.seats,
-      values.hallSelection.sectors
+      values.hallSelection.sectors,
+      null
     );
     this.hallService.createHall(hall).subscribe(
       createdHall => {
@@ -198,7 +200,7 @@ export class FloorplanControlComponent implements OnInit {
       error => console.log(error)
     );
     this.createHallForm.reset({
-      'hallSelection': this.newHall = new Hall(null, 'New Hall', null, [], []),
+      'hallSelection': this.newHall = new Hall(null, 'New Hall', null, [], [], true),
     });
   }
 
@@ -377,7 +379,7 @@ export class FloorplanControlComponent implements OnInit {
    */
   private loadSelectedShow(selectedShow: Show): void {
     console.log(selectedShow);
-    this.showResultsService.findOneById(selectedShow.id).subscribe(
+    this.showResultsService.findOneById(selectedShow.id, [ShowRequestParameter.TICKETS]).subscribe(
       show => {
         this.createHallForm.patchValue({
           'showSelection': show,
@@ -420,7 +422,7 @@ export class FloorplanControlComponent implements OnInit {
    */
   private loadSelectedHall(selectedHall: Hall): void {
     if (selectedHall !== this.newHall) {
-      this.hallService.findOneById(selectedHall.id).subscribe(
+      this.hallService.findOneById(selectedHall.id, [HallRequestParameter.EDITING]).subscribe(
         hall => {
           this.createHallForm.patchValue({
             'hallSelection': hall,

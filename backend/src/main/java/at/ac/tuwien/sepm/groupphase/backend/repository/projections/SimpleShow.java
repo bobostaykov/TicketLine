@@ -5,6 +5,4 @@ import java.time.LocalTime;
 
 public interface SimpleShow {
     Integer getId();
-    LocalDate getDate();
-    LocalTime getTime();
 }
