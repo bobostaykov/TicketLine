@@ -85,7 +85,7 @@ public class NewsEndpointTest extends BaseIntegrationTestWithMockedUserCredentia
     @Test
     public void findAllNewsAsUser() {
         BDDMockito.
-            given(newsRepository.findAllByOrderByPublishedAtDesc(PageRequest.of(0, 10)))
+            given(newsRepository.findAllByOrderByPublishedAtDesc(PageRequest.of(0, 12)))
             .willReturn(
             new PageImpl<>(
                 Collections.singletonList(
@@ -95,7 +95,7 @@ public class NewsEndpointTest extends BaseIntegrationTestWithMockedUserCredentia
                         .text(TEST_NEWS_TEXT)
                         .image(TEST_NEWS_IMAGEID)
                         .publishedAt(TEST_NEWS_PUBLISHED_AT)
-                        .build()), PageRequest.of(0,10), 1
+                        .build()), PageRequest.of(0,12), 1
             )
         );
         Response response = RestAssured
