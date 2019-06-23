@@ -100,14 +100,14 @@ public class TicketServiceImpl implements TicketService {
             Sector sector = null;
             if (current.getSeat() != null) {
                 seat = this.seatRepository.getOne(current.getSeat());
-                if (!show.getHall().getSeats().contains(seat)) {
+                if (!this.containsSeat(show.getHall().getSeats(), seat)) {
                     throw new NotFoundException("Seat " + seat.getSeatNumber() + " in row " + seat.getSeatRow() +
                         " not found in list of seats for this show!");
                 }
             }
             if (current.getSector() != null) {
                 sector = this.sectorRepository.getOne(current.getSector());
-                if (!show.getHall().getSectors().contains(sector)) {
+                if (!this.containsSector(show.getHall().getSectors(), sector)) {
                     throw new NotFoundException("Sector " + sector.getSectorNumber() +
                         " not found in list of sectors for this show!");
                 }
@@ -131,6 +131,38 @@ public class TicketServiceImpl implements TicketService {
             created.add(ticketMapper.ticketToTicketDTO(ticketRepository.save(ticket)));
         }
         return created;
+    }
+
+    /**
+     * Check if given list of seats contains seat element
+     *
+     * @param list list of seats to search
+     * @param elem seat element to search for
+     * @return true is list contains element, false otherwise
+     */
+    private boolean containsSeat(List<Seat> list, Seat elem) {
+        for (Seat current:list) {
+            if (current.getId() == elem.getId()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Check if given list of sectors contains sector element
+     *
+     * @param list list of sectors to search
+     * @param elem sector element to search for
+     * @return true is list contains element, false otherwise
+     */
+    private boolean containsSector(List<Sector> list, Sector elem) {
+        for (Sector current:list) {
+            if (current.getId() == elem.getId()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

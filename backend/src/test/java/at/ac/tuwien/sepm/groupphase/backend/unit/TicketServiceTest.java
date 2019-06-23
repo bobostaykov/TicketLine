@@ -332,7 +332,7 @@ public class TicketServiceTest {
     }
 
     @Test
-    public void testPostTicketsWithSeatsWhenTicketAlreadyExistsExpectingTicketSoldOutException() {
+    public void testPostTicketsWithSeatsWhenTicketAlreadyExists_ExpectingTicketSoldOutException() {
         Mockito.when(ticketRepository.findAllByShowAndSeat(TEST_SHOW, TEST_SEAT1)).thenReturn(TEST_TICKET_LIST);
         Mockito.when(showRepository.getOne(TEST_SHOW_ID)).thenReturn(TEST_SHOW);
         Mockito.when(seatRepository.getOne(TEST_SEAT_ID_1)).thenReturn(TEST_SEAT1);
@@ -346,7 +346,7 @@ public class TicketServiceTest {
     }
 
     @Test
-    public void testPostTicketsWithSectorsWhenTicketAlreadyExistsExpectingTicketSoldOutException() {
+    public void testPostTicketsWithSectorsWhenTicketAlreadyExists_ExpectingTicketSoldOutException() {
         Mockito.when(ticketRepository.findAllByShowAndSector(TEST_SHOW, TEST_SECTOR)).thenReturn(TEST_TICKET_LIST);
         Mockito.when(showRepository.getOne(TEST_SHOW_ID)).thenReturn(TEST_SHOW);
         Mockito.when(sectorRepository.getOne(TEST_SECTOR_ID)).thenReturn(TEST_SECTOR);
@@ -360,7 +360,7 @@ public class TicketServiceTest {
     }
 
     @Test
-    public void testPostTicketSubmittingNonExistingCustomerExpectingNotFoundException() {
+    public void testPostTicketSubmittingNonExistingCustomer_ExpectingNotFoundException() {
         Mockito.when(ticketRepository.findAllByShowAndSeat(TEST_SHOW, TEST_SEAT1)).thenReturn(new ArrayList<>());
         Mockito.when(showRepository.getOne(TEST_SHOW_ID)).thenReturn(TEST_SHOW);
         Mockito.when(seatRepository.getOne(TEST_SEAT_ID_1)).thenReturn(TEST_SEAT1);
@@ -377,7 +377,7 @@ public class TicketServiceTest {
     }
 
     @Test
-    public void testPostTicketSubmittingNonExistingShowExpectingNotFoundException() {
+    public void testPostTicketSubmittingNonExistingShow_ExpectingNotFoundException() {
         Mockito.when(ticketRepository.findAllByShowAndSeat(TEST_SHOW, TEST_SEAT1)).thenReturn(new ArrayList<>());
         Mockito.when(showRepository.getOne(TEST_SHOW_ID)).thenReturn(TEST_SHOW);
         Mockito.when(seatRepository.getOne(TEST_SEAT_ID_1)).thenReturn(TEST_SEAT1);
@@ -395,7 +395,7 @@ public class TicketServiceTest {
     }
 
     @Test
-    public void testPostTicketSubmittingWrongSeatForGivenShowExpectingNotFoundException() {
+    public void testPostTicketSubmittingWrongSeatForGivenShow_ExpectingNotFoundException() {
         Mockito.when(ticketRepository.findAllByShowAndSeat(TEST_SHOW, TEST_SEAT1)).thenReturn(new ArrayList<>());
         Mockito.when(showRepository.getOne(TEST_SHOW_ID)).thenReturn(TEST_SHOW);
         Mockito.when(seatRepository.getOne(TEST_SEAT_ID_1)).thenReturn(TEST_SEAT1);
@@ -413,7 +413,7 @@ public class TicketServiceTest {
     }
 
     @Test
-    public void testPostTicketSubmittingNoSeatOrSectorExpectingNotFoundException() {
+    public void testPostTicketSubmittingNoSeatOrSector_ExpectingNotFoundException() {
         Mockito.when(customerRepository.getOne(TEST_CUSTOMER_ID1)).thenReturn(TEST_CUSTOMER1);
         try{
             ticketService.postTicket(TEST_TICKET_POST_DTO_LIST);
