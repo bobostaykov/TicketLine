@@ -35,7 +35,6 @@ public interface UserService {
      */
     UserDTO createUser(UserDTO userDTO) throws ServiceException;
 
-
     /**
      * Delete a user by id
      *

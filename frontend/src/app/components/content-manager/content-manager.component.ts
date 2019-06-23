@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {AuthService} from '../../services/auth/auth.service';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {Event} from '../../dtos/event';
 import {Artist} from '../../dtos/artist';
 import {Show} from '../../dtos/show';
@@ -11,6 +11,9 @@ import {EventResultsService} from '../../services/search-results/events/event-re
 import {Location} from '../../dtos/location';
 import {MatSnackBar} from '@angular/material';
 import {Time} from '@angular/common';
+import {EventType} from '../../datatype/event_type';
+import {EventService} from '../../services/event/event.service';
+import {Customer} from '../../dtos/customer';
 
 @Component({
   selector: 'app-content-manager',
@@ -39,6 +42,9 @@ export class ContentManagerComponent implements OnInit {
   // Add Content
   private addType: string;
   private addForm: FormGroup;
+
+  // Add/edit Event
+  private activeEvent: Event;
 
   // Search Content
   private searchName: string;
@@ -99,7 +105,8 @@ export class ContentManagerComponent implements OnInit {
   ];
 
   constructor(private authService: AuthService, public snackBar: MatSnackBar, private artistService: ArtistResultsService,
-              private showService: ShowResultsService, private eventService: EventResultsService, private locationService: LocationResultsService) { }
+              private showService: ShowResultsService, private eventResultsService: EventResultsService, private locationService: LocationResultsService,
+              private artistResultsService: ArtistResultsService, private eventService: EventService) { }
 
   ngOnInit() {
     this.addForm = new FormGroup({
@@ -190,7 +197,7 @@ export class ContentManagerComponent implements OnInit {
         );
         break;
       case 'Event':
-        this.eventService.findEventsFilteredByAttributes(this.savedName, null, null, null, null, this.page).subscribe(
+        this.eventResultsService.findEventsFilteredByAttributes(this.savedName, null, null, null, null, this.page).subscribe(
           result => {
             this.events = result['content'];
             this.totalPages = result['totalPages'];
@@ -331,4 +338,36 @@ export class ContentManagerComponent implements OnInit {
       this.errorMessage = error.error.error;
     }
   }
+
+  private addEvent(event: Event) {
+    this.eventService.createEvent(event).subscribe(
+      () => {},
+      error => this.defaultServiceErrorHandling(error),
+      () => window.location.reload()
+    );
+  }
+
+  private setActiveEvent(event: Event) {
+    this.activeEvent = event;
+  }
+
+  private updateEvent(event: Event) {
+    console.log('Updates event with id ' + event.id + ' to ' + JSON.stringify(event));
+    Object.assign(this.activeEvent, event);
+    this.eventService.updateEvent(event).subscribe(
+      () => {},
+      error => this.defaultServiceErrorHandling(error),
+      () => this.loadEntities()
+    );
+  }
+
+  private deleteEvent() {
+    console.log('Delete event with id ' + this.activeEvent.id);
+    this.eventService.deleteEvent(this.activeEvent.id).subscribe(
+      () => {},
+      error => this.defaultServiceErrorHandling(error),
+      () => { this.savedName = ''; this.loadEntities(); }
+    );
+  }
+
 }
