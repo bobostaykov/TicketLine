@@ -7,8 +7,10 @@ import at.ac.tuwien.sepm.groupphase.backend.entity.Hall;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Seat;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Sector;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.hall.HallMapper;
+import at.ac.tuwien.sepm.groupphase.backend.exception.CustomValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.HallRepository;
+import at.ac.tuwien.sepm.groupphase.backend.repository.ShowRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.HallService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,19 +24,21 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 public class HallServiceImpl implements HallService {
 
     private final HallRepository hallRepository;
+    private final ShowRepository showRepository;
     private final HallMapper hallMapper;
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
-    public HallServiceImpl(HallRepository hallRepository, HallMapper hallMapper) {
+    public HallServiceImpl(HallRepository hallRepository, HallMapper hallMapper, ShowRepository showRepository) {
         this.hallMapper = hallMapper;
         this.hallRepository = hallRepository;
+        this.showRepository = showRepository;
     }
 
     @Override
     public List<HallDTO> findHalls(List<HallRequestParameter> fields, HallSearchParametersDTO searchParameters) {
-        LOGGER.info("Finding halls with " + (isEmpty(fields) ?  "all parameters " : "parameters " + fields.toString())
-        + (searchParameters != null ? "matching search parameters " + searchParameters.toString() : ""));
-        if(searchParameters == null || (searchParameters.getName() == null && searchParameters.getLocation() == null)){
+        LOGGER.info("Finding halls with " + (isEmpty(fields) ? "all parameters " : "parameters " + fields.toString())
+            + (searchParameters != null ? "matching search parameters " + searchParameters.toString() : ""));
+        if (searchParameters == null || (searchParameters.getName() == null && searchParameters.getLocation() == null)) {
             return isEmpty(fields) ? hallMapper.hallListToHallDTOs(hallRepository.findAll()) :
                 hallMapper.hallListToHallDTOs(hallRepository.findAllWithSpecifiedFields(fields));
         } else {
@@ -45,26 +49,55 @@ public class HallServiceImpl implements HallService {
     }
 
     @Override
-    public HallDTO addHall(HallDTO hallDTO) {
+    public HallDTO addHall(HallDTO hallDTO) throws CustomValidationException {
         LOGGER.info("Validating and adding hall: " + hallDTO.toString());
         // map hall dto to entity
         Hall hall = hallMapper.hallDTOToHall(hallDTO);
-        //sets child column in ManyToOne relationship and validate seats/sectors;
-        if (!isEmpty(hall.getSeats())) {
-            for(Seat seat : hall.getSeats()){
-                seat.setHall(hall);
+        // hall should only be saved if it is new, otherwise we run the risk of updating a hall
+        // that may not be updated any longer
+        if (hall.isNew()) {
+            //sets child column in ManyToOne relationship and validate seats/sectors;
+            if (!isEmpty(hall.getSeats())) {
+                for (Seat seat : hall.getSeats()) {
+                    seat.setHall(hall);
+                }
+            } else if (!isEmpty(hall.getSectors())) {
+                for (Sector sector : hall.getSectors()) {
+                    sector.setHall(hall);
+                }
             }
-        } else if (!isEmpty(hall.getSectors())) {
-            for(Sector sector : hall.getSectors()){
-                sector.setHall(hall);
-            }
+            return hallMapper.hallToHallDTO(hallRepository.save(hall));
+        } else {
+            throw new CustomValidationException("Hall could not be created because it already exists");
         }
-        return hallMapper.hallToHallDTO(hallRepository.save(hall));
     }
 
     @Override
     public HallDTO findHallById(Long hallId) {
         LOGGER.info("Find hall with id " + hallId);
         return hallMapper.hallToHallDTO(hallRepository.findById(hallId).orElseThrow(NotFoundException::new));
+    }
+
+    @Override
+    public HallDTO updateHall(HallDTO hallDTO) throws CustomValidationException {
+        LOGGER.info("Update hall " + hallDTO.toString());
+        if (editingEnabled(hallDTO)) {
+            return hallMapper.hallToHallDTO(hallRepository.save(hallMapper.hallDTOToHall(hallDTO)));
+        }
+        LOGGER.error("Hall cannot be edited because shows already exist for it");
+        throw new CustomValidationException("There are shows that will take place in this hall. It cannot be edited any more!");
+    }
+
+
+    @Override
+    public void deleteHall(Long hallId) {
+        LOGGER.info("Deleting hall with id " + hallId);
+        hallRepository.deleteById(hallId);
+    }
+
+    // checks if editing this hall is still enabled and throws a validation exception if this is not the case
+    // editing halls is only allowed if no shows have been added to the hall yet
+    private boolean editingEnabled(HallDTO hallDTO) {
+        return hallDTO.getId() == null || !showRepository.existsByHallId(hallDTO.getId());
     }
 }

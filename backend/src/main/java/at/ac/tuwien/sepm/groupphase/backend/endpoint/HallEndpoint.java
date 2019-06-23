@@ -47,14 +47,14 @@ public class HallEndpoint {
         return hallService.findHallById(hallId);
     }
 
+    // TODO: If there is time replace location with locationDTO and adjust everything as necessary
     @GetMapping
     @ApiOperation(value = "Get all saved halls", authorizations = {@Authorization(value = "apiKey")})
     public List<HallDTO> getHalls(@RequestParam(value = "fields", required = false) List<HallRequestParameter> fields,
                                   @RequestParam(required = false) String name,
                                   @RequestParam(required = false) Location location){
-        // TODO: add correct logger statement
-//        LOGGER.info("GET Halls: Halls with " + (isEmpty(fields) ? "all parameters" : "parameters " +  fields.toString())
-//        + (searchParametersDTO != null ? "matching search parameters " + searchParametersDTO.toString() : ""));
+        LOGGER.info("Gets a list of halls with search parameters name = " + (name == null ? "all" : name) + " and location = "
+            + (location == null ? "all" : location.toString()) + " with requested fields = " + (fields == null ? "all" : fields.toString()));
         HallSearchParametersDTO searchParametersDTO = HallSearchParametersDTO.builder()
             .name(name)
             .location(location)
@@ -69,7 +69,21 @@ public class HallEndpoint {
     public HallDTO postHall(@RequestBody @Valid HallDTO hallDto) throws ServiceException, CustomValidationException {
         LOGGER.info("POST Halls: " + hallDto.toString());
         return hallService.addHall(hallDto);
+    }
 
+    @PutMapping(value = "/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "Updates an already existing hall and its seats or sectors", authorizations = {@Authorization(value = "apiKey")})
+    public HallDTO updateHall(@PathVariable Long id, @RequestBody @Valid HallDTO hallDTO) throws CustomValidationException {
+        LOGGER.info("UPDATE Hall with id " + id + " with parameters " + hallDTO.toString());
+        return hallService.updateHall(hallDTO);
+    }
 
+    @DeleteMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "Deletes a hall and its seats or sectors by id", authorizations = {@Authorization(value = "apiKey")})
+    public void deleteHall(@PathVariable Long id) {
+        LOGGER.info("Delete request for hall with id " + id);
+        hallService.deleteHall(id);
     }
 }
