@@ -4,6 +4,7 @@ import {User} from '../../dtos/user';
 import {UserService} from '../../services/user/user.service';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {UserType} from '../../datatype/user_type';
+import {ChangePasswordRequest} from '../../dtos/change-password-request';
 
 @Component({
   selector: 'app-user',
@@ -15,7 +16,6 @@ export class UserComponent implements OnInit {
   private page: number = 0;
   private pages: Array<number>;
   private dataReady: boolean = false;
-
   private error: boolean = false;
   private userBlocked: boolean = false;
   private userAlreadyBlocked: boolean = false;
@@ -28,11 +28,12 @@ export class UserComponent implements OnInit {
   private userForm: FormGroup;
   private submitted: boolean = false;
   private usernameError: boolean = false;
-  private headElements = ['Username', 'Type', 'User Since', 'Last Login', 'Remove', 'Block'];
+  private headElements = ['Username', 'Type', 'User Since', 'Last Login', 'Remove', 'Block', 'reset user'];
   private userTypes = ['Admin', 'Seller'];
   private selectedUserType: string = null;
   private userToDelete: number = null;
   private userToSearch: string = null;
+  private userToChangePwd: User = null;
 
   constructor(private authService: AuthService, private userService: UserService, private formBuilder: FormBuilder) {
     this.userForm = this.formBuilder.group({
@@ -167,6 +168,19 @@ export class UserComponent implements OnInit {
   private setUserToDelete(userId: number) {
     this.userToDelete = userId;
   }
+  private setUserToReset(user: User) {
+    this.userToChangePwd = user;
+  }
+
+  /**
+   * sends an request to the backend to change the password of a user
+   * @param changePasswordRequest an request containing id name and the new password
+   */
+  private changePassword(changePasswordRequest: ChangePasswordRequest): boolean{
+    console.log('changing password for user' + changePasswordRequest.username);
+    this.userService.changePassword(changePasswordRequest);
+    return true;
+  }
 
   /**
    * Returns true if the authenticated user is an admin
@@ -224,6 +238,9 @@ export class UserComponent implements OnInit {
   private showUserAlreadyBlockedMessage() {
     this.userAlreadyBlocked = true;
     setTimeout(() => this.userAlreadyBlocked = false, 5000);
+  }
+  private checkIfUserIsAdmin(user: User): boolean{
+    return user.type === UserType.ADMIN;
   }
 
 }

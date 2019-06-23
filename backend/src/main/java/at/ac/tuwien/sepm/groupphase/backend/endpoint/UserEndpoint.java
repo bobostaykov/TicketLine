@@ -1,6 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint;
 
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.PasswordChangeRequest;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.requestparameter.PasswordChangeRequest;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.user.UserDTO;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
@@ -15,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.constraints.Positive;
@@ -126,12 +127,16 @@ public class UserEndpoint {
         }
     }
 
-    @RequestMapping(value = "/password/{id}", method = RequestMethod.POST)
+    @RequestMapping(value = "/password", method = RequestMethod.POST)
     @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "change password of user with id", authorizations = {@Authorization(value = "apiKey")})
     public void changePassword(@RequestBody PasswordChangeRequest passwordChangeRequest){
         LOGGER.info("changing password for user " + passwordChangeRequest.getId());
-        userService.changePassword(passwordChangeRequest);
+        try {
+            userService.changePassword(passwordChangeRequest);
+        } catch (ServiceException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "error changing password for user " + passwordChangeRequest.getUserName()));
+        }
     }
 
 

@@ -1,6 +1,5 @@
-package at.ac.tuwien.sepm.groupphase.backend.endpoint.dto;
+package at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.requestparameter;
 
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.authentication.AuthenticationRequest;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -12,7 +11,10 @@ public class PasswordChangeRequest {
     private String password;
 
     @ApiModelProperty(required = true, name = "the id of the user", example = "1")
-    public Long id;
+    private Long id;
+
+    @ApiModelProperty(required = true, name = "the username of the user", example = "sweetheart93")
+    private String userName;
 
     public String getPassword() {
         return password;
@@ -21,6 +23,8 @@ public class PasswordChangeRequest {
     public void setPassword(String password) {
         this.password = password;
     }
+
+
 
     public Long getId() {
         return id;
@@ -40,12 +44,13 @@ public class PasswordChangeRequest {
         if (o == null || getClass() != o.getClass()) return false;
         PasswordChangeRequest that = (PasswordChangeRequest) o;
         return Objects.equals(password, that.password) &&
-            Objects.equals(id, that.id);
+            Objects.equals(id, that.id) &&
+            Objects.equals(userName, that.userName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(password, id);
+        return Objects.hash(password, id, userName);
     }
 
     @Override
@@ -53,16 +58,30 @@ public class PasswordChangeRequest {
         return "PasswordChangeRequest{" +
             "password='" + password + '\'' +
             ", id=" + id +
+            ", userName='" + userName + '\'' +
             '}';
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public static final class PasswordChangeRequestBuilder {
 
         private Long userId;
         private String password;
+        private String userName;
 
         public PasswordChangeRequestBuilder userId(Long userId) {
             this.userId = userId;
+            return this;
+        }
+        public PasswordChangeRequestBuilder userName(String userName){
+            this.userName = userName;
             return this;
         }
 
@@ -75,6 +94,7 @@ public class PasswordChangeRequest {
             PasswordChangeRequest passwordChangeRequest = new PasswordChangeRequest();
             passwordChangeRequest.setId(userId);
             passwordChangeRequest.setPassword(password);
+            passwordChangeRequest.setUserName(userName);
             return passwordChangeRequest;
         }
     }

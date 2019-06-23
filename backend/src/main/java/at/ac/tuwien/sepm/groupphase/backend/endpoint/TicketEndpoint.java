@@ -88,12 +88,6 @@ public class TicketEndpoint {
         return ticketService.changeStatusToSold(id);
     }
 
-    @RequestMapping(value = "/reservated/{id}", method = RequestMethod.GET)
-    @ApiOperation(value = "Find reservated Ticket by id", authorizations = {@Authorization(value = "apiKey")})
-    public TicketDTO findReservatedById(@PathVariable Long id) {
-        LOGGER.info("Ticket Endpoint: Find reservated Ticket with id " + id);
-        return ticketService.findOneReservated(id);
-    }
 
     // PINO's Implementation
     /*
@@ -106,6 +100,15 @@ public class TicketEndpoint {
         return ticketService.findByCustomerNameAndShowWithStatusReservated(surname, firstname, showDTO);
     }
      */
+
+
+
+    @RequestMapping(value = "/reservated/{id}", method = RequestMethod.DELETE)
+    @ApiOperation(value = "Delete reservations by id", authorizations = {@Authorization(value = "apiKey")})
+    public TicketDTO findReservatedById(@PathVariable Long id) {
+        LOGGER.info("Ticket Endpoint: Find reservated Ticket with id " + id);
+        return ticketService.findOneReservated(id);
+    }
 
     // PINO: added value = "filter" to avoid GET method crash with findAll()
     @RequestMapping(value = "/filter", method = RequestMethod.GET)

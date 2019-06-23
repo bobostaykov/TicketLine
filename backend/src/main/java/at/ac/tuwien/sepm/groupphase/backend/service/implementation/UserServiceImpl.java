@@ -1,7 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.implementation;
 
 import at.ac.tuwien.sepm.groupphase.backend.datatype.UserType;
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.PasswordChangeRequest;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.requestparameter.PasswordChangeRequest;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.user.UserDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.LoginAttempts;
 import at.ac.tuwien.sepm.groupphase.backend.entity.User;
@@ -22,10 +22,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.PersistenceException;
-import javax.validation.constraints.Positive;
 import java.util.ArrayList;
 import java.util.Comparator;
-import javax.persistence.PersistenceException;
 import java.util.List;
 import java.util.Optional;
 

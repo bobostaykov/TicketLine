@@ -24,8 +24,6 @@ public class UserDataGenerator implements DataGenerator {
     private static final String ADMIN_PASSWORD = "password";
 
     Faker faker = new Faker();
-    @Autowired
-    PasswordEncoder passwordEncoder;
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;

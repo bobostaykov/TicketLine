@@ -71,7 +71,7 @@ import { ChangePasswordDialogComponent } from './components/change-password-dial
     MinDirective,
     BlockedUsersComponent,
     TicketCheckReservationComponent,
-    ContentManagerComponent
+    ContentManagerComponent,
     BlockedUsersComponent,
     ChangePasswordDialogComponent
   ],
