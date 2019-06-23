@@ -42,7 +42,6 @@ public class TicketEndpoint {
 
 
     @RequestMapping(method = RequestMethod.POST)
-    @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(value = "Create a ticket", authorizations = {@Authorization(value = "apiKey")})
     public List<TicketDTO> create(@RequestBody List<TicketPostDTO> ticketPostDTO) {
         LOGGER.info("Create Ticket");

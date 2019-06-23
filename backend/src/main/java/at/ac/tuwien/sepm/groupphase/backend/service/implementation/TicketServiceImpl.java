@@ -63,7 +63,7 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public List<TicketDTO> postTicket(List<TicketPostDTO> ticketPostDTO) throws TicketSoldOutException {
+    public List<TicketDTO> postTicket(List<TicketPostDTO> ticketPostDTO) throws TicketSoldOutException, NotFoundException {
         LOGGER.info("Ticket Service: Create Ticket");
         // Check if any of the requested tickets were already sold or reservated
         for (TicketPostDTO current : ticketPostDTO) {
@@ -89,17 +89,17 @@ public class TicketServiceImpl implements TicketService {
             if (customer == null) {
                 throw new NotFoundException("No Customer found with id " + current.getCustomer());
             }
+            if ((current.getSeat() == null && current.getSector() == null) || (current.getSeat() != null && current.getSector() != null)) {
+                throw new NotFoundException("Either seat or sector must be given");
+            }
             Show show = this.showRepository.getOne(current.getShow());
             if (show == null) {
                 throw new NotFoundException("No Show found with id " + current.getShow());
             }
-            if ((current.getSeat() == null && current.getSector() == null) || (current.getSeat() != null && current.getSector() != null)) {
-                throw new NotFoundException("Either seat or sector must be given.");
-            }
             Seat seat = null;
             Sector sector = null;
             if (current.getSeat() != null) {
-                seat = this.seatRepository.findOneById(current.getSeat()).get();
+                seat = this.seatRepository.getOne(current.getSeat());
                 if (!show.getHall().getSeats().contains(seat)) {
                     throw new NotFoundException("Seat " + seat.getSeatNumber() + " in row " + seat.getSeatRow() +
                         " not found in list of seats for this show!");
@@ -116,6 +116,8 @@ public class TicketServiceImpl implements TicketService {
             if (current.getStatus() == TicketStatus.RESERVATED) {
                 uniqueReservationNo = UUID.randomUUID().toString();
             }
+            show.setTicketsSold(show.getTicketsSold() + 1);
+            show = showRepository.save(show);
             Ticket ticket = new Ticket().builder()
                 .status(current.getStatus())
                 .customer(customer)
@@ -125,8 +127,6 @@ public class TicketServiceImpl implements TicketService {
                 .sector(sector)
                 .reservationNo(uniqueReservationNo)
                 .build();
-            show.setTicketsSold(show.getTicketsSold() + 1);
-            showRepository.save(show);
             /* TODO: test everthing, also test if incrementing ticketSold worked */
             created.add(ticketMapper.ticketToTicketDTO(ticketRepository.save(ticket)));
         }
