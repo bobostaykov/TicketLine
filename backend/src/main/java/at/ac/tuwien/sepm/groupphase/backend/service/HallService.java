@@ -32,9 +32,12 @@ public interface HallService {
     /**
      * finds specific hall by id
      * @param hallId id of hall to be found
+     * @param include inclues special instructions for method.
+     * If editing request parameter is set hall will return a boolean to decide hall should
+     * be allowed to edit in frontend
      * @return hall with specified id
      */
-    HallDTO findHallById(Long hallId);
+    HallDTO findHallById(Long hallId, List<HallRequestParameter> include);
 
     /**
      * updates the hall with the given id to the parameters passed in hallDTO

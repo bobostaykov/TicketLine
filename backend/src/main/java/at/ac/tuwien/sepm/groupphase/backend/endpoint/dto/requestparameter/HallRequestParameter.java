@@ -12,6 +12,6 @@ public enum HallRequestParameter {
     NAME,
     @JsonProperty("location")
     LOCATION,
-    @JsonProperty("simpleshows")
-    SIMPLESHOWS
+    @JsonProperty("editing")
+    EDITING
 }

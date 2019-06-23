@@ -73,9 +73,13 @@ public class HallServiceImpl implements HallService {
     }
 
     @Override
-    public HallDTO findHallById(Long hallId) {
+    public HallDTO findHallById(Long hallId, List<HallRequestParameter> include) {
         LOGGER.info("Find hall with id " + hallId);
-        return hallMapper.hallToHallDTO(hallRepository.findById(hallId).orElseThrow(NotFoundException::new));
+        HallDTO hallDTO =  hallMapper.hallToHallDTO(hallRepository.findById(hallId).orElseThrow(NotFoundException::new));
+        if(include.contains(HallRequestParameter.EDITING)) {
+            hallDTO.setEditingEnabled(! showRepository.existsByHallId(hallId));
+        }
+        return hallDTO;
     }
 
     @Override
@@ -98,6 +102,6 @@ public class HallServiceImpl implements HallService {
     // checks if editing this hall is still enabled and throws a validation exception if this is not the case
     // editing halls is only allowed if no shows have been added to the hall yet
     private boolean editingEnabled(HallDTO hallDTO) {
-        return hallDTO.getId() == null || !showRepository.existsByHallId(hallDTO.getId());
+        return hallDTO.getId() == null || ! showRepository.existsByHallId(hallDTO.getId());
     }
 }
