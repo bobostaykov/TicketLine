@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint;
 
 import at.ac.tuwien.sepm.groupphase.backend.datatype.EventType;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.customer.CustomerDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.event.EventDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.event.EventTicketsDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.event.TopTenDetailsDTO;
@@ -15,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -139,4 +141,30 @@ public class EventEndpoint {
         }
 
     }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    @ApiOperation(value = "Delete event by id", authorizations = {@Authorization(value = "apiKey")})
+    public void delete(@PathVariable Long id) {
+        LOGGER.info("Delete event with id " + id);
+        try {
+            eventService.deleteEvent(id);
+        } catch (ServiceException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    @ApiOperation(value = "Update event", authorizations = {@Authorization(value = "apiKey")})
+    public EventDTO updateEvent(@RequestBody EventDTO eventDTO, @PathVariable("id") Long id) {
+        LOGGER.info("Update event " + eventDTO.toString());
+        eventDTO.setId(id);
+        try {
+            return eventService.updateEvent(eventDTO);
+        } catch (org.hibernate.service.spi.ServiceException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error during updating event: " + e.getMessage(), e);
+        } catch (NotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Error when reading event: " + e.getMessage(), e);
+        }
+    }
+
 }

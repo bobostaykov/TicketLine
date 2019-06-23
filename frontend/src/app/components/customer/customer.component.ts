@@ -135,7 +135,7 @@ export class CustomerComponent implements OnInit {
    * @param customer to be updated
    */
   private updateCustomer(customer: Customer) {
-    console.log('Updates custoemr with id ' + customer.id + ' to ' + JSON.stringify(customer));
+    console.log('Updates customer with id ' + customer.id + ' to ' + JSON.stringify(customer));
     Object.assign(this.activeCustomer, customer);
     this.customerService.updateCustomer(customer);
   }

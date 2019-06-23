@@ -32,6 +32,7 @@ import {CustomerDialogComponent} from './components/customer-dialog/customer-dia
 import { BlockedUsersComponent } from './components/blocked-users/blocked-users.component';
 import { ContentManagerComponent } from './components/content-manager/content-manager.component';
 import { SelectDropDownModule } from 'ngx-select-dropdown';
+import { EventDialogComponent } from './components/event-dialog/event-dialog.component';
 
 @NgModule({
   declarations: [
@@ -54,7 +55,8 @@ import { SelectDropDownModule } from 'ngx-select-dropdown';
     CustomerComponent,
     CustomerDialogComponent,
     BlockedUsersComponent,
-    ContentManagerComponent
+    ContentManagerComponent,
+    EventDialogComponent
   ],
   imports: [
     BrowserModule,
