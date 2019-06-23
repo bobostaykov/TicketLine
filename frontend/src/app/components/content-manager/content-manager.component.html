@@ -1,5 +1,6 @@
-<h1 class="mt-5">Content Manager</h1>
-
+<div *ngIf="isAdmin()">
+  <h1 class="mt-5">Content Manager</h1>
+  <!------------------------ Add Form --------------------------------->
 <div *ngIf="isAdmin()" class="mt-4">
   <form [formGroup]="addForm" (ngSubmit)="addContent()">
     <mat-form-field appearance="outline" class="mr-4">
@@ -14,7 +15,7 @@
     <button mat-raised-button id="add_content" color="primary">Add</button>
   </form>
 
-
+  <!------------------------ Search Form --------------------------------->
   <form [formGroup]="searchForm" (ngSubmit)="searchContent()">
     <mat-form-field appearance="outline">
       <mat-label>Name</mat-label>
@@ -34,7 +35,7 @@
   </form>
 
 
-  <div *ngIf="dataReady && pages.length > 0">
+  <div *ngIf="dataReady && totalPages > 0">
     <h3 class="mt-5">Results:</h3>
 
     <!------------------------ Location --------------------------------->
@@ -155,6 +156,9 @@
       </tbody>
     </table>
 
+    <!-- Modal to add artist -->
+
+
     <!-- Modal to update artist -->
     <div *ngIf="artistToUpdate !== undefined" class="modal fade" id="update-artist-modal" tabindex="-1" role="dialog" aria-labelledby="Update artist modal" aria-hidden="true">
       <div class="modal-dialog modal-lg">
@@ -211,19 +215,30 @@
     </div>
 
     <!------------------------ Pagination --------------------------------->
-    <div class="justify-content-center" style="padding-bottom: 15px" *ngIf="pages.length > 1">
+    <div class="justify-content-center" *ngIf="totalPages > 1">
       <ul class="nav nav-pills">
         <li class="nav-item">
-          <a class="nav-link" href="" (click)="previousPage($event)">«</a>
-        </li>
-        <li class="nav-item" *ngFor="let p of pages; let i = index">
-          <a class="nav-link" href="" (click)="setPage(i, $event)" [ngClass]="{'active': i == page}">{{i}}</a>
+          <a class="nav-link" href="" (click)="setPage(0, $event)">«</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="" (click)="nextPage($event)">»</a>
+          <a class="nav-link" href="" (click)="previousPage($event)">Previous</a>
+        </li>
+        <li class="nav-item" *ngIf="page - 5 > 0">
+          <a class="nav-link" href="">...</a>
+        </li>
+        <li class="nav-item" *ngFor="let p of pageRange;">
+          <a class="nav-link" href="" (click)="setPage(p, $event)" [ngClass]="{'active': p == page}">{{p + 1}}</a>
+        </li>
+        <li class="nav-item" *ngIf="totalPages - 5 > page">
+          <a class="nav-link" href="">...</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="" (click)="nextPage($event)">Next</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="" (click)="setPage(totalPages - 1, $event)">»</a>
         </li>
       </ul>
     </div>
-  </div>
-  <h3 class="mt-5" *ngIf="dataReady && pages.length === 0">No Results</h3>
+  <h3 class="mt-5" *ngIf="dataReady && totalPages === 0">No Results</h3>
 </div>

@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -26,6 +27,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
 import java.util.List;
 
 @RestController
@@ -51,18 +53,21 @@ public class NewsEndpoint {
 
     @RequestMapping(method = RequestMethod.GET)
     @ApiOperation(value = "Get list of simple news entries", authorizations = {@Authorization(value = "apiKey")})
-    public List<SimpleNewsDTO> findAll() {
+    public Page<SimpleNewsDTO> findAll(@RequestParam(value = "page", required = false) Integer page,
+                                       @RequestParam(value = "pageSize", required = false) @Positive Integer pageSize) {
         LOGGER.info("News Endpoint: Get all news entries (short version)");
-        return newsService.findAll();
+        return newsService.findAll(page, pageSize);
     }
 
 
     @RequestMapping(value = "/unread", method = RequestMethod.GET)
     @ApiOperation(value = "Get list of unread News articles", authorizations = {@Authorization(value = "apiKey")})
-    public List<SimpleNewsDTO> findUnread(HttpServletRequest request) {
+    public Page<SimpleNewsDTO> findUnread(HttpServletRequest request,
+                                          @RequestParam(value = "page", required = false) Integer page,
+                                          @RequestParam(value = "pageSize", required = false) @Positive Integer pageSize) {
         LOGGER.info("News Endpoint: Get all unread news entries (short version)");
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        return newsService.findUnread(username);
+        return newsService.findUnread(username, page, pageSize);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)

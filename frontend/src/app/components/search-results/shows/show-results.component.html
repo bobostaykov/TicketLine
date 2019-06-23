@@ -1,4 +1,4 @@
-<div *ngIf="dataReady && pages.length > 0">
+<div *ngIf="dataReady && totalPages > 0">
   <h1 class="mt-5" *ngIf="resultsFor === 'EVENT'">Shows - Results for the chosen event</h1>
   <h1 class="mt-5" *ngIf="resultsFor === 'LOCATION'">Shows - Results for the chosen location</h1>
   <h1 class="mt-5" *ngIf="resultsFor === 'ATTRIBUTES'">Shows - Results for the chosen parameters</h1>
@@ -26,22 +26,34 @@
     </tr>
     </tbody>
   </table>
-  <div class="justify-content-center" style="padding-bottom: 15px" *ngIf="pages.length > 1">
+  <div class="justify-content-center" *ngIf="totalPages > 1">
     <ul class="nav nav-pills">
       <li class="nav-item">
-        <a class="nav-link" href="" (click)="previousPage($event)">«</a>
-      </li>
-      <li class="nav-item" *ngFor="let p of pages; let i = index">
-        <a class="nav-link" href="" (click)="setPage(i, $event)" [ngClass]="{'active': i == page}">{{i}}</a>
+        <a class="nav-link" href="" (click)="setPage(0, $event)">«</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="" (click)="nextPage($event)">»</a>
+        <a class="nav-link" href="" (click)="previousPage($event)">Previous</a>
+      </li>
+      <li class="nav-item" *ngIf="page - 5 > 0">
+        <a class="nav-link" href="">...</a>
+      </li>
+      <li class="nav-item" *ngFor="let p of pageRange;">
+        <a class="nav-link" href="" (click)="setPage(p, $event)" [ngClass]="{'active': p == page}">{{p + 1}}</a>
+      </li>
+      <li class="nav-item" *ngIf="totalPages - 5 > page">
+        <a class="nav-link" href="">...</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="" (click)="nextPage($event)">Next</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="" (click)="setPage(totalPages - 1, $event)">»</a>
       </li>
     </ul>
   </div>
 </div>
 
-<div *ngIf="dataReady && pages.length === 0">
+<div *ngIf="dataReady && totalPages === 0">
   <h1 class="mt-5" align="center">Shows - No Results</h1>
 </div>
 

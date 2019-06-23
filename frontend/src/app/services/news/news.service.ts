@@ -25,18 +25,20 @@ export class NewsService {
 
   /**
    * Loads all unread news from the backend
+   * @param page number of the page to load
    */
-  getUnreadNews(): Observable<News[]> {
+  getUnreadNews(page): Observable<News[]> {
     console.log('Get unread news');
-    return this.httpClient.get<News[]>(this.newsBaseUri + '/unread');
+    return this.httpClient.get<News[]>(this.newsBaseUri + '/unread', {params: {page: page}});
   }
 
   /**
    * Loads all news from the backend
+   * @param page number of the page to load
    */
-  getAllNews(): Observable<News[]> {
+  getAllNews(page): Observable<News[]> {
     console.log('Get all news');
-    return this.httpClient.get<News[]>(this.newsBaseUri);
+    return this.httpClient.get<News[]>(this.newsBaseUri, {params: {page: page}});
   }
 
 

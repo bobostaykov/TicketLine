@@ -13,7 +13,8 @@ import {UserType} from '../../datatype/user_type';
 export class UserComponent implements OnInit {
 
   private page: number = 0;
-  private pages: Array<number>;
+  private totalPages: number;
+  private pageRange: Array<number> = [];
   private dataReady: boolean = false;
 
   private error: boolean = false;
@@ -55,7 +56,8 @@ export class UserComponent implements OnInit {
     this.userService.getUsers(username, this.page).subscribe(
       result => {
         this.users = result['content'];
-        this.pages = new Array(result['totalPages']);
+        this.totalPages = result['totalPages'];
+        this.setPagesRange();
       },
       error => {
         this.defaultServiceErrorHandling(error);
@@ -95,9 +97,37 @@ export class UserComponent implements OnInit {
    */
   private nextPage(event: any) {
     event.preventDefault();
-    if (this.page < this.pages.length - 1) {
+    if (this.page < this.totalPages - 1) {
       this.page++;
       this.loadUsers(null);
+    }
+  }
+
+  /**
+   * Determines the page numbers which will be shown in the clickable menu
+   */
+  private setPagesRange() {
+    this.pageRange = []; // nullifies the array
+    if (this.totalPages <= 11) {
+      for (let i = 0; i < this.totalPages; i++) {
+        this.pageRange.push(i);
+      }
+    } else {
+      if (this.page <= 5) {
+        for (let i = 0; i <= 10; i++) {
+          this.pageRange.push(i);
+        }
+      }
+      if (this.page > 5 && this.page < this.totalPages - 5) {
+        for (let i = this.page - 5; i <= this.page + 5; i++) {
+          this.pageRange.push(i);
+        }
+      }
+      if (this.page >= this.totalPages - 5) {
+        for (let i = this.totalPages - 10; i < this.totalPages; i++) {
+          this.pageRange.push(i);
+        }
+      }
     }
   }
 

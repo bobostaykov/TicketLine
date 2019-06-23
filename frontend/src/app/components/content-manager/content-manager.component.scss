@@ -10,6 +10,7 @@ mat-form-field {
 .justify-content-center {
   display: flex !important;
   justify-content: center !important;
+  margin-bottom: 15px;
 }
 
 ul {
@@ -19,16 +20,13 @@ ul {
 
 li {
   border-left: 1px solid lightblue;
+  font-size: 15px;
 }
 
 li:first-child {
   border: none;
 }
 
-a:first-child {
-  padding: 4px 16px; font-size: 20px;
-}
-
-a:last-child {
-  padding: 4px 16px; font-size: 20px;
+a {
+  font-size: 15px;
 }

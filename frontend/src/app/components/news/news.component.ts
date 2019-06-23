@@ -15,6 +15,12 @@ import {UserService} from '../../services/user/user.service';
 })
 export class NewsComponent implements OnInit {
 
+
+  private page: number = 0;
+  private totalPages: number;
+  private pageRange: Array<number> = [];
+  private dataReady: boolean = false;
+
   error: boolean = false;
   errorMessage: string = '';
   image: File;
@@ -38,6 +44,58 @@ export class NewsComponent implements OnInit {
 
   ngOnInit() {
     this.loadNews();
+  }
+
+
+  private setPage(i, event: any) {
+    event.preventDefault();
+    this.page = i;
+    this.loadNews();
+  }
+
+  private previousPage(event: any) {
+    event.preventDefault();
+    if (this.page > 0 ) {
+      this.page--;
+      this.loadNews();
+    }
+  }
+
+  private nextPage(event: any) {
+    event.preventDefault();
+    if (this.page < this.totalPages - 1) {
+      this.page++;
+      this.loadNews();
+    }
+  }
+
+
+  /**
+   * Determines the page numbers which will be shown in the clickable menu
+   */
+  private setPagesRange() {
+    this.pageRange = []; // nullifies the array
+    if (this.totalPages <= 11) {
+      for (let i = 0; i < this.totalPages; i++) {
+        this.pageRange.push(i);
+      }
+    } else {
+      if (this.page <= 5) {
+        for (let i = 0; i <= 10; i++) {
+          this.pageRange.push(i);
+        }
+      }
+      if (this.page > 5 && this.page < this.totalPages - 5) {
+        for (let i = this.page - 5; i <= this.page + 5; i++) {
+          this.pageRange.push(i);
+        }
+      }
+      if (this.page >= this.totalPages - 5) {
+        for (let i = this.totalPages - 10; i < this.totalPages; i++) {
+          this.pageRange.push(i);
+        }
+      }
+    }
   }
 
   /**
@@ -163,28 +221,34 @@ export class NewsComponent implements OnInit {
 
   private loadNews() {
     if (this.showReadNews === true) {
-      console.log('True');
+      console.log('showReadNews: True');
     } else {
-      console.log('False');
+      console.log('showReadNews: False');
     }
 
     if (this.showReadNews === true) {
-      this.newsService.getAllNews().subscribe(
-        (news: News[]) => {
-          this.news = news;
+      this.newsService.getAllNews(this.page).subscribe(
+        result => {
+          this.news = result['content'];
+          this.totalPages = result['totalPages'];
+          this.setPagesRange();
         },
         error => {
           this.defaultServiceErrorHandling(error);
-        }
+        },
+      () => { this.dataReady = true; }
       );
     } else {
-      this.newsService.getUnreadNews().subscribe(
-        (news: News[]) => {
-          this.news = news;
+      this.newsService.getUnreadNews(this.page).subscribe(
+        result => {
+          this.news = result['content'];
+          this.totalPages = result['totalPages'];
+          this.setPagesRange();
         },
         error => {
           this.defaultServiceErrorHandling(error);
-        }
+        },
+        () => { this.dataReady = true; }
       );
     }
   }

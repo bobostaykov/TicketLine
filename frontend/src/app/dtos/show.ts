@@ -1,5 +1,6 @@
 import {Hall} from './hall';
 import {Event} from './event';
+import {PricePattern} from './pricePattern';
 
 export class Show {
   constructor(
@@ -9,6 +10,7 @@ export class Show {
     public date: string,
     public hall: Hall,
     public description: string,
-    public ticketsSold: number
+    public ticketsSold: number,
+    public pricePattern: PricePattern
   ) {}
 }
