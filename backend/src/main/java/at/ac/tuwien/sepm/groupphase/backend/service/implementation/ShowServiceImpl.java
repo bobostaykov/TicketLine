@@ -3,10 +3,12 @@ package at.ac.tuwien.sepm.groupphase.backend.service.implementation;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.requestparameter.ShowRequestParameter;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.searchParameters.ShowSearchParametersDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.show.ShowDTO;
+import at.ac.tuwien.sepm.groupphase.backend.entity.PricePattern;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Show;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Ticket;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.show.ShowMapper;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
+import at.ac.tuwien.sepm.groupphase.backend.repository.PricePatternRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.ShowRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.TicketRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.ShowService;
@@ -27,11 +29,10 @@ import java.util.List;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import javax.validation.constraints.Positive;
 
-//TODO Class is unfinished
 @Service
 public class ShowServiceImpl implements ShowService {
 
-
+    private PricePatternRepository pricePatternRepository;
     @Autowired
     private ShowRepository showRepository;
     @Autowired
@@ -42,7 +43,8 @@ public class ShowServiceImpl implements ShowService {
     private static final Logger LOGGER = LoggerFactory.getLogger(ShowServiceImpl.class);
 
     public ShowServiceImpl(ShowRepository showRepository, ShowMapper showMapper, TicketRepository ticketRepository,
-                           TicketExpirationHandler ticketExpirationHandler) {
+                           TicketExpirationHandler ticketExpirationHandler, PricePatternRepository pricePatternRepository) {
+        this.pricePatternRepository = pricePatternRepository;
         this.showRepository = showRepository;
         this.ticketRepository = ticketRepository;
         this.showMapper = showMapper;
@@ -129,6 +131,14 @@ public class ShowServiceImpl implements ShowService {
             }
         }
         return showDTO;
+    }
+
+    @Override
+    public ShowDTO updateShow(ShowDTO showDTO) throws ServiceException {
+        LOGGER.info("Update show: " + showDTO.toString());
+        PricePattern pricePattern = pricePatternRepository.save(showDTO.getPricePattern());
+        showDTO.setPricePattern(pricePattern);
+        return showMapper.showToShowDTO(showRepository.save(showMapper.showDTOToShow(showDTO)));
     }
 
     @Override

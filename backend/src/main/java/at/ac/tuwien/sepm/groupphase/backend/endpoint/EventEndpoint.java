@@ -87,6 +87,13 @@ public class EventEndpoint {
             } catch (ServiceException e) {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
             }
+        } else if(eventName != null && eventName.equals("getAllEventsNotPaginated")) {
+            LOGGER.info("Event Endpoint: findAll Not Paginated");
+            try {
+                return eventService.findAll(page, -1);
+            } catch (ServiceException e) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+            }
         } else {
             LOGGER.info("Event Endpoint: findEventsFilteredByAttributes");
             try{

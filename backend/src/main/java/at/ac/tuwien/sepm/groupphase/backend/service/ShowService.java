@@ -94,4 +94,12 @@ public interface ShowService {
      * @throws DataIntegrityViolationException if the entity can't be deleted because it's referenced by another one
      */
     void deleteById(Long showId) throws ServiceException, DataIntegrityViolationException;
+
+    /**
+     * Change show information.
+     *
+     * @param showDTO show to be changed
+     * @return changed show
+     */
+    ShowDTO updateShow(ShowDTO showDTO) throws ServiceException;
 }

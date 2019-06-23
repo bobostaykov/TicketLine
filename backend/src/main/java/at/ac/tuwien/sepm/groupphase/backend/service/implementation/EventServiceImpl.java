@@ -83,7 +83,14 @@ public class EventServiceImpl implements EventService {
             if(page < 0) {
                 throw new IllegalArgumentException("Not a valid page.");
             }
-            Pageable pageable = PageRequest.of(page, pageSize);
+
+            Pageable pageable;
+            if(pageSize == -1){
+                LOGGER.info("Find all events without pagination");
+                pageable = Pageable.unpaged();
+            } else {
+                pageable = PageRequest.of(page, pageSize);
+            }
             return eventRepository.findAllByOrderByNameAsc(pageable).map(eventMapper::eventToEventDTO);
         } catch (PersistenceException e) {
             throw new ServiceException(e.getMessage());

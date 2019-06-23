@@ -44,6 +44,7 @@ import { BlockedUsersComponent } from './components/blocked-users/blocked-users.
 import { MinDirective } from './directives/min.directive';
 import { ContentManagerComponent } from './components/content-manager/content-manager.component';
 import { SelectDropDownModule } from 'ngx-select-dropdown';
+import { ShowDialogComponent } from './components/show-dialog/show-dialog.component';
 
 @NgModule({
   declarations: [
@@ -70,7 +71,8 @@ import { SelectDropDownModule } from 'ngx-select-dropdown';
     MinDirective,
     BlockedUsersComponent,
     TicketCheckReservationComponent,
-    ContentManagerComponent
+    ContentManagerComponent,
+    ShowDialogComponent
   ],
   imports: [
     BrowserModule,

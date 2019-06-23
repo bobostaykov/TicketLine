@@ -53,7 +53,7 @@ export class EventsComponent implements OnInit {
 
   ngOnInit() {
     this.loadEvents();
-    this.loadArtists();
+    this.loadArtists(); // TODO it would be better if you call it on opening of the create button
   }
 
   private addEvent() {

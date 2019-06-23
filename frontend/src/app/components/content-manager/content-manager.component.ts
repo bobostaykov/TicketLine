@@ -49,12 +49,6 @@ export class ContentManagerComponent implements OnInit {
   private updateArtistName: string;
   private updateArtistForm: FormGroup;
 
-  // Update Show
-  private updateShowDate: Date;
-  private updateShowTime: Time;
-  private updateShowDescription: string;
-  private updateShowForm: FormGroup;
-
   private artists: Artist[];
   private shows: Show[];
   private events: Event[];
@@ -113,12 +107,6 @@ export class ContentManagerComponent implements OnInit {
 
     this.updateArtistForm = new FormGroup({
       updateArtistNameControl: new FormControl('', [Validators.required, Validators.maxLength(60)])
-    });
-
-    this.updateShowForm = new FormGroup({
-      updateShowDateControl: new FormControl(),
-      updateShowTimeControl: new FormControl(),
-      updateShowDescriptionControl: new FormControl()
     });
   }
 
@@ -275,11 +263,11 @@ export class ContentManagerComponent implements OnInit {
   }
 
   private setShowToUpdate(show: Show) {
-    this.showToUpdate = show;
+    this.showToUpdate = Object.assign({}, show);
   }
 
   private setArtistToUpdate(artist: Artist) {
-    this.artistToUpdate = Object.assign({}, artist);
+    this.artistToUpdate = Object.assign({}, artist); // Object.assign(this.artistToUpdate, artist);
   }
 
   private updateArtist() {
@@ -291,9 +279,19 @@ export class ContentManagerComponent implements OnInit {
     );
   }
 
-  private updateShow() {
-    console.log('ContentManager: updateShow');
-    this.showService.updateShow(this.showToUpdate).subscribe(
+  private updateShow(show: Show) {
+    console.log('ContentManager: updateShow:' + JSON.stringify(show));
+    // Object.assign(this.showToUpdate, show);
+    this.showService.updateShow(show).subscribe(
+      () => {},
+      error => { this.defaultServiceErrorHandling(error); },
+      () => { this.loadEntities(); }
+    );
+  }
+
+  private addShow(show: Show) {
+    console.log('ContentManager: addShow: ' + JSON.stringify(show));
+    this.showService.addShow(show).subscribe(
       () => {},
       error => { this.defaultServiceErrorHandling(error); },
       () => { this.loadEntities(); }

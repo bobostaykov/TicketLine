@@ -48,6 +48,7 @@ public class ArtistEndpoint {
     @ApiOperation(value = "Update an artist by id", authorizations = {@Authorization(value = "apiKey")})
     public ArtistDTO updateArtist(@RequestBody ArtistDTO artistDTO, @PathVariable("id") Long id) {
         LOGGER.info("ArtistEndpoint: updateArtist");
+        artistDTO.setId(id);
         return artistService.updateArtist(artistDTO);
     }
 
