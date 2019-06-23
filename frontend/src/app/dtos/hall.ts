@@ -8,6 +8,7 @@ export class Hall {
     public name: string,
     public location: Location,
     public seats: Seat[],
-    public sectors: Sector[]
+    public sectors: Sector[],
+    public editingEnabled: boolean
   ) {}
 }

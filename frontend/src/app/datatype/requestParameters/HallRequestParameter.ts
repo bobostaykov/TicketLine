@@ -1,5 +1,6 @@
 export enum HallRequestParameter {
   ID = 'id',
   NAME = 'name',
-  LOCATION = 'location'
+  LOCATION = 'location',
+  EDITING = 'editing'
 }
