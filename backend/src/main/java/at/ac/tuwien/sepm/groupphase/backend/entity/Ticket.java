@@ -36,8 +36,8 @@ public class Ticket {
     @Column(nullable = false)
     private TicketStatus status;
 
-    public void setId(Long reservationNumber) {
-        this.id = reservationNumber;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Long getId() {
@@ -169,8 +169,8 @@ public class Ticket {
         private Sector sector;
         private TicketStatus status;
 
-        public TicketBuilder id(Long reservationNumber) {
-            this.id = reservationNumber;
+        public TicketBuilder id(Long id) {
+            this.id = id;
             return this;
         }
 
