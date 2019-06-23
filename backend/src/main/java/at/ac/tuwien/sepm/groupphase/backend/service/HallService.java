@@ -40,7 +40,7 @@ public interface HallService {
     HallDTO findHallById(Long hallId, List<HallRequestParameter> include);
 
     /**
-     * updates the hall with the given id to the parameters passed in hallDTO
+     * updates the passed as parameter
      * @param hallDTO to update hall to
      * @return updated hall as dto
      * @throws CustomValidationException if hall cannot be edited anymore because shows are associated with it

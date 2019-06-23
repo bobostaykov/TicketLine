@@ -42,9 +42,10 @@ public class HallEndpoint {
 
     @GetMapping(value = "/{id}")
     @ApiOperation(value = "Get specific hall by its id", authorizations = {@Authorization(value = "apiKey")})
-    public HallDTO getHallById(@PathVariable("id") Long hallId) {
+    public HallDTO getHallById(@PathVariable("id") Long hallId,
+                               @RequestParam(required = false) List<HallRequestParameter> include) {
         LOGGER.info("GET hall with id " + hallId);
-        return hallService.findHallById(hallId);
+        return hallService.findHallById(hallId, include);
     }
 
     // TODO: If there is time replace location with locationDTO and adjust everything as necessary
@@ -71,11 +72,11 @@ public class HallEndpoint {
         return hallService.addHall(hallDto);
     }
 
-    @PutMapping(value = "/{id}")
+    @PutMapping
     @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "Updates an already existing hall and its seats or sectors", authorizations = {@Authorization(value = "apiKey")})
-    public HallDTO updateHall(@PathVariable Long id, @RequestBody @Valid HallDTO hallDTO) throws CustomValidationException {
-        LOGGER.info("UPDATE Hall with id " + id + " with parameters " + hallDTO.toString());
+    public HallDTO updateHall(@RequestBody @Valid HallDTO hallDTO) throws CustomValidationException {
+        LOGGER.info("UPDATE Hall with id " + hallDTO.getId() + " with parameters " + hallDTO.toString());
         return hallService.updateHall(hallDTO);
     }
 

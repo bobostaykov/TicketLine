@@ -53,9 +53,8 @@ public class HallServiceImpl implements HallService {
         LOGGER.info("Validating and adding hall: " + hallDTO.toString());
         // map hall dto to entity
         Hall hall = hallMapper.hallDTOToHall(hallDTO);
-        // hall should only be saved if it is new, otherwise we run the risk of updating a hall
-        // that may not be updated any longer
-        if (hall.isNew()) {
+        // hall should only be saved if it is new or if updating is still enabled for this hall
+        if (hall.isNew() || editingEnabled(hallDTO)) {
             //sets child column in ManyToOne relationship and validate seats/sectors;
             if (!isEmpty(hall.getSeats())) {
                 for (Seat seat : hall.getSeats()) {
@@ -68,7 +67,7 @@ public class HallServiceImpl implements HallService {
             }
             return hallMapper.hallToHallDTO(hallRepository.save(hall));
         } else {
-            throw new CustomValidationException("Hall could not be created because it already exists");
+            throw new CustomValidationException("Hall could not be created because it already exists and is not allowed to be edited");
         }
     }
 
@@ -76,7 +75,7 @@ public class HallServiceImpl implements HallService {
     public HallDTO findHallById(Long hallId, List<HallRequestParameter> include) {
         LOGGER.info("Find hall with id " + hallId);
         HallDTO hallDTO =  hallMapper.hallToHallDTO(hallRepository.findById(hallId).orElseThrow(NotFoundException::new));
-        if(include.contains(HallRequestParameter.EDITING)) {
+        if(include != null && include.contains(HallRequestParameter.EDITING)) {
             hallDTO.setEditingEnabled(! showRepository.existsByHallId(hallId));
         }
         return hallDTO;
