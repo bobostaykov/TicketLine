@@ -1,13 +1,21 @@
 package at.ac.tuwien.sepm.groupphase.backend.datagenerator.demo;
 
+import at.ac.tuwien.sepm.groupphase.backend.entity.File;
 import at.ac.tuwien.sepm.groupphase.backend.entity.News;
+import at.ac.tuwien.sepm.groupphase.backend.repository.DBFileRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.NewsRepository;
 import com.github.javafaker.Faker;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ResourceUtils;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.concurrent.TimeUnit;
@@ -18,7 +26,7 @@ public class NewsDataGenerator implements DataGenerator{
 
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
     private static final int NUMBER_OF_NEWS_TO_GENERATE = 25;
-    private static final String TEST_NEWS_IMAGE_ID = "1";
+    private static final String TEST_NEWS_IMAGE_ID = "0";
     private static final String DEMO_NEWS_TITLES[] = {
         "TU Wien Bibliothek takes over the coordination of the ORCID Austria",
         "Upcoming events of Forum TU Vision 2025+",
@@ -48,10 +56,12 @@ public class NewsDataGenerator implements DataGenerator{
     };
 
     private final NewsRepository newsRepository;
+    private final DBFileRepository dbFileRepository;
     private final Faker faker;
 
-    public NewsDataGenerator(NewsRepository newsRepository) {
+    public NewsDataGenerator(NewsRepository newsRepository, DBFileRepository dbFileRepository) {
         this.newsRepository = newsRepository;
+        this.dbFileRepository = dbFileRepository;
         faker = new Faker();
     }
 
@@ -62,10 +72,25 @@ public class NewsDataGenerator implements DataGenerator{
         } else {
             LOGGER.info("Generating {} news entries", DEMO_NEWS_TITLES.length);
             for (int i = 0; i < DEMO_NEWS_TITLES.length; i++) {
+                Long fileId;
+                try {
+                    String fileName = (i+1) + ".jpg";
+                    /*File dbFile = File.builder().fileName(fileName).fileType(".jpg").data(Files.readAllBytes(Paths.get("classpath:TEST_NEWS_IMAGES/" + fileName))).build();
+                    fileId = dbFileRepository.save(dbFile).getId();*/
+                    Path path = Paths.get(getClass().getClassLoader()
+                        .getResource("TEST_NEWS_IMAGES/" + fileName).toURI());
+                    byte[] fileBytes = Files.readAllBytes(path);
+                    File dbFile = File.builder().fileName(fileName).fileType("jpg").data(fileBytes).build();
+                    fileId = dbFileRepository.save(dbFile).getId();
+                }
+                catch (Exception e) {
+                    LOGGER.info("Image for news entry with id {} could not be added: " + e.getMessage(), (i+1));
+                    fileId = 0L;
+                }
                 News news = News.builder()
                     .title(DEMO_NEWS_TITLES[i])
                     .text(DEMO_NEWS_TEXTS[i])
-                    .image(TEST_NEWS_IMAGE_ID)
+                    .image(fileId.toString())
                     .publishedAt(
                         LocalDateTime.ofInstant(
                             faker.date()
