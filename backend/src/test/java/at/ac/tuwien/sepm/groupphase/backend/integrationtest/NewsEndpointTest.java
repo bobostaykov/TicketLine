@@ -21,6 +21,7 @@ import org.mockito.BDDMockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -186,8 +187,8 @@ public class NewsEndpointTest extends BaseIntegrationTestWithMockedUserCredentia
                 .readNews(newsReadList)
                 .build()));
         BDDMockito.
-            given(newsRepository.findAllByOrderByPublishedAtDesc(PageRequest.of(0, 12))).
-            willReturn(new PageImpl<>(newsInRepositoryList, PageRequest.of(0,12), 2));
+            given(newsRepository.findAllByOrderByPublishedAtDesc(Pageable.unpaged()))
+                .willReturn(new PageImpl<>(newsInRepositoryList, Pageable.unpaged(), 2));
 
         Response response = RestAssured
             .given()
@@ -196,16 +197,12 @@ public class NewsEndpointTest extends BaseIntegrationTestWithMockedUserCredentia
             .when().get(UNREAD_NEWS_ENDPOINT + "?page=0")
             .then().extract().response();
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
-        Assert.assertThat(response.jsonPath().getList("content", SimpleNewsDTO.class), is(newsUnreadList));
-/*
         SimpleNewsDTO readValue = response.jsonPath().getList("content", SimpleNewsDTO.class).get(0);
         Assert.assertNotNull(readValue);
         Assert.assertEquals(readValue.getId(), TEST_NEWS_ID_2);
         Assert.assertEquals(readValue.getTitle(), TEST_NEWS_TITLE_2);
         Assert.assertEquals(readValue.getSummary(), TEST_NEWS_TEXT_2);
         Assert.assertEquals(readValue.getPublishedAt(), TEST_NEWS_PUBLISHED_AT_2);
-
-*/
     }
 
     @Test

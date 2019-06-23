@@ -60,11 +60,12 @@ public class NewsServiceImpl implements NewsService {
             throw new IllegalArgumentException("Not a valid page.");
         }
         Pageable pageable = PageRequest.of(page, pageSize);
+        Pageable allPages = Pageable.unpaged();
         Optional<User> found = userRepository.findOneByUsername(username);
         if (!found.isEmpty()) {
             User user = found.get();
             List<News> readNews = user.getReadNews();
-            List<News> allNews = newsRepository.findAll();
+            List<News> allNews = newsRepository.findAllByOrderByPublishedAtDesc(allPages).getContent();
             List<SimpleNewsDTO> resultedList = newsMapper.newsToSimpleNewsDTO(difference(allNews, readNews));
             int start = (int)pageable.getOffset();
             int end = (start + pageable.getPageSize()) > resultedList.size() ? resultedList.size() : (start + pageable.getPageSize());
@@ -81,8 +82,6 @@ public class NewsServiceImpl implements NewsService {
                 result.add(news);
             }
         }
-        LOGGER.info("size: " + result.size());
-        LOGGER.info(result.toString());
         return result;
     }
 
