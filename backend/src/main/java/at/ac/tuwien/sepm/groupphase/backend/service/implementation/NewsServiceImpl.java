@@ -60,7 +60,6 @@ public class NewsServiceImpl implements NewsService {
             throw new IllegalArgumentException("Not a valid page.");
         }
         Pageable pageable = PageRequest.of(page, pageSize);
-
         Optional<User> found = userRepository.findOneByUsername(username);
         if (!found.isEmpty()) {
             User user = found.get();
@@ -82,6 +81,8 @@ public class NewsServiceImpl implements NewsService {
                 result.add(news);
             }
         }
+        LOGGER.info("size: " + result.size());
+        LOGGER.info(result.toString());
         return result;
     }
 
