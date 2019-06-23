@@ -80,10 +80,10 @@ public class HallEndpoint {
         return hallService.updateHall(hallDTO);
     }
 
-    @DeleteMapping
+    @DeleteMapping(value = "/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "Deletes a hall and its seats or sectors by id", authorizations = {@Authorization(value = "apiKey")})
-    public void deleteHall(@PathVariable Long id) {
+    public @ResponseBody void deleteHall(@PathVariable Long id) {
         LOGGER.info("Delete request for hall with id " + id);
         hallService.deleteHall(id);
     }
