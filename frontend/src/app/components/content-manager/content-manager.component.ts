@@ -10,7 +10,6 @@ import {LocationResultsService} from '../../services/search-results/locations/lo
 import {EventResultsService} from '../../services/search-results/events/event-results.service';
 import {Location} from '../../dtos/location';
 import {MatSnackBar} from '@angular/material';
-import {Time} from '@angular/common';
 
 @Component({
   selector: 'app-content-manager',
