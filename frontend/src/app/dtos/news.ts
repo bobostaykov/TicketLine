@@ -1,3 +1,5 @@
+import {SafeResourceUrl} from '@angular/platform-browser';
+
 export class News {
   constructor(
     public id: number,
@@ -5,7 +7,7 @@ export class News {
     public summary: string,
     public text: string,
     public image: string,
-    public imageURL: string,
+    public imageURL: SafeResourceUrl,
     public publishedAt: string) {
   }
 }
