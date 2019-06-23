@@ -121,6 +121,7 @@ export class ShowResultsService {
    */
   public findOneById(id: number, include: ShowRequestParameter[]): Observable<Show> {
     console.log('Get show with id ' + id + ' and request parameters ' + include.toString());
-    return this.httpClient.get<Show>(this.showBaseUri + '/' + id);
+    const parameters = include ? new HttpParams().set('include', include.toString()) : null;
+    return this.httpClient.get<Show>(this.showBaseUri + '/' + id, {params: parameters});
   }
 }

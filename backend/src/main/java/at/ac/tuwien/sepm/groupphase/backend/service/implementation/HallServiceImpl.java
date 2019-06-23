@@ -85,7 +85,7 @@ public class HallServiceImpl implements HallService {
     public HallDTO updateHall(HallDTO hallDTO) throws CustomValidationException {
         LOGGER.info("Update hall " + hallDTO.toString());
         if (editingEnabled(hallDTO)) {
-            return hallMapper.hallToHallDTO(hallRepository.save(hallMapper.hallDTOToHall(hallDTO)));
+            return hallMapper.hallToHallDTO(hallRepository.save(setSeatsOrSectorsAndMapToEntity(hallDTO)));
         }
         LOGGER.error("Hall cannot be edited because shows already exist for it");
         throw new CustomValidationException("There are shows that will take place in this hall. It cannot be edited any more!");
@@ -102,5 +102,20 @@ public class HallServiceImpl implements HallService {
     // editing halls is only allowed if no shows have been added to the hall yet
     private boolean editingEnabled(HallDTO hallDTO) {
         return hallDTO.getId() == null || ! showRepository.existsByHallId(hallDTO.getId());
+    }
+
+    // maps dto to hall entity and sets child column in ManyToOne relationship correctly
+    private Hall setSeatsOrSectorsAndMapToEntity(HallDTO hallDTO) {
+        Hall hall = hallMapper.hallDTOToHall(hallDTO);
+        if (!isEmpty(hall.getSeats())) {
+            for (Seat seat : hall.getSeats()) {
+                seat.setHall(hall);
+            }
+        } else if (!isEmpty(hall.getSectors())) {
+            for (Sector sector : hall.getSectors()) {
+                sector.setHall(hall);
+            }
+        }
+        return hall;
     }
 }

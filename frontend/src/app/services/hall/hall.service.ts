@@ -20,7 +20,7 @@ export class HallService {
    * @param hall to be added to the backend
    */
   createHall(hall: Hall) {
-    console.log('Create hall with name ' + hall.name);
+    console.log('Add hall to backend ' + hall.toString());
     return this.httpClient.post<Hall>(this.hallBaseUri, hall);
   }
 
@@ -65,8 +65,8 @@ export class HallService {
    * deletes hall with given id
    * @param id of hall to be deleted
    */
-  deleteHall(id: number): void {
+  deleteHall(id: number):  Observable<{}>  {
     console.log('Deleting hall with id ' + id);
-    this.httpClient.delete(this.hallBaseUri + '/' + id);
+    return this.httpClient.delete(this.hallBaseUri + '/' + id);
   }
 }

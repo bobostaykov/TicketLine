@@ -85,9 +85,12 @@ public class TicketServiceImpl implements TicketService {
         // Create each ticket
         List<TicketDTO> created = new ArrayList<>();
         for (TicketPostDTO current : ticketPostDTO) {
-            Customer customer = this.customerRepository.getOne(current.getCustomer());
-            if (customer == null) {
-                throw new NotFoundException("No Customer found with id " + current.getCustomer());
+            Customer customer = null;
+            if (current.getCustomer() != null) {
+                customer = this.customerRepository.getOne(current.getCustomer());
+                if (customer == null) {
+                    throw new NotFoundException("No Customer found with id " + current.getCustomer());
+                }
             }
             if ((current.getSeat() == null && current.getSector() == null) || (current.getSeat() != null && current.getSector() != null)) {
                 throw new NotFoundException("Either seat or sector must be given");

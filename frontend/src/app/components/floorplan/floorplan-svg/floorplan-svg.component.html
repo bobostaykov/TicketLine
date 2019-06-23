@@ -62,13 +62,13 @@
 
 <!-- div containing context menu for delete, ticket, update operations -->
 <div id="contextmenu" class="dropdown-menu shadow-sm">
-  <button class="btn dropdown-item" (click)="displayUpdateForm(selectedElement, activeElement)">Update</button>
-  <button class="btn dropdown-item" (click)="deleteSelectedElement()">Delete</button>
-  <button *ngIf="hallType === 'seats'" class="btn dropdown-item" (click)="addAsSeatTicket()">
+  <button class="btn dropdown-item" (click)="displayUpdateForm(selectedElement, activeElement)" *ngIf="editingEnabled && isAdmin()">Update</button>
+  <button class="btn dropdown-item" (click)="deleteSelectedElement()" *ngIf="editingEnabled && isAdmin()">Delete</button>
+  <button class="btn dropdown-item" (click)="addAsTicket()" *ngIf="!editingEnabled && priceMapping && ! selectedElement?.ticketStatus">
     Add To Ticket
   </button>
-  <button *ngIf="hallType === 'sectors'" class="btn dropdown-item" (click)="addAsSectorTicket()">
-    Add To Ticket
+  <button class="btn dropdown-item" (click)="removeTicket()" *ngIf="!editingEnabled && priceMapping && selectedElement?.ticketStatus === 'SELECTED'">
+    Delete Ticket
   </button>
 </div>
 

@@ -82,7 +82,8 @@ export class TicketCheckReservationComponent implements OnInit {
     this.tickets = [];
     if (this.ticket_seats && this.ticket_seats.length > 0) {
       for (const entry of this.ticket_seats) {
-        const currentTicket = new TicketPost(null, this.ticket_show.id, this.ticket_customer.id, entry.price, entry.id, null,
+        const customerId = this.ticket_customer ? this.ticket_customer.id : null;
+        const currentTicket = new TicketPost(null, this.ticket_show.id, customerId, entry.price, entry.id, null,
           this.ticket_status);
         this.tickets.push(currentTicket);
       }
