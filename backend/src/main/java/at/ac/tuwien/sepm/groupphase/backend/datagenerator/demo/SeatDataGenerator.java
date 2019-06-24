@@ -68,7 +68,7 @@ public class SeatDataGenerator implements DataGenerator {
                     seats.add(Seat.builder()
                         .priceCategory(seat % 3 == 0 ? PriceCategory.CHEAP : seat % 3 == 1 ? PriceCategory.AVERAGE : PriceCategory.EXPENSIVE)
                         .seatNumber(((seat-1) % numOfSeatsPerRow) + 1)
-                        .seatRow(seat / numOfSeatsPerRow + 1)
+                        .seatRow((seat-1) / numOfSeatsPerRow + 1)
                         .hall(hall)
                         .build());
                 }
