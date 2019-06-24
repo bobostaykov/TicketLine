@@ -430,6 +430,11 @@ export class FloorplanControlComponent implements OnInit {
           'hallSelection': show.hall,
           'locationSelection': show.hall.location,
         });
+        if (show.hall.seats && show.hall.seats.length > 0) {
+          this.hallType = 'seats';
+        } else if (show.hall.sectors && show.hall.sectors.length > 0) {
+          this.hallType = 'sectors';
+        }
         this.ticketSession.changeShow(show);
         this.editingEnabled = false;
       }
@@ -458,6 +463,11 @@ export class FloorplanControlComponent implements OnInit {
           'showSelection': show,
           'hallName': hallName
         });
+        if (hall.seats && hall.seats.length > 0) {
+          this.hallType = 'seats';
+        } else if (hall.sectors && hall.sectors.length > 0) {
+          this.hallType = 'sectors';
+        }
       }
     );
   }
