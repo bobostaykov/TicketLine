@@ -45,6 +45,9 @@ import { MinDirective } from './directives/min.directive';
 import { ContentManagerComponent } from './components/content-manager/content-manager.component';
 import { SelectDropDownModule } from 'ngx-select-dropdown';
 import { ShowDialogComponent } from './components/show-dialog/show-dialog.component';
+import {errorHandlingProvider} from './errorhandling';
+import { ErrorSnackBarComponent } from './components/error-snack-bar/error-snack-bar.component';
+import { EventDialogComponent } from './components/event-dialog/event-dialog.component';
 
 @NgModule({
   declarations: [
@@ -73,6 +76,9 @@ import { ShowDialogComponent } from './components/show-dialog/show-dialog.compon
     TicketCheckReservationComponent,
     ContentManagerComponent,
     ShowDialogComponent
+    ContentManagerComponent,
+    EventDialogComponent,
+    ErrorSnackBarComponent
   ],
   imports: [
     BrowserModule,
@@ -93,8 +99,9 @@ import { ShowDialogComponent } from './components/show-dialog/show-dialog.compon
     MatAutocompleteModule,
     SelectDropDownModule
   ],
-  providers: [httpInterceptorProviders, Globals],
-  bootstrap: [AppComponent]
+  providers: [errorHandlingProvider, httpInterceptorProviders, Globals],
+  bootstrap: [AppComponent],
+  entryComponents: [ErrorSnackBarComponent]
 })
 export class AppModule {
 }

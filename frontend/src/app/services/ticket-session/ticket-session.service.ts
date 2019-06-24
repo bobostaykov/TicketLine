@@ -21,6 +21,8 @@ export class TicketSessionService {
   private customer: Customer;
   // ticketStatus - whether tickets should be bought or reserved
   ticketStatus: TicketStatus = TicketStatus.SOLD;
+  // total price of all currently selected tickets
+  totalPrice: number = 0;
 
   constructor() {
   }
@@ -34,7 +36,10 @@ export class TicketSessionService {
   saveSeatTicket(seat: Seat) {
     if (this.show && !this.ticket_seats.some(s => seat === s)) {
       seat.price = this.show.pricePattern.priceMapping[seat.priceCategory];
-      this.ticket_sectors = this.ticket_sectors.length > 0 ? [] : this.ticket_sectors;
+      if (this.ticket_sectors && this.ticket_sectors.length) {
+        this.flushTickets();
+      }
+      this.totalPrice += seat.price;
       this.ticket_seats.push(seat);
     }
   }
@@ -48,7 +53,10 @@ export class TicketSessionService {
   saveSectorTicket(sector: Sector) {
     if (this.show && !this.ticket_sectors.some(s => sector === s)) {
       sector.price = this.show.pricePattern.priceMapping[sector.priceCategory];
-      this.ticket_seats = this.ticket_seats.length > 0 ? [] : this.ticket_seats;
+      if (this.ticket_seats && this.ticket_seats.length) {
+        this.flushTickets();
+      }
+      this.totalPrice += sector.price;
       this.ticket_sectors.push(sector);
     }
   }
@@ -59,9 +67,10 @@ export class TicketSessionService {
    * @param show for which tickets are sold
    */
   changeShow(show: Show) {
-    this.ticket_seats = [];
-    this.ticket_sectors = [];
-    this.show = show;
+    if (show !== this.show) {
+      this.flushTickets();
+      this.show = show;
+    }
   }
 
   /**
@@ -87,9 +96,20 @@ export class TicketSessionService {
   deleteTicket(ticket: Seat | Sector) {
     if (this.ticket_seats.length > 0) {
       this.ticket_seats.splice(this.ticket_seats.indexOf(ticket as Seat), 1);
+      this.totalPrice -= ticket.price;
     } else {
       this.ticket_sectors.splice(this.ticket_sectors.indexOf(ticket as Sector), 1);
+      this.totalPrice -= ticket.price;
     }
+  }
+
+  /**
+   * deletes all currently saved tickets
+   */
+  flushTickets() {
+    this.ticket_seats = [];
+    this.ticket_sectors = [];
+    this.totalPrice = 0;
   }
 
   /**
@@ -132,5 +152,12 @@ export class TicketSessionService {
    */
   getTicketStatus(): TicketStatus {
     return this.ticketStatus;
+  }
+
+  /**
+   * getter; returns total price of all currently selected tickets
+   */
+  getTotalPrice(): number {
+    return this.totalPrice;
   }
 }

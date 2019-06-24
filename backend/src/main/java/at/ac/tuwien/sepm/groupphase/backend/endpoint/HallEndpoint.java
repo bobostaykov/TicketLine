@@ -42,19 +42,20 @@ public class HallEndpoint {
 
     @GetMapping(value = "/{id}")
     @ApiOperation(value = "Get specific hall by its id", authorizations = {@Authorization(value = "apiKey")})
-    public HallDTO getHallById(@PathVariable("id") Long hallId) {
+    public HallDTO getHallById(@PathVariable("id") Long hallId,
+                               @RequestParam(required = false) List<HallRequestParameter> include) {
         LOGGER.info("GET hall with id " + hallId);
-        return hallService.findHallById(hallId);
+        return hallService.findHallById(hallId, include);
     }
 
+    // TODO: If there is time replace location with locationDTO and adjust everything as necessary
     @GetMapping
     @ApiOperation(value = "Get all saved halls", authorizations = {@Authorization(value = "apiKey")})
     public List<HallDTO> getHalls(@RequestParam(value = "fields", required = false) List<HallRequestParameter> fields,
                                   @RequestParam(required = false) String name,
                                   @RequestParam(required = false) Location location){
-        // TODO: add correct logger statement
-//        LOGGER.info("GET Halls: Halls with " + (isEmpty(fields) ? "all parameters" : "parameters " +  fields.toString())
-//        + (searchParametersDTO != null ? "matching search parameters " + searchParametersDTO.toString() : ""));
+        LOGGER.info("Gets a list of halls with search parameters name = " + (name == null ? "all" : name) + " and location = "
+            + (location == null ? "all" : location.toString()) + " with requested fields = " + (fields == null ? "all" : fields.toString()));
         HallSearchParametersDTO searchParametersDTO = HallSearchParametersDTO.builder()
             .name(name)
             .location(location)
@@ -69,7 +70,21 @@ public class HallEndpoint {
     public HallDTO postHall(@RequestBody @Valid HallDTO hallDto) throws ServiceException, CustomValidationException {
         LOGGER.info("POST Halls: " + hallDto.toString());
         return hallService.addHall(hallDto);
+    }
 
+    @PutMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "Updates an already existing hall and its seats or sectors", authorizations = {@Authorization(value = "apiKey")})
+    public HallDTO updateHall(@RequestBody @Valid HallDTO hallDTO) throws CustomValidationException {
+        LOGGER.info("UPDATE Hall with id " + hallDTO.getId() + " with parameters " + hallDTO.toString());
+        return hallService.updateHall(hallDTO);
+    }
 
+    @DeleteMapping(value = "/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "Deletes a hall and its seats or sectors by id", authorizations = {@Authorization(value = "apiKey")})
+    public @ResponseBody void deleteHall(@PathVariable Long id) {
+        LOGGER.info("Delete request for hall with id " + id);
+        hallService.deleteHall(id);
     }
 }

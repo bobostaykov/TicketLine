@@ -21,7 +21,6 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.PersistenceException;
 import javax.persistence.Tuple;
-import javax.validation.constraints.Positive;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -131,6 +130,24 @@ public class EventServiceImpl implements EventService {
         } catch (PersistenceException e) {
             throw new ServiceException(e.getMessage());
         }
+    }
+
+    @Override
+    public void deleteEvent(Long id) throws ServiceException {
+        LOGGER.info("Remove event with id " + id);
+        try {
+            eventRepository.deleteById(id);
+        } catch (PersistenceException e) {
+            throw new ServiceException(e.getMessage());
+        }
+    }
+
+    @Override
+    public EventDTO updateEvent(EventDTO eventDTO) {
+        LOGGER.info("Update event: " + eventDTO.toString());
+        Artist artist = artistRepository.findByName(eventDTO.getArtist().getName());
+        eventDTO.setArtist(artistMapper.artistToArtistDTO(artist));
+        return eventMapper.eventToEventDTO(eventRepository.save(eventMapper.eventDTOToEvent(eventDTO)));
     }
 
 }

@@ -1,9 +1,10 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {Globals} from '../../../global/globals';
 import {Observable} from 'rxjs';
 import {Show} from '../../../dtos/show';
 import {Artist} from '../../../dtos/artist';
+import {ShowRequestParameter} from '../../../datatype/requestParameters/ShowRequestParameter';
 import {Customer} from '../../../dtos/customer';
 
 @Injectable({
@@ -103,9 +104,16 @@ export class ShowResultsService {
     parameters = street ? parameters.append('street', street) : parameters;
     parameters = postalCode ? parameters.append('postalCode', postalCode) : parameters;
     parameters = parameters.append('page', page);
-    return this.httpClient.get<Show[]>(this.showBaseUri + '/filter', { params: parameters });
+    return this.httpClient.get<Show[]>(this.showBaseUri + '/filter', {params: parameters});
   }
 
+  /**
+   * finds and loads search suggestions for shows from the backend
+   * show entities found this way only include the name of the show's event, the show's date and its time attribute
+   * @param eventName search parameter. Only shows with event names containing this parameter will be found
+   * @param date search parameter. Only shows with dates containing this parameter will be found
+   * @param time search parameter. Only shows with time attributes containing this parameter will be found
+   */
   public getSearchSuggestions(eventName: string, date: string, time: string): Observable<Show[]> {
     let parameters = new HttpParams();
     parameters = eventName ? parameters.append('eventName', eventName) : parameters;
@@ -114,7 +122,15 @@ export class ShowResultsService {
     return this.httpClient.get<Show[]>(this.showBaseUri + '/suggestions', {params: parameters});
   }
 
-  public findOneById(id: number): Observable<Show> {
-    return this.httpClient.get<Show>(this.showBaseUri + '/' + id);
+  /**
+   * finds and loads a single show from backend by its it
+   * @param id of show to be found
+   * @param include includes special request parameters
+   * if set to tickets the show's hall will include ticketstatus with every seat or sector associated with that hall
+   */
+  public findOneById(id: number, include: ShowRequestParameter[]): Observable<Show> {
+    console.log('Get show with id ' + id + ' and request parameters ' + include.toString());
+    const parameters = include ? new HttpParams().set('include', include.toString()) : null;
+    return this.httpClient.get<Show>(this.showBaseUri + '/' + id, {params: parameters});
   }
 }

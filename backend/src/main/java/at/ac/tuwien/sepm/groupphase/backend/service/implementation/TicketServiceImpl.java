@@ -63,7 +63,7 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public List<TicketDTO> postTicket(List<TicketPostDTO> ticketPostDTO) throws TicketSoldOutException {
+    public List<TicketDTO> postTicket(List<TicketPostDTO> ticketPostDTO) throws TicketSoldOutException, NotFoundException {
         LOGGER.info("Ticket Service: Create Ticket");
         // Check if any of the requested tickets were already sold or reservated
         for (TicketPostDTO current : ticketPostDTO) {
@@ -85,29 +85,32 @@ public class TicketServiceImpl implements TicketService {
         // Create each ticket
         List<TicketDTO> created = new ArrayList<>();
         for (TicketPostDTO current : ticketPostDTO) {
-            Customer customer = this.customerRepository.getOne(current.getCustomer());
-            if (customer == null) {
-                throw new NotFoundException("No Customer found with id " + current.getCustomer());
+            Customer customer = null;
+            if (current.getCustomer() != null) {
+                customer = this.customerRepository.getOne(current.getCustomer());
+                if (customer == null) {
+                    throw new NotFoundException("No Customer found with id " + current.getCustomer());
+                }
+            }
+            if ((current.getSeat() == null && current.getSector() == null) || (current.getSeat() != null && current.getSector() != null)) {
+                throw new NotFoundException("Either seat or sector must be given");
             }
             Show show = this.showRepository.getOne(current.getShow());
             if (show == null) {
                 throw new NotFoundException("No Show found with id " + current.getShow());
             }
-            if ((current.getSeat() == null && current.getSector() == null) || (current.getSeat() != null && current.getSector() != null)) {
-                throw new NotFoundException("Either seat or sector must be given.");
-            }
             Seat seat = null;
             Sector sector = null;
             if (current.getSeat() != null) {
-                seat = this.seatRepository.findOneById(current.getSeat()).get();
-                if (!show.getHall().getSeats().contains(seat)) {
+                seat = this.seatRepository.getOne(current.getSeat());
+                if (!this.containsSeat(show.getHall().getSeats(), seat)) {
                     throw new NotFoundException("Seat " + seat.getSeatNumber() + " in row " + seat.getSeatRow() +
                         " not found in list of seats for this show!");
                 }
             }
             if (current.getSector() != null) {
                 sector = this.sectorRepository.getOne(current.getSector());
-                if (!show.getHall().getSectors().contains(sector)) {
+                if (!this.containsSector(show.getHall().getSectors(), sector)) {
                     throw new NotFoundException("Sector " + sector.getSectorNumber() +
                         " not found in list of sectors for this show!");
                 }
@@ -116,6 +119,8 @@ public class TicketServiceImpl implements TicketService {
             if (current.getStatus() == TicketStatus.RESERVATED) {
                 uniqueReservationNo = UUID.randomUUID().toString();
             }
+            show.setTicketsSold(show.getTicketsSold() + 1);
+            show = showRepository.save(show);
             Ticket ticket = new Ticket().builder()
                 .status(current.getStatus())
                 .customer(customer)
@@ -125,12 +130,42 @@ public class TicketServiceImpl implements TicketService {
                 .sector(sector)
                 .reservationNo(uniqueReservationNo)
                 .build();
-            show.setTicketsSold(show.getTicketsSold() + 1);
-            showRepository.save(show);
             /* TODO: test everthing, also test if incrementing ticketSold worked */
             created.add(ticketMapper.ticketToTicketDTO(ticketRepository.save(ticket)));
         }
         return created;
+    }
+
+    /**
+     * Check if given list of seats contains seat element
+     *
+     * @param list list of seats to search
+     * @param elem seat element to search for
+     * @return true is list contains element, false otherwise
+     */
+    private boolean containsSeat(List<Seat> list, Seat elem) {
+        for (Seat current:list) {
+            if (current.getId() == elem.getId()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Check if given list of sectors contains sector element
+     *
+     * @param list list of sectors to search
+     * @param elem sector element to search for
+     * @return true is list contains element, false otherwise
+     */
+    private boolean containsSector(List<Sector> list, Sector elem) {
+        for (Sector current:list) {
+            if (current.getId() == elem.getId()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

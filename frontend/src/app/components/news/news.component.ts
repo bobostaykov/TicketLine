@@ -187,7 +187,7 @@ export class NewsComponent implements OnInit {
         if (news.image != null) {
           this.fileService.getFile(news.image).subscribe(
             val => {
-              console.log('Loaded file with id ' + id);
+              console.log('Loaded file with id ' + news.image);
               const reader = new FileReader();
               reader.addEventListener('load', () => {
                 result.imageURL = <string>reader.result; }, false);

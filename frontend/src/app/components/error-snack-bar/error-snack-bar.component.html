@@ -1,0 +1,11 @@
+<div>
+  <button type="button" class="close closeButton" aria-label="Close" (click)="closeSnackBar()">
+    <span aria-hidden="true">&times;</span>
+  </button>
+  <p class="errorTitle">
+    An error was encountered!
+  </p>
+  <p *ngFor="let message of messages" class="errorMessage">
+    {{message}}
+  </p>
+</div>

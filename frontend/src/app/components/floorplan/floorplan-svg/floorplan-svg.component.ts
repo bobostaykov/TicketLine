@@ -1,8 +1,10 @@
-import {AfterViewInit, Component, DoCheck, EventEmitter, Input, IterableDiffers, OnInit, Output, Renderer2} from '@angular/core';
+import {AfterViewInit, Component, DoCheck, Input, IterableDiffers, OnInit, Renderer2} from '@angular/core';
 import {Seat} from '../../../dtos/seat';
 import {Sector} from '../../../dtos/sector';
 import {PriceCategory} from '../../../dtos/priceCategory';
 import {TicketStatus} from '../../../datatype/ticket_status';
+import {AuthService} from '../../../services/auth/auth.service';
+import {TicketSessionService} from '../../../services/ticket-session/ticket-session.service';
 
 @Component({
   selector: 'app-floorplan-svg',
@@ -16,17 +18,16 @@ export class FloorplanSvgComponent implements OnInit, DoCheck, AfterViewInit {
   @Input() private sectors?: Sector[];
   // hallType as input to decide whether seats or sectors are drawn
   @Input() private hallType: string;
-  // event emitters to add ticket for selected seat or sector
-  @Output() private addSeatTicket: EventEmitter<Seat> = new EventEmitter<Seat>();
-  @Output() private addSectorTicket: EventEmitter<Sector> = new EventEmitter<Sector>();
+  @Input() private editingEnabled: boolean;
+  @Input() private priceMapping: object;
   // properties necessary to adjust svg viebox on zoom/mousedrag
   private viewboxPosX: number = 0;
   private viewboxPosY: number = 0;
-  private viewboxWidth: number = 300;
+  private viewboxWidth: number = 500;
   // used to represent original width of viewbox which is necessary to correctly draw sectors
   private originalWidth: number = this.viewboxWidth;
   // initial svg viewbox. Used for property binding
-  private viewbox: string = '0 0 300 300';
+  private viewbox: string = '0 0 500 500';
   // list of priceCategories to loop through in select fields
   // noinspection JSMismatchedCollectionQueryUpdate
   private priceCategories: string[] = Object.keys(PriceCategory);
@@ -52,7 +53,10 @@ export class FloorplanSvgComponent implements OnInit, DoCheck, AfterViewInit {
   // detects changes for seat/sector arrays
   private iterableDiffer;
 
-  constructor(private _iterableDiffers: IterableDiffers, private renderer: Renderer2) {
+  constructor(private _iterableDiffers: IterableDiffers,
+              private renderer: Renderer2,
+              private authService: AuthService,
+              private ticketSession: TicketSessionService) {
     this.iterableDiffer = _iterableDiffers.find([]).create(null);
   }
 
@@ -66,6 +70,12 @@ export class FloorplanSvgComponent implements OnInit, DoCheck, AfterViewInit {
     this.svgElement = document.getElementById('floorplan');
     this.updateForm = document.getElementById('updateForm');
     this.contextmenu = document.getElementById('contextmenu');
+    // draw seats after view init otherwise they will sometimes not show up
+    if (this.hallType === 'seats') {
+      this.seats.forEach(seat => this.drawSeatPath(seat));
+    } else if (this.hallType === 'sectors') {
+      this.sectors.forEach(sector => this.drawSectorPath(sector));
+    }
   }
 
   /**
@@ -85,6 +95,13 @@ export class FloorplanSvgComponent implements OnInit, DoCheck, AfterViewInit {
         changes.forEachRemovedItem(record => this.removeSectorPath(record.item));
       }
     }
+  }
+
+  /**
+   * checks if user currently logged in is admin
+   */
+  private isAdmin() {
+    return this.authService.getUserRole() === 'ADMIN';
   }
 
   /**
@@ -169,18 +186,20 @@ export class FloorplanSvgComponent implements OnInit, DoCheck, AfterViewInit {
    * @param eventTarget target of click event used to get position of the element's path representation
    */
   displayUpdateForm(element: Seat | Sector, eventTarget: HTMLElement): boolean | void {
-    this.closeContext();
-    this.renderer.setStyle(this.updateForm, 'display', 'inline-block');
-    const rectForm = this.updateForm.getBoundingClientRect();
-    const rectEvent = eventTarget.getBoundingClientRect();
-    this.renderer.setStyle(this.updateForm, 'left', window.scrollX + rectEvent.left - rectForm.width / 2 + rectEvent.width / 2 + 'px');
-    this.renderer.setStyle(this.updateForm, 'top', window.scrollY + rectEvent.bottom + 20 + 'px');
-    this.updateElementModel = {...element};
-    this.setActiveElement(element, eventTarget);
-    if (this.disableListenerUpdate) {
-      this.disableListenerUpdate();
+    if (this.isAdmin() && this.editingEnabled) {
+      this.closeContext();
+      this.renderer.setStyle(this.updateForm, 'display', 'inline-block');
+      const rectForm = this.updateForm.getBoundingClientRect();
+      const rectEvent = eventTarget.getBoundingClientRect();
+      this.renderer.setStyle(this.updateForm, 'left', window.scrollX + rectEvent.left - rectForm.width / 2 + rectEvent.width / 2 + 'px');
+      this.renderer.setStyle(this.updateForm, 'top', window.scrollY + rectEvent.bottom + 20 + 'px');
+      this.updateElementModel = {...element};
+      if (this.disableListenerUpdate) {
+        this.disableListenerUpdate();
+      }
+      this.disableListenerUpdate = this.renderer.listen('document', 'click', (evt) => this.onCloseMenusClick(evt));
     }
-    this.disableListenerUpdate = this.renderer.listen('document', 'click', (evt) => this.onCloseMenusClick(evt));
+    this.setActiveElement(element, eventTarget);
   }
 
   /**
@@ -261,41 +280,43 @@ export class FloorplanSvgComponent implements OnInit, DoCheck, AfterViewInit {
    * displays update form wherever selectedElement with updated parameters reappears
    */
   private updateSelectedElement(): void {
-    // check if selected element and updateElementModel have a value other than null/undefiend
-    if (this.selectedElement && this.updateElementModel) {
-      // check if currently displaying seat array in which case selectedElement must also be seat
-      if (this.seats && this.seats.length) {
-        const updateElement = this.updateElementModel as Seat;
-        const selectedElement = this.selectedElement as Seat;
-        // if seat with updatedElement's number and row already exists display error message
-        if (this.seats.some(seat => seat !== selectedElement &&
-          seat.seatNumber === updateElement.seatNumber &&
-          seat.seatRow === updateElement.seatRow)) {
-          this.updateSubmissionError = true;
-          this.updateSubmissionMessage = 'A Seat with row ' + updateElement.seatRow +
-            ' and number ' + updateElement.seatNumber + ' already exists!';
-        } else {
-          // remove old svg path of selected element, update selected element, draw new path and display updateForm again
-          this.removeSeatPath(selectedElement);
-          Object.assign(selectedElement, updateElement);
-          this.displayUpdateForm(selectedElement, this.drawSeatPath(selectedElement));
-          this.updateSubmissionError = false;
-        }
-        // check if currently displayingg sector array in which case selectedElement must also be sector
-      } else if (this.sectors && this.sectors.length) {
-        const updateElement = this.updateElementModel as Sector;
-        const selectedElement = this.selectedElement as Sector;
-        // if sector with updatedElement's sector number already exists display error message
-        if (this.sectors.some(sector => sector !== selectedElement &&
-          sector.sectorNumber === updateElement.sectorNumber)) {
-          this.updateSubmissionError = true;
-          this.updateSubmissionMessage = 'A Sector with number ' + updateElement.sectorNumber + ' already exists!';
-        } else {
-          // remove old svg path of selected element, update selected element, draw new path and display updateForm again
-          this.removeSectorPath(selectedElement);
-          Object.assign(selectedElement, updateElement);
-          this.displayUpdateForm(selectedElement, this.drawSectorPath(selectedElement));
-          this.updateSubmissionError = false;
+    if (this.isAdmin() && this.editingEnabled) {
+      // check if selected element and updateElementModel have a value other than null/undefiend
+      if (this.selectedElement && this.updateElementModel) {
+        // check if currently displaying seat array in which case selectedElement must also be seat
+        if (this.seats && this.seats.length) {
+          const updateElement = this.updateElementModel as Seat;
+          const selectedElement = this.selectedElement as Seat;
+          // if seat with updatedElement's number and row already exists display error message
+          if (this.seats.some(seat => seat !== selectedElement &&
+            seat.seatNumber === updateElement.seatNumber &&
+            seat.seatRow === updateElement.seatRow)) {
+            this.updateSubmissionError = true;
+            this.updateSubmissionMessage = 'A Seat with row ' + updateElement.seatRow +
+              ' and number ' + updateElement.seatNumber + ' already exists!';
+          } else {
+            // remove old svg path of selected element, update selected element, draw new path and display updateForm again
+            this.removeSeatPath(selectedElement);
+            Object.assign(selectedElement, updateElement);
+            this.displayUpdateForm(selectedElement, this.drawSeatPath(selectedElement));
+            this.updateSubmissionError = false;
+          }
+          // check if currently displayingg sector array in which case selectedElement must also be sector
+        } else if (this.sectors && this.sectors.length) {
+          const updateElement = this.updateElementModel as Sector;
+          const selectedElement = this.selectedElement as Sector;
+          // if sector with updatedElement's sector number already exists display error message
+          if (this.sectors.some(sector => sector !== selectedElement &&
+            sector.sectorNumber === updateElement.sectorNumber)) {
+            this.updateSubmissionError = true;
+            this.updateSubmissionMessage = 'A Sector with number ' + updateElement.sectorNumber + ' already exists!';
+          } else {
+            // remove old svg path of selected element, update selected element, draw new path and display updateForm again
+            this.removeSectorPath(selectedElement);
+            Object.assign(selectedElement, updateElement);
+            this.displayUpdateForm(selectedElement, this.drawSectorPath(selectedElement));
+            this.updateSubmissionError = false;
+          }
         }
       }
     }
@@ -305,36 +326,61 @@ export class FloorplanSvgComponent implements OnInit, DoCheck, AfterViewInit {
    * deletes selected element from seat/sector array
    */
   private deleteSelectedElement(): void {
-    if (this.selectedElement) {
-      if (this.seats && this.seats.length) {
-        this.seats.splice(this.seats.indexOf(this.selectedElement as Seat), 1);
-      } else if (this.sectors && this.sectors.length) {
-        this.sectors.splice(this.sectors.indexOf(this.selectedElement as Sector), 1);
+    if (this.isAdmin() && this.editingEnabled) {
+      if (this.selectedElement) {
+        if (this.seats && this.seats.length) {
+          this.seats.splice(this.seats.indexOf(this.selectedElement as Seat), 1);
+        } else if (this.sectors && this.sectors.length) {
+          this.sectors.splice(this.sectors.indexOf(this.selectedElement as Sector), 1);
+        }
       }
-      this.closeContext();
     }
+    this.closeContext();
   }
 
   /**
-   * emits event for selectedElement to parent component so it can add selectedElement to seat tickets array
+   * saves selected element in ticketSessionService as either seat or sector ticket
    */
-  private addAsSeatTicket(): void {
-    if (this.selectedElement) {
-      this.addSeatTicket.emit(this.selectedElement as Seat);
-      this.closeContext();
+  private addAsTicket(): void {
+    // tickets can only be added and priceMapping exists i.e. if a show is selected
+    if (!this.editingEnabled && this.priceMapping && this.selectedElement) {
+      if (this.hallType === 'seats') {
+        const seat = this.selectedElement as Seat;
+        this.ticketSession.saveSeatTicket(seat);
+        // set ticket status and redraw element
+        seat.ticketStatus = TicketStatus.SELECTED;
+        this.removeSeatPath(seat);
+        this.drawSeatPath(seat);
+      } else if (this.hallType === 'sectors') {
+        const sector = this.selectedElement as Sector;
+        this.ticketSession.saveSectorTicket(sector);
+        // set ticket status and redraw element
+        sector.ticketStatus = TicketStatus.SELECTED;
+        this.removeSectorPath(sector);
+        this.drawSectorPath(sector);
+      }
     }
+    this.closeContext();
   }
 
   /**
-   * emits event for selectedElement to parent component so it can add selectedElement to sector tickets array
+   * removes ticket from an element and redraws it
    */
-  private addAsSectorTicket(): void {
-    if (this.selectedElement) {
-      this.addSectorTicket.emit(this.selectedElement as Sector);
-      this.closeContext();
+  private removeTicket(): void {
+    if (!this.editingEnabled && this.priceMapping && this.selectedElement) {
+      this.ticketSession.deleteTicket(this.selectedElement);
+      this.selectedElement.ticketStatus = null;
+      if (this.hallType === 'seats') {
+        const seat = this.selectedElement as Seat;
+        this.removeSeatPath(seat);
+        this.drawSeatPath(seat);
+      } else if (this.hallType === 'sectors') {
+        const sector = this.selectedElement as Sector;
+        this.removeSectorPath(sector);
+        this.drawSectorPath(sector);
+      }
     }
   }
-
 
   /**
    * get color of seat or sector passed as parameter
