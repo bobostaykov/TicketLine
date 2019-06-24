@@ -142,11 +142,11 @@ public class ShowEndpoint {
     @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "Update a show by id", authorizations = {@Authorization(value = "apiKey")})
     public ShowDTO updateShow(@RequestBody ShowDTO showDTO, @PathVariable("id") Long id) {
-        LOGGER.info("Adapt show " + showDTO.toString());
+        LOGGER.info("Update show " + showDTO.toString());
         showDTO.setId(id);
         try {
             return showService.updateShow(showDTO);
-        } catch (ServiceException e) {
+        } catch (IllegalArgumentException | ServiceException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error during updating show: " + e.getMessage(), e);
         } catch (NotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Error when reading show: " + e.getMessage(), e);

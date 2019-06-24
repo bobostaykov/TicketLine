@@ -5,6 +5,7 @@ import {HallService} from '../../services/hall/hall.service';
 import {Hall} from '../../dtos/hall';
 import {Event} from '../../dtos/event';
 import {EventResultsService} from '../../services/search-results/events/event-results.service';
+import {HallRequestParameter} from '../../datatype/HallRequestParameter';
 
 @Component({
   selector: 'app-show-dialog',
@@ -85,7 +86,7 @@ export class ShowDialogComponent implements OnInit, OnChanges {
    */
   private loadHalls() {
     console.log('ShowDialog: loadHalls');
-    this.hallService.getAllHalls().subscribe(
+    this.hallService.searchHalls(null, null, [HallRequestParameter.ID, HallRequestParameter.NAME]).subscribe(
       halls => { this.halls = halls; },
       error => { this.defaultServiceErrorHandling(error); }
     );
@@ -103,7 +104,7 @@ export class ShowDialogComponent implements OnInit, OnChanges {
     };
     this.showModel.event = this.chosenEvent;
     this.showModel.hall = this.chosenHall;
-    console.log('ShowDialog showModel: ' + this.showModel);
+    console.log('ShowDialog showModel: ' + this.showModel); // the updated showModel before sending the request
     this.submitShow.emit(this.showModel);
   }
 

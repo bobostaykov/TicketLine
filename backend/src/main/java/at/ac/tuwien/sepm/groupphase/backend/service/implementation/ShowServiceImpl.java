@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.implementation;
 
+import at.ac.tuwien.sepm.groupphase.backend.datatype.PriceCategory;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.requestparameter.ShowRequestParameter;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.searchParameters.ShowSearchParametersDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.show.ShowDTO;
@@ -136,6 +137,13 @@ public class ShowServiceImpl implements ShowService {
     @Override
     public ShowDTO updateShow(ShowDTO showDTO) throws ServiceException {
         LOGGER.info("Update show: " + showDTO.toString());
+        if (showDTO.getPricePattern().getName() == null ||
+            showDTO.getPricePattern().getPriceMapping().get(PriceCategory.CHEAP) < 0 ||
+            showDTO.getPricePattern().getPriceMapping().get(PriceCategory.AVERAGE) < 0 ||
+            showDTO.getPricePattern().getPriceMapping().get(PriceCategory.EXPENSIVE) < 0
+        ) {
+            throw new IllegalArgumentException("A negative value is being passed for the Price Pattern");
+        }
         PricePattern pricePattern = pricePatternRepository.save(showDTO.getPricePattern());
         showDTO.setPricePattern(pricePattern);
         return showMapper.showToShowDTO(showRepository.save(showMapper.showDTOToShow(showDTO)));
