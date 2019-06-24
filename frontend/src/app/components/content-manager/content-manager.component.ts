@@ -162,10 +162,12 @@ export class ContentManagerComponent implements OnInit {
     this.savedType = this.searchType;
     this.savedName = this.searchName;
 
+    this.page = 0;
     this.loadEntities();
   }
 
   private loadEntities() {
+    console.log('page: ' + this.page);
     switch (this.savedType) {
       case 'Artist':
         this.artistService.findArtists(this.savedName, this.page).subscribe(
@@ -201,8 +203,6 @@ export class ContentManagerComponent implements OnInit {
         );
         break;
       case 'Location':
-        console.log('ContentManager: savedName=' + this.savedName);
-        console.log('ContentManager: page=' + this.page);
         this.locationService.findLocationsFiltered(this.savedName, null, null, null, null, null, this.page).subscribe(
           result => {
             this.locations = result['content'];
@@ -221,14 +221,14 @@ export class ContentManagerComponent implements OnInit {
   private setPage(i, event: any) {
     event.preventDefault();
     this.page = i;
-    this.searchContent();
+    this.loadEntities();
   }
 
   private previousPage(event: any) {
     event.preventDefault();
     if (this.page > 0 ) {
       this.page--;
-      this.searchContent();
+      this.loadEntities();
     }
   }
 
@@ -236,7 +236,7 @@ export class ContentManagerComponent implements OnInit {
     event.preventDefault();
     if (this.page < this.totalPages - 1) {
       this.page++;
-      this.searchContent();
+      this.loadEntities();
     }
   }
 
