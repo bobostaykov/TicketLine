@@ -3,6 +3,7 @@ package at.ac.tuwien.sepm.groupphase.backend.entity.mapper.ticket;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.ticket.TicketDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Ticket;
 import org.mapstruct.Mapper;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -16,5 +17,6 @@ public interface TicketMapper {
     List<TicketDTO> ticketToTicketDTO(List<Ticket> all);
 
     List<Ticket> ticketDTOToTicket(List<TicketDTO> all);
+
 
 }

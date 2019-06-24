@@ -9,16 +9,23 @@ import com.itextpdf.text.DocumentException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
+import io.swagger.models.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
@@ -49,12 +56,6 @@ public class TicketEndpoint {
         }
     }
 
-    @RequestMapping(method = RequestMethod.GET)
-    @ApiOperation(value = "Get all tickets", authorizations = {@Authorization(value = "apiKey")})
-    public List<TicketDTO> findAll() {
-        return ticketService.findAll();
-    }
-
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Delete a ticket", authorizations = {@Authorization(value = "apiKey")})
@@ -72,6 +73,7 @@ public class TicketEndpoint {
         return new ResponseEntity<>(ticketService.deleteAndGetCancellationReceipt(tickets), headers, HttpStatus.OK);
     }
 
+
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ApiOperation(value = "Find Ticket by id", authorizations = {@Authorization(value = "apiKey")})
     public TicketDTO findById(@PathVariable Long id) {
@@ -84,6 +86,13 @@ public class TicketEndpoint {
     public TicketDTO buyReservatedTicket(@PathVariable Long id) {
         LOGGER.info("Ticket Endpoint: Buy Ticket with id " + id);
         return ticketService.changeStatusToSold(id);
+    }
+
+    @RequestMapping(value = "/buy", method = RequestMethod.POST, produces = "application/json")
+    @ApiOperation(value = "Buy multiple reservated Tickets by id", authorizations = {@Authorization(value = "apiKey")})
+    public List<TicketDTO> buyMultipleReservatedTickets(@RequestBody List<Long> tickets){
+        LOGGER.info("buy tickets with ids" + tickets.toString());
+        return ticketService.changeStatusToSold(tickets);
     }
 
     @RequestMapping(value = "/reservated/{id}", method = RequestMethod.GET)
@@ -108,13 +117,20 @@ public class TicketEndpoint {
     // PINO: added value = "filter" to avoid GET method crash with findAll()
     @RequestMapping(value = "/filter", method = RequestMethod.GET)
     @ApiOperation(value = "Find all tickets filtered by customer name and event name", authorizations = {@Authorization(value = "apiKey")})
-    public List<TicketDTO> findTicketFilteredByCustomerAndEvent(@RequestParam(value = "customerName", required = false) @NotNull String customerName,
-                                                                @RequestParam(value = "eventName", required = false) @NotNull String eventName) {
-        LOGGER.info("Ticket Endpoint: Find all tickets filtered by customer with name {} and event with name {}", customerName, eventName);
+    public Page<TicketDTO> findTicketFilteredByCustomerAndEvent(@RequestParam(value = "customerName", required = false) @NotNull String customerName,
+                                                                @RequestParam(value = "eventName", required = false) @NotNull String eventName,
+                                                                @RequestParam(value = "number", required = false) @NotNull String number,
+                                                                @RequestParam(value = "page", required = true) @PositiveOrZero Integer page,
+                                                                @RequestParam(value = "pageSize", required = false) @PositiveOrZero Integer pageSize,
+                                                                @RequestParam(value = "reserved", required = false) Boolean reserved){
+        LOGGER.info("Ticket Endpoint: Find all tickets filtered by customer with name {} and event with name {} or with reservationNumber{}", customerName, eventName, number);
+        if(number != null){
+            return ticketService.findAllFilteredByReservationNumber(number, reserved, page, pageSize);
+        }
         if (customerName == null && eventName == null) {
-            return ticketService.findAll();
+            return ticketService.findAll(page, pageSize);
         } else {
-            return ticketService.findAllFilteredByCustomerAndEvent(customerName, eventName);
+            return ticketService.findAllFilteredByCustomerAndEvent(customerName, eventName, reserved, page, pageSize);
         }
     }
 

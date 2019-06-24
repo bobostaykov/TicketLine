@@ -17,13 +17,13 @@ import {Globals} from './global/globals';
 import {TopTenEventsComponent} from './components/events/top-ten-events/top-ten-events.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {
-  MatAutocompleteModule,
   MatButtonModule,
   MatCheckboxModule,
   MatInputModule,
-  MatRadioModule,
   MatSelectModule,
-  MatSnackBarModule
+  MatSnackBarModule,
+  MatRadioModule,
+  MatAutocompleteModule
 } from '@angular/material';
 import {NgxChartsModule} from '@swimlane/ngx-charts';
 import {SearchPageComponent} from './components/events/search page/search-page.component';
@@ -39,6 +39,7 @@ import {CustomerComponent} from './components/customer/customer.component';
 import {TicketComponent} from './components/ticket/ticket.component';
 import {CustomerDialogComponent} from './components/customer-dialog/customer-dialog.component';
 import {TicketCheckReservationComponent} from './components/ticket/ticket-check/ticket-check.component';
+import {StornoComponent} from './components/storno/storno.component';
 import {FloorplanTicketComponent} from './components/floorplan/floorplan-ticket/floorplan-ticket.component';
 import {BlockedUsersComponent} from './components/blocked-users/blocked-users.component';
 import {MinDirective} from './directives/min.directive';
@@ -81,6 +82,8 @@ import {LocationDialogComponent} from './components/location-dialog/location-dia
     EventDialogComponent,
     ErrorSnackBarComponent,
     LocationDialogComponent
+    ContentManagerComponent,
+    StornoComponent
   ],
   imports: [
     BrowserModule,

@@ -2,20 +2,24 @@ package at.ac.tuwien.sepm.groupphase.backend.repository;
 
 import at.ac.tuwien.sepm.groupphase.backend.datatype.TicketStatus;
 import at.ac.tuwien.sepm.groupphase.backend.entity.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface TicketRepository extends JpaRepository<Ticket, Long> {
+public interface TicketRepository extends JpaRepository<Ticket, Long>, PagingAndSortingRepository<Ticket, Long> {
     /**
      * Find all ticket entries ordered by their IDs (ascending).
-     *
+     * @param pageable the pagerequest
      * @return ordered list of all ticket entries
      */
-    List<Ticket> findAllByOrderByIdAsc();
+    Page<Ticket> findAllByOrderByIdAsc(Pageable pageable);
 
     // PINOS IMPLEMENTATION
     /**
@@ -43,7 +47,7 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
      * @param customers list of customers
      * @return found tickets
      */
-    List<Ticket> findAllByCustomer(List<Customer> customers);
+    List<Ticket> findAllByCustomerIn(List<Customer> customers);
 
     /**
      * Find tickets for show given by a list of shows.
@@ -51,7 +55,7 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
      * @param shows list of shows
      * @return found tickets
      */
-    List<Ticket> findAllByShow(List<Show> shows);
+    List<Ticket> findAllByShowIn(List<Show> shows);
 
     /**
      * Finds tickets for a single show by its id
@@ -117,5 +121,23 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
      * @return
      */
     List<Ticket> findAllByShowAndStatus(Show show, TicketStatus status);
+
+    /**
+     * Find all tickets filtred by a given reservationNumber and status
+     * @param reservationNo the string with (parts of) the reservation naumber
+     * @param status status to search tickets for
+     * @return a list of the found tickets
+     */
+    Page<Ticket> findAllByStatusAndReservationNoContainsIgnoreCaseOrderByCustomer_Firstname(TicketStatus status,String reservationNo, Pageable pageable);
+
+    /**
+     *Returns a Page of (reserved, possibly other stati) tickets filtered by CustomerName and EventName
+     * @param customerName the customer name
+     * @param EventName the event name
+     * @param ticketStatus the ticket status
+     * @param pageable pagerequest
+     * @return a page
+     */
+    Page<Ticket> findAllByCustomer_NameContainsIgnoreCaseAndShow_Event_NameContainsIgnoreCaseAndStatusOrderByCustomer_Firstname(String customerName, String EventName, TicketStatus ticketStatus, Pageable pageable);
 
 }

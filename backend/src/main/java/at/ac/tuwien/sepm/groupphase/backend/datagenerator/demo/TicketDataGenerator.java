@@ -67,6 +67,7 @@ public class TicketDataGenerator implements DataGenerator {
                     .seat(!show.getHall().getSeats().isEmpty() ? show.getHall().getSeats().get(0) : null)
                     .sector(!show.getHall().getSectors().isEmpty()? show.getHall().getSectors().get(0) : null)
                     .status(i % 6 == 0 ? TicketStatus.RESERVATED : TicketStatus.SOLD)
+                    .reservationNo("A1234"+ i)
                     .build());
             }
             /*Long id = 1L, cn = 1L, sn = 1L;
