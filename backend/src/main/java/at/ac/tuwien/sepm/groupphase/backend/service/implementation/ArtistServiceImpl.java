@@ -37,6 +37,10 @@ public class ArtistServiceImpl implements ArtistService {
     @Override
     public Page<ArtistDTO> findArtistsByName(String artistName, Integer page, Integer pageSize) {
         LOGGER.info("ArtistService: findArtistsByName");
+        if (artistName.equals("-1")) {
+            artistName = "";
+            pageSize = 100;
+        }
         if(pageSize == null) {
             //default size
             pageSize = 10;

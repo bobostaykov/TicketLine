@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.service;
 
 import at.ac.tuwien.sepm.groupphase.backend.datatype.EventType;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.customer.CustomerDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.event.EventDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.event.EventTicketsDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.searchParameters.EventSearchParametersDTO;
@@ -56,4 +57,20 @@ public interface EventService {
      * @throws ServiceException is thrown if something went wrong in the process
      */
     Page<EventDTO> findEventsFilteredByArtistID(Long id, Integer page, Integer PageSize) throws ServiceException;
+
+    /**
+     * Delete event by id
+     *
+     * @param eventId id of event to delete
+     */
+    void deleteEvent(Long eventId) throws ServiceException;
+
+    /**
+     * Change event information.
+     *
+     * @param eventDTO event to be changed
+     * @return changed event
+     */
+    EventDTO updateEvent(EventDTO eventDTO);
+
 }

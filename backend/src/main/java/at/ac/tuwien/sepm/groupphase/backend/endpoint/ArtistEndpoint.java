@@ -36,10 +36,6 @@ public class ArtistEndpoint {
                                              @RequestParam(value = "page", required = false) Integer page,
                                              @RequestParam(value = "pagesize", required = false) @Positive Integer pageSize) {
         LOGGER.info("ArtistEndpoint: findArtistsByName");
-        if (artistName.equals("-1")) {
-            artistName = "";
-            pageSize = 100;
-        }
         return artistService.findArtistsByName(artistName, page, pageSize);
     }
 

@@ -46,6 +46,7 @@ import { ContentManagerComponent } from './components/content-manager/content-ma
 import { SelectDropDownModule } from 'ngx-select-dropdown';
 import {errorHandlingProvider} from './errorhandling';
 import { ErrorSnackBarComponent } from './components/error-snack-bar/error-snack-bar.component';
+import { EventDialogComponent } from './components/event-dialog/event-dialog.component';
 
 @NgModule({
   declarations: [
@@ -73,6 +74,7 @@ import { ErrorSnackBarComponent } from './components/error-snack-bar/error-snack
     BlockedUsersComponent,
     TicketCheckReservationComponent,
     ContentManagerComponent,
+    EventDialogComponent,
     ErrorSnackBarComponent
   ],
   imports: [
