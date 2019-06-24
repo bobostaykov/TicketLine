@@ -87,6 +87,12 @@ public class TicketEndpoint {
         LOGGER.info("Ticket Endpoint: Buy Ticket with id " + id);
         return ticketService.changeStatusToSold(id);
     }
+    @RequestMapping(value = "/buy", method = RequestMethod.PUT, produces = "application/json")
+    @ApiOperation(value = "Buy multiple reservated Tickets by id", authorizations = {@Authorization(value = "apiKey")})
+    public List<TicketDTO> buyMultipleReservatedTickets(@RequestParam List<String> tickets){
+        LOGGER.info("buy ticktes with ids" + tickets.toString());
+        return ticketService.changeStatusToSold(tickets);
+    }
 
     @RequestMapping(value = "/reservated/{id}", method = RequestMethod.GET)
     @ApiOperation(value = "Find reservated Ticket by id", authorizations = {@Authorization(value = "apiKey")})
@@ -112,13 +118,13 @@ public class TicketEndpoint {
     @ApiOperation(value = "Find all tickets filtered by customer name and event name", authorizations = {@Authorization(value = "apiKey")})
     public Page<TicketDTO> findTicketFilteredByCustomerAndEvent(@RequestParam(value = "customerName", required = false) @NotNull String customerName,
                                                                 @RequestParam(value = "eventName", required = false) @NotNull String eventName,
-                                                                @RequestParam(value = "reservationNumber", required = false) @NotNull String reservationNumber,
+                                                                @RequestParam(value = "number", required = false) @NotNull String number,
                                                                 @RequestParam(value = "page", required = true) @PositiveOrZero Integer page,
                                                                 @RequestParam(value = "pageSize", required = false) @PositiveOrZero Integer pageSize,
                                                                 @RequestParam(value = "reserved", required = false) Boolean reserved){
-        LOGGER.info("Ticket Endpoint: Find all tickets filtered by customer with name {} and event with name {} or with reservationNumber{}", customerName, eventName, reservationNumber);
-        if(reservationNumber != null){
-            return ticketService.findAllFilteredByReservationNumber(reservationNumber, page, pageSize);
+        LOGGER.info("Ticket Endpoint: Find all tickets filtered by customer with name {} and event with name {} or with reservationNumber{}", customerName, eventName, number);
+        if(number != null){
+            return ticketService.findAllFilteredByReservationNumber(number, reserved, page, pageSize);
         }
         if (customerName == null && eventName == null) {
             return ticketService.findAll(page, pageSize);

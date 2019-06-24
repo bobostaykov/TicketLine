@@ -41,7 +41,7 @@ const routes: Routes = [
   {path: 'manager', canActivate: [AuthGuard], component: ContentManagerComponent},
   {path: 'ticket-check', canActivate: [AuthGuard], component: TicketCheckReservationComponent},
   {path: 'blocked', canActivate: [AuthGuard], component: BlockedUsersComponent},
-  {path: 'storno', canActivate: [AuthGuard], component: StornoComponent}
+  {path: 'ticketsearch', canActivate: [AuthGuard], component: StornoComponent}
 ];
 
 @NgModule({

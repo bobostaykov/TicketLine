@@ -48,6 +48,14 @@ public interface TicketService {
     TicketDTO changeStatusToSold(Long id);
 
     /**
+     * Find more than one ticket by the given reservation number (id) with status RESERVATED and change it to SOLD
+     *
+     * @param reservationIds reservation numbers of the tickets
+     * @return changed tickets
+     */
+    List<TicketDTO> changeStatusToSold(List<String> reservationIds);
+
+    /**
      * Find one ticket with status rservated by the given reservation number (id)
      *
      * @param id reservation number of the ticket
@@ -108,7 +116,7 @@ public interface TicketService {
      * @param pageSize the size of the requested page
      * @return
      */
-    Page<TicketDTO> findAllFilteredByReservationNumber(String reservationNumber, Integer page, Integer pageSize);
+    Page<TicketDTO> findAllFilteredByReservationNumber(String reservationNumber, Boolean reserved, Integer page, Integer pageSize);
 
     // PINOS IMPLEMENTATION
     /**

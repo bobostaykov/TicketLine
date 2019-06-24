@@ -197,6 +197,19 @@ public class TicketServiceImpl implements TicketService {
         return ticketMapper.ticketToTicketDTO(ticketRepository.save(ticketMapper.ticketDTOToTicket(ticket)));
     }
 
+    @Transactional
+    @Override
+    public List<TicketDTO> changeStatusToSold(List<String> reservationIds) {
+        LOGGER.info("Change Ticket status for tickets with ids " + reservationIds.toString());
+        List<TicketDTO> tickets = ticketMapper.ticketToTicketDTO(ticketRepository.findByIdIn(this.parseListOfIds(reservationIds)));
+        tickets.stream().forEach(ticketDTO -> {ticketDTO.setStatus(TicketStatus.SOLD);});
+        List<TicketDTO> outputList = new ArrayList(){
+        };
+        tickets.stream().forEach(t -> {outputList.add(ticketMapper.ticketToTicketDTO(ticketRepository.save(ticketMapper.ticketDTOToTicket(t))));});
+        return outputList;
+
+    }
+
     @Override
     public TicketDTO findOneReservated(Long id) {
         LOGGER.info("Ticket Service: Find Ticket by id {} with status = {}", id, TicketStatus.RESERVATED);
@@ -257,13 +270,14 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public Page<TicketDTO> findAllFilteredByReservationNumber(@NotNull String reservationNumber, Integer page, Integer pageSize) {
+    public Page<TicketDTO> findAllFilteredByReservationNumber(@NotNull String reservationNumber, Boolean reserved, Integer page, Integer pageSize) {
         LOGGER.info("Find all tickets filtered by reservation number {}", reservationNumber);
         if(pageSize == null){
             pageSize = 10;
         }
         Pageable pageable = PageRequest.of(page, pageSize);
-        Page<TicketDTO> ticketPage =  ticketRepository.findAllByReservationNoContainsIgnoreCaseAndStatus(reservationNumber, TicketStatus.RESERVATED, pageable).map(ticketMapper::ticketToTicketDTO);
+        TicketStatus status = reserved ? TicketStatus.RESERVATED : TicketStatus.SOLD;
+        Page<TicketDTO> ticketPage =  ticketRepository.findAllByStatusAndReservationNoContainsIgnoreCaseOrderByCustomer_Firstname(status, reservationNumber, pageable).map(ticketMapper::ticketToTicketDTO);
 
         LOGGER.info("returning page" + page);
         return ticketPage;

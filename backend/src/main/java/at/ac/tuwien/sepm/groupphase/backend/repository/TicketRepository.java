@@ -128,7 +128,7 @@ public interface TicketRepository extends JpaRepository<Ticket, Long>, PagingAnd
      * @param status status to search tickets for
      * @return a list of the found tickets
      */
-    Page<Ticket> findAllByReservationNoContainsIgnoreCaseAndStatus(String reservationNo, TicketStatus status, Pageable pageable);
+    Page<Ticket> findAllByStatusAndReservationNoContainsIgnoreCaseOrderByCustomer_Firstname(TicketStatus status,String reservationNo, Pageable pageable);
 
     /**
      *Returns a Page of (reserved, possibly other stati) tickets filtered by CustomerName and EventName

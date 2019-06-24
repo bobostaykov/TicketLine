@@ -41,7 +41,7 @@ export class TicketService {
    */
   getReservationsByNumber(number: string, page: number): Observable<Ticket>{
     console.log('Load reservations by number: ' + number);
-    return this.httpClient.get<Ticket>(this.ticketBaseUri + '/filter/?reservationNumber=' + number + '&page=' + page);
+    return this.httpClient.get<Ticket>(this.ticketBaseUri + '/filter/?number=' + number + '&page=' + page);
   }
 
   /**
@@ -49,9 +49,9 @@ export class TicketService {
    * @param number the number that is searched for
    * @param page the page
    */
-  getTicketsByNumber(number: string, page: number): Observable<Ticket>{
-    console.log('Load tickets by number: ' + number);
-    return this.httpClient.get<Ticket>(this.ticketBaseUri + '/filter/?ticketNumber=' + number + '&page=' + page);
+  getTicketsByNumber(number: string, reserved: boolean , page: number): Observable<Ticket>{
+    console.log('Load tickets by number: ' + number + ' reserved= ' + + reserved);
+    return this.httpClient.get<Ticket>(this.ticketBaseUri + '/filter/?number=' + number + '&page=' + page + '&reserved=' + reserved);
   }
   /**
    * searches for reservations by last name of the customer and event
@@ -61,7 +61,8 @@ export class TicketService {
    */
   getReservedTicketsByConsumerAndEvent(customer: string, event: string, page: number): Observable<Ticket>{
     console.log('load reserved tickets by consumer ' + customer + 'and event ' + event);
-    console.log(this.ticketBaseUri + '/filter/?name=' + customer + '&event=' + event + '&page=' + page);
+    console.log(this.ticketBaseUri + '/filter/?customerName=' + customer + '&eventName=' + event + '&page=' + page /*+
+      '&reserved=true'*/);
     return this.httpClient.get<Ticket>(this.ticketBaseUri + '/filter/?customerName=' + customer + '&eventName=' + event + '&page=' + page +
       '&reserved=true');
   }
