@@ -30,6 +30,7 @@ public class CustomerEndpoint {
         this.customerService = customerService;
     }
 
+    // TODO: add birthdate validation (not in future)
     @RequestMapping(method = RequestMethod.POST)
     public CustomerDTO postCustomer(@RequestBody CustomerDTO customerDTO) {
         LOGGER.info("Post customer " + customerDTO.toString());
