@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.artist.ArtistDTO;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.service.ArtistService;
 import io.swagger.annotations.Api;
@@ -39,13 +40,33 @@ public class ArtistEndpoint {
         return artistService.findArtistsByName(artistName, page, pageSize);
     }
 
+    @RequestMapping(method = RequestMethod.POST)
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "Add an artist by id", authorizations = {@Authorization(value = "apiKey")})
+    public ArtistDTO updateArtist(@RequestBody ArtistDTO artistDTO) {
+        LOGGER.info("ArtistEndpoint: Add an artist " + artistDTO.toString());
+        try {
+            return artistService.addArtist(artistDTO);
+        } catch (ServiceException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error during adding a artist: " + e.getMessage(), e);
+        } catch (NotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Error when reading artist: " + e.getMessage(), e);
+        }
+    }
+
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "Update an artist by id", authorizations = {@Authorization(value = "apiKey")})
     public ArtistDTO updateArtist(@RequestBody ArtistDTO artistDTO, @PathVariable("id") Long id) {
         LOGGER.info("ArtistEndpoint: updateArtist");
         artistDTO.setId(id);
-        return artistService.updateArtist(artistDTO);
+        try {
+            return artistService.updateArtist(artistDTO);
+        } catch (ServiceException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error during adding a artist: " + e.getMessage(), e);
+        } catch (NotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Error when reading artist: " + e.getMessage(), e);
+        }
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)

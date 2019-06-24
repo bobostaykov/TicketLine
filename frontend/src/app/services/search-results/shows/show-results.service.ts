@@ -31,7 +31,7 @@ export class ShowResultsService {
    */
   public updateShow(show: Show): Observable<{}> {
     console.log('ShowResultsService: updateShow');
-    return this.httpClient.put<Artist>(this.showBaseUri + '/' + show.id, show);
+    return this.httpClient.put<Show>(this.showBaseUri + '/' + show.id, show);
   }
 
   /**

@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {AuthService} from '../../services/auth/auth.service';
-import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {Event} from '../../dtos/event';
 import {Artist} from '../../dtos/artist';
 import {Show} from '../../dtos/show';
@@ -10,10 +10,7 @@ import {LocationResultsService} from '../../services/search-results/locations/lo
 import {EventResultsService} from '../../services/search-results/events/event-results.service';
 import {Location} from '../../dtos/location';
 import {MatSnackBar} from '@angular/material';
-import {Time} from '@angular/common';
-import {EventType} from '../../datatype/event_type';
 import {EventService} from '../../services/event/event.service';
-import {Customer} from '../../dtos/customer';
 
 @Component({
   selector: 'app-content-manager',
@@ -21,12 +18,6 @@ import {Customer} from '../../dtos/customer';
   styleUrls: ['./content-manager.component.scss']
 })
 export class ContentManagerComponent implements OnInit {
-
-  private showToDelete: number;
-  private artistToDelete: number;
-
-  private showToUpdate: Show;
-  private artistToUpdate: Artist;
 
   private savedType: string;
   private savedName: string;
@@ -43,17 +34,27 @@ export class ContentManagerComponent implements OnInit {
   private addType: string;
   private addForm: FormGroup;
 
-  // Add/edit Event
-  private activeEvent: Event;
-
   // Search Content
   private searchName: string;
   private searchType: string;
   private searchForm: FormGroup;
 
-  // Update Artist
-  private updateArtistName: string;
+  // Add/Update Event
+  private activeEvent: Event;
+
+  // Add/Update Location
+  private activeLocation: Location;
+
+  // Add/Update Artist
+  private artistToAdd: Artist = {id: undefined, name: undefined};
+  private artistToUpdate: Artist;
+  private artistToDelete: number;
+  private addArtistForm: FormGroup;
   private updateArtistForm: FormGroup;
+
+  // Add/Update Show
+  private showToDelete: number;
+  private showToUpdate: Show;
 
   private artists: Artist[];
   private shows: Show[];
@@ -100,7 +101,7 @@ export class ContentManagerComponent implements OnInit {
 
   constructor(private authService: AuthService, public snackBar: MatSnackBar, private artistService: ArtistResultsService,
               private showService: ShowResultsService, private eventResultsService: EventResultsService, private locationService: LocationResultsService,
-              private artistResultsService: ArtistResultsService, private eventService: EventService) { }
+              private eventService: EventService) { }
 
   ngOnInit() {
     this.addForm = new FormGroup({
@@ -114,6 +115,10 @@ export class ContentManagerComponent implements OnInit {
 
     this.updateArtistForm = new FormGroup({
       updateArtistNameControl: new FormControl('', [Validators.required, Validators.maxLength(60)])
+    });
+
+    this.addArtistForm = new FormGroup({
+        addArtistNameControl: new FormControl('', [Validators.required, Validators.maxLength(60)])
     });
   }
 
@@ -196,6 +201,8 @@ export class ContentManagerComponent implements OnInit {
         );
         break;
       case 'Location':
+        console.log('ContentManager: savedName=' + this.savedName);
+        console.log('ContentManager: page=' + this.page);
         this.locationService.findLocationsFiltered(this.savedName, null, null, null, null, null, this.page).subscribe(
           result => {
             this.locations = result['content'];
@@ -277,12 +284,35 @@ export class ContentManagerComponent implements OnInit {
     this.artistToUpdate = Object.assign({}, artist);
   }
 
-  private updateArtist() {
-    console.log('ContentManager: updateArtist');
-    this.artistService.updateArtist(this.artistToUpdate).subscribe(
+  private setActiveLocation(location: Location) {
+    this.activeLocation = location;
+  }
+
+  private updateLocation(location: Location) {
+    console.log('ContentManager: updateLocation:' + JSON.stringify(location));
+    // Object.assign(this.showToUpdate, show);
+    this.locationService.updateLocation(location).subscribe(
       () => {},
       error => { this.defaultServiceErrorHandling(error); },
       () => { this.loadEntities(); }
+    );
+  }
+
+  private addLocation(location: Location) {
+    console.log('ContentManager: addLocation: ' + JSON.stringify(location));
+    this.locationService.addLocation(location).subscribe(
+      () => {},
+      error => { this.defaultServiceErrorHandling(error); },
+      () => { this.loadEntities(); }
+    );
+  }
+
+  private deleteLocation() {
+    console.log('Delete location with id ' + this.activeLocation.id);
+    this.locationService.deleteLocation(this.activeLocation.id).subscribe(
+      () => {},
+      error => this.defaultServiceErrorHandling(error),
+      () => { this.savedName = ''; this.loadEntities(); }
     );
   }
 
@@ -310,7 +340,25 @@ export class ContentManagerComponent implements OnInit {
     this.showService.deleteShow(this.showToDelete).subscribe(
       () => {},
       error => { this.defaultServiceErrorHandling(error); },
-      () => { this.loadEntities(); this.showToDelete = null; }
+      () => { this.showToDelete = null; this.loadEntities(); }
+    );
+  }
+
+  private addArtist() {
+    console.log('ContentManager: addArtist');
+    this.artistService.addArtist(this.artistToAdd).subscribe(
+      () => {},
+      error => { this.defaultServiceErrorHandling(error); },
+      () => { this.loadEntities(); }
+    );
+  }
+
+  private updateArtist() {
+    console.log('ContentManager: updateArtist');
+    this.artistService.updateArtist(this.artistToUpdate).subscribe(
+      () => {},
+      error => { this.defaultServiceErrorHandling(error); },
+      () => { this.loadEntities(); }
     );
   }
 
@@ -319,22 +367,8 @@ export class ContentManagerComponent implements OnInit {
     this.artistService.deleteArtist(this.artistToDelete).subscribe(
       () => {},
       error => { this.defaultServiceErrorHandling(error); },
-      () => { this.loadEntities(); this.artistToDelete = null; }
+      () => { this.artistToDelete = null; this.loadEntities(); }
     );
-  }
-
-  openSnackBar(message: string, css: string) {
-    this.snackBar.open(message, '', {duration: 3000, panelClass: [css]});
-  }
-
-  private defaultServiceErrorHandling(error: any) {
-    console.log(error);
-    this.error = true;
-    if (error.error.message !== 'No message available') {
-      this.errorMessage = error.error.message;
-    } else {
-      this.errorMessage = error.error.error;
-    }
   }
 
   private addEvent(event: Event) {
@@ -368,4 +402,17 @@ export class ContentManagerComponent implements OnInit {
     );
   }
 
+  openSnackBar(message: string, css: string) {
+    this.snackBar.open(message, '', {duration: 3000, panelClass: [css]});
+  }
+
+  private defaultServiceErrorHandling(error: any) {
+    console.log(error);
+    this.error = true;
+    if (error.error.message !== 'No message available') {
+      this.errorMessage = error.error.message;
+    } else {
+      this.errorMessage = error.error.error;
+    }
+  }
 }

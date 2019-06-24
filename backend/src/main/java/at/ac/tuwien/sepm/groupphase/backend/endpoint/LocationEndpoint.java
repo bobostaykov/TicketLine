@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -87,9 +88,50 @@ public class LocationEndpoint {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/suggestions")
-    @ApiOperation(value = "Get search result suggestions for locations by returning only lcoation name and id", authorizations = {@Authorization(value = "apiKey")})
+    @ApiOperation(value = "Get search result suggestions for locations by returning only location name and id", authorizations = {@Authorization(value = "apiKey")})
     public List<SimpleLocation> getSearchResultSuggestions(@RequestParam String name){
         LOGGER.info("GET location");
         return locationService.findSearchResultSuggestions(name);
+    }
+
+    @RequestMapping(method = RequestMethod.POST)
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "Add a location by id", authorizations = {@Authorization(value = "apiKey")})
+    public LocationDTO updateLocation(@RequestBody LocationDTO locationDTO) {
+        LOGGER.info("LocationEndpoint: Add a location " + locationDTO.toString());
+        try {
+            return locationService.addLocation(locationDTO);
+        } catch (ServiceException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error during adding a location: " + e.getMessage(), e);
+        } catch (NotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Error when reading location: " + e.getMessage(), e);
+        }
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "Update a location by id", authorizations = {@Authorization(value = "apiKey")})
+    public LocationDTO updateLocation(@RequestBody LocationDTO locationDTO, @PathVariable("id") Long id) {
+        LOGGER.info("LocationEndpoint: Update location " + locationDTO.toString());
+        locationDTO.setId(id);
+        try {
+            return locationService.updateLocation(locationDTO);
+        } catch (ServiceException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error during updating location: " + e.getMessage(), e);
+        } catch (NotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Error when reading location: " + e.getMessage(), e);
+        }
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "Delete a location by id", authorizations = {@Authorization(value = "apiKey")})
+    public void deleteById(@PathVariable Long id) {
+        LOGGER.info("LocationEndpoint: deleteById " + id);
+        try {
+            locationService.deleteById(id);
+        } catch (ServiceException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
     }
 }

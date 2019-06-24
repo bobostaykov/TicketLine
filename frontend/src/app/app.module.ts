@@ -48,6 +48,7 @@ import { ShowDialogComponent } from './components/show-dialog/show-dialog.compon
 import {errorHandlingProvider} from './errorhandling';
 import { ErrorSnackBarComponent } from './components/error-snack-bar/error-snack-bar.component';
 import { EventDialogComponent } from './components/event-dialog/event-dialog.component';
+import { LocationDialogComponent } from './components/location-dialog/location-dialog.component';
 
 @NgModule({
   declarations: [
@@ -78,7 +79,8 @@ import { EventDialogComponent } from './components/event-dialog/event-dialog.com
     ShowDialogComponent,
     ContentManagerComponent,
     EventDialogComponent,
-    ErrorSnackBarComponent
+    ErrorSnackBarComponent,
+    LocationDialogComponent
   ],
   imports: [
     BrowserModule,

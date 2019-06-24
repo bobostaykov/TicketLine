@@ -86,6 +86,7 @@ public interface ShowService {
      * @return show with id matching param
      */
     ShowDTO findOneById(Long id, List<ShowRequestParameter> include);
+
     /**
      * Delete the show with the given id
      *

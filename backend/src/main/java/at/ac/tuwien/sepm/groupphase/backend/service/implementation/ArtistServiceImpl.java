@@ -37,10 +37,6 @@ public class ArtistServiceImpl implements ArtistService {
     @Override
     public Page<ArtistDTO> findArtistsByName(String artistName, Integer page, Integer pageSize) {
         LOGGER.info("ArtistService: findArtistsByName");
-        if (artistName.equals("-1")) {
-            artistName = "";
-            pageSize = 100;
-        }
         if(pageSize == null) {
             //default size
             pageSize = 10;
@@ -48,14 +44,32 @@ public class ArtistServiceImpl implements ArtistService {
         if (page < 0) {
             throw new IllegalArgumentException("Not a valid page.");
         }
-        Pageable pageable = PageRequest.of(page, pageSize);
+        Pageable pageable;
+        if (artistName.equals("-1")) {
+            artistName = "";
+            pageable = Pageable.unpaged();
+        } else pageable = PageRequest.of(page, pageSize);
         return artistRepository.findByNameContainingIgnoreCase(artistName, pageable).map(artistMapper::artistToArtistDTO);
     }
 
     @Override
-    public ArtistDTO updateArtist(ArtistDTO artistDTO) {
+    public ArtistDTO updateArtist(ArtistDTO artistDTO) throws ServiceException {
         LOGGER.info("ArtistService: updateArtist");
-        return artistMapper.artistToArtistDTO(artistRepository.save(artistMapper.artistDTOToArtist(artistDTO)));
+        try {
+            return artistMapper.artistToArtistDTO(artistRepository.save(artistMapper.artistDTOToArtist(artistDTO)));
+        } catch (PersistenceException e) {
+            throw new ServiceException(e.getMessage());
+        }
+    }
+
+    @Override
+    public ArtistDTO addArtist(ArtistDTO artistDTO) throws ServiceException {
+        LOGGER.info("ArtistService: addArtist");
+        try {
+            return artistMapper.artistToArtistDTO(artistRepository.save(artistMapper.artistDTOToArtist(artistDTO)));
+        } catch (PersistenceException e) {
+            throw new ServiceException(e.getMessage());
+        }
     }
 
     @Override

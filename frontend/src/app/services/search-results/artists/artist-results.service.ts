@@ -3,6 +3,7 @@ import {Observable} from 'rxjs';
 import {Artist} from '../../../dtos/artist';
 import {HttpClient} from '@angular/common/http';
 import {Globals} from '../../../global/globals';
+import {Show} from '../../../dtos/show';
 
 @Injectable({
   providedIn: 'root'
@@ -39,5 +40,14 @@ export class ArtistResultsService {
   public updateArtist(artist: Artist): Observable<{}> {
     console.log('ArtistResultsService: updateArtist');
     return this.httpClient.put<Artist>(this.artistBaseUri + '/' + artist.id, artist);
+  }
+
+  /**
+   * Adds a artist to the data base
+   * @param artist to persist
+   */
+  public addArtist(artist: Artist): Observable<{}> {
+    console.log('ArtistResultsService: addArtist');
+    return this.httpClient.post<Artist>(this.artistBaseUri, artist);
   }
 }
