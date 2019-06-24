@@ -21,7 +21,7 @@ public interface ShowRepository extends JpaRepository<Show, Long>, ShowRepositor
      * @param events list of events
      * @return found shows
      */
-    List<Show> findAllByEvent(List<Event> events);
+    List<Show> findAllByEventIn(List<Event> events);
 
     /**
      * Find all shows by location id

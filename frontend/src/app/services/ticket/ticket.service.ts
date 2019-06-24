@@ -4,6 +4,7 @@ import {Ticket} from '../../dtos/ticket';
 import {Observable} from 'rxjs';
 import {Globals} from '../../global/globals';
 import {TicketPost} from '../../dtos/ticket-post';
+import {Tick} from 'ng5-slider/slider.component';
 
 @Injectable({
   providedIn: 'root'
@@ -31,6 +32,38 @@ export class TicketService {
   getTicketById(id: number): Observable<Ticket> {
     console.log('Load ticket for ' + id);
     return this.httpClient.get<Ticket>(this.ticketBaseUri + '/' + id);
+  }
+
+  /**
+   *
+   * @param number the reservation Number
+   * @param page the requested page
+   */
+  getReservationsByNumber(number: string, page: number): Observable<Ticket>{
+    console.log('Load reservations by number: ' + number);
+    return this.httpClient.get<Ticket>(this.ticketBaseUri + '/filter/?reservationNumber=' + number + '&page=' + page);
+  }
+
+  /**
+   * gets sold tickets by number
+   * @param number the number that is searched for
+   * @param page the page
+   */
+  getTicketsByNumber(number: string, page: number): Observable<Ticket>{
+    console.log('Load tickets by number: ' + number);
+    return this.httpClient.get<Ticket>(this.ticketBaseUri + '/filter/?ticketNumber=' + number + '&page=' + page);
+  }
+  /**
+   * searches for reservations by last name of the customer and event
+   * @param customer last name of the customer
+   * @param event name of the event
+   * @param page the page
+   */
+  getReservedTicketsByConsumerAndEvent(customer: string, event: string, page: number): Observable<Ticket>{
+    console.log('load reserved tickets by consumer ' + customer + 'and event ' + event);
+    console.log(this.ticketBaseUri + '/filter/?name=' + customer + '&event=' + event + '&page=' + page);
+    return this.httpClient.get<Ticket>(this.ticketBaseUri + '/filter/?customerName=' + customer + '&eventName=' + event + '&page=' + page +
+      '&reserved=true');
   }
 
   /**

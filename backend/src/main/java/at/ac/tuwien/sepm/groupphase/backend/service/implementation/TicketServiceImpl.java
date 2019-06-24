@@ -1,32 +1,34 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.implementation;
 
 import at.ac.tuwien.sepm.groupphase.backend.datatype.TicketStatus;
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.TicketEndpoint;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.ticket.TicketDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.ticket.TicketPostDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.*;
-import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.customer.CustomerMapper;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.show.ShowMapper;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.ticket.TicketMapper;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.TicketSoldOutException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.*;
-import at.ac.tuwien.sepm.groupphase.backend.service.CustomerService;
 import at.ac.tuwien.sepm.groupphase.backend.service.TicketService;
 import at.ac.tuwien.sepm.groupphase.backend.service.generator.PDFGenerator;
 import at.ac.tuwien.sepm.groupphase.backend.service.ticketExpirationHandler.TicketExpirationHandler;
 import com.itextpdf.text.DocumentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class TicketServiceImpl implements TicketService {
@@ -169,10 +171,14 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public List<TicketDTO> findAll() {
+    public Page<TicketDTO> findAll(Integer page, Integer pageSize) {
         LOGGER.info("Ticket Service: Get all tickets");
+        if(pageSize == null){
+            pageSize = 10;
+        }
+        Pageable pageable = PageRequest.of(page, pageSize);
         ticketExpirationHandler.setAllExpiredReservatedTicketsToStatusExpired();
-        return ticketMapper.ticketToTicketDTO(ticketRepository.findAllByOrderByIdAsc());
+        return ticketRepository.findAllByOrderByIdAsc(pageable).map(ticketMapper::ticketToTicketDTO);
     }
 
     @Override
@@ -212,25 +218,69 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public List<TicketDTO> findAllFilteredByCustomerAndEvent(String customerName, String eventName) {
+    public Page<TicketDTO> findAllFilteredByCustomerAndEvent(@NotNull String customerName, @NotNull String eventName, Boolean reserved, @PositiveOrZero Integer page, @Positive Integer pageSize) {
         LOGGER.info("Ticket Service: Find all tickets filtered by customer with name {} and event with name {}", customerName, eventName);
-        List<Customer> customers = customerRepository.findAllByName(customerName);
-        List<Event> events =  eventRepository.findAllByName(eventName);
-        List<Show> shows = showRepository.findAllByEvent(events);
+        if(pageSize == null){
+            pageSize = 10;
+        }
+        Pageable pageable = PageRequest.of(page, pageSize);
+        List<Customer> customers = customerRepository.findAllByNameContainsIgnoreCase(customerName);
+        List<Event> events =  eventRepository.findAllByNameContainsIgnoreCase(eventName);
+        List<Show> shows = showRepository.findAllByEventIn(events);
         List<Ticket> result1 = new ArrayList<>();
         List<Ticket> result2 = new ArrayList<>();
         if (customerName != null) {
-            result1 = ticketRepository.findAllByCustomer(customers);
+            result1 = ticketRepository.findAllByCustomerIn(customers);
             //result1 = ticketExpirationHandler.setExpiredReservatedTicketsToStatusExpired(ticketMapper.ticketToTicketDTO(ticketRepository.findAllByCustomer(customers)));
         }
         if (eventName != null) {
-            result2 = ticketRepository.findAllByShow(shows);
+            result2 = ticketRepository.findAllByShowIn(shows);
             //result2 = ticketExpirationHandler.setExpiredReservatedTicketsToStatusExpired(ticketMapper.ticketToTicketDTO(ticketRepository.findAllByShow(shows)));
         }
         List<Ticket> result = this.difference(result1, result2);
         List<TicketDTO> res = ticketExpirationHandler.setExpiredReservatedTicketsToStatusExpired(ticketMapper.ticketToTicketDTO(result));
-        return res;
+        //Aussortieren der Reservierungem oder der nicht-Reservierungen
+        if(reserved == null){
+
+        }else if(reserved == true){
+            res = res.stream().filter(ticketDTO -> ticketDTO.getStatus() == TicketStatus.RESERVATED).collect(Collectors.toList());
+        }else{
+            res = res.stream().filter(ticketDTO -> ticketDTO.getStatus() == TicketStatus.SOLD).collect(Collectors.toList());
+        }
+        // create page from the result
+        res = res.stream().sorted(Comparator.comparing(ticketDTO -> ticketDTO.getCustomer().getFirstname())).collect(Collectors.toList());
+        int start = (int)pageable.getOffset();
+        int end = (start + pageable.getPageSize()) > res.size() ? res.size() : (start + pageable.getPageSize());
+        Page<TicketDTO> pages = new PageImpl<TicketDTO>(res.subList(start, end), pageable, res.size());
+        return pages;
         //return /*ticketExpirationHandler.setExpiredReservatedTicketsToStatusExpired(*/ticketMapper.ticketToTicketDTO(this.difference(result1, result2));
+    }
+
+    @Override
+    public Page<TicketDTO> findAllFilteredByReservationNumber(@NotNull String reservationNumber, Integer page, Integer pageSize) {
+        LOGGER.info("Find all tickets filtered by reservation number {}", reservationNumber);
+        if(pageSize == null){
+            pageSize = 10;
+        }
+        Pageable pageable = PageRequest.of(page, pageSize);
+        Page<TicketDTO> ticketPage =  ticketRepository.findAllByReservationNoContainsIgnoreCaseAndStatus(reservationNumber, TicketStatus.RESERVATED, pageable).map(ticketMapper::ticketToTicketDTO);
+
+        LOGGER.info("returning page" + page);
+        return ticketPage;
+    }
+
+    @Override
+    public Page<TicketDTO> findAllReservedFilteredByCustomerAndEvent(@NotNull String customerName,@NotNull String eventName,@PositiveOrZero Integer page, @Positive Integer pageSize) {
+        if (pageSize == null) {
+            pageSize = 10;
+        }
+        Pageable pageable = PageRequest.of(page, pageSize);
+        Page<TicketDTO> ticketPage = ticketRepository.findAllByCustomer_NameContainsIgnoreCaseAndShow_Event_NameContainsIgnoreCaseAndStatusOrderByCustomer_Firstname(
+            customerName, eventName, TicketStatus.RESERVATED, pageable).map(ticketMapper::ticketToTicketDTO);
+        if(ticketPage.isEmpty()){
+            //throw new NotFoundException("could not find any tickets");
+        }
+        return ticketPage;
     }
 
     @Override
@@ -287,6 +337,9 @@ public class TicketServiceImpl implements TicketService {
         }
         return result;
     }
+
+
+
 
     // PINOS IMPLEMENTATION
     /*

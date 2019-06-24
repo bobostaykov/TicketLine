@@ -3,7 +3,6 @@ package at.ac.tuwien.sepm.groupphase.backend.unit;
 import at.ac.tuwien.sepm.groupphase.backend.datatype.EventType;
 import at.ac.tuwien.sepm.groupphase.backend.datatype.PriceCategory;
 import at.ac.tuwien.sepm.groupphase.backend.datatype.TicketStatus;
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.show.ShowDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.ticket.TicketDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.ticket.TicketPostDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.*;
@@ -16,18 +15,14 @@ import at.ac.tuwien.sepm.groupphase.backend.exception.TicketSoldOutException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.*;
 import at.ac.tuwien.sepm.groupphase.backend.service.implementation.TicketServiceImpl;
 import at.ac.tuwien.sepm.groupphase.backend.service.ticketExpirationHandler.TicketExpirationHandler;
-import at.ac.tuwien.sepm.groupphase.backend.service.ticketExpirationHandler.TicketExpirationHandlerImpl;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.BDDMockito;
-import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.springframework.data.domain.Page;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -320,14 +315,14 @@ public class TicketServiceTest {
 
     @Test
     public void testFindAllFilteredByCustomerAndEvent_Successfull() {
-        Mockito.when(customerRepository.findAllByName(TEST_CUSTOMER_NAME1)).thenReturn(TEST_CUSTOMER1_LIST);
-        Mockito.when(eventRepository.findAllByName(TEST_EVENT_NAME)).thenReturn(TEST_EVENT_LIST);
-        Mockito.when(showRepository.findAllByEvent(TEST_EVENT_LIST)).thenReturn(TEST_SHOW_LIST);
-        Mockito.when(ticketRepository.findAllByCustomer(TEST_CUSTOMER1_LIST)).thenReturn(TEST_TICKET_LIST_BY_CUSTOMER);
-        Mockito.when(ticketRepository.findAllByShow(TEST_SHOW_LIST)).thenReturn(TEST_TICKET_LIST_BY_SHOW);
+        Mockito.when(customerRepository.findAllByNameContainsIgnoreCase(TEST_CUSTOMER_NAME1)).thenReturn(TEST_CUSTOMER1_LIST);
+        Mockito.when(eventRepository.findAllByNameContainsIgnoreCase(TEST_EVENT_NAME)).thenReturn(TEST_EVENT_LIST);
+        Mockito.when(showRepository.findAllByEventIn(TEST_EVENT_LIST)).thenReturn(TEST_SHOW_LIST);
+        Mockito.when(ticketRepository.findAllByCustomerIn(TEST_CUSTOMER1_LIST)).thenReturn(TEST_TICKET_LIST_BY_CUSTOMER);
+        Mockito.when(ticketRepository.findAllByShowIn(TEST_SHOW_LIST)).thenReturn(TEST_TICKET_LIST_BY_SHOW);
         Mockito.when(ticketExpirationHandler.setExpiredReservatedTicketsToStatusExpired(TEST_TICKET_LIST_DTO)).thenReturn(TEST_TICKET_LIST_DTO);
         //BDDMockito.given(ticketExpirationHandler.setExpiredReservatedTicketsToStatusExpired(any(ShowDTO.class));
-        List<TicketDTO> result = ticketService.findAllFilteredByCustomerAndEvent(TEST_CUSTOMER_NAME1, TEST_EVENT_NAME);
+        Page<TicketDTO> result = ticketService.findAllFilteredByCustomerAndEvent(TEST_CUSTOMER_NAME1, TEST_EVENT_NAME,null, 0, 10);
         assertEquals(result, TEST_TICKET_LIST_DTO);
     }
 

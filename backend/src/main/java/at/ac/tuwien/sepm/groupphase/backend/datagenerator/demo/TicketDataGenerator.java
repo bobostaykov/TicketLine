@@ -67,6 +67,7 @@ public class TicketDataGenerator implements DataGenerator {
                     .seat(seatRepository.getOne(((i-1) % numOfSeats) + 1))
                     .sector(null)
                     .status(i % 6 == 0 ? TicketStatus.RESERVATED : TicketStatus.SOLD)
+                    .reservationNo(i % 6 == 0 ? "A1234"+i : null)
                     .build());
             }
             /*Long id = 1L, cn = 1L, sn = 1L;

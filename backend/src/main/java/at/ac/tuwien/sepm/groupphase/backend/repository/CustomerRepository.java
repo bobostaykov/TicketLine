@@ -30,7 +30,7 @@ public interface CustomerRepository extends CustomerRepositoryCustom, JpaReposit
      * @param surname name of customer
      * @return list of customers found
      */
-    List<Customer> findAllByName(String surname);
+    List<Customer> findAllByNameContainsIgnoreCase(String surname);
 
     /**
      * Find all customers by firstname
