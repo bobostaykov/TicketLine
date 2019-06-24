@@ -19,6 +19,7 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
 import java.util.List;
 
 import static org.springframework.util.CollectionUtils.isEmpty;
@@ -42,7 +43,7 @@ public class HallEndpoint {
 
     @GetMapping(value = "/{id}")
     @ApiOperation(value = "Get specific hall by its id", authorizations = {@Authorization(value = "apiKey")})
-    public HallDTO getHallById(@PathVariable("id") Long hallId,
+    public HallDTO getHallById(@Valid @Positive  @PathVariable("id") Long hallId,
                                @RequestParam(required = false) List<HallRequestParameter> include) {
         LOGGER.info("GET hall with id " + hallId);
         return hallService.findHallById(hallId, include);
@@ -83,7 +84,7 @@ public class HallEndpoint {
     @DeleteMapping(value = "/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "Deletes a hall and its seats or sectors by id", authorizations = {@Authorization(value = "apiKey")})
-    public @ResponseBody void deleteHall(@PathVariable Long id) {
+    public @ResponseBody void deleteHall(@Valid @Positive @PathVariable Long id) {
         LOGGER.info("Delete request for hall with id " + id);
         hallService.deleteHall(id);
     }
