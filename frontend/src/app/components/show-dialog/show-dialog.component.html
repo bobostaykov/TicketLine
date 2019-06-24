@@ -4,10 +4,11 @@
     <div class="form-group">
       <div class="col">
         <label for="event_name">Event Name</label>
-        <ngx-select-dropdown id="event_name" name="eventName" class="form-control"
+        <ngx-select-dropdown id="event_name" name="eventName"
                              [config]="eventConfig"
                              [options]="events"
-                             [(ngModel)]="chosenEvent">
+                             [(ngModel)]="chosenEvent"
+                             [_value] = "chosenEvent">
         </ngx-select-dropdown>
       </div>
     </div>
@@ -15,10 +16,11 @@
     <div class="form-group">
       <div class="col">
         <label for="hall_name">Hall Name</label>
-        <ngx-select-dropdown id="hall_name" name="hallName" class="form-control"
+        <ngx-select-dropdown id="hall_name" name="hallName"
                              [config]="hallConfig"
                              [options]="halls"
-                             [(ngModel)]="chosenHall">
+                             [(ngModel)]="chosenHall"
+                             [_value] = "chosenHall">
         </ngx-select-dropdown>
       </div>
     </div>

@@ -115,13 +115,7 @@ export class ShowDialogComponent implements OnInit, OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['show']) {
       if (this.show !== undefined) {
-        console.log('Show EventName: ' + this.show.event.name);
-        console.log('Show HallName: ' + this.show.hall.name);
-        console.log(this.show);
         this.showModel = Object.assign({}, this.show);
-        console.log('ShowModel EventName: ' + this.showModel.event.name);
-        console.log('ShowModel HallName: ' + this.showModel.hall.name);
-        console.log(this.showModel);
         this.chosenEvent = this.showModel.event;
         this.chosenHall = this.showModel.hall;
         this.pricePattern = this.showModel.pricePattern;
