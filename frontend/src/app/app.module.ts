@@ -75,7 +75,7 @@ import { EventDialogComponent } from './components/event-dialog/event-dialog.com
     BlockedUsersComponent,
     TicketCheckReservationComponent,
     ContentManagerComponent,
-    ShowDialogComponent
+    ShowDialogComponent,
     ContentManagerComponent,
     EventDialogComponent,
     ErrorSnackBarComponent
