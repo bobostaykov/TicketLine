@@ -24,9 +24,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static net.bytebuddy.matcher.ElementMatchers.is;
-import static org.junit.Assert.assertEquals;
-
 public class TicketExpirationHandlerTest {
     private TicketRepository ticketRepository;
 

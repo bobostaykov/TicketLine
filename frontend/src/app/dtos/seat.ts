@@ -1,4 +1,4 @@
-import { PriceCategory } from './priceCategory';
+import {PriceCategory} from './priceCategory';
 import {TicketStatus} from '../datatype/ticket_status';
 
 export class Seat {

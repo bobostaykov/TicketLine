@@ -5,8 +5,6 @@ import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.customer.CustomerDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.seat.SeatDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.sector.SectorDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.show.ShowDTO;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Seat;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Sector;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 

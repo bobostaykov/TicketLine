@@ -4,11 +4,7 @@ import at.ac.tuwien.sepm.groupphase.backend.datatype.PriceCategory;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.requestparameter.ShowRequestParameter;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.searchParameters.ShowSearchParametersDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.show.ShowDTO;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Seat;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Sector;
-import at.ac.tuwien.sepm.groupphase.backend.entity.PricePattern;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Show;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Ticket;
+import at.ac.tuwien.sepm.groupphase.backend.entity.*;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.show.ShowMapper;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.PricePatternRepository;
@@ -30,8 +26,6 @@ import javax.persistence.PersistenceException;
 import java.util.List;
 
 import static org.springframework.util.CollectionUtils.isEmpty;
-
-import javax.validation.constraints.Positive;
 
 @Service
 public class ShowServiceImpl implements ShowService {
