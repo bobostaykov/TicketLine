@@ -199,13 +199,14 @@ public class TicketServiceImpl implements TicketService {
 
     @Transactional
     @Override
-    public List<TicketDTO> changeStatusToSold(List<String> reservationIds) {
+    public List<TicketDTO> changeStatusToSold(List<Long> reservationIds) {
         LOGGER.info("Change Ticket status for tickets with ids " + reservationIds.toString());
-        List<TicketDTO> tickets = ticketMapper.ticketToTicketDTO(ticketRepository.findByIdIn(this.parseListOfIds(reservationIds)));
+        List<TicketDTO> tickets = ticketMapper.ticketToTicketDTO(ticketRepository.findByIdIn(reservationIds));
         tickets.stream().forEach(ticketDTO -> {ticketDTO.setStatus(TicketStatus.SOLD);});
         List<TicketDTO> outputList = new ArrayList(){
         };
         tickets.stream().forEach(t -> {outputList.add(ticketMapper.ticketToTicketDTO(ticketRepository.save(ticketMapper.ticketDTOToTicket(t))));});
+        LOGGER.info(outputList.toString());
         return outputList;
 
     }

@@ -13,6 +13,7 @@ export class TicketService {
 
   private ticketBaseUri: string = this.globals.backendUri + '/tickets';
   private printableTicketBaseUri: string = this.ticketBaseUri + '/printable';
+  private ticketBuyUri: string = this.ticketBaseUri + '/buy';
 
   constructor(private httpClient: HttpClient, private globals: Globals) {
   }
@@ -74,6 +75,11 @@ export class TicketService {
   createTicket(ticket: TicketPost[]): Observable<Ticket[]> {
     console.log('Create ticket');
     return this.httpClient.post<Ticket[]>(this.ticketBaseUri, ticket);
+  }
+
+  buyReservedTickets(ticketIDs: Number[]): Observable<Ticket> {
+    console.log('sell reservated tickets for tickets' + ticketIDs);
+     return this.httpClient.post<Ticket>(this.ticketBuyUri, ticketIDs);
   }
 
   /**

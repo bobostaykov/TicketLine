@@ -88,10 +88,10 @@ public class TicketEndpoint {
         return ticketService.changeStatusToSold(id);
     }
 
-    @RequestMapping(value = "/buy", method = RequestMethod.PUT, produces = "application/json")
+    @RequestMapping(value = "/buy", method = RequestMethod.POST, produces = "application/json")
     @ApiOperation(value = "Buy multiple reservated Tickets by id", authorizations = {@Authorization(value = "apiKey")})
-    public List<TicketDTO> buyMultipleReservatedTickets(@RequestParam List<String> tickets){
-        LOGGER.info("buy ticktes with ids" + tickets.toString());
+    public List<TicketDTO> buyMultipleReservatedTickets(@RequestBody List<Long> tickets){
+        LOGGER.info("buy tickets with ids" + tickets.toString());
         return ticketService.changeStatusToSold(tickets);
     }
 
