@@ -4,6 +4,7 @@ import {UserService} from '../../services/user/user.service';
 import {User} from '../../dtos/user';
 import {ChangePasswordRequest} from '../../dtos/change-password-request';
 import {UserType} from '../../datatype/user_type';
+import {el} from '@angular/platform-browser/testing/src/browser_util';
 
 
 @Component({
@@ -14,7 +15,8 @@ import {UserType} from '../../datatype/user_type';
 export class BlockedUsersComponent implements OnInit {
 
   private page: number = 0;
-  private pages: Array<number>;
+  private totalPages: number;
+  private pageRange: Array<number> = [];
   private dataReady: boolean = false;
 
   private blockedUsers: User[];
@@ -47,7 +49,6 @@ export class BlockedUsersComponent implements OnInit {
     this.error = false;
   }
 
-
   /**
    * Sets page number to the chosen i
    * @param i number of the page to get
@@ -77,9 +78,37 @@ export class BlockedUsersComponent implements OnInit {
    */
   private nextPage(event: any) {
     event.preventDefault();
-    if (this.page < this.pages.length - 1) {
+    if (this.page < this.totalPages - 1) {
       this.page++;
       this.loadBlockedUsers(null);
+    }
+  }
+
+  /**
+   * Determines the page numbers which will be shown in the clickable menu
+   */
+  private setPagesRange() {
+    this.pageRange = []; // nullifies the array
+    if (this.totalPages <= 11) {
+      for (let i = 0; i < this.totalPages; i++) {
+        this.pageRange.push(i);
+      }
+    } else {
+      if (this.page <= 5) {
+        for (let i = 0; i <= 10; i++) {
+          this.pageRange.push(i);
+        }
+      }
+      if (this.page > 5 && this.page < this.totalPages - 5) {
+        for (let i = this.page - 5; i <= this.page + 5; i++) {
+          this.pageRange.push(i);
+        }
+      }
+      if (this.page >= this.totalPages - 5) {
+        for (let i = this.totalPages - 10; i < this.totalPages; i++) {
+          this.pageRange.push(i);
+        }
+      }
     }
   }
 
@@ -104,12 +133,13 @@ export class BlockedUsersComponent implements OnInit {
     this.userService.getBlockedUsers(username, this.page).subscribe(
       result => {
         this.blockedUsers = result['content'];
-        this.pages = new Array(result['totalPages']);
+        this.totalPages = result['totalPages'];
+        this.setPagesRange();
       },
       error => this.defaultServiceErrorHandling(error),
       () => {
         this.dataReady = true;
-        if (this.blockedUsers.length === 0 && this.pages.length === 1) {
+        if (this.blockedUsers.length === 0 && this.totalPages === 1) {
           this.page--;
           this.loadBlockedUsers(null);
         }

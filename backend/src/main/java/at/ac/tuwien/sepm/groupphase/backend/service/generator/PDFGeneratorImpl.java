@@ -4,6 +4,7 @@ import at.ac.tuwien.sepm.groupphase.backend.datatype.TicketStatus;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.location.LocationDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.ticket.TicketDTO;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
+import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.BarcodeQRCode;
 import com.itextpdf.text.pdf.PdfPCell;
@@ -28,28 +29,21 @@ import java.util.List;
 @Component
 public class PDFGeneratorImpl implements PDFGenerator{
 
-    private static final String RECEIPT_PATH = "receipt/";
-    private static final String TICKET_PATH = "ticket/";
+    // TODO: take from application.yml
     private static final String TICKET_CHECK_URL = "https://ticketline.at/tickets/check/";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PDFGeneratorImpl.class);
 
     @Value("${receipt.address}")
-    private String TICKETLINE_ADDRESS;
+    private String TICKETLINE_ADDRESS; // TODO: does this work?
 
     public byte[] generateReceipt(List<TicketDTO> tickets, Boolean cancellation) throws DocumentException {
         LOGGER.info("PDF Generator: Generate (cancellation) receipt for ticket(s)");
         if (tickets.size() < 1)
-            throw new NotFoundException("Cannot create receipt for empty list of Tickets.");
+            throw new NotFoundException("Cannot create receipt for empty list of Tickets."); //TODO: warum wird das auf HHTP 406 und nicht HTTP.NOT_FOUND gemapped?
         Double returnSum;
         Double sum = 0.0;
         Document receipt = new Document();
-        /*String fileName, justFileName;
-        if (cancellation)
-            justFileName = "cancellation-receipt_" + LocalDateTime.now().toString() + ".pdf";
-        else
-            justFileName = "receipt_" + LocalDateTime.now().toString() + ".pdf";
-        fileName = RECEIPT_PATH + justFileName;*/
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         PdfWriter.getInstance(receipt, outputStream);
 
@@ -66,7 +60,6 @@ public class PDFGeneratorImpl implements PDFGenerator{
         Paragraph headline;
         if (cancellation)
             headline = new Paragraph("TICKETLINE STORNO-RECHNUNG", headlineFont);
-
         else
             headline = new Paragraph("TICKETLINE RECHNUNG", headlineFont);
         receipt.add(headline);
@@ -92,15 +85,17 @@ public class PDFGeneratorImpl implements PDFGenerator{
 
         Integer i = 1;
         for (TicketDTO t:tickets) {
+            if(t.getStatus() == TicketStatus.EXPIRED)
+                continue;
             PdfPCell number = new PdfPCell();
             number.setPhrase(new Phrase(i.toString(), font));
             table.addCell(number);
             PdfPCell item = new PdfPCell();
-            item.setPhrase(new Phrase(t.getShow().getEvent().getName(), font));
+            item.setPhrase(new Phrase(t.getShow().getEvent().getName() + (t.getStatus() == TicketStatus.RESERVATED ? " - Reservierung" : ""), font));
             table.addCell(item);
             PdfPCell price = new PdfPCell();
-            price.setPhrase(new Phrase(this.doubleToEuro(t.getPrice()), font));
-            sum += t.getPrice();
+            price.setPhrase(new Phrase(this.doubleToEuro(t.getStatus() == TicketStatus.SOLD ? t.getPrice() : 0.0), font));
+            sum += t.getStatus() == TicketStatus.SOLD ? t.getPrice() : 0;
             table.addCell(price);
             i++;
         }
@@ -139,8 +134,6 @@ public class PDFGeneratorImpl implements PDFGenerator{
         receipt.add(Chunk.NEWLINE);
         receipt.add(Chunk.NEWLINE);
 
-
-        // TODO: Use TICKETLINE_ADDRESS from application.yml here
         //Paragraph address = new Paragraph("Ticketline-Gasse 1a, 1010 Wien", font);
         Paragraph address = new Paragraph(TICKETLINE_ADDRESS, font);
         receipt.add(address);
@@ -151,17 +144,13 @@ public class PDFGeneratorImpl implements PDFGenerator{
     }
 
     @Override
-    public byte[] generateTicketPDF(List<TicketDTO> tickets) throws DocumentException, IOException, NoSuchAlgorithmException {
+    public byte[] generateTicketPDF(List<TicketDTO> tickets) throws DocumentException {
         LOGGER.info("PDF Generator: Generate PDF for ticket(s) and/or reservation(s)");
         int numberOfTickets = tickets.size();
         if (numberOfTickets < 1)
             throw new NotFoundException("Cannot create pdf for empty list of Tickets.");
+
         Document pdf = new Document();
-        /*String justFileName = "ticket_" + LocalDateTime.now().toString() + ".pdf";
-        String fileName = TICKET_PATH + justFileName;
-
-        this.generatePathIfNotExists(TICKET_PATH);*/
-
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         PdfWriter.getInstance(pdf, outputStream);
 
@@ -180,12 +169,6 @@ public class PDFGeneratorImpl implements PDFGenerator{
         }
 
         pdf.close();
-
-        /*File file = new File(fileName);
-        FileInputStream input = new FileInputStream(file);
-        MultipartFile multipartPDF = new MockMultipartFile(justFileName,
-            file.getName(), "application/pdf", IOUtils.toByteArray(input));
-        return multipartPDF;*/
         return outputStream.toByteArray();
     }
 
@@ -205,21 +188,13 @@ public class PDFGeneratorImpl implements PDFGenerator{
         String centsStr = Long.toString(100 + eurocents%100).substring(1);
         return plusMinus + eurocents / 100 + "," + centsStr + " €";
     }
-/*
-    private void generatePathIfNotExists(String pathString) throws IOException {
-        Path path = Paths.get(pathString);
-        if (!Files.exists(path))
-            Files.createDirectories(path);
-    }
 
- */
-
-    private void addTicketPage(TicketDTO ticket, Document doc) throws DocumentException, NoSuchAlgorithmException {
+    private void addTicketPage(TicketDTO ticket, Document doc) throws DocumentException {
         Boolean buy = ticket.getStatus() == TicketStatus.SOLD;
         Font headlineFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 24, BaseColor.BLACK);
         Font font = FontFactory.getFont(FontFactory.HELVETICA, 16, BaseColor.BLACK);
         Font fontBold = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 16, BaseColor.BLACK);
-        Paragraph headline = new Paragraph("TICKETLINE TICKET", headlineFont);
+        Paragraph headline = new Paragraph("TICKETLINE " + (ticket.getStatus() == TicketStatus.SOLD ? "TICKET" : "RESERVIERUNG"), headlineFont);
         doc.add(headline);
         doc.add(Chunk.NEWLINE);
         Paragraph date = new Paragraph("Ausstellungsdatum: " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")), font);
@@ -265,7 +240,7 @@ public class PDFGeneratorImpl implements PDFGenerator{
             price.setPhrase(new Phrase("Preis (zu bezahlen): " + this.doubleToEuro(ticket.getPrice()), fontBold));
             table.addCell(price);
             PdfPCell reservationNumber = new PdfPCell();
-            reservationNumber.setPhrase(new Phrase("Reservierungsnummer: " + ticket.getReservationNumber().toString()));
+            reservationNumber.setPhrase(new Phrase("Reservierungsnummer: " + ticket.getReservationNumber().toString(), fontBold));
             table.addCell(reservationNumber);
         }
 

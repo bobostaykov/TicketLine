@@ -163,6 +163,7 @@
 </div>
 
 
+
 <div *ngIf="dataReady">
 <table class="table">
   <thead>
@@ -185,16 +186,28 @@
 </table>
 
   <hr class="hr-bold">
-  <div class="justify-content-center" *ngIf="pages.length > 1">
+  <div class="justify-content-center" *ngIf="totalPages > 1">
     <ul class="nav nav-pills">
       <li class="nav-item">
-        <a class="nav-link" href="" (click)="previousPage($event)">«</a>
-      </li>
-      <li class="nav-item" *ngFor="let p of pages; let i = index">
-        <a class="nav-link" href="" (click)="setPage(i, $event)" [ngClass]="{'active': i == page}">{{i}}</a>
+        <a class="nav-link" href="" (click)="setPage(0, $event)">«</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="" (click)="nextPage($event)">»</a>
+        <a class="nav-link" href="" (click)="previousPage($event)">Previous</a>
+      </li>
+      <li class="nav-item" *ngIf="page - 5 > 0">
+        <a class="nav-link" href="">...</a>
+      </li>
+      <li class="nav-item" *ngFor="let p of pageRange;">
+        <a class="nav-link" href="" (click)="setPage(p, $event)" [ngClass]="{'active': p == page}">{{p + 1}}</a>
+      </li>
+      <li class="nav-item" *ngIf="totalPages - 5 > page">
+        <a class="nav-link" href="">...</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="" (click)="nextPage($event)">Next</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="" (click)="setPage(totalPages - 1, $event)">»</a>
       </li>
     </ul>
   </div>

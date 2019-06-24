@@ -23,6 +23,7 @@ import org.springframework.http.HttpStatus;
 import java.util.Collections;
 
 import static org.hamcrest.core.Is.is;
+import static org.mockito.ArgumentMatchers.any;
 
 public class LocationEndpointTest extends BaseIntegrationTest {
 
@@ -352,5 +353,72 @@ public class LocationEndpointTest extends BaseIntegrationTest {
             .when().get(LOCATION_FILTERED_COUNTRY_AND_CITY_NOT_FOUND)
             .then().extract().response();
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.NOT_FOUND.value()));
+    }
+
+    @Test
+    public void addLocationAsAdminThenHTTPResponseOKAndLocationIsReturned() {
+        BDDMockito.
+            given(locationRepository.save(any(Location.class))).
+            willReturn(
+                Location.builder()
+                .locationName(NAME)
+                .id(ID)
+                .country(COUNTRY)
+                .city(CITY)
+                .postalCode(POSTAL_CODE)
+                .street(STREET)
+                .description(DESCRIPTION)
+                .build());
+        Response response = RestAssured
+            .given()
+            .contentType(ContentType.JSON)
+            .header(HttpHeaders.AUTHORIZATION, validAdminTokenWithPrefix)
+            .body(
+                LocationDTO.builder()
+                    .locationName(NAME)
+                    .id(ID)
+                    .country(COUNTRY)
+                    .city(CITY)
+                    .postalCode(POSTAL_CODE)
+                    .street(STREET)
+                    .description(DESCRIPTION)
+                    .build())
+            .when().post(LOCATION_ENDPOINT)
+            .then().extract().response();
+
+        Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
+        Assert.assertThat(response.as(LocationDTO.class), is(
+            LocationDTO.builder()
+            .locationName(NAME)
+            .id(ID)
+            .country(COUNTRY)
+            .city(CITY)
+            .postalCode(POSTAL_CODE)
+            .street(STREET)
+            .description(DESCRIPTION)
+            .build()));
+    }
+
+    @Test
+    public void deleteLocationAsAdminThenHTTPResponseOK() {
+        BDDMockito.
+            given(locationRepository.save(any(Location.class))).
+            willReturn(
+                Location.builder()
+                    .locationName(NAME)
+                    .id(ID)
+                    .country(COUNTRY)
+                    .city(CITY)
+                    .postalCode(POSTAL_CODE)
+                    .street(STREET)
+                    .description(DESCRIPTION)
+                    .build());
+        Response response = RestAssured
+            .given()
+            .contentType(ContentType.JSON)
+            .header(HttpHeaders.AUTHORIZATION, validAdminTokenWithPrefix)
+            .when().delete(LOCATION_ENDPOINT + "/1")
+            .then().extract().response();
+        Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
     }
 }

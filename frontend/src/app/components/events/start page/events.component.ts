@@ -1,10 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {EventService} from '../../../services/event/event.service';
 import {Event} from '../../../dtos/event';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {EventType} from '../../../datatype/event_type';
-import {Artist} from '../../../dtos/artist';
-import {ArtistResultsService} from '../../../services/search-results/artists/artist-results.service';
 
 @Component({
   selector: 'app-events',
@@ -14,96 +10,30 @@ import {ArtistResultsService} from '../../../services/search-results/artists/art
 export class EventsComponent implements OnInit {
 
   private page: number = 0;
-  private pages: Array<number>;
+  private totalPages: number;
+  private pageRange: Array<number> = [];
   private dataReady: boolean = false;
+
   private error: boolean = false;
   private errorMessage: string = '';
   private events: Event[];
-  private createEventForm: FormGroup;
-  private submitted: boolean = false;
-  private selectedEventType: string = null;
-  private duration: number = null;
-  private eventTypes = ['', 'Theatre', 'Opera', 'Festival', 'Concert', 'Movie', 'Musical', 'Sport', 'Other'];
-  // for artist search dropdown
-  private options: string[] = [];
-  private config = {
-    displayKey: 'Select an artist',
-    search: true,
-    height: '350px',
-    placeholder: ' ',
-    limitTo: this.options.length,
-    moreText: 'more',
-    noResultsFound: 'No results found!',
-    searchPlaceholder: 'Search',
-    searchOnKey: 'name'
-  };
 
-  constructor(private eventService: EventService, private artistResultsService: ArtistResultsService, private formBuilder: FormBuilder) {
-    this.createEventForm = this.formBuilder.group({
-      eventName: ['', [Validators.required]],
-      type: ['', [Validators.required]],
-      duration: ['', [Validators.required, Validators.min(1)]],
-      artist: ['', [Validators.required]],
-      content: ['', []],
-      description: ['', []],
-    });
-  }
+  constructor(private eventService: EventService) {}
 
   ngOnInit() {
     this.loadEvents();
-    this.loadArtists();
-  }
-
-  private addEvent() {
-    this.submitted = true;
-    if (this.createEventForm.valid) {
-      const event: Event = new Event(null,
-        this.createEventForm.controls.eventName.value,
-        EventType[this.selectedEventType.toUpperCase()],
-        this.createEventForm.controls.description.value,
-        this.createEventForm.controls.content.value,
-        new Artist(null, this.createEventForm.controls.artist.value),
-        this.duration
-      );
-      this.createEvent(event);
-      window.location.reload();
-      // this.clearCreateEventForm();
-    } else {
-      console.log('Invalid input');
-    }
-  }
-
-  private createEvent(event: Event) {
-    this.eventService.createEvent(event).subscribe(
-      () => {},
-      error => { this.defaultServiceErrorHandling(error); },
-      () => { this.loadEvents(); }
-    );
   }
 
   private loadEvents() {
     this.eventService.getAllEvents(this.page).subscribe(
       result => {
         this.events = result['content'];
-        this.pages = new Array(result['totalPages']);
-        console.log(result);
+        this.totalPages = result['totalPages'];
+        this.setPagesRange();
         },
       error => { this.defaultServiceErrorHandling(error); },
       () => { this.dataReady = true; }
     );
-  }
-
-  private loadArtists() {
-    this.artistResultsService.findArtists('-1', this.page).subscribe(
-      (artists: Artist[]) => { this.options = this.artistArrayToStringArray(artists); },
-      error => { this.defaultServiceErrorHandling(error); }
-    );
-  }
-
-  private artistArrayToStringArray(artists: Artist[]): string[] {
-    const toReturn: string[] = [];
-    artists['content'].forEach(artist => { toReturn.push(artist.name); });
-    return toReturn;
   }
 
   private setPage(i, event: any) {
@@ -122,9 +52,37 @@ export class EventsComponent implements OnInit {
 
   private nextPage(event: any) {
     event.preventDefault();
-    if (this.page < this.pages.length - 1) {
+    if (this.page < this.totalPages - 1) {
       this.page++;
       this.loadEvents();
+    }
+  }
+
+  /**
+   * Determines the page numbers which will be shown in the clickable menu
+   */
+  private setPagesRange() {
+    this.pageRange = []; // nullifies the array
+    if (this.totalPages <= 11) {
+      for (let i = 0; i < this.totalPages; i++) {
+        this.pageRange.push(i);
+      }
+    } else {
+      if (this.page <= 5) {
+        for (let i = 0; i <= 10; i++) {
+          this.pageRange.push(i);
+        }
+      }
+      if (this.page > 5 && this.page < this.totalPages - 5) {
+        for (let i = this.page - 5; i <= this.page + 5; i++) {
+          this.pageRange.push(i);
+        }
+      }
+      if (this.page >= this.totalPages - 5) {
+        for (let i = this.totalPages - 10; i < this.totalPages; i++) {
+          this.pageRange.push(i);
+        }
+      }
     }
   }
 
@@ -136,11 +94,6 @@ export class EventsComponent implements OnInit {
     } else {
       this.errorMessage = error.error.error;
     }
-  }
-
-  private clearCreateEventForm() {
-    this.createEventForm.reset();
-    this.submitted = false;
   }
 
 }

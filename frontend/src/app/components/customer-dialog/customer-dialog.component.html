@@ -1,12 +1,5 @@
 <!-- dialog to search for, add and update customers -->
 <form #customerForm="ngForm" class="form">
-  <div class="form-group" *ngIf="title === 'Search Customers'">
-    <label for="customerId">ID</label>
-    <input id="customerId" type="number" name="id" class="form-control"
-           aria-labelledby="customer ID"
-           placeholder="Enter Customer ID"
-           [(ngModel)]="customerModel.id"/>
-  </div>
   <div class="form-group form-row">
     <div class="col">
       <label for="customerFirstName">First Name</label>
@@ -39,7 +32,7 @@
     <input id="customerMail" type="email" name="mail" class="form-control"
            aria-labelledby="customer email"
            placeholder="Enter Customer E-Mail"
-           pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$"
+           [pattern]="(title !== 'Search Customers' ? '[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$' : null)"
            [(ngModel)]="customerModel.email"
            [required]="requiredValues"
            #mail='ngModel'/>

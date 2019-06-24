@@ -9,6 +9,7 @@ import at.ac.tuwien.sepm.groupphase.backend.repository.projections.SimpleLocatio
 import at.ac.tuwien.sepm.groupphase.backend.service.LocationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -85,7 +86,30 @@ public class LocationServiceImpl implements LocationService {
 
     @Override
     public LocationDTO findOneById(Long id) {
-        LOGGER.info("Locaiton Service: Retrieving a location by id " + id);
+        LOGGER.info("Location Service: Retrieving a location by id " + id);
         return locationMapper.locationToLocationDTO(locationRepository.findOneById(id).orElseThrow(NotFoundException::new));
+    }
+
+    @Override
+    public void deleteById(Long locationId) throws ServiceException, DataIntegrityViolationException {
+        LOGGER.info("LocationService: deleteById " + locationId);
+        try {
+            locationRepository.deleteById(locationId);
+        } catch (PersistenceException e) {
+            throw new ServiceException(e.getMessage());
+        }
+    }
+
+    @Override
+    public LocationDTO updateLocation(LocationDTO locationDTO) {
+        LOGGER.info("LocationService: Updating a location: " + locationDTO.toString());
+        return locationMapper.locationToLocationDTO(locationRepository.save(locationMapper.locationDTOToLocation(locationDTO)));
+
+    }
+
+    @Override
+    public LocationDTO addLocation(LocationDTO locationDTO) {
+        LOGGER.info("LocationService: Adding a location: " + locationDTO.toString());
+        return locationMapper.locationToLocationDTO(locationRepository.save(locationMapper.locationDTOToLocation(locationDTO)));
     }
 }

@@ -1,0 +1,228 @@
+
+
+
+  <div class="row p-2 mb-">
+    <form>
+      <div>Search by Reservation Number
+        <input type="text" class="form-control search mr-4" [(ngModel)]="activeReservationNumber"[ngModelOptions]="{standalone: true}" placeholder="Reservation Number">
+        <button (click)="loadReservationsByNumber(activeReservationNumber, 0)" class="btn btn-secondary btn-sm search mr-4">Search reservations</button>
+      </div>
+      <div>Search by Customer and Event
+        <input type="text" class="form-control search mr-4" [(ngModel)]="activeCustomerName" [ngModelOptions]="{standalone: true}"  placeholder="Customer Name">
+        <input type="text" class="form-control search mr-4" [(ngModel)]="activeEventName" [ngModelOptions]="{standalone: true}" placeholder="Event Name">
+        <button (click)="loadReservationsByCustomerAndEvent(activeCustomerName, activeEventName, 0)" class="btn btn-secondary btn-sm search mr-4">Search reservations</button>
+        </div>
+    </form>
+  </div>
+
+
+  <div class="row p-2 mb-4">
+    <input type="text" class="form-control search mr-4" [(ngModel)]="activeTicketNumber"[ngModelOptions]="{standalone: true}" placeholder="Ticket Number">
+    <button (click)="loadTicketsByNumber(activeTicketNumber, 0)" class="btn btn-secondary btn-sm search mr-4">Search tickets</button>
+  </div>
+
+  <div *ngIf="cancellationCompleted" class="modal-fade" role="alert">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Search Costumers</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">x</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        {{ cancellationMessage }}
+      </div>
+    </div>
+
+  </div>
+  <div *ngIf="saleComplete" class="modal-fade" role="alert">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Search Costumers</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">x</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        {{ saleMessage}}
+      </div>
+    </div>
+
+  </div>
+
+
+  <div *ngIf="cantSubmitEmpty" class="alert alert-warning alert-dismissible fade show" role="alert">
+    {{ cantSubmitEmptyMessage }}
+    <button type="button" (click)="vanishError()" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div *ngIf="stornoTickets.length !== 0">
+    <table class="table">
+      <thead>
+      <tr>
+        <th scope="col"> Name </th>
+        <th scope="col"> First Name </th>
+        <th scope="col"> Event Name </th>
+        <th scope="col"> Artist Name</th>
+        <th scope="col"> Date </th>
+        <th scope="col"> Time </th>
+        <th scope="col"> Location </th>
+        <th scope="col"> Hall </th>
+        <th scope="col"> Seat/Sector </th>
+        <th scope="col"> Status </th>
+        <th scope="col"> Ticket-Number </th>
+        <th scope="col"> dismiss</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let ticket of stornoTickets">
+        <td>{{ticket.customer.name}}</td>
+        <td>{{ticket.customer.firstname}}</td>
+        <td>{{ticket.show.event.name}}</td>
+        <td *ngIf="hasArtistName(ticket)">{{ticket.show.event.artist.name}}</td>
+        <td *ngIf="!hasArtistName(ticket)"> no data available </td>
+        <td>{{ticket.show.date}}</td>
+        <td>{{ticket.show.time}}</td>
+        <td>{{ticket.show.hall.location.locationName}}</td>
+        <td>{{ticket.show.hall.name}}</td>
+        <td *ngIf="hasSeatNo(ticket) && hasRowNo(ticket)"> Seat: {{ticket.seat.seatNumber}} Row: {{ticket.seat.seatRow}} </td>
+        <td *ngIf="hasSectorNo(ticket) && !hasRowNo(ticket)"> Sector: {{ticket.sector.sectorNumber}}</td>
+        <td *ngIf="hasSectorNo(ticket) && !hasSeatNo(ticket)"> no data available</td>
+        <td>{{ticket.status}}</td>
+        <td>{{ticket.reservationNo}}</td>
+        <td ><button mat-raised-button (click)="dismissFromCancellation(ticket)" > dismiss </button></td>
+      </tr>
+      <td>
+        <form>
+          <p align="right">
+            <button id = "submitCancel"  type = mat-raised-button (click)="submitStorno()" >submit Cancellation</button>
+          </p>
+        </form>
+      </td>
+      </tbody>
+    </table>
+  </div>
+
+
+  <div *ngIf="cantSubmitEmpty" class="alert alert-warning alert-dismissible fade show" role="alert">
+    {{ cantSubmitEmptyMessage }}
+    <button type="button" (click)="vanishError()" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div *ngIf="saleTickets.length !== 0">
+    <table class="table">
+      <thead>
+      <tr>
+        <th scope="col"> Name </th>
+        <th scope="col"> First Name </th>
+        <th scope="col"> Event Name </th>
+        <th scope="col"> Artist Name</th>
+        <th scope="col"> Date </th>
+        <th scope="col"> Time </th>
+        <th scope="col"> Location </th>
+        <th scope="col"> Hall </th>
+        <th scope="col"> Seat/Sector </th>
+        <th scope="col"> Status </th>
+        <th scope="col"> Ticket-Number </th>
+        <th scope="col"> dismiss</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let ticket of saleTickets">
+        <td>{{ticket.customer.name}}</td>
+        <td>{{ticket.customer.firstname}}</td>
+        <td>{{ticket.show.event.name}}</td>
+        <td *ngIf="hasArtistName(ticket)">{{ticket.show.event.artist.name}}</td>
+        <td *ngIf="!hasArtistName(ticket)"> no data available </td>
+        <td>{{ticket.show.date}}</td>
+        <td>{{ticket.show.time}}</td>
+        <td>{{ticket.show.hall.location.locationName}}</td>
+        <td>{{ticket.show.hall.name}}</td>
+        <td *ngIf="hasSeatNo(ticket) && hasRowNo(ticket)"> Seat: {{ticket.seat.seatNumber}} Row: {{ticket.seat.seatRow}} </td>
+        <td *ngIf="hasSectorNo(ticket) && !hasRowNo(ticket)"> Sector: {{ticket.sector.sectorNumber}}</td>
+        <td *ngIf="hasSectorNo(ticket) && !hasSeatNo(ticket)"> no data available</td>
+        <td>{{ticket.status}}</td>
+        <td>{{ticket.reservationNo}}</td>
+        <td ><button mat-raised-button (click)="dismissFromBasket(ticket)" > Dismiss </button></td>
+      </tr>
+      <td>
+        <form>
+          <p align="right">
+            <button id = "submitBasket  "  type = mat-raised-button (click)="submitSale()" >Submit Order</button>
+          </p>
+        </form>
+      </td>
+      </tbody>
+    </table>
+  </div>
+  <!-- table displaying ticket search results -->
+  <div *ngIf="ticketDataReady">
+    <table class="table">
+      <thead>
+      <tr>
+        <th scope="col"> Name </th>
+        <th scope="col"> First Name </th>
+        <th scope="col"> Event Name </th>
+        <th scope="col"> Artist Name</th>
+        <th scope="col"> Date </th>
+        <th scope="col"> Time </th>
+        <th scope="col"> Location </th>
+        <th scope="col"> Hall </th>
+        <th scope="col"> Seat/Sector </th>
+        <th scope="col"> Status </th>
+        <th scope="col"> Ticket-Number </th>
+        <th scope="col"> Cancel </th>
+        <th *ngIf="!displaySoldTickets" scope="col"> Buy</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let ticket of tickets">
+        <td>{{ticket.customer.name}}</td>
+        <td>{{ticket.customer.firstname}}</td>
+        <td>{{ticket.show.event.name}}</td>
+        <td *ngIf="hasArtistName(ticket)">{{ticket.show.event.artist.name}}</td>
+        <td *ngIf="!hasArtistName(ticket)"> no data available </td>
+        <td>{{ticket.show.date}}</td>
+        <td>{{ticket.show.time}}</td>
+        <td>{{ticket.show.hall.location.locationName}}</td>
+        <td>{{ticket.show.hall.name}}</td>
+        <td *ngIf="hasSeatNo(ticket) && hasRowNo(ticket)"> Seat: {{ticket.seat.seatNumber}} Row: {{ticket.seat.seatRow}} </td>
+        <td *ngIf="hasSectorNo(ticket) && !hasRowNo(ticket)"> Sector: {{ticket.sector.sectorNumber}}</td>
+        <td *ngIf="hasSectorNo(ticket) && !hasSeatNo(ticket)"> no data available</td>
+        <td>{{ticket.status}}</td>
+        <td>{{ticket.reservationNo}}</td>
+        <td><button (click)="addToCancellation(ticket)" mat-raised-button>Storno</button></td>
+        <td *ngIf="!displaySoldTickets"><button (click)="addToBasket(ticket)" mat-raised-button>Buy</button></td>
+      </tr>
+      </tbody>
+    </table>
+
+    <hr class="hr-bold">
+    <div class="justify-content-center" *ngIf="totalPages > 1">
+      <ul class="nav nav-pills">
+        <li class="nav-item">
+          <a class="nav-link" href="" (click)="setPage(0, $event)">«</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="" (click)="previousPage($event)">Previous</a>
+        </li>
+        <li class="nav-item" *ngIf="page - 5 > 0">
+          <a class="nav-link" href="">...</a>
+        </li>
+        <li class="nav-item" *ngFor="let p of pageRange;">
+          <a class="nav-link" href="" (click)="setPage(p, $event)" [ngClass]="{'active': p == page}">{{p + 1}}</a>
+        </li>
+        <li class="nav-item" *ngIf="totalPages - 5 > page">
+          <a class="nav-link" href="">...</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="" (click)="nextPage($event)">Next</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="" (click)="setPage(totalPages - 1, $event)">»</a>
+        </li>
+      </ul>
+    </div>
+

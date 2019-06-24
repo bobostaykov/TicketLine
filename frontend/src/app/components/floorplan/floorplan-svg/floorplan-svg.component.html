@@ -1,7 +1,8 @@
 <!-- div containing form to update selected seat or sector -->
 <div id="updateForm">
   <form #updateForm="ngForm" (ngSubmit)="updateForm.valid && updateSelectedElement()">
-    <div class="row mx-2" *ngIf="seats !== undefined">
+    <!-- disable row if elements are sectors -->
+    <div class="row mx-2" *ngIf="hallType === 'seats'">
       <!-- form field to update seat row -->
       <mat-form-field appearance="standard" class="col-6" hideRequiredMarker>
         <mat-label class="pr-4">Row</mat-label>
@@ -25,7 +26,8 @@
         </mat-error>
       </mat-form-field>
     </div>
-    <div class="row mx-2" *ngIf="sectors !== undefined">
+    <!-- disable row if elements are seats -->
+    <div class="row mx-2" *ngIf="hallType === 'secotrs'">
       <!-- form field to update sector number -->
       <mat-form-field appearance="standard" class="col-10" hideRequiredMarker>
         <mat-label class="pr-4" matPrefix>Sector Number</mat-label>
@@ -60,33 +62,21 @@
 
 <!-- div containing context menu for delete, ticket, update operations -->
 <div id="contextmenu" class="dropdown-menu shadow-sm">
-  <button *ngIf="seats" class="btn dropdown-item" (click)="displaySeatUpdateForm(selectedElement)">Update</button>
-  <button *ngIf="sectors" class="btn dropdown-item" (click)="displaySectorUpdateForm(selectedElement)">Update</button>
-  <button class="btn dropdown-item" (click)="deleteSelectedElement()">Delete</button>
-  <button class="btn dropdown-item" (click)="addToTicket()">Add To Ticket</button>
+  <button class="btn dropdown-item" (click)="displayUpdateForm(selectedElement, activeElement)" *ngIf="editingEnabled && isAdmin()">Update</button>
+  <button class="btn dropdown-item" (click)="deleteSelectedElement()" *ngIf="editingEnabled && isAdmin()">Delete</button>
+  <button class="btn dropdown-item" (click)="addAsTicket()" *ngIf="!editingEnabled && priceMapping && ! selectedElement?.ticketStatus">
+    Add To Ticket
+  </button>
+  <button class="btn dropdown-item" (click)="removeTicket()" *ngIf="!editingEnabled && priceMapping && selectedElement?.ticketStatus === 'SELECTED'">
+    Delete Ticket
+  </button>
 </div>
 
 <div id="svg-container">
-  <!-- draws a floor plan with seats -->
-  <svg id="floorplan" *ngIf="seats"
+  <!-- displays a floor plan with seats or sectors -->
+  <svg id="floorplan"
        [attr.viewBox]="this.viewbox"
        (mousedown)="svgDragInit()"
-       (mousewheel)="zoom($event)" >
-    <path *ngFor="let seat of seats"
-          [attr.d]="getSeatPath(seat)"
-          [attr.fill]="getColor(seat)"
-          (click)="displaySeatUpdateForm(seat)"
-          (contextmenu)="displayContext(seat, $event)"></path>
-  </svg>
-  <!-- draws a floor plan with sectors -->
-  <svg id="floorplan" *ngIf="sectors"
-       [attr.viewBox]="this.viewbox"
-       (mousedown)="svgDragInit()"
-       (mousewheel)="zoom($event)" >
-    <path *ngFor="let sector of sectors"
-          [attr.d]="getSectorPath(sector)"
-          [attr.fill]="getColor(sector)"
-          (click)="displaySectorUpdateForm(sector)"
-          (contextmenu)="displayContext(sector, $event)"></path>
+       (mousewheel)="zoom($event)">
   </svg>
 </div>

@@ -39,7 +39,7 @@ public class Show {
     private Long ticketsSold;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "pricePatter_id")
+    @JoinColumn(name = "pricePattern_id")
     private PricePattern pricePattern;
 
     public Long getId() {

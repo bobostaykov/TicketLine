@@ -36,6 +36,7 @@ export class TicketCheckReservationComponent implements OnInit {
   private rowStr: String[] = [];
   private sectorStr: String [] = [];
   private statusStr: String;
+  private ticketOrReservation: String;
   private idx: number;
   private amtTickets: number;
 
@@ -47,12 +48,15 @@ export class TicketCheckReservationComponent implements OnInit {
     this.ticket_sectors = this.ticketSession.getSectorTickets();
     this.ticket_customer = this.ticketSession.getCustomer();
     this.ticket_show = this.ticketSession.getShow();
+    this.ticket_status = this.ticketSession.getTicketStatus();
     this.submitted = false;
 
     if (this.ticket_status === TicketStatus.RESERVATED) {
       this.statusStr = 'Reservation';
+      this.ticketOrReservation = 'Reservation';
     } else {
       this.statusStr = 'Purchase';
+      this.ticketOrReservation = 'Ticket';
     }
     this.idx = 0;
     this.priceTotal = 0;
@@ -79,9 +83,10 @@ export class TicketCheckReservationComponent implements OnInit {
    */
   createTicket() {
     this.tickets = [];
+    const customerId = this.ticket_customer ? this.ticket_customer.id : null;
     if (this.ticket_seats && this.ticket_seats.length > 0) {
       for (const entry of this.ticket_seats) {
-        const currentTicket = new TicketPost(null, this.ticket_show.id, this.ticket_customer.id, entry.price, entry.id, null,
+        const currentTicket = new TicketPost(null, this.ticket_show.id, customerId, entry.price, entry.id, null,
           this.ticket_status);
         this.tickets.push(currentTicket);
       }
@@ -89,7 +94,7 @@ export class TicketCheckReservationComponent implements OnInit {
 
     if (this.ticket_sectors && this.ticket_sectors.length > 0) {
       for (const entry of this.ticket_sectors) {
-        const currentTicket = new TicketPost(null, this.ticket_show.id, this.ticket_customer.id, entry.price, null, entry.id,
+        const currentTicket = new TicketPost(null, this.ticket_show.id, customerId, entry.price, null, entry.id,
           this.ticket_status);
         this.tickets.push(currentTicket);
       }
@@ -166,6 +171,7 @@ export class TicketCheckReservationComponent implements OnInit {
     this.ticketService.getTicketPdf(this.getIdsOfCreatedTickets()).subscribe(
       res => {
         const fileURL = URL.createObjectURL(res);
+        console.log(fileURL);
         window.open(fileURL, '_blank');
       },
       error => {

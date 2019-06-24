@@ -9,7 +9,8 @@ import java.util.Objects;
 public class Seat {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @SequenceGenerator(name = "seat_seq", initialValue = 1, allocationSize = 50)
+    @GeneratedValue(generator = "seat_seq")
     private Long id;
 
     @Column(nullable = false)

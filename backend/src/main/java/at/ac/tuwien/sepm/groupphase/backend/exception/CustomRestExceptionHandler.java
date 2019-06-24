@@ -34,14 +34,6 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
             HttpStatus.NOT_FOUND, ex.getLocalizedMessage(), error);
         return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
     }
-
-    @ExceptionHandler({PersistenceException.class})
-    protected ResponseEntity<Object> handlePersitenceException (PersistenceException ex, WebRequest request){
-        String error = "Persistence Exception: Error = " + ex.getMessage();
-        ApiError apiError = new ApiError(
-            HttpStatus.INTERNAL_SERVER_ERROR,ex.getLocalizedMessage(), error);
-        return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
-    }
     @ExceptionHandler({ServiceException.class})
     private ResponseEntity<Object> handleServiceException(ServiceException ex, WebRequest request){
         String error = "Service Exception: Error = " + ex.getMessage();

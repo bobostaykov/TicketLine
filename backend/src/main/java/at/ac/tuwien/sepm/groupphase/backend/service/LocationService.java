@@ -3,6 +3,7 @@ package at.ac.tuwien.sepm.groupphase.backend.service;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.location.LocationDTO;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.projections.SimpleLocation;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -50,4 +51,31 @@ public interface LocationService {
      * @return location dto with it matching param
      */
     LocationDTO findOneById(Long id);
+
+    /**
+     * Delete the location with the given id
+     *
+     * @param locationId of the location to delete
+     * @throws ServiceException if the id is not found
+     * @throws DataIntegrityViolationException if the entity can't be deleted because it's referenced by another one
+     */
+    void deleteById(Long locationId) throws ServiceException, DataIntegrityViolationException;
+
+    /**
+     * Change location information.
+     *
+     * @param locationDTO location to be changed
+     * @return changed location
+     * @throws ServiceException if something goes wrong during updating
+     */
+    LocationDTO updateLocation(LocationDTO locationDTO) throws ServiceException;
+
+    /**
+     * Add a location
+     *
+     * @param locationDTO location to be added
+     * @return added location
+     * @throws ServiceException if something goes wrong during creation
+     */
+    LocationDTO addLocation(LocationDTO locationDTO)  throws ServiceException;
 }

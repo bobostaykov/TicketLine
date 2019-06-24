@@ -1,17 +1,18 @@
 package at.ac.tuwien.sepm.groupphase.backend.datagenerator.demo;
 
 import at.ac.tuwien.sepm.groupphase.backend.datatype.TicketStatus;
+import at.ac.tuwien.sepm.groupphase.backend.entity.Show;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Ticket;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.*;
 import com.github.javafaker.Faker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Profile("generateData")
 @Component
@@ -25,7 +26,7 @@ public class TicketDataGenerator implements DataGenerator {
     private final ShowRepository showRepository;
     private final SeatRepository seatRepository;
 
-    private final static int NUM_OF_TICKETS = 2;
+    private long NUM_OF_TICKETS;
 
     public TicketDataGenerator(TicketRepository ticketRepository,
                                CustomerRepository customerRepository,
@@ -37,22 +38,34 @@ public class TicketDataGenerator implements DataGenerator {
         this.seatRepository = seatRepository;
     }
 
+    @Transactional
     @Override
     public void generate(){
         if(ticketRepository.count() > 0){
             LOGGER.info("Tickets already generated");
         }else {
             LOGGER.info("Generating tickets");
+            Random randomGenerator = new Random();
             List<Ticket> tickets = new ArrayList<>();
+            Optional<Show> showOptional;
+            Long numOfShows = showRepository.count();
+            Long numOfCustomers = customerRepository.count();
+            Long numOfSeats = seatRepository.count();
+            NUM_OF_TICKETS = numOfShows;
             for (Long i = 1L; i <= NUM_OF_TICKETS; i++) {
+                do { showOptional = showRepository.findById(((i+randomGenerator.nextLong()) % numOfShows) + 1); } while (showOptional.isEmpty());
+                Show show = showOptional.get();
+                show.setTicketsSold(show.getTicketsSold() + 1);
+                show = showRepository.save(show);
                 tickets.add(Ticket.builder()
                     .reservationNo(UUID.randomUUID().toString())
-                    .customer(customerRepository.getOne(i))
-                    .show(showRepository.getOne(i))
+                    .customer(customerRepository.getOne(((i-1) % numOfCustomers) + 1))
+                    .show(show)
                     .price(faker.random().nextDouble()*50)
-                    .seat(seatRepository.getOne(i))
-                    .sector(null)
-                    .status(TicketStatus.RESERVATED)
+                    .seat(!show.getHall().getSeats().isEmpty() ? show.getHall().getSeats().get(0) : null)
+                    .sector(!show.getHall().getSectors().isEmpty()? show.getHall().getSectors().get(0) : null)
+                    .status(i % 6 == 0 ? TicketStatus.RESERVATED : TicketStatus.SOLD)
+                    .reservationNo("A1234"+ i)
                     .build());
             }
             /*Long id = 1L, cn = 1L, sn = 1L;
