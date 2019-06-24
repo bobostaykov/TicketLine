@@ -71,9 +71,11 @@ export class FloorplanControlComponent implements OnInit {
     this.buildSeatForm();
     this.buildSectorForm();
     this.buildHallForm();
-    // get show and hall parameter saved in ticketSession
-    if (this.route.snapshot.queryParams['show_id']) {
-      this.loadSelectedShow(+this.route.snapshot.paramMap.get('show_id'));
+    // get show first from route parameters and if none is passed there from ticket session service
+    // else do not get show
+    const id: number = +this.route.snapshot.queryParamMap.get('show_id');
+    if (id && id > 0) {
+      this.loadSelectedShow(id);
       this.editingEnabled = false;
     } else if (this.ticketSession.getShow() && this.ticketSession.getShow().hall) {
       this.createHallForm.patchValue({

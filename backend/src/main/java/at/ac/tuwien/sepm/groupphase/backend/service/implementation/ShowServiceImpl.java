@@ -4,6 +4,8 @@ import at.ac.tuwien.sepm.groupphase.backend.datatype.PriceCategory;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.requestparameter.ShowRequestParameter;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.searchParameters.ShowSearchParametersDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.show.ShowDTO;
+import at.ac.tuwien.sepm.groupphase.backend.entity.Seat;
+import at.ac.tuwien.sepm.groupphase.backend.entity.Sector;
 import at.ac.tuwien.sepm.groupphase.backend.entity.PricePattern;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Show;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Ticket;
@@ -28,6 +30,7 @@ import javax.persistence.PersistenceException;
 import java.util.List;
 
 import static org.springframework.util.CollectionUtils.isEmpty;
+
 import javax.validation.constraints.Positive;
 
 @Service
@@ -39,7 +42,7 @@ public class ShowServiceImpl implements ShowService {
     @Autowired
     private TicketRepository ticketRepository;
     @Autowired
-    private  ShowMapper showMapper;
+    private ShowMapper showMapper;
     private final TicketExpirationHandler ticketExpirationHandler;
     private static final Logger LOGGER = LoggerFactory.getLogger(ShowServiceImpl.class);
 
@@ -58,7 +61,7 @@ public class ShowServiceImpl implements ShowService {
         LOGGER.info("Show Service: Find all shows");
         try {
             int pageSize = 10;
-            if(page < 0) {
+            if (page < 0) {
                 throw new IllegalArgumentException("Not a valid page.");
             }
             Pageable pageable = PageRequest.of(page, pageSize);
@@ -70,17 +73,17 @@ public class ShowServiceImpl implements ShowService {
 
     @Override
     public Page<ShowDTO> findAllShowsFiltered(ShowSearchParametersDTO parameters, Integer page, Integer pageSize) throws ServiceException {
-        try{
+        try {
             LOGGER.info("Show Service: Find all shows filtered by :" + parameters.toString());
-            if(pageSize == null){
+            if (pageSize == null) {
                 pageSize = 10;
             }
-            if(page < 0) {
+            if (page < 0) {
                 throw new IllegalArgumentException("Not a valid page.");
             }
             Pageable pageable = PageRequest.of(page, pageSize);
             return showRepository.findAllShowsFiltered(parameters, pageable).map(showMapper::showToShowDTO);
-        }catch (PersistenceException e){
+        } catch (PersistenceException e) {
             throw new ServiceException(e.getMessage(), e);
         }
 
@@ -91,7 +94,7 @@ public class ShowServiceImpl implements ShowService {
         LOGGER.info("Show Service: Find all shows filtered by location id");
         try {
             if (locationID < 0) throw new IllegalArgumentException("The location id is negative");
-            if(pageSize == null){
+            if (pageSize == null) {
                 pageSize = 10;
             }
             if (page < 0) {
@@ -120,15 +123,22 @@ public class ShowServiceImpl implements ShowService {
             if (!isEmpty(showDTO.getHall().getSeats())) {
                 for (Ticket ticket : tickets) {
                     // set ticket status for ever seat associated with the show that has already been sold or reserved
-                    showDTO.getHall().getSeats().stream()
-                        .filter(seatDTO -> seatDTO.getId().equals(ticket.getSeat().getId()))
-                        .findFirst().ifPresent(seatDTO -> seatDTO.setTicketStatus(ticket.getStatus()));
+                    Seat seat = ticket.getSeat();
+                    if (seat != null) {
+                        showDTO.getHall().getSeats().stream()
+                            .filter(seatDTO -> seatDTO.getId().equals(seat.getId()))
+                            .findFirst().ifPresent(seatDTO -> seatDTO.setTicketStatus(ticket.getStatus()));
+                    }
                 }
             } else if (!isEmpty(showDTO.getHall().getSectors())) {
-                for (Ticket ticket : tickets)
-                    showDTO.getHall().getSectors().stream()
-                        .filter(sectorDTO -> sectorDTO.getId().equals(ticket.getSector().getId()))
-                        .findFirst().ifPresent(sectorDTO -> sectorDTO.setTicketStatus(ticket.getStatus()));
+                for (Ticket ticket : tickets) {
+                    Sector sector = ticket.getSector();
+                    if (sector != null) {
+                        showDTO.getHall().getSectors().stream()
+                            .filter(sectorDTO -> sectorDTO.getId().equals(sector.getId()))
+                            .findFirst().ifPresent(sectorDTO -> sectorDTO.setTicketStatus(ticket.getStatus()));
+                    }
+                }
             }
         }
         return showDTO;
