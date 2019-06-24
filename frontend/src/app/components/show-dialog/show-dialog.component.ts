@@ -20,24 +20,23 @@ export class ShowDialogComponent implements OnInit, OnChanges {
   private cheap: number = 0;
   private average: number = 0;
   private expensive: number = 0;
+  private patternName: string = 'NewPricePattern';
   private pricePattern: PricePattern = {
     id: undefined,
-    name: 'NewPricePattern',
-    priceMapping: {'CHEAP': this.cheap, 'AVERAGE': this.average, 'EXPENSIVE': this.expensive}
+    name: this.patternName,
+    priceMapping: { Cheap: this.cheap, Average: this.average, Expensive: this.expensive }
   };
   private showModel: Show = new Show(null, null, null, null, null, null, 0, this.pricePattern);
 
   // drop down menu for choosing an event
   private chosenEvent: Event;
-  private chosenEventName: string;
   private events: Event[];
-  private eventOptions: string[] = [];
   private eventConfig = {
-    displayKey: 'Select an event',
+    displayKey: 'name',
     search: true,
-    height: '350px',
+    height: 'auto',
     placeholder: ' ',
-    limitTo: this.eventOptions.length,
+    limitTo: 10,
     moreText: 'more',
     noResultsFound: 'No results found!',
     searchPlaceholder: 'Search',
@@ -46,23 +45,18 @@ export class ShowDialogComponent implements OnInit, OnChanges {
 
   // drop down menu for choosing a hall
   private chosenHall: Hall;
-  private chosenHallName: string;
   private halls: Hall[];
-  private hallOptions: string[] = [];
   private hallConfig = {
-    displayKey: 'Select a hall',
+    displayKey: 'name',
     search: true,
-    height: '350px',
+    height: 'auto',
     placeholder: ' ',
-    limitTo: this.hallOptions.length,
+    limitTo: 10,
     moreText: 'more',
     noResultsFound: 'No results found!',
     searchPlaceholder: 'Search',
     searchOnKey: 'name'
   };
-
-  private eventsLoaded: boolean = false;
-  private hallsLoaded: boolean = false;
 
   private error: boolean = false;
   private errorMessage: string = '';
@@ -83,13 +77,9 @@ export class ShowDialogComponent implements OnInit, OnChanges {
     this.eventResultsService.findEventsFilteredByAttributes('getAllEventsNotPaginated', null, null, null, null, 0).subscribe(
       result => {
         this.events = result['content'];
-        this.eventOptions = this.eventsArrayToStringArray(this.events);
       },
       error => {
         this.defaultServiceErrorHandling(error);
-      },
-      () => {
-        this.eventsLoaded = true;
       }
     );
   }
@@ -102,69 +92,7 @@ export class ShowDialogComponent implements OnInit, OnChanges {
     this.hallService.getAllHalls().subscribe(
       halls => {
         this.halls = halls;
-        this.hallOptions = this.hallsArrayToStringArray(this.halls);
       },
-      error => {
-        this.defaultServiceErrorHandling(error);
-      },
-      () => {
-        this.hallsLoaded = true;
-      }
-    );
-  }
-
-  /**
-   * Takes the names out of the array and returns them
-   * @param events array of events
-   */
-  private eventsArrayToStringArray(events: Event[]): string[] {
-    const toReturn: string[] = [];
-    events.forEach(event => {
-      toReturn.push(event.name);
-    });
-    return toReturn;
-  }
-
-  /**
-   * Takes the names out of the array and returns them
-   * @param halls array of halls
-   */
-  private hallsArrayToStringArray(halls: Hall[]): string[] {
-    const toReturn: string[] = [];
-    halls.forEach(hall => {
-      toReturn.push(hall.name);
-    });
-    return toReturn;
-  }
-
-  /**
-   * Returns the found event with the chosenEventName
-   */
-  private getOneEventByName() {
-    console.log('ShowDialog: getOneEventByName');
-    this.eventResultsService.findEventsFilteredByAttributes(this.chosenEventName, null, null, null, null, 0).subscribe(
-      result => {
-        this.chosenEvent = result['content'][0];
-        this.showModel.event = this.chosenEvent;
-        console.log(result);
-        console.log(this.showModel.event.name);
-      },
-      error => {
-        this.defaultServiceErrorHandling(error);
-      }
-    );
-  }
-
-  /**
-   * Returns the found hall with the chosenHallName
-   */
-  private getOneHallByName() {
-    console.log('ShowDialog: getOneHallByName');
-    this.hallService.searchHalls(this.chosenHallName, null, null).subscribe(
-      halls => {
-        this.chosenHall = halls[0];
-        this.showModel.hall = this.chosenHall;
-        },
       error => {
         this.defaultServiceErrorHandling(error);
       }
@@ -176,18 +104,26 @@ export class ShowDialogComponent implements OnInit, OnChanges {
    */
   private onSubmit() {
     console.log('ShowDialog: onSubmit');
-    if (this.chosenHallName !== undefined && this.chosenEventName !== undefined) {
-      this.getOneEventByName();
-      this.getOneHallByName();
-      this.pricePattern.priceMapping = {'CHEAP': this.cheap, 'AVERAGE': this.average, 'EXPENSIVE': this.expensive};
-      this.showModel.pricePattern = this.pricePattern;
-      this.showModel.event = this.chosenEvent;
-      this.showModel.hall = this.chosenHall;
-      console.log(this.showModel); // I print the model before returning it
-      this.submitShow.emit(this.showModel);
-    } else {
-      console.log('Not specified event or hall');
-    }
+    this.showModel.pricePattern = {
+      id: this.showModel.pricePattern.id,
+      name: this.patternName,
+      priceMapping: { Cheap: this.cheap, Average: this.average, Expensive: this.expensive }
+    };
+    this.showModel.event = this.chosenEvent;
+    this.showModel.hall = this.chosenHall;
+    console.log('ShowDialog showModel: ' + this.showModel);
+    this.submitShow.emit(this.showModel);
+    // Resets the values
+    // this.cheap = 0;
+    // this.average = 0;
+    // this.expensive = 0;
+    // this.pricePattern = {
+    //   id: undefined,
+    //   name: 'New Price Pattern',
+    //   priceMapping: {'Cheap': this.cheap, 'Average': this.average, 'Expensive': this.expensive }
+    // };
+    // this.chosenEvent = null;
+    // this.chosenHall = null;
   }
 
   /**
@@ -196,15 +132,18 @@ export class ShowDialogComponent implements OnInit, OnChanges {
    * @param changes list of changes to component
    */
   ngOnChanges(changes: SimpleChanges): void {
-    console.log(this.showModel);
     if (changes['show']) {
       if (this.show !== undefined) {
-        console.log(this.show.pricePattern);
+        console.log('Show EventName: ' + this.show.event.name);
+        console.log('Show HallName: ' + this.show.hall.name);
         this.showModel = Object.assign({}, this.show);
+        console.log('ShowModel EventName: ' + this.showModel.event.name);
+        console.log('ShowModel HallName: ' + this.showModel.hall.name);
+        this.chosenEvent = this.showModel.event;
+        this.chosenHall = this.showModel.hall;
       }
     }
   }
-
 
   /**
    * Error handler

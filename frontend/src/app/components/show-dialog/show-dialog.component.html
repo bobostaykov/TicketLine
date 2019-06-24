@@ -6,8 +6,8 @@
         <label for="event_name">Event Name</label>
         <ngx-select-dropdown id="event_name" name="eventName" class="form-control"
                              [config]="eventConfig"
-                             [options]="eventOptions"
-                             [(ngModel)]="chosenEventName">
+                             [options]="events"
+                             [(ngModel)]="chosenEvent">
         </ngx-select-dropdown>
       </div>
     </div>
@@ -17,8 +17,8 @@
         <label for="hall_name">Hall Name</label>
         <ngx-select-dropdown id="hall_name" name="hallName" class="form-control"
                              [config]="hallConfig"
-                             [options]="hallOptions"
-                             [(ngModel)]="chosenHallName">
+                             [options]="halls"
+                             [(ngModel)]="chosenHall">
         </ngx-select-dropdown>
       </div>
     </div>
@@ -68,6 +68,16 @@
 
   <div class="form-inline">
     <div class="form-group mb-3">
+
+      <div class="col">
+        <label for="price_pattern">Price Pattern:</label>
+        <input id="price_pattern" type="text" name="pricePattern" class="form-control" style="width: 175px"
+               aria-labelledby="show price pattern"
+               placeholder="Name"
+               [(ngModel)]="patternName"
+        />
+      </div>
+
       <div class="col">
         <label for="price_cheap">Cheap:</label>
         <input id="price_cheap" type="number" name="priceCheap" class="form-control" style="width: 75px"
