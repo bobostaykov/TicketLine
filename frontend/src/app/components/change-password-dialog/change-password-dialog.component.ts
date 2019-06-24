@@ -29,10 +29,14 @@ export class ChangePasswordDialogComponent implements OnInit {
 
 
   private onSubmit() {
-    this.changePasswordRequest.id = this.user.id;
-    this.changePasswordRequest.username = this.user.username;
-    this.changePasswordRequest.password = this.passwordForm.controls.newPassword.value;
-    this.submitPasswordChangeRequest.emit(this.changePasswordRequest);
+    this.submitted = true
+    if (this.passwordForm.valid) {
+      this.changePasswordRequest.id = this.user.id;
+      this.changePasswordRequest.username = this.user.username;
+      this.changePasswordRequest.password = this.passwordForm.controls.newPassword.value;
+      this.submitPasswordChangeRequest.emit(this.changePasswordRequest);
+    }
+    this.submitted = false;
   }
   constructor(private authService: AuthService, private userService: UserService, private formBuilder: FormBuilder) {
     this.passwordForm = formBuilder.group(

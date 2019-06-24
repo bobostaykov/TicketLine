@@ -135,7 +135,7 @@ public class UserEndpoint {
         try {
             userService.changePassword(passwordChangeRequest);
         } catch (ServiceException e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "error changing password for user " + passwordChangeRequest.getUserName()));
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "error changing password for user " + passwordChangeRequest.getUserName());
         }
     }
 
