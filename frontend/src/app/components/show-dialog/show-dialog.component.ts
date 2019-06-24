@@ -5,7 +5,7 @@ import {HallService} from '../../services/hall/hall.service';
 import {Hall} from '../../dtos/hall';
 import {Event} from '../../dtos/event';
 import {EventResultsService} from '../../services/search-results/events/event-results.service';
-import {HallRequestParameter} from '../../datatype/HallRequestParameter';
+import {HallRequestParameter} from '../../datatype/requestParameters/HallRequestParameter';
 
 @Component({
   selector: 'app-show-dialog',

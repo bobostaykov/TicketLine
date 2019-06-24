@@ -86,6 +86,7 @@ public interface ShowService {
      * @return show with id matching param
      */
     ShowDTO findOneById(Long id, List<ShowRequestParameter> include);
+
     /**
      * Delete the show with the given id
      *
@@ -100,6 +101,18 @@ public interface ShowService {
      *
      * @param showDTO show to be changed
      * @return changed show
+     * @throws ServiceException if something goes wrong during updating
+     * @throws IllegalArgumentException if the price pattern is not correct
      */
-    ShowDTO updateShow(ShowDTO showDTO) throws ServiceException;
+    ShowDTO updateShow(ShowDTO showDTO) throws ServiceException, IllegalArgumentException;
+
+    /**
+     * Add a show
+     *
+     * @param showDTO show to be added
+     * @return added show
+     * @throws ServiceException if something goes wrong during creation
+     * @throws IllegalArgumentException if the price pattern is not correct
+     */
+    ShowDTO addShow(ShowDTO showDTO)  throws ServiceException, IllegalArgumentException;
 }
