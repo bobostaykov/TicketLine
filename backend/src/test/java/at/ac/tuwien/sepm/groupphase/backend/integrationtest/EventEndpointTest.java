@@ -161,6 +161,26 @@ public class EventEndpointTest extends BaseIntegrationTest {
     }
 
     @Test
+    public void deleteEventAsAdminThenHTTPResponseOK() {
+        BDDMockito.
+            given(eventRepository.save(any(Event.class)))
+            .willReturn(Event.builder()
+                .id(TEST_EVENT_ID)
+                .name(TEST_EVENT_NAME)
+                .eventType(TEST_EVENT_TYPE)
+                .durationInMinutes(TEST_EVENT_DURATION)
+                .artist(Artist.builder().name(TEST_ARTIST_NAME).id(TEST_ARTIST_ID).build())
+                .build());
+        Response response = RestAssured
+            .given()
+            .contentType(ContentType.JSON)
+            .header(HttpHeaders.AUTHORIZATION, validAdminTokenWithPrefix)
+            .when().delete(EVENT_ENDPOINT + "/1")
+            .then().extract().response();
+        Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
+    }
+
+    @Test
     public void findTopTenEventsUnauthorisedAsAnonymous() {
         Response response = RestAssured
             .given()

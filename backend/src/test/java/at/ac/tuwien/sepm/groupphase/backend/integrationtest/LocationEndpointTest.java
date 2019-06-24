@@ -356,7 +356,7 @@ public class LocationEndpointTest extends BaseIntegrationTest {
     }
 
     @Test
-    public void addLocationThenHTTPResponseOKAndLocationIsReturned() {
+    public void addLocationAsAdminThenHTTPResponseOKAndLocationIsReturned() {
         BDDMockito.
             given(locationRepository.save(any(Location.class))).
             willReturn(
@@ -397,5 +397,28 @@ public class LocationEndpointTest extends BaseIntegrationTest {
             .street(STREET)
             .description(DESCRIPTION)
             .build()));
+    }
+
+    @Test
+    public void deleteLocationAsAdminThenHTTPResponseOK() {
+        BDDMockito.
+            given(locationRepository.save(any(Location.class))).
+            willReturn(
+                Location.builder()
+                    .locationName(NAME)
+                    .id(ID)
+                    .country(COUNTRY)
+                    .city(CITY)
+                    .postalCode(POSTAL_CODE)
+                    .street(STREET)
+                    .description(DESCRIPTION)
+                    .build());
+        Response response = RestAssured
+            .given()
+            .contentType(ContentType.JSON)
+            .header(HttpHeaders.AUTHORIZATION, validAdminTokenWithPrefix)
+            .when().delete(LOCATION_ENDPOINT + "/1")
+            .then().extract().response();
+        Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
     }
 }

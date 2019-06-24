@@ -109,7 +109,7 @@ public class ShowEndpointTest extends BaseIntegrationTest {
     }
 
     @Test
-    public void addShowThenHTTPResponseOKAndShowIsReturned() {
+    public void addShowAsAdminThenHTTPResponseOKAndShowIsReturned() {
         BDDMockito.
             given(showRepository.save(any(Show.class)))
             .willReturn(
@@ -155,5 +155,30 @@ public class ShowEndpointTest extends BaseIntegrationTest {
         Assert.assertEquals(readValue.getPricePattern().getId(), PRICE_PATTERN.getId());
         Assert.assertEquals(readValue.getPricePattern().getName(), PRICE_PATTERN.getName());
         Assert.assertEquals(readValue.getPricePattern().getPriceMapping(), PRICE_PATTERN.getPriceMapping());
+    }
+
+
+    @Test
+    public void deleteShowAsAdminThenHTTPResponseOK() {
+        BDDMockito.
+            given(showRepository.save(any(Show.class)))
+            .willReturn(
+                Show.builder()
+                    .id(ID)
+                    .event(EVENT)
+                    .hall(HALL)
+                    .date(DATE)
+                    .time(TIME)
+                    .description(DESCRIPTION)
+                    .ticketsSold(TICKETS_SOLD)
+                    .pricePattern(PRICE_PATTERN)
+                    .build());
+        Response response = RestAssured
+            .given()
+            .contentType(ContentType.JSON)
+            .header(HttpHeaders.AUTHORIZATION, validAdminTokenWithPrefix)
+            .when().delete(SHOWS_ENDPOINT + "/1")
+            .then().extract().response();
+        Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
     }
 }

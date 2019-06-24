@@ -122,7 +122,7 @@ public class ArtistEndpointTest extends BaseIntegrationTest {
     }
 
     @Test
-    public void addArtistThenHTTPResponseOKAndArtistIsReturned() {
+    public void addArtistAsAdminThenHTTPResponseOKAndArtistIsReturned() {
         BDDMockito.
             given(artistRepository.save(any(Artist.class))).
             willReturn(Artist.builder()
@@ -145,5 +145,22 @@ public class ArtistEndpointTest extends BaseIntegrationTest {
             .id(ARTIST_ID)
             .name(ARTIST_NAME)
             .build()));
+    }
+
+    @Test
+    public void deleteArtistAsAdminThenHTTPResponseOK() {
+        BDDMockito.
+            given(artistRepository.save(any(Artist.class))).
+            willReturn(Artist.builder()
+                .id(ARTIST_ID)
+                .name(ARTIST_NAME)
+                .build());
+        Response response = RestAssured
+            .given()
+            .contentType(ContentType.JSON)
+            .header(HttpHeaders.AUTHORIZATION, validAdminTokenWithPrefix)
+            .when().delete(ARTIST_ENDPOINT + "/1")
+            .then().extract().response();
+        Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
     }
 }
