@@ -3,6 +3,7 @@ package at.ac.tuwien.sepm.groupphase.backend.service.implementation;
 import at.ac.tuwien.sepm.groupphase.backend.datatype.PriceCategory;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.requestparameter.ShowRequestParameter;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.searchParameters.ShowSearchParametersDTO;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.sector.SectorDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.show.ShowDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Seat;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Sector;
@@ -115,9 +116,11 @@ public class ShowServiceImpl implements ShowService {
 
     @Override
     public ShowDTO findOneById(Long id, List<ShowRequestParameter> include) {
+        LOGGER.info("Show Service: Retrieve hall by its id");
         Show show = showRepository.findOneById(id).orElseThrow(NotFoundException::new);
         ShowDTO showDTO = showMapper.showToShowDTO(show);
         if (include != null && include.contains(ShowRequestParameter.TICKETS)) {
+            LOGGER.info("Show Service: Include TicketStatus in seats and Ticket number in sectors saved in associated hall");
             ticketExpirationHandler.setExpiredReservatedTicketsToStatusExpiredForSpecificShow(showDTO);
             List<Ticket> tickets = ticketRepository.findAllByShowId(showDTO.getId());
             if (!isEmpty(showDTO.getHall().getSeats())) {
@@ -132,11 +135,11 @@ public class ShowServiceImpl implements ShowService {
                 }
             } else if (!isEmpty(showDTO.getHall().getSectors())) {
                 for (Ticket ticket : tickets) {
-                    Sector sector = ticket.getSector();
-                    if (sector != null) {
+                    if(ticket.getSector() != null) {
                         showDTO.getHall().getSectors().stream()
-                            .filter(sectorDTO -> sectorDTO.getId().equals(sector.getId()))
-                            .findFirst().ifPresent(sectorDTO -> sectorDTO.setTicketStatus(ticket.getStatus()));
+                            .filter(sectorDTO -> sectorDTO.getId().equals(ticket.getSector().getId()))
+                            .forEach(sectorDTO -> sectorDTO.setTicketsSold(sectorDTO.getTicketsSold() == null ?
+                                1 : sectorDTO.getTicketsSold() + 1));
                     }
                 }
             }

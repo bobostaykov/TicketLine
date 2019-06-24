@@ -67,6 +67,7 @@ public class SectorDataGenerator implements DataGenerator {
                         .priceCategory(sector % 3 == 0 ? PriceCategory.CHEAP : sector % 3 == 1 ? PriceCategory.AVERAGE : PriceCategory.EXPENSIVE)
                         .sectorNumber(sector)
                         .hall(hall)
+                        .maxCapacity((int)(Math.random() * 1000) + 100)
                         .build());
                 }
             }

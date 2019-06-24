@@ -1,7 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.sector;
 
 import at.ac.tuwien.sepm.groupphase.backend.datatype.PriceCategory;
-import at.ac.tuwien.sepm.groupphase.backend.datatype.TicketStatus;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -24,8 +23,13 @@ public class SectorDTO {
     @NotNull(message = "Sector price category was not set")
     private PriceCategory priceCategory;
 
-    @ApiModelProperty(name = "The sector's ticket status declares whether the sector has already been sold or reserved")
-    private TicketStatus ticketStatus;
+    @ApiModelProperty(name = "Maximum capacity of customers for this sector per show", required = true)
+    @NotNull(message = "Sector capacity was not set")
+    @Positive(message = "Sector capacity must be greater than zero")
+    private Integer maxCapacity;
+
+    @ApiModelProperty(name = "Number of tickets already sold for this sector for a specific currently selected show")
+    private Integer ticketsSold;
 
     public Long getId() {
         return id;
@@ -51,15 +55,23 @@ public class SectorDTO {
         this.priceCategory = priceCategory;
     }
 
-    public TicketStatus getTicketStatus() {
-        return ticketStatus;
+    public Integer getTicketsSold() {
+        return ticketsSold;
     }
 
-    public void setTicketStatus(TicketStatus ticketStatus) {
-        this.ticketStatus = ticketStatus;
+    public void setTicketsSold(Integer ticketsSold) {
+        this.ticketsSold = ticketsSold;
     }
 
-    public static SectorDTOBuilder builder(){
+    public Integer getMaxCapacity() {
+        return maxCapacity;
+    }
+
+    public void setMaxCapacity(Integer maxCapacity) {
+        this.maxCapacity = maxCapacity;
+    }
+
+    public static SectorDTOBuilder builder() {
         return new SectorDTOBuilder();
     }
 
@@ -69,7 +81,8 @@ public class SectorDTO {
             "id=" + id +
             ", sectorNumber=" + sectorNumber +
             ", priceCategory=" + priceCategory +
-            ", ticketStatus=" + ticketStatus +
+            ", maxCapacity=" + maxCapacity +
+            ", ticketsSold=" + ticketsSold +
             '}';
     }
 
@@ -81,50 +94,57 @@ public class SectorDTO {
         return Objects.equals(getId(), sectorDTO.getId()) &&
             Objects.equals(getSectorNumber(), sectorDTO.getSectorNumber()) &&
             getPriceCategory() == sectorDTO.getPriceCategory() &&
-            Objects.equals(getTicketStatus(), sectorDTO.getTicketStatus());
+            Objects.equals(getMaxCapacity(), sectorDTO.getMaxCapacity()) &&
+            Objects.equals(getTicketsSold(), sectorDTO.getTicketsSold());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getSectorNumber(), getPriceCategory(), getTicketStatus());
+        return Objects.hash(getId(), getSectorNumber(), getPriceCategory(), getMaxCapacity(), getTicketsSold());
     }
 
-
-
-    public static final class SectorDTOBuilder{
+    public static final class SectorDTOBuilder {
         private Long id;
         private Integer sectorNumber;
         private PriceCategory priceCategory;
-        private TicketStatus ticketStatus;
+        private Integer maxCapacity;
+        private Integer ticketsSold;
 
-        private SectorDTOBuilder(){}
+        private SectorDTOBuilder() {
+        }
 
-        public SectorDTOBuilder id(Long id){
+        public SectorDTOBuilder id(Long id) {
             this.id = id;
             return this;
         }
 
-        public SectorDTOBuilder sectorNumber(Integer sectorNumber){
+        public SectorDTOBuilder sectorNumber(Integer sectorNumber) {
             this.sectorNumber = sectorNumber;
             return this;
         }
 
-        public SectorDTOBuilder priceCategory(PriceCategory priceCategory){
+        public SectorDTOBuilder priceCategory(PriceCategory priceCategory) {
             this.priceCategory = priceCategory;
             return this;
         }
 
-        public SectorDTOBuilder ticketStatus(TicketStatus ticketStatus){
-            this.ticketStatus = ticketStatus;
+        public SectorDTOBuilder maxCapacity(Integer maxCapacity) {
+            this.maxCapacity = maxCapacity;
             return this;
         }
 
-        public SectorDTO build(){
+        public SectorDTOBuilder ticketsSold(Integer ticketsSold) {
+            this.ticketsSold = ticketsSold;
+            return this;
+        }
+
+        public SectorDTO build() {
             SectorDTO sectorDTO = new SectorDTO();
             sectorDTO.setId(id);
             sectorDTO.setSectorNumber(sectorNumber);
             sectorDTO.setPriceCategory(priceCategory);
-            sectorDTO.setTicketStatus(ticketStatus);
+            sectorDTO.setMaxCapacity(maxCapacity);
+            sectorDTO.setTicketsSold(ticketsSold);
             return sectorDTO;
         }
     }
