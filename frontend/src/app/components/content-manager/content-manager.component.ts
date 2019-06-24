@@ -129,28 +129,9 @@ export class ContentManagerComponent implements OnInit {
     return this.authService.getUserRole() === 'ADMIN';
   }
 
-  private addContent(): void {
-    console.log('ContentManager: addContent');
-
-    if (this.addType === undefined) {
-      this.openSnackBar('Type is required!', 'red-snackbar');
-      return;
-    }
-
-    switch (this.addType) {
-      case 'Artist':
-        break;
-      case 'Show':
-        break;
-      case 'Event':
-        break;
-      case 'Location':
-        break;
-      default:
-        this.defaultServiceErrorHandling('Can\'t create an object from this type');
-    }
-  }
-
+  /**
+   * Reset page number and calls loadEntities()
+   */
   private searchContent(): void {
     console.log('ContentManager: searchContent');
 
@@ -166,6 +147,9 @@ export class ContentManagerComponent implements OnInit {
     this.loadEntities();
   }
 
+  /**
+   * Loads entities for the 'savedName' and 'savedType'
+   */
   private loadEntities() {
     console.log('page: ' + this.page);
     switch (this.savedType) {
@@ -218,12 +202,21 @@ export class ContentManagerComponent implements OnInit {
     }
   }
 
+  /**
+   * Sets page number to the chosen i
+   * @param i number of the page to get
+   * @param event to handle
+   */
   private setPage(i, event: any) {
     event.preventDefault();
     this.page = i;
     this.loadEntities();
   }
 
+  /**
+   * Sets page number to the previous one and calls the last method
+   * @param event to handle
+   */
   private previousPage(event: any) {
     event.preventDefault();
     if (this.page > 0 ) {
@@ -232,6 +225,10 @@ export class ContentManagerComponent implements OnInit {
     }
   }
 
+  /**
+   * Sets page number to the next one and calls the last method
+   * @param event to handle
+   */
   private nextPage(event: any) {
     event.preventDefault();
     if (this.page < this.totalPages - 1) {

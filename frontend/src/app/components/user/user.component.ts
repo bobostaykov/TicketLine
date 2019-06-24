@@ -81,7 +81,7 @@ export class UserComponent implements OnInit {
 
   /**
    * Sets page number to the previous one and calls the last method
-   * @param event o handle
+   * @param event to handle
    */
   private previousPage(event: any) {
     event.preventDefault();
