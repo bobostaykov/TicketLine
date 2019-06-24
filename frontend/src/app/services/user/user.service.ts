@@ -86,7 +86,8 @@ export class UserService {
    */
   changePassword(changePasswordRequest: ChangePasswordRequest): Observable<{}> {
     console.log('Change Password for user' + changePasswordRequest.username);
-    return this.httpClient.put(this.passWordChangeBaseUri, changePasswordRequest);
+    console.log('POST' + this.passWordChangeBaseUri)
+    return this.httpClient.post<ChangePasswordRequest>(this.passWordChangeBaseUri, changePasswordRequest);
   }
 
 }

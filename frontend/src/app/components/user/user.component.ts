@@ -33,7 +33,9 @@ export class UserComponent implements OnInit {
   private selectedUserType: string = null;
   private userToDelete: number = null;
   private userToSearch: string = null;
-  private userToChangePwd: User = null;
+  private userToChangePwd: User;
+  private passwordChangeAttempt: boolean = false;
+  private passwordChangeRequest: ChangePasswordRequest
 
   constructor(private authService: AuthService, private userService: UserService, private formBuilder: FormBuilder) {
     this.userForm = this.formBuilder.group({
@@ -176,9 +178,11 @@ export class UserComponent implements OnInit {
    * sends an request to the backend to change the password of a user
    * @param changePasswordRequest an request containing id name and the new password
    */
-  private changePassword(changePasswordRequest: ChangePasswordRequest): boolean{
-    console.log('changing password for user' + changePasswordRequest.username);
-    this.userService.changePassword(changePasswordRequest);
+  private changePassword(newPassword: string): boolean{
+    this.passwordChangeAttempt = false;
+    this.passwordChangeRequest = new ChangePasswordRequest(this.userToChangePwd.id, this.userToChangePwd.username, newPassword)
+    console.log('changing password for user' + this.passwordChangeRequest.username  + ' and id' + this.userToChangePwd.id);
+    this.userService.changePassword(this.passwordChangeRequest).subscribe();
     return true;
   }
 
@@ -241,6 +245,9 @@ export class UserComponent implements OnInit {
   }
   private checkIfUserIsAdmin(user: User): boolean{
     return user.type === UserType.ADMIN;
+  }
+  private setPasswordChangeAttempt() {
+    this.passwordChangeAttempt = true;
   }
 
 }

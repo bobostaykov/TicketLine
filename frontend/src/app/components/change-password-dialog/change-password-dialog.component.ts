@@ -2,15 +2,13 @@ import {
   Component,
   EventEmitter,
   Input,
-  OnChanges,
   OnInit,
-  Output, SimpleChanges
+  Output
 } from '@angular/core';
 import {ChangePasswordRequest} from '../../dtos/change-password-request';
-import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {UserService} from '../../services/user/user.service';
 import {AuthService} from '../../services/auth/auth.service';
-import {User} from '../../dtos/user';
 
 
 @Component({
@@ -21,22 +19,19 @@ import {User} from '../../dtos/user';
 
 export class ChangePasswordDialogComponent implements OnInit {
   private changePasswordRequest: ChangePasswordRequest = new ChangePasswordRequest(null, null, null);
-  private newPassword: string;
+  private newPassword: string = '';
   private submitted: boolean;
-  @Input() user: User;
-  @Output() submitPasswordChangeRequest = new EventEmitter<ChangePasswordRequest>();
+  @Output() submitNewPassword = new EventEmitter<String>();
   private passwordForm: FormGroup;
 
 
   private onSubmit() {
     this.submitted = true
     if (this.passwordForm.valid) {
-      this.changePasswordRequest.id = this.user.id;
-      this.changePasswordRequest.username = this.user.username;
-      this.changePasswordRequest.password = this.passwordForm.controls.newPassword.value;
-      this.submitPasswordChangeRequest.emit(this.changePasswordRequest);
+      this.newPassword = this.passwordForm.controls.newPassword.value;
+      this.submitNewPassword.emit(this.newPassword);
+      this.submitted = false;
     }
-    this.submitted = false;
   }
   constructor(private authService: AuthService, private userService: UserService, private formBuilder: FormBuilder) {
     this.passwordForm = formBuilder.group(
@@ -44,7 +39,6 @@ export class ChangePasswordDialogComponent implements OnInit {
       rePassword: ['', []]});
   }
   ngOnInit(): void {
-    console.log('username is : ' + this.user.username);
   }
 
 /*
