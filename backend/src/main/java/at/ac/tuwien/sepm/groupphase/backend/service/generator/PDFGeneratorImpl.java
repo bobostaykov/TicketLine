@@ -40,7 +40,7 @@ public class PDFGeneratorImpl implements PDFGenerator{
     public byte[] generateReceipt(List<TicketDTO> tickets, Boolean cancellation) throws DocumentException {
         LOGGER.info("PDF Generator: Generate (cancellation) receipt for ticket(s)");
         if (tickets.size() < 1)
-            throw new NotFoundException("Cannot create receipt for empty list of Tickets.");
+            throw new NotFoundException("Cannot create receipt for empty list of Tickets."); //TODO: warum wird das auf HHTP 406 und nicht HTTP.NOT_FOUND gemapped?
         Double returnSum;
         Double sum = 0.0;
         Document receipt = new Document();
@@ -60,7 +60,6 @@ public class PDFGeneratorImpl implements PDFGenerator{
         Paragraph headline;
         if (cancellation)
             headline = new Paragraph("TICKETLINE STORNO-RECHNUNG", headlineFont);
-
         else
             headline = new Paragraph("TICKETLINE RECHNUNG", headlineFont);
         receipt.add(headline);
@@ -92,11 +91,11 @@ public class PDFGeneratorImpl implements PDFGenerator{
             number.setPhrase(new Phrase(i.toString(), font));
             table.addCell(number);
             PdfPCell item = new PdfPCell();
-            item.setPhrase(new Phrase(t.getShow().getEvent().getName(), font));
+            item.setPhrase(new Phrase(t.getShow().getEvent().getName() + (t.getStatus() == TicketStatus.RESERVATED ? " - Reservierung" : ""), font));
             table.addCell(item);
             PdfPCell price = new PdfPCell();
             price.setPhrase(new Phrase(this.doubleToEuro(t.getStatus() == TicketStatus.SOLD ? t.getPrice() : 0.0), font));
-            sum += t.getPrice();
+            sum += t.getStatus() == TicketStatus.SOLD ? t.getPrice() : 0;
             table.addCell(price);
             i++;
         }
@@ -195,7 +194,7 @@ public class PDFGeneratorImpl implements PDFGenerator{
         Font headlineFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 24, BaseColor.BLACK);
         Font font = FontFactory.getFont(FontFactory.HELVETICA, 16, BaseColor.BLACK);
         Font fontBold = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 16, BaseColor.BLACK);
-        Paragraph headline = new Paragraph("TICKETLINE TICKET", headlineFont);
+        Paragraph headline = new Paragraph("TICKETLINE " + (ticket.getStatus() == TicketStatus.SOLD ? "TICKET" : "RESERVIERUNG"), headlineFont);
         doc.add(headline);
         doc.add(Chunk.NEWLINE);
         Paragraph date = new Paragraph("Ausstellungsdatum: " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")), font);
@@ -241,7 +240,7 @@ public class PDFGeneratorImpl implements PDFGenerator{
             price.setPhrase(new Phrase("Preis (zu bezahlen): " + this.doubleToEuro(ticket.getPrice()), fontBold));
             table.addCell(price);
             PdfPCell reservationNumber = new PdfPCell();
-            reservationNumber.setPhrase(new Phrase("Reservierungsnummer: " + ticket.getReservationNumber().toString()));
+            reservationNumber.setPhrase(new Phrase("Reservierungsnummer: " + ticket.getReservationNumber().toString(), fontBold));
             table.addCell(reservationNumber);
         }
 

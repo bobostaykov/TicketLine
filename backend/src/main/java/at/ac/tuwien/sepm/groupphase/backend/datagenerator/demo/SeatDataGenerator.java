@@ -39,8 +39,9 @@ public class SeatDataGenerator implements DataGenerator {
             Seat seat7 = Seat.builder().id(7L).seatNumber(5).seatRow(9).priceCategory(PriceCategory.EXPENSIVE).hall(hallRepository.getOne(7L)).build();
             Seat seat8 = Seat.builder().id(8L).seatNumber(5).seatRow(2).priceCategory(PriceCategory.EXPENSIVE).hall(hallRepository.getOne(8L)).build();
             Seat seat9 = Seat.builder().id(9L).seatNumber(25).seatRow(10).priceCategory(PriceCategory.AVERAGE).hall(hallRepository.getOne(9L)).build();
+            Seat seat10 = Seat.builder().id(10L).seatNumber(26).seatRow(10).priceCategory(PriceCategory.AVERAGE).hall(hallRepository.getOne(9L)).build();
 
-            seatRepository.saveAll(Arrays.asList(seat1, seat2, seat3, seat4, seat5, seat6, seat7, seat8, seat9));
+            seatRepository.saveAll(Arrays.asList(seat1, seat2, seat3, seat4, seat5, seat6, seat7, seat8, seat9, seat10));
         }
     }
 }
