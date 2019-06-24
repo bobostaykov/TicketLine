@@ -24,6 +24,7 @@ export class UserComponent implements OnInit {
   private blockedUserMessage: string = 'User was successfully blocked!';
   private cantBlockAdminMessage: string = 'Can\'t block admin!';
   private userAlreadyBlockedMessage: string = 'User already blocked!';
+  private passwordResetMessage: string = 'Password was successfully reset';
   private users: User[];
   private userForm: FormGroup;
   private submitted: boolean = false;
@@ -35,7 +36,9 @@ export class UserComponent implements OnInit {
   private userToSearch: string = null;
   private userToChangePwd: User;
   private passwordChangeAttempt: boolean = false;
-  private passwordChangeRequest: ChangePasswordRequest
+  private passwordChangeRequest: ChangePasswordRequest;
+  private passwordReset: boolean = false;
+
 
   constructor(private authService: AuthService, private userService: UserService, private formBuilder: FormBuilder) {
     this.userForm = this.formBuilder.group({
@@ -181,8 +184,8 @@ export class UserComponent implements OnInit {
   private changePassword(newPassword: string): boolean{
     this.passwordChangeAttempt = false;
     this.passwordChangeRequest = new ChangePasswordRequest(this.userToChangePwd.id, this.userToChangePwd.username, newPassword)
-    console.log('changing password for user' + this.passwordChangeRequest.username  + ' and id' + this.userToChangePwd.id);
     this.userService.changePassword(this.passwordChangeRequest).subscribe();
+    this.showPasswordResetMessage();
     return true;
   }
 
@@ -237,6 +240,10 @@ export class UserComponent implements OnInit {
   private showCantBlockAdminMessage() {
     this.cantBlockAdmin = true;
     setTimeout(() => this.cantBlockAdmin = false, 5000);
+  }
+  private showPasswordResetMessage() {
+    this.passwordReset = true;
+    setTimeout(() => this.passwordReset = false, 5000);
   }
 
   private showUserAlreadyBlockedMessage() {

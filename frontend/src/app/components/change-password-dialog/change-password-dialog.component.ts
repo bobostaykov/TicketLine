@@ -41,35 +41,14 @@ export class ChangePasswordDialogComponent implements OnInit {
   ngOnInit(): void {
   }
 
-/*
-  ngOnChanges(changes: SimpleChanges): void {
-    if()
-    for(let propName in changes){
-      if(propName === 'id') {
-        this.id = curVal.;
-      }
-      let change = changes[propName];
-      let curVal = JSON.stringify(change.currentValue);
-
-      if(propName === 'userName'){
-        this.name = curVal;
-      }
-    }
-
-    if(changes['id']){
-      if(this.id !== undefined){
-        for(let id in changes){
-          let change = changes['id'];
-
-        }
-      }
-    }
-  }*/
-  changePassword() {
+  private changePassword() {
     this.submitted = true;
     if (this.passwordForm.valid
       && this.passwordForm.controls.rePassword.value === this.passwordForm.controls.newPassword.value) {
       this.onSubmit();
     }
+  }
+  private setSubmitted(){
+    this.submitted = true;
   }
 }

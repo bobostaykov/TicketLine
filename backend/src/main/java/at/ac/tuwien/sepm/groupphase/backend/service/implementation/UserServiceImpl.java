@@ -207,7 +207,8 @@ public class UserServiceImpl implements UserService {
                 throw new ServiceException("admins cant be blocked");
             }else{
                 user.setPassword(passwordEncoder.encode(passwordChangeRequest.getPassword()));
-                userRepository.save(user);
+                user = userRepository.save(user);
+                unblockUser(user.getId());
             }
         }else{
             throw new NotFoundException("could not find user with id: " + passwordChangeRequest.getId());
