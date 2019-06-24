@@ -74,9 +74,10 @@ public class TicketServiceImpl implements TicketService {
                 }
             }
             if (current.getSector() != null) {
-                if (this.ticketRepository.findAllByShowAndSector(this.showRepository.getOne(current.getShow()),
-                    this.sectorRepository.getOne(current.getSector())).size() ==
-                    this.showRepository.getOne(current.getShow()).getHall().getSeats().size()) {
+                Integer amtTicketsSold = this.ticketRepository.findAllByShowAndSector(
+                    this.showRepository.getOne(current.getShow()), this.sectorRepository.getOne(current.getSector())).size();
+                Integer amtTicketsAvailable = this.showRepository.getOne(current.getShow()).getHall().getSectors().size();
+                if (amtTicketsSold >= amtTicketsAvailable) {
                     throw new TicketSoldOutException("Tickets for this sector are sold out, please choose another sector");
                 }
             }
