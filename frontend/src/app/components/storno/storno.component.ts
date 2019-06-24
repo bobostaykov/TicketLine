@@ -159,8 +159,7 @@ export class StornoComponent implements OnInit {
         this.showCantSubmitEmptyMessage();
       } else {
         this.saleTickets.forEach(ticket =>  this.saleArray.push(ticket.id));
-        /*
-        this.ticketService.getCancellationReceiptPdf(this.stornoArray).subscribe(res => {
+        this.ticketService.(this.stornoArray).subscribe(res => {
 
             const fileURL = URL.createObjectURL(res);
             window.open(fileURL, '_blank');

@@ -87,6 +87,7 @@ public class TicketEndpoint {
         LOGGER.info("Ticket Endpoint: Buy Ticket with id " + id);
         return ticketService.changeStatusToSold(id);
     }
+
     @RequestMapping(value = "/buy", method = RequestMethod.PUT, produces = "application/json")
     @ApiOperation(value = "Buy multiple reservated Tickets by id", authorizations = {@Authorization(value = "apiKey")})
     public List<TicketDTO> buyMultipleReservatedTickets(@RequestParam List<String> tickets){
