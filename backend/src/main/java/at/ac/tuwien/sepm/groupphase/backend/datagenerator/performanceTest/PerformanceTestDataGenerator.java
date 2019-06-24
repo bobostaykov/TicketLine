@@ -30,7 +30,7 @@ public abstract class PerformanceTestDataGenerator {
 
     final static int NUM_OF_ARTISTS = 25;
     final static int NUM_OF_CUSTOMERS = 1000;
-    final static int NUM_OF_TICKETS = 1000;
+    final static int NUM_OF_TICKETS = 1000; // MAX: NUM_OF_SHOWS * 10
     final static int NUM_OF_EVENTS = 200;
     final static int NUM_OF_SHOWS = 200;
     final static int NUM_OF_LOCATIONS = 25;

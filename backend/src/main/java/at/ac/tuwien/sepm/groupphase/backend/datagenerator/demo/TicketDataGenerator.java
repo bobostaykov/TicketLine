@@ -53,11 +53,7 @@ public class TicketDataGenerator implements DataGenerator {
             Long numOfSeats = seatRepository.count();
             NUM_OF_TICKETS = numOfShows;
             for (Long i = 1L; i <= NUM_OF_TICKETS; i++) {
-                Long adder = 0L;
-                do {
-                    showOptional = showRepository.findById(((i+randomGenerator.nextLong()) % numOfShows) + 1);
-                    adder++;
-                } while (showOptional.isEmpty());
+                do { showOptional = showRepository.findById(((i+randomGenerator.nextLong()) % numOfShows) + 1); } while (showOptional.isEmpty());
                 Show show = showOptional.get();
                 show.setTicketsSold(show.getTicketsSold() + 1);
                 show = showRepository.save(show);

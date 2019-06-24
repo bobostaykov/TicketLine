@@ -1,7 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.datagenerator.demo;
 
 import at.ac.tuwien.sepm.groupphase.backend.configuration.DataGeneratorConfiguration;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Seat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
