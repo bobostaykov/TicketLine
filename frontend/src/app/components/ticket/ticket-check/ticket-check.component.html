@@ -53,7 +53,7 @@
 </div>
 
 <button type="button" *ngIf="submitted == false" class="btn btn-success col-2 mr-2 mb-4 float-right" (click)="createTicket()">Confirm</button>
-<button type="button" class="btn btn-success col-2 mr-2 mb-4 float-right" (click)="getReceipt()">Get receipt</button>
-<button type="button" class="btn btn-success col-2 mr-2 mb-4 float-right" (click)="getTicketPdf()">Get ticket pdf</button>
-<button type="button" *ngIf="submitted == false"  class="btn btn-secondary col-2 mr-2 mb-4 float-left">Change</button>
+<button type="button" *ngIf="submitted == true" class="btn btn-success col-2 mr-2 mb-4 float-right" (click)="getReceipt()">Get receipt</button>
+<button type="button" *ngIf="submitted == true" class="btn btn-success col-2 mr-2 mb-4 float-right" (click)="getTicketPdf()">Get {{ticketOrReservation}} pdf</button>
+<button type="button" *ngIf="submitted == false" class="btn btn-secondary col-2 mr-2 mb-4 float-left">Change</button>
 <!-- <button type="button" class="btn btn-success col-2 mr-2 mb-4 float-right" (click)="getCancellationReceipt()">Get cancellation receipt</button> !-->

@@ -15,6 +15,14 @@ export class HallService {
   constructor(private httpClient: HttpClient, private globals: Globals) {
   }
 
+
+  /**
+   * Loads all halls from backend
+   */
+  getAllHalls(): Observable<Hall[]> {
+    return this.httpClient.get<Hall[]>(this.hallBaseUri);
+  }
+
   /**
    * persists hall to the backend
    * @param hall to be added to the backend

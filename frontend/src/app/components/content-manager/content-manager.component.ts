@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {AuthService} from '../../services/auth/auth.service';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {Event} from '../../dtos/event';
@@ -10,7 +10,7 @@ import {LocationResultsService} from '../../services/search-results/locations/lo
 import {EventResultsService} from '../../services/search-results/events/event-results.service';
 import {Location} from '../../dtos/location';
 import {MatSnackBar} from '@angular/material';
-import {Time} from '@angular/common';
+import {EventService} from '../../services/event/event.service';
 
 @Component({
   selector: 'app-content-manager',
@@ -18,12 +18,6 @@ import {Time} from '@angular/common';
   styleUrls: ['./content-manager.component.scss']
 })
 export class ContentManagerComponent implements OnInit {
-
-  private showToDelete: number;
-  private artistToDelete: number;
-
-  private showToUpdate: Show;
-  private artistToUpdate: Artist;
 
   private savedType: string;
   private savedName: string;
@@ -45,15 +39,22 @@ export class ContentManagerComponent implements OnInit {
   private searchType: string;
   private searchForm: FormGroup;
 
-  // Update Artist
-  private updateArtistName: string;
+  // Add/Update Event
+  private activeEvent: Event;
+
+  // Add/Update Location
+  private activeLocation: Location;
+
+  // Add/Update Artist
+  private artistToAdd: Artist = {id: undefined, name: undefined};
+  private artistToUpdate: Artist;
+  private artistToDelete: number;
+  private addArtistForm: FormGroup;
   private updateArtistForm: FormGroup;
 
-  // Update Show
-  private updateShowDate: Date;
-  private updateShowTime: Time;
-  private updateShowDescription: string;
-  private updateShowForm: FormGroup;
+  // Add/Update Show
+  private showToDelete: number;
+  private showToUpdate: Show;
 
   private artists: Artist[];
   private shows: Show[];
@@ -99,7 +100,8 @@ export class ContentManagerComponent implements OnInit {
   ];
 
   constructor(private authService: AuthService, public snackBar: MatSnackBar, private artistService: ArtistResultsService,
-              private showService: ShowResultsService, private eventService: EventResultsService, private locationService: LocationResultsService) { }
+              private showService: ShowResultsService, private eventResultsService: EventResultsService, private locationService: LocationResultsService,
+              private eventService: EventService) { }
 
   ngOnInit() {
     this.addForm = new FormGroup({
@@ -115,10 +117,8 @@ export class ContentManagerComponent implements OnInit {
       updateArtistNameControl: new FormControl('', [Validators.required, Validators.maxLength(60)])
     });
 
-    this.updateShowForm = new FormGroup({
-      updateShowDateControl: new FormControl(),
-      updateShowTimeControl: new FormControl(),
-      updateShowDescriptionControl: new FormControl()
+    this.addArtistForm = new FormGroup({
+        addArtistNameControl: new FormControl('', [Validators.required, Validators.maxLength(60)])
     });
   }
 
@@ -190,7 +190,7 @@ export class ContentManagerComponent implements OnInit {
         );
         break;
       case 'Event':
-        this.eventService.findEventsFilteredByAttributes(this.savedName, null, null, null, null, this.page).subscribe(
+        this.eventResultsService.findEventsFilteredByAttributes(this.savedName, null, null, null, null, this.page).subscribe(
           result => {
             this.events = result['content'];
             this.totalPages = result['totalPages'];
@@ -201,6 +201,8 @@ export class ContentManagerComponent implements OnInit {
         );
         break;
       case 'Location':
+        console.log('ContentManager: savedName=' + this.savedName);
+        console.log('ContentManager: page=' + this.page);
         this.locationService.findLocationsFiltered(this.savedName, null, null, null, null, null, this.page).subscribe(
           result => {
             this.locations = result['content'];
@@ -275,25 +277,58 @@ export class ContentManagerComponent implements OnInit {
   }
 
   private setShowToUpdate(show: Show) {
-    this.showToUpdate = show;
+    this.showToUpdate = Object.assign({}, show);
   }
 
   private setArtistToUpdate(artist: Artist) {
     this.artistToUpdate = Object.assign({}, artist);
   }
 
-  private updateArtist() {
-    console.log('ContentManager: updateArtist');
-    this.artistService.updateArtist(this.artistToUpdate).subscribe(
+  private setActiveLocation(location: Location) {
+    this.activeLocation = location;
+  }
+
+  private updateLocation(location: Location) {
+    console.log('ContentManager: updateLocation:' + JSON.stringify(location));
+    // Object.assign(this.showToUpdate, show);
+    this.locationService.updateLocation(location).subscribe(
       () => {},
       error => { this.defaultServiceErrorHandling(error); },
       () => { this.loadEntities(); }
     );
   }
 
-  private updateShow() {
-    console.log('ContentManager: updateShow');
-    this.showService.updateShow(this.showToUpdate).subscribe(
+  private addLocation(location: Location) {
+    console.log('ContentManager: addLocation: ' + JSON.stringify(location));
+    this.locationService.addLocation(location).subscribe(
+      () => {},
+      error => { this.defaultServiceErrorHandling(error); },
+      () => { this.loadEntities(); }
+    );
+  }
+
+  private deleteLocation() {
+    console.log('Delete location with id ' + this.activeLocation.id);
+    this.locationService.deleteLocation(this.activeLocation.id).subscribe(
+      () => {},
+      error => this.defaultServiceErrorHandling(error),
+      () => { this.savedName = ''; this.loadEntities(); }
+    );
+  }
+
+  private updateShow(show: Show) {
+    console.log('ContentManager: updateShow:' + JSON.stringify(show));
+    // Object.assign(this.showToUpdate, show);
+    this.showService.updateShow(show).subscribe(
+      () => {},
+      error => { this.defaultServiceErrorHandling(error); },
+      () => { this.loadEntities(); }
+    );
+  }
+
+  private addShow(show: Show) {
+    console.log('ContentManager: addShow: ' + JSON.stringify(show));
+    this.showService.addShow(show).subscribe(
       () => {},
       error => { this.defaultServiceErrorHandling(error); },
       () => { this.loadEntities(); }
@@ -305,7 +340,25 @@ export class ContentManagerComponent implements OnInit {
     this.showService.deleteShow(this.showToDelete).subscribe(
       () => {},
       error => { this.defaultServiceErrorHandling(error); },
-      () => { this.loadEntities(); this.showToDelete = null; }
+      () => { this.showToDelete = null; this.loadEntities(); }
+    );
+  }
+
+  private addArtist() {
+    console.log('ContentManager: addArtist');
+    this.artistService.addArtist(this.artistToAdd).subscribe(
+      () => {},
+      error => { this.defaultServiceErrorHandling(error); },
+      () => { this.loadEntities(); }
+    );
+  }
+
+  private updateArtist() {
+    console.log('ContentManager: updateArtist');
+    this.artistService.updateArtist(this.artistToUpdate).subscribe(
+      () => {},
+      error => { this.defaultServiceErrorHandling(error); },
+      () => { this.loadEntities(); }
     );
   }
 
@@ -314,7 +367,38 @@ export class ContentManagerComponent implements OnInit {
     this.artistService.deleteArtist(this.artistToDelete).subscribe(
       () => {},
       error => { this.defaultServiceErrorHandling(error); },
-      () => { this.loadEntities(); this.artistToDelete = null; }
+      () => { this.artistToDelete = null; this.loadEntities(); }
+    );
+  }
+
+  private addEvent(event: Event) {
+    this.eventService.createEvent(event).subscribe(
+      () => {},
+      error => this.defaultServiceErrorHandling(error),
+      () => window.location.reload()
+    );
+  }
+
+  private setActiveEvent(event: Event) {
+    this.activeEvent = event;
+  }
+
+  private updateEvent(event: Event) {
+    console.log('Updates event with id ' + event.id + ' to ' + JSON.stringify(event));
+    Object.assign(this.activeEvent, event);
+    this.eventService.updateEvent(event).subscribe(
+      () => {},
+      error => this.defaultServiceErrorHandling(error),
+      () => this.loadEntities()
+    );
+  }
+
+  private deleteEvent() {
+    console.log('Delete event with id ' + this.activeEvent.id);
+    this.eventService.deleteEvent(this.activeEvent.id).subscribe(
+      () => {},
+      error => this.defaultServiceErrorHandling(error),
+      () => { this.savedName = ''; this.loadEntities(); }
     );
   }
 

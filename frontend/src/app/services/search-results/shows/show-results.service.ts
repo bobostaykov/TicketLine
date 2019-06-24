@@ -5,6 +5,7 @@ import {Observable} from 'rxjs';
 import {Show} from '../../../dtos/show';
 import {Artist} from '../../../dtos/artist';
 import {ShowRequestParameter} from '../../../datatype/requestParameters/ShowRequestParameter';
+import {Customer} from '../../../dtos/customer';
 
 @Injectable({
   providedIn: 'root'
@@ -13,8 +14,7 @@ export class ShowResultsService {
 
   private showBaseUri: string = this.globals.backendUri + '/shows';
 
-  constructor(private httpClient: HttpClient, private globals: Globals) {
-  }
+  constructor(private httpClient: HttpClient, private globals: Globals) { }
 
   /**
    * Deletes specified show in backend
@@ -31,7 +31,16 @@ export class ShowResultsService {
    */
   public updateShow(show: Show): Observable<{}> {
     console.log('ShowResultsService: updateShow');
-    return this.httpClient.put<Artist>(this.showBaseUri + '/' + show.id, show);
+    return this.httpClient.put<Show>(this.showBaseUri + '/' + show.id, show);
+  }
+
+  /**
+   * Adds a show to the data base
+   * @param show to persist
+   */
+  public addShow(show: Show): Observable<{}> {
+    console.log('ShowResultsService: addShow');
+    return this.httpClient.post<Show>(this.showBaseUri, show);
   }
 
   /**

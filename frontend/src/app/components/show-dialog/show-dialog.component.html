@@ -1,0 +1,121 @@
+<!-- dialog to add and update shows -->
+<form #showForm="ngForm" class="form">
+
+    <div class="form-group">
+      <div class="col">
+        <label for="event_name">Event Name</label>
+        <ngx-select-dropdown id="event_name" name="eventName"
+                             [config]="eventConfig"
+                             [options]="events"
+                             [(ngModel)]="chosenEvent"
+                             [_value] = "chosenEvent">
+        </ngx-select-dropdown>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="col">
+        <label for="hall_name">Hall Name</label>
+        <ngx-select-dropdown id="hall_name" name="hallName"
+                             [config]="hallConfig"
+                             [options]="halls"
+                             [(ngModel)]="chosenHall"
+                             [_value] = "chosenHall">
+        </ngx-select-dropdown>
+      </div>
+    </div>
+
+  <div class="form-group">
+    <div class="col">
+      <label for="description">Description:</label>
+      <input id="description" type="text" name="description" class="form-control"
+             aria-labelledby="show description"
+             placeholder="Enter a description"
+             [(ngModel)]="showModel.description"
+      />
+    </div>
+  </div>
+
+
+  <div class="form-inline">
+    <div class="form-group mb-2">
+
+      <div class="col">
+        <label for="date">Date:</label>
+        <input id="date" type="date" name="date" class="form-control"
+               aria-labelledby="show date"
+               placeholder="Enter a date"
+               [(ngModel)]="showModel.date"
+               #date='ngModel'/>
+        <div [hidden]="date.valid || date.pristine" class="form-text text-warning">
+          Valid date is required!
+        </div>
+      </div>
+
+      <div class="col">
+        <label for="time">Time:</label>
+        <input id="time" type="time" name="time" class="form-control"
+               aria-labelledby="show time"
+               placeholder="Enter a time"
+               [(ngModel)]="showModel.time"
+               #time='ngModel'/>
+        <div [hidden]="time.valid || time.pristine" class="form-text text-warning">
+          Valid time is required!
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <div class="form-inline">
+    <div class="form-group mb-3">
+
+      <div class="col">
+        <label for="price_pattern">Price Pattern:</label>
+        <input id="price_pattern" type="text" name="pricePattern" class="form-control" style="width: 175px"
+               aria-labelledby="show price pattern"
+               placeholder="Name"
+               [(ngModel)]="patternName"
+        />
+      </div>
+
+      <div class="col">
+        <label for="price_cheap">Cheap:</label>
+        <input id="price_cheap" type="number" name="priceCheap" class="form-control" style="width: 75px"
+               [(ngModel)]="cheap"
+               #priceCheap='ngModel'/>
+        <div [hidden]="priceCheap.valid || priceCheap.pristine" class="form-text text-warning">
+          Valid cheap price is required!
+        </div>
+      </div>
+
+      <div class="col">
+        <label for="price_average">Average:</label>
+        <input id="price_average" type="number" name="priceAverage" class="form-control" style="width: 75px"
+               [(ngModel)]="average"
+               #priceAverage='ngModel'/>
+        <div [hidden]="priceAverage.valid || priceAverage.pristine" class="form-text text-warning">
+          Valid average price is required!
+        </div>
+      </div>
+
+      <div class="col">
+        <label for="price_expensive">Expensive:</label>
+        <input id="price_expensive" type="number" name="priceExpensive" class="form-control" style="width: 75px"
+               [(ngModel)]="expensive"
+               #priceExpensive='ngModel'/>
+        <div [hidden]="priceExpensive.valid || priceExpensive.pristine" class="form-text text-warning">
+          Valid expensive price is required!
+        </div>
+      </div>
+    </div>
+  </div>
+  <p>
+    <mat-hint>Note: Updating the price pattern will change it for all shows, which are using it!</mat-hint>
+  </p>
+
+
+  <button class="btn btn-success float-right" data-dismiss="modal" (click)="showForm.valid && onSubmit()"
+          [disabled]="showForm.invalid">{{title}}</button>
+</form>

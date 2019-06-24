@@ -3,6 +3,7 @@ package at.ac.tuwien.sepm.groupphase.backend.datagenerator.performanceTest;
 import at.ac.tuwien.sepm.groupphase.backend.datatype.TicketStatus;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Show;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Ticket;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.CustomerRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.ShowRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.TicketRepository;
@@ -11,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +38,7 @@ public class TicketPerformanceTestDataGenerator extends PerformanceTestDataGener
         this.showRepository = showRepository;
     }
 
+    @Transactional
     @Override
     public void generate(){
         if(ticketRepository.count() > 0){
@@ -45,22 +48,22 @@ public class TicketPerformanceTestDataGenerator extends PerformanceTestDataGener
             Random randomGenerator = new Random();
             List<Ticket> tickets = new ArrayList<>();
             Optional<Show> showOptional;
-            for(Long id = 1L; id <= NUM_OF_TICKETS; id++) {
-                do {
-                    showOptional = showRepository.findById(customMod(id + randomGenerator.nextInt(NUM_OF_SHOWS), NUM_OF_SHOWS));
-                } while (showOptional.isEmpty());
-                Show show = showOptional.get();
-                show.setTicketsSold(show.getTicketsSold() + 1);
+            for(Long showId = 1L; showId <= NUM_OF_SHOWS; showId++) {
+                Show show = showRepository.getOne(customMod(showId, NUM_OF_SHOWS));
+                int numOfTicketsPerShow = NUM_OF_TICKETS/NUM_OF_SHOWS;
+                show.setTicketsSold(show.getTicketsSold() + numOfTicketsPerShow);
                 show = showRepository.save(show);
-                tickets.add(Ticket.builder()
-                    .id(id)
-                    .customer(customerRepository.getOne(customMod(id, NUM_OF_CUSTOMERS)))
-                    .show(show)
-                    .status(id % 6 == 0 ? TicketStatus.SOLD : TicketStatus.RESERVATED)
-                    //.seatNumber(customModInt(id, NUM_OF_SEAT_ROWS_PER_HALL))
-                    //.rowNumber(Math.toIntExact((id-1) / NUM_OF_SEAT_ROWS_PER_HALL + 1))
-                    .price(TICKET_PRICE)
-                    .build());
+                for(int i = 0; i < numOfTicketsPerShow; i++) {
+                    tickets.add(Ticket.builder()
+                        .id(showId)
+                        .customer(customerRepository.getOne(customMod(showId, NUM_OF_CUSTOMERS)))
+                        .show(show)
+                        .status(showId % 6 == 0 ? TicketStatus.RESERVATED : TicketStatus.SOLD)
+                        .seat(!show.getHall().getSeats().isEmpty() ? show.getHall().getSeats().get(i) : null)
+                        .sector(!show.getHall().getSectors().isEmpty() ? show.getHall().getSectors().get(customModInt((long)i, NUM_OF_SECTORS_PER_HALL)) : null)
+                        .price(TICKET_PRICE)
+                        .build());
+                }
             }
             ticketRepository.saveAll(tickets); // TODO: use service in order to increment the soldTickets field for the show
         }

@@ -25,7 +25,6 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-// TODO Class is unfinished
 @RestController
 @RequestMapping(value = "/shows")
 @Api(value = "shows")
@@ -138,6 +137,34 @@ public class ShowEndpoint {
         return showService.findSearchResultSuggestions(eventName, date, time);
     }
 
+    @RequestMapping(method = RequestMethod.POST)
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "Add a show by id", authorizations = {@Authorization(value = "apiKey")})
+    public ShowDTO updateShow(@RequestBody ShowDTO showDTO) {
+        LOGGER.info("Add a show " + showDTO.toString());
+        try {
+            return showService.addShow(showDTO);
+        } catch (IllegalArgumentException | ServiceException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error during adding a show: " + e.getMessage(), e);
+        } catch (NotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Error when reading show: " + e.getMessage(), e);
+        }
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiOperation(value = "Update a show by id", authorizations = {@Authorization(value = "apiKey")})
+    public ShowDTO updateShow(@RequestBody ShowDTO showDTO, @PathVariable("id") Long id) {
+        LOGGER.info("Update show " + showDTO.toString());
+        showDTO.setId(id);
+        try {
+            return showService.updateShow(showDTO);
+        } catch (IllegalArgumentException | ServiceException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error during updating show: " + e.getMessage(), e);
+        } catch (NotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Error when reading show: " + e.getMessage(), e);
+        }
+    }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     @PreAuthorize("hasRole('ADMIN')")

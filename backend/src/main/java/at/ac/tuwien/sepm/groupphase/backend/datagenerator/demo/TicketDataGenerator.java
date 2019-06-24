@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -37,6 +38,7 @@ public class TicketDataGenerator implements DataGenerator {
         this.seatRepository = seatRepository;
     }
 
+    @Transactional
     @Override
     public void generate(){
         if(ticketRepository.count() > 0){
@@ -49,13 +51,9 @@ public class TicketDataGenerator implements DataGenerator {
             Long numOfShows = showRepository.count();
             Long numOfCustomers = customerRepository.count();
             Long numOfSeats = seatRepository.count();
-            NUM_OF_TICKETS = numOfShows * 5;
+            NUM_OF_TICKETS = numOfShows;
             for (Long i = 1L; i <= NUM_OF_TICKETS; i++) {
-                Long adder = 0L;
-                do {
-                    showOptional = showRepository.findById(((i+randomGenerator.nextLong()) % numOfShows) + 1);
-                    adder++;
-                } while (showOptional.isEmpty());
+                do { showOptional = showRepository.findById(((i+randomGenerator.nextLong()) % numOfShows) + 1); } while (showOptional.isEmpty());
                 Show show = showOptional.get();
                 show.setTicketsSold(show.getTicketsSold() + 1);
                 show = showRepository.save(show);
@@ -64,8 +62,8 @@ public class TicketDataGenerator implements DataGenerator {
                     .customer(customerRepository.getOne(((i-1) % numOfCustomers) + 1))
                     .show(show)
                     .price(faker.random().nextDouble()*50)
-                    .seat(seatRepository.getOne(((i-1) % numOfSeats) + 1))
-                    .sector(null)
+                    .seat(!show.getHall().getSeats().isEmpty() ? show.getHall().getSeats().get(0) : null)
+                    .sector(!show.getHall().getSectors().isEmpty()? show.getHall().getSectors().get(0) : null)
                     .status(i % 6 == 0 ? TicketStatus.RESERVATED : TicketStatus.SOLD)
                     .reservationNo("A1234"+ i)
                     .build());

@@ -158,7 +158,7 @@ export class CustomerComponent implements OnInit {
    * @param customer to be set as activeCustomer
    */
   private setActiveCustomer(customer: Customer) {
-    this.activeCustomer = customer;
+    this.activeCustomer = customer; // TODO?   Object.assign(this.activeCustomer, customer);
   }
 
   /**

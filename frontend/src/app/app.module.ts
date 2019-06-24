@@ -45,6 +45,11 @@ import { MinDirective } from './directives/min.directive';
 import { ContentManagerComponent } from './components/content-manager/content-manager.component';
 import { SelectDropDownModule } from 'ngx-select-dropdown';
 import { StornoComponent } from './components/storno/storno.component';
+import { ShowDialogComponent } from './components/show-dialog/show-dialog.component';
+import {errorHandlingProvider} from './errorhandling';
+import { ErrorSnackBarComponent } from './components/error-snack-bar/error-snack-bar.component';
+import { EventDialogComponent } from './components/event-dialog/event-dialog.component';
+import { LocationDialogComponent } from './components/location-dialog/location-dialog.component';
 
 @NgModule({
   declarations: [
@@ -72,6 +77,12 @@ import { StornoComponent } from './components/storno/storno.component';
     BlockedUsersComponent,
     TicketCheckReservationComponent,
     ContentManagerComponent,
+    ShowDialogComponent,
+    ContentManagerComponent,
+    EventDialogComponent,
+    ErrorSnackBarComponent,
+    LocationDialogComponent
+    ContentManagerComponent,
     StornoComponent
   ],
   imports: [
@@ -93,8 +104,9 @@ import { StornoComponent } from './components/storno/storno.component';
     MatAutocompleteModule,
     SelectDropDownModule
   ],
-  providers: [httpInterceptorProviders, Globals],
-  bootstrap: [AppComponent]
+  providers: [errorHandlingProvider, httpInterceptorProviders, Globals],
+  bootstrap: [AppComponent],
+  entryComponents: [ErrorSnackBarComponent]
 })
 export class AppModule {
 }

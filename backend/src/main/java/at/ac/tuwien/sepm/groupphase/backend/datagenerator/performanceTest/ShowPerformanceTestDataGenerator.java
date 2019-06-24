@@ -68,7 +68,7 @@ public class ShowPerformanceTestDataGenerator extends PerformanceTestDataGenerat
                     .id(id)
                     .event(eventRepository.getOne(customMod(id, NUM_OF_EVENTS)))
                     .hall(hallRepository.getOne(customMod(id, NUM_OF_HALLS)))
-                    .date(faker.date().future(365, TimeUnit.DAYS).toInstant().atZone(ZoneId.systemDefault()).toLocalDate())
+                    .date(faker.date().future(365, TimeUnit.DAYS).toInstant().atZone(ZoneId.systemDefault()).toLocalDate().plusMonths(1))
                     .time(LocalTime.parse( "21:00",timeFormatter))
                     .description(faker.letterify("????????????????"))
                     .ticketsSold(0L)
