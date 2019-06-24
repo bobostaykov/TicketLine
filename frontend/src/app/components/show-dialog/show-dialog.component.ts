@@ -75,12 +75,8 @@ export class ShowDialogComponent implements OnInit, OnChanges {
   private loadEvents() {
     console.log('ShowDialog: loadEvents');
     this.eventResultsService.findEventsFilteredByAttributes('getAllEventsNotPaginated', null, null, null, null, 0).subscribe(
-      result => {
-        this.events = result['content'];
-      },
-      error => {
-        this.defaultServiceErrorHandling(error);
-      }
+      result => { this.events = result['content']; },
+      error => { this.defaultServiceErrorHandling(error); }
     );
   }
 
@@ -90,12 +86,8 @@ export class ShowDialogComponent implements OnInit, OnChanges {
   private loadHalls() {
     console.log('ShowDialog: loadHalls');
     this.hallService.getAllHalls().subscribe(
-      halls => {
-        this.halls = halls;
-      },
-      error => {
-        this.defaultServiceErrorHandling(error);
-      }
+      halls => { this.halls = halls; },
+      error => { this.defaultServiceErrorHandling(error); }
     );
   }
 
@@ -113,17 +105,6 @@ export class ShowDialogComponent implements OnInit, OnChanges {
     this.showModel.hall = this.chosenHall;
     console.log('ShowDialog showModel: ' + this.showModel);
     this.submitShow.emit(this.showModel);
-    // Resets the values
-    // this.cheap = 0;
-    // this.average = 0;
-    // this.expensive = 0;
-    // this.pricePattern = {
-    //   id: undefined,
-    //   name: 'New Price Pattern',
-    //   priceMapping: {'Cheap': this.cheap, 'Average': this.average, 'Expensive': this.expensive }
-    // };
-    // this.chosenEvent = null;
-    // this.chosenHall = null;
   }
 
   /**
@@ -136,11 +117,18 @@ export class ShowDialogComponent implements OnInit, OnChanges {
       if (this.show !== undefined) {
         console.log('Show EventName: ' + this.show.event.name);
         console.log('Show HallName: ' + this.show.hall.name);
+        console.log(this.show);
         this.showModel = Object.assign({}, this.show);
         console.log('ShowModel EventName: ' + this.showModel.event.name);
         console.log('ShowModel HallName: ' + this.showModel.hall.name);
+        console.log(this.showModel);
         this.chosenEvent = this.showModel.event;
         this.chosenHall = this.showModel.hall;
+        this.pricePattern = this.showModel.pricePattern;
+        this.patternName = this.pricePattern.name;
+        this.cheap = this.pricePattern.priceMapping['Cheap'];
+        this.average = this.pricePattern.priceMapping['Average'];
+        this.expensive = this.pricePattern.priceMapping['Expensive'];
       }
     }
   }
