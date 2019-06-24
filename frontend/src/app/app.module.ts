@@ -81,8 +81,7 @@ import {LocationDialogComponent} from './components/location-dialog/location-dia
     ContentManagerComponent,
     EventDialogComponent,
     ErrorSnackBarComponent,
-    LocationDialogComponent
-    ContentManagerComponent,
+    LocationDialogComponent,
     StornoComponent
   ],
   imports: [
