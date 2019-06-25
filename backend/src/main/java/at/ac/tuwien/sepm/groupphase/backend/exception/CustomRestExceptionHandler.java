@@ -126,28 +126,11 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler({DataIntegrityViolationException.class})
     private ResponseEntity<Object> handleDataIntegrityViolationException(DataIntegrityViolationException ex, WebRequest request){
-        String error = "Data Integrity Violation: Error = " + ex.getMessage();
-        /*Throwable t = ex.getCause();
-        if (t instanceof ConstraintViolationException)
-            error = "Data Integrity Violation: Error = " + t.getLocalizedMessage();
-        else
-            error = */
+        String error = "Data Integrity Violation: Error = " + ex.getMessage()
         ApiError apiError = new ApiError(
             HttpStatus.BAD_REQUEST,ex.getLocalizedMessage(), error);
         return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
     }
-    /*
-
-    @ExceptionHandler({MissingServletRequestParameterException.class})
-    private ResponseEntity<Object> handleMissingServletRequestParameterException(MissingServletRequestParameterException ex, WebRequest request){
-        String error = "Bad Request: Error = " + ex.getMessage();
-        ApiError apiError = new ApiError(
-            HttpStatus.BAD_REQUEST,ex.getLocalizedMessage(), error);
-        return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
-    }
-    */
-    // default implementation
-
     @ExceptionHandler({Exception.class})
     protected ResponseEntity<Object> defaultExceptionHandler(Exception ex, WebRequest request) {
         LOGGER.info(ex.getClass().getCanonicalName() + "is thrown!");
