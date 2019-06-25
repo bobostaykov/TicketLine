@@ -54,7 +54,6 @@ export class ContentManagerComponent implements OnInit {
   private artistToDelete: number;
   private addArtistForm: FormGroup;
   private updateArtistForm: FormGroup;
-  private addArtistFormSubmitted: boolean;
 
   // Add/Update Show
   private showToDelete: number;
@@ -345,19 +344,16 @@ export class ContentManagerComponent implements OnInit {
   }
 
   private addArtist() {
-    this.addArtistForm.reset();
-    this.addArtistFormSubmitted = false;
     console.log('ContentManager: addArtist');
     this.artistService.addArtist(this.artistToAdd).subscribe(
-      () => {},
+      () => { this.addArtistForm.reset(); },
       error => { this.defaultServiceErrorHandling(error); },
-      () => { this.loadEntities(); }
+      () => { this.loadEntities();  }
     );
   }
 
   private updateArtist() {
     console.log('ContentManager: updateArtist');
-    this.addArtistFormSubmitted = true;
     this.artistService.updateArtist(this.artistToUpdate).subscribe(
       () => {},
       error => { this.defaultServiceErrorHandling(error); },

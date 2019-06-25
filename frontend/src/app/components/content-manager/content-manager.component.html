@@ -276,9 +276,6 @@
               <input type="text" id="add_artist_name" formControlName="addArtistNameControl"
                      class="form-control"
                      placeholder="Enter a name" [(ngModel)]="artistToAdd.name">
-              <div *ngIf="addArtistFormSubmitted && addArtistForm.controls['addArtistNameControl'].hasError('required')" class="error">
-                <small class="form-text text-danger">Name is required!</small>
-              </div>
               <div *ngIf="addArtistForm.controls['addArtistNameControl'].hasError('maxlength')" class="error">
                 <small class="form-text text-danger">Name can be at most 60 characters!</small>
               </div>
@@ -312,7 +309,7 @@
               <input type="text" id="update_artist_name" formControlName="updateArtistNameControl"
                      class="form-control"
                      placeholder="Enter a name" [(ngModel)]="artistToUpdate.name">
-              <div *ngIf="addArtistFormSubmitted && updateArtistForm.controls['updateArtistNameControl'].hasError('required')" class="error">
+              <div *ngIf="updateArtistForm.controls['updateArtistNameControl'].hasError('required')" class="error">
                 <small class="form-text text-danger">Name is required!</small>
               </div>
               <div *ngIf="updateArtistForm.controls['updateArtistNameControl'].hasError('maxlength')" class="error">
