@@ -30,7 +30,7 @@
         <a class="nav-link" *ngIf="authService.isLoggedIn() && authService.getUserRole()==='ADMIN'" routerLink="/manager" routerLinkActive="active">ContentManager</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" *ngIf="authService.isLoggedIn()" routerLink="/ticketsearch" routerLinkActive="active">Storno/Reservations</a>
+        <a class="nav-link" *ngIf="authService.isLoggedIn()" routerLink="/ticketsearch" routerLinkActive="active">Cancellations/Reservations</a>
       </li>
     </ul>
     <ul class="navbar-nav mr-5">

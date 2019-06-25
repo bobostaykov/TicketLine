@@ -89,7 +89,11 @@ public class TicketEndpoint {
     @ApiOperation(value = "Buy multiple reservated Tickets by id", authorizations = {@Authorization(value = "apiKey")})
     public List<TicketDTO> buyMultipleReservatedTickets(@RequestBody List<Long> tickets){
         LOGGER.info("buy tickets with ids" + tickets.toString());
-        return ticketService.changeStatusToSold(tickets);
+        try {
+            return ticketService.changeStatusToSold(tickets);
+        } catch (TicketSoldOutException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
     }
 
     @RequestMapping(value = "/reserved/{id}", method = RequestMethod.GET)

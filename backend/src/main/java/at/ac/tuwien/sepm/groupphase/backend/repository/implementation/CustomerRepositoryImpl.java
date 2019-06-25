@@ -40,8 +40,6 @@ public class CustomerRepositoryImpl implements CustomerRepositoryCustom {
         CriteriaQuery<Customer> criteriaQuery = cBuilder.createQuery(Customer.class);
         Root<Customer> customerRoot = criteriaQuery.from(Customer.class);
 
-
-
         if(id != null){
             predicates.add(cBuilder.equal(customerRoot.get(Customer_.id), id));
         }

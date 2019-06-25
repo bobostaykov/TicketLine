@@ -45,7 +45,7 @@ import {MinDirective} from './directives/min.directive';
 import {ContentManagerComponent} from './components/content-manager/content-manager.component';
 import {SelectDropDownModule} from 'ngx-select-dropdown';
 import {ChangePasswordDialogComponent } from './components/change-password-dialog/change-password-dialog.component';
-import {StornoComponent} from './components/storno/storno.component';
+import {ReservationAndCancellationComponent} from './components/storno/reservation-and-cancellation.component';
 import {ShowDialogComponent} from './components/show-dialog/show-dialog.component';
 import {errorHandlingProvider} from './errorhandling';
 import {ErrorSnackBarComponent} from './components/error-snack-bar/error-snack-bar.component';
@@ -88,7 +88,7 @@ import {LocationDialogComponent} from './components/location-dialog/location-dia
     LocationDialogComponent,
     ContentManagerComponent,
     LocationDialogComponent,
-    StornoComponent
+    ReservationAndCancellationComponent
   ],
   imports: [
     BrowserModule,

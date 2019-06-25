@@ -31,13 +31,6 @@ public class LocationEndpoint {
         this.locationService = locationService;
     }
 
-    /*@RequestMapping(method = RequestMethod.GET)
-    @ApiOperation(value = "Get all saved halls", authorizations = {@Authorization(value = "apiKey")})
-    public List<LocationDTO> getLocations(){
-        LOGGER.info("Getting all locations by name descending");
-        return locationService.findAll();
-    }*/
-
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ApiOperation(value = "Get one location by its id", authorizations = {@Authorization(value = "apiKey")})
     public LocationDTO findOneById(@PathVariable("id") Long id){
