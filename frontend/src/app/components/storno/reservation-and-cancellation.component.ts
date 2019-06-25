@@ -230,12 +230,20 @@ export class ReservationAndCancellationComponent implements OnInit {
   private defaultServiceErrorHandling(error: any) {
     console.log(error);
     this.error = true;
-    if (error.error.news !== 'No message available') {
-      this.errorMessage = error.error.news;
-    } else if (error.error.httpRequestStatusCode === 404) {
-      this.errorMessage = 'Could not block user';
+    if (error.error.ticketCheckReservation !== 'No message available') {
+      this.errorMessage = error.error.ticketCheckReservation;
     } else {
       this.errorMessage = error.error.error;
+    }
+    if (error.error.status === 'BAD_REQUEST') {
+      this.errorMessage = error.error.message.replace('400 BAD_REQUEST \"', '');
+      this.errorMessage = this.errorMessage.replace('\"', '');
+    } else if (error.error.status === 'NOT_FOUND') {
+      this.errorMessage = error.error.message.replace('404 NOT_FOUND \"', '');
+      this.errorMessage = this.errorMessage.replace('\"', '');
+    } else if (error.error.status === 'INTERNAL_SERVER_ERROR') {
+      this.errorMessage = error.error.message.replace('404 INTERNAL_SERVER_ERROR \"', '');
+      this.errorMessage = this.errorMessage.replace('\"', '');
     }
   }
   /**

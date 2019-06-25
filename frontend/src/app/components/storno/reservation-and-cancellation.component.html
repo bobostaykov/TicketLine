@@ -57,6 +57,10 @@
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
+  <div *ngIf="error === true" class="alert alert-danger alert-dismissable">
+    {{errorMessage}}
+    <a class="close" (click)="vanishError()">&times;</a>
+  </div>
   <div *ngIf="cancelTickets.length !== 0">
     <table class="table">
       <thead>
