@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -35,7 +36,8 @@ public class AppUserDetailsService implements org.springframework.security.core.
                 LOGGER.info("Authentication denied, user is blocked");
                 throw new BadCredentialsException("is blocked");
             }
-
+            user.setLastLogin(LocalDateTime.now());
+            userRepository.save(user);
             builder = org.springframework.security.core.userdetails.User.withUsername(username);
             builder.password(user.getPassword());
             if(user.getType().equals(UserType.ADMIN)){

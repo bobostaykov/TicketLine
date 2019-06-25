@@ -9,9 +9,10 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface EventTicketsMapper {
 
-    EventTickets eventTicketsDTOToEventTickets(EventTicketsDTO eventTicketsDTO);
-
+    /**
+     * Maps the EventTicket object to EventTicketDTO object
+     * @param eventTickets to map
+     * @return the mapped EventTicketDTO object
+     */
     EventTicketsDTO eventTicketsToEventTicketsDTO(EventTickets eventTickets);
-
-    List<EventTicketsDTO> eventTicketsToEventTicketsDTO(List<EventTickets> all);
 }

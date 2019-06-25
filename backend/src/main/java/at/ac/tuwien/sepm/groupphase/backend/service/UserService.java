@@ -1,9 +1,12 @@
 package at.ac.tuwien.sepm.groupphase.backend.service;
 
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.requestparameter.PasswordChangeRequest;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.user.UserDTO;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import org.springframework.data.domain.Page;
+
+import java.util.List;
 
 public interface UserService {
 
@@ -25,6 +28,12 @@ public interface UserService {
      */
     UserDTO findOne(Long id) throws NotFoundException;
 
+    /**
+     * finds a user by (unique) name
+     *
+     * @param name the name of the user
+     * @return an dto of the user
+     */
     UserDTO findUserByName(String name);
 
     /**
@@ -51,17 +60,27 @@ public interface UserService {
     UserDTO findOneByUsername(String username);
 
     /**
+     * Unblock a user by id
+     *
      * @param userId id of the user that is to be unblocked
      * @return boolean if the operation was successful
      */
     boolean unblockUser(Long userId);
 
     /**
+     * Block a user by id
+     *
      * @param userId the id of the user that is to be blocked
      * @return boolean of the success of the operation
      */
     boolean blockUser(Long userId) throws ServiceException;
 
+
+    /**
+     * changes the password of a user (request is from an admin)
+     * @param passwordChangeRequest contains the id and the new password
+     */
+    void changePassword(PasswordChangeRequest passwordChangeRequest) throws ServiceException;
 
     /**
      * Get all blocked users or search by username, depending on whether username == null

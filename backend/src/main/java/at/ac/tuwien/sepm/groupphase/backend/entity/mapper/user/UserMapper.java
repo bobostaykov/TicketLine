@@ -9,10 +9,18 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 
+    /**
+     * Maps User object to UserDTO object
+     * @param user to map
+     * @return the mapped UserDTO object
+     */
     UserDTO userToUserDTO(User user);
 
-    List<UserDTO> userToUserDTO(List<User> all);
-
+    /**
+     * Maps UserDTO object to User object
+     * @param userDTO to map
+     * @return the mapped User object
+     */
     User userDTOToUser(UserDTO userDTO);
 
 }

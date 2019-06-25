@@ -1,8 +1,11 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.searchParameters;
 
+import at.ac.tuwien.sepm.groupphase.backend.datatype.EventType;
+import at.ac.tuwien.sepm.groupphase.backend.entity.Event;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDate;
@@ -24,6 +27,8 @@ public class ShowSearchParametersDTO {
     @ApiModelProperty(name = "the minimum price")
     @PositiveOrZero
     private Integer priceInEuroFrom;
+    @ApiModelProperty(name = "type of the event")
+    private EventType eventType;
     @ApiModelProperty(name = "the maximum price")
     @PositiveOrZero
     private Integer priceInEuroTo;
@@ -56,6 +61,14 @@ public class ShowSearchParametersDTO {
     @NotBlank
     private String artistName;
 
+
+    public EventType getEventType() {
+        return eventType;
+    }
+
+    public void setEventType(EventType eventType) {
+        this.eventType = eventType;
+    }
 
     public String getArtistName() {
         return artistName;
@@ -204,6 +217,7 @@ public class ShowSearchParametersDTO {
         private String postalCode;
         private String street;
         private String artistName;
+        private EventType eventType;
 
         public builder(){}
 
@@ -214,6 +228,10 @@ public class ShowSearchParametersDTO {
 
         public builder eventId(Long eventId){
             this.eventId = eventId;
+            return this;
+        }
+        public builder eventType(EventType eventType){
+            this.eventType = eventType;
             return this;
         }
 
@@ -298,6 +316,7 @@ public class ShowSearchParametersDTO {
             parametersDTO.setPriceInEuroTo(priceInEuroTo);
             parametersDTO.setLocationName(locationName);
             parametersDTO.setArtistName(artistName);
+            parametersDTO.setEventType(eventType);
             return parametersDTO;
         }
 

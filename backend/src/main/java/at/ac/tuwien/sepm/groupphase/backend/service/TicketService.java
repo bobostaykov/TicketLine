@@ -4,7 +4,11 @@ import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.ticket.TicketDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.ticket.TicketPostDTO;
 import at.ac.tuwien.sepm.groupphase.backend.exception.TicketSoldOutException;
 import com.itextpdf.text.DocumentException;
+import org.springframework.data.domain.Page;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
@@ -20,11 +24,12 @@ public interface TicketService {
     List<TicketDTO> postTicket(List<TicketPostDTO> ticketPostDTOS)  throws TicketSoldOutException;
 
     /**
-     * Get all ticket entries
      *
-     * @return list of all ticket entries
+     * @param page the requested page
+     * @param pageSize the requested page size
+     * @return
      */
-    List<TicketDTO> findAll();
+    Page<TicketDTO> findAll(Integer page, Integer pageSize);
 
     /**
      * Find one ticket by the given reservation number (id)
@@ -43,6 +48,14 @@ public interface TicketService {
     TicketDTO changeStatusToSold(Long id);
 
     /**
+     * Find more than one ticket by the given reservation number (id) with status RESERVATED and change it to SOLD
+     *
+     * @param reservationIds reservation numbers of the tickets
+     * @return changed tickets
+     */
+    List<TicketDTO> changeStatusToSold(List<Long> reservationIds);
+
+    /**
      * Find one ticket with status rservated by the given reservation number (id)
      *
      * @param id reservation number of the ticket
@@ -58,14 +71,6 @@ public interface TicketService {
      */
     TicketDTO deleteOne(Long id);
 
-    /**
-     * Get all ticket entries filtered by the corresponsing customer and/or event name
-     *
-     * @param customerName name of customer the ticket was issued for
-     * @param eventName name of event the ticket was issued for
-     * @return list of found customers
-     */
-    List<TicketDTO> findAllFilteredByCustomerAndEvent(String customerName, String eventName);
 
     /**
      * Get one receipt PDF for the list of ticket IDs
@@ -91,6 +96,28 @@ public interface TicketService {
      */
     byte[] generateTicketPDF(List<String> ticketIDs) throws DocumentException, IOException, NoSuchAlgorithmException;
 
+    /**
+     * Get all ticket entries filtered by the corresponding customer and/or event name
+     *
+     * @param customerName name of customer the ticket was issued for
+     * @param eventName name of event the ticket was issued for
+     * @param page the requested page
+     * @param pageSize the requested pagesize
+     * @param reserved true to only get reserved tickets, false to get only sold tickets. null to get all tickets
+     * @return list of found customers
+     */
+    Page<TicketDTO> findAllFilteredByCustomerAndEvent(@NotNull String customerName, @NotNull String eventName, Boolean reserved, @PositiveOrZero Integer page, @Positive Integer pageSize);
+
+    /**
+     * Get all ticket entries filtered by the corresponding reservationNumber
+     *
+     * @param reservationNumber the reservation number
+     * @param page the requested page
+     * @param pageSize the size of the requested page
+     * @return
+     */
+    Page<TicketDTO> findAllFilteredByReservationNumber(String reservationNumber, Boolean reserved, Integer page, Integer pageSize);
+
     // PINOS IMPLEMENTATION
     /**
      * Get all reservated tickets filtered by customer and show
@@ -101,4 +128,14 @@ public interface TicketService {
      * @return list of found tickets
      */
     //List<TicketDTO> findByCustomerNameAndShowWithStatusReservated(String surname, String firstname, ShowDTO show);
+
+    /**
+     *
+     * @param customerName
+     * @param eventName
+     * @param page
+     * @param pageSize
+     * @return
+     */
+    Page<TicketDTO> findAllReservedFilteredByCustomerAndEvent(String customerName, String eventName, Integer page, Integer pageSize);
 }

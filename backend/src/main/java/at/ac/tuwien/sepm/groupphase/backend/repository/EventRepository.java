@@ -31,7 +31,7 @@ public interface EventRepository extends JpaRepository<Event, Long>, EventReposi
      * @param name name to search for
      * @return list of found events
      */
-    List<Event> findAllByName(String name);
+    List<Event> findAllByNameContainsIgnoreCase(String name);
 
     /**
      * Find all events ordered by name

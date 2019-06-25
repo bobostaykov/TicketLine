@@ -1,13 +1,9 @@
 package at.ac.tuwien.sepm.groupphase.backend.repository;
 
-import at.ac.tuwien.sepm.groupphase.backend.datatype.EventType;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.searchParameters.EventSearchParametersDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Event;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-
-import java.util.List;
-import java.util.Set;
 
 public interface EventRepositoryCustom {
 

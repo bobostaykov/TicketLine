@@ -18,6 +18,7 @@ import at.ac.tuwien.sepm.groupphase.backend.service.ticketExpirationHandler.Tick
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.springframework.data.domain.Page;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -138,7 +139,7 @@ public class TicketServiceTest {
     private Long TEST_TICKET_ID2 = 12L;
     private Double TEST_TICKET_PRICE2 = 15.50;
     private Integer TEST_TICKET_SECTOR2 = 1;
-    private TicketStatus TEST_TICKET_STATUS2 = TicketStatus.RESERVED;
+    private TicketStatus TEST_TICKET_STATUS2 = TicketStatus.RESERVATED;
 
     @Before
     public void before() {
@@ -314,14 +315,14 @@ public class TicketServiceTest {
 
     @Test
     public void testFindAllFilteredByCustomerAndEvent_Successfull() {
-        Mockito.when(customerRepository.findAllByName(TEST_CUSTOMER_NAME1)).thenReturn(TEST_CUSTOMER1_LIST);
-        Mockito.when(eventRepository.findAllByName(TEST_EVENT_NAME)).thenReturn(TEST_EVENT_LIST);
-        Mockito.when(showRepository.findAllByEvent(TEST_EVENT_LIST)).thenReturn(TEST_SHOW_LIST);
-        Mockito.when(ticketRepository.findAllByCustomer(TEST_CUSTOMER1_LIST)).thenReturn(TEST_TICKET_LIST_BY_CUSTOMER);
-        Mockito.when(ticketRepository.findAllByShow(TEST_SHOW_LIST)).thenReturn(TEST_TICKET_LIST_BY_SHOW);
-        Mockito.when(ticketExpirationHandler.setExpiredReservedTicketsToStatusExpired(TEST_TICKET_LIST_DTO)).thenReturn(TEST_TICKET_LIST_DTO);
-        //BDDMockito.given(ticketExpirationHandler.setExpiredReservedTicketsToStatusExpired(any(ShowDTO.class));
-        List<TicketDTO> result = ticketService.findAllFilteredByCustomerAndEvent(TEST_CUSTOMER_NAME1, TEST_EVENT_NAME);
+        Mockito.when(customerRepository.findAllByNameContainsIgnoreCase(TEST_CUSTOMER_NAME1)).thenReturn(TEST_CUSTOMER1_LIST);
+        Mockito.when(eventRepository.findAllByNameContainsIgnoreCase(TEST_EVENT_NAME)).thenReturn(TEST_EVENT_LIST);
+        Mockito.when(showRepository.findAllByEventIn(TEST_EVENT_LIST)).thenReturn(TEST_SHOW_LIST);
+        Mockito.when(ticketRepository.findAllByCustomerIn(TEST_CUSTOMER1_LIST)).thenReturn(TEST_TICKET_LIST_BY_CUSTOMER);
+        Mockito.when(ticketRepository.findAllByShowIn(TEST_SHOW_LIST)).thenReturn(TEST_TICKET_LIST_BY_SHOW);
+        Mockito.when(ticketExpirationHandler.setExpiredReservatedTicketsToStatusExpired(TEST_TICKET_LIST_DTO)).thenReturn(TEST_TICKET_LIST_DTO);
+        //BDDMockito.given(ticketExpirationHandler.setExpiredReservatedTicketsToStatusExpired(any(ShowDTO.class));
+        Page<TicketDTO> result = ticketService.findAllFilteredByCustomerAndEvent(TEST_CUSTOMER_NAME1, TEST_EVENT_NAME,null, 0, 10);
         assertEquals(result, TEST_TICKET_LIST_DTO);
     }
 

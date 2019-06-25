@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {Customer} from '../../dtos/customer';
 import {CustomerService} from '../../services/customer.service';
 import {AuthService} from '../../services/auth/auth.service';
+import {FormGroup} from '@angular/forms';
 
 @Component({
   selector: 'app-customer',

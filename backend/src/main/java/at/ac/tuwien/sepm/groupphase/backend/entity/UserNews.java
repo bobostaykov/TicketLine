@@ -2,7 +2,10 @@ package at.ac.tuwien.sepm.groupphase.backend.entity;
 
 import io.swagger.annotations.ApiModelProperty;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
 @Entity
 public class UserNews {

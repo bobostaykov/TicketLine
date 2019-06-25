@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
@@ -71,7 +70,8 @@ public class ShowRepositoryImpl implements ShowRepositoryCustom {
         if (parameters.getEventId() != null
             || parameters.getEventName() != null
             || parameters.getArtistName() != null
-            || (parameters.getDurationInMinutes() != null && parameters.getDurationInMinutes() != 0)) {
+            || (parameters.getDurationInMinutes() != null && parameters.getDurationInMinutes() != 0)
+            || parameters.getEventType() != null) {
 
             Join<Show, Event> eventJoin = show.join(Show_.event);
 
@@ -89,6 +89,9 @@ public class ShowRepositoryImpl implements ShowRepositoryCustom {
             if (parameters.getDurationInMinutes() != null && parameters.getDurationInMinutes() != 0) {
                 predicates.add(cBuilder.between
                     (eventJoin.get(Event_.durationInMinutes), parameters.getDurationInMinutes() - 30, parameters.getDurationInMinutes() + 30));
+            }
+            if(parameters.getEventType() != null){
+                predicates.add(cBuilder.equal(eventJoin.get(Event_.eventType), parameters.getEventType()));
             }
         }
 
@@ -215,7 +218,7 @@ public class ShowRepositoryImpl implements ShowRepositoryCustom {
             .stream()
             .max(Comparator
                 .comparingDouble(Double::doubleValue))
-            .get() > maxPrice;
+            .get() >= maxPrice;
     }
     private static java.util.function.Predicate<Show> compareMinPrice(Double minPrice){
         return show -> show.getPricePattern()
@@ -224,7 +227,7 @@ public class ShowRepositoryImpl implements ShowRepositoryCustom {
             .stream()
             .max(Comparator
                 .comparingDouble(Double :: doubleValue))
-            .get() > minPrice;
+            .get() >= minPrice;
     }
 }
 

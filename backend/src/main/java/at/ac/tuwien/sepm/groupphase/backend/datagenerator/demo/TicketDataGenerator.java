@@ -3,6 +3,7 @@ package at.ac.tuwien.sepm.groupphase.backend.datagenerator.demo;
 import at.ac.tuwien.sepm.groupphase.backend.datatype.TicketStatus;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Show;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Ticket;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.*;
 import com.github.javafaker.Faker;
 import org.slf4j.Logger;
@@ -54,8 +55,6 @@ public class TicketDataGenerator implements DataGenerator {
             for (Long i = 1L; i <= NUM_OF_TICKETS; i++) {
                 do { showOptional = showRepository.findById(((i+randomGenerator.nextLong()) % numOfShows) + 1); } while (showOptional.isEmpty());
                 Show show = showOptional.get();
-                /*show.setTicketsSold(show.getTicketsSold() + 1);
-                show = showRepository.save(show);*/
                 Ticket ticket =  Ticket.builder()
                     .reservationNo(UUID.randomUUID().toString())
                     .customer(customerRepository.getOne(((i-1) % numOfCustomers) + 1))
@@ -64,6 +63,7 @@ public class TicketDataGenerator implements DataGenerator {
                     .seat(!show.getHall().getSeats().isEmpty() ? show.getHall().getSeats().get(0) : null)
                     .sector(!show.getHall().getSectors().isEmpty()? show.getHall().getSectors().get(0) : null)
                     .status(i % 6 == 0 ? TicketStatus.RESERVED : TicketStatus.SOLD)
+                    .reservationNo("A1234"+ i) // TODO: use randomUUID(?) here
                     .build();
                 if (ticket.getStatus() == TicketStatus.SOLD)
                     showRepository.incrementSoldTickets(show.getId());

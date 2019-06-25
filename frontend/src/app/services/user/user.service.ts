@@ -3,6 +3,7 @@ import {HttpClient} from '@angular/common/http';
 import {Globals} from '../../global/globals';
 import {Observable} from 'rxjs';
 import {User} from '../../dtos/user';
+import {ChangePasswordRequest} from '../../dtos/change-password-request';
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +13,7 @@ export class UserService {
   private userBaseUri: string = this.globals.backendUri + '/users';
   private blockedUserBaseUri: string = this.userBaseUri + '/blocked';
   private unblockUserBaseUri: string = this.blockedUserBaseUri + '/unblock';
+  private passWordChangeBaseUri: string = this.userBaseUri + '/password';
 
   constructor(private httpClient: HttpClient, private globals: Globals) {}
 
@@ -76,6 +78,16 @@ export class UserService {
   deleteUser(userId: number): Observable<{}> {
     console.log('Delete user with id ' + userId);
     return this.httpClient.delete(this.userBaseUri + '/' + userId);
+  }
+
+  /**
+   * Changes the password of a user (sender has to be admin and only passwords of not-admin users can be changed
+   * @param changePasswordRequest a request containing the id, the username and the new password
+   */
+  changePassword(changePasswordRequest: ChangePasswordRequest): Observable<{}> {
+    console.log('Change Password for user' + changePasswordRequest.username);
+    console.log('POST' + this.passWordChangeBaseUri)
+    return this.httpClient.post<ChangePasswordRequest>(this.passWordChangeBaseUri, changePasswordRequest);
   }
 
 }
