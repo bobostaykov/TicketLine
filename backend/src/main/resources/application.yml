@@ -29,3 +29,7 @@ management:
 
 receipt:
   address: Ticketline-Gasse 1a, 1010 Wien
+
+ticket:
+  check:
+    url: https://ticketline.at/tickets/check/
