@@ -47,7 +47,6 @@ import {SelectDropDownModule} from 'ngx-select-dropdown';
 import {ChangePasswordDialogComponent } from './components/change-password-dialog/change-password-dialog.component';
 import {ReservationAndCancellationComponent} from './components/storno/reservation-and-cancellation.component';
 import {ShowDialogComponent} from './components/show-dialog/show-dialog.component';
-import {errorHandlingProvider} from './errorhandling';
 import {ErrorSnackBarComponent} from './components/error-snack-bar/error-snack-bar.component';
 import {EventDialogComponent} from './components/event-dialog/event-dialog.component';
 import {LocationDialogComponent} from './components/location-dialog/location-dialog.component';
