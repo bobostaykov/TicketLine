@@ -2,9 +2,9 @@ package at.ac.tuwien.sepm.groupphase.backend.endpoint;
 
 import at.ac.tuwien.sepm.groupphase.backend.conversion.CaseInsensitiveEnumConverter;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.hall.HallDTO;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.location.LocationDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.requestparameter.HallRequestParameter;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.searchParameters.HallSearchParametersDTO;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Location;
 import at.ac.tuwien.sepm.groupphase.backend.exception.CustomValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.service.HallService;
@@ -48,12 +48,12 @@ public class HallEndpoint {
         return hallService.findHallById(hallId, include);
     }
 
-    // TODO: If there is time replace location with locationDTO and adjust everything as necessary
+
     @GetMapping
     @ApiOperation(value = "Get all saved halls", authorizations = {@Authorization(value = "apiKey")})
     public List<HallDTO> getHalls(@RequestParam(value = "fields", required = false) List<HallRequestParameter> fields,
                                   @RequestParam(required = false) String name,
-                                  @RequestParam(required = false) Location location){
+                                  @RequestParam(required = false) LocationDTO location){
         LOGGER.info("Gets a list of halls with search parameters name = " + (name == null ? "all" : name) + " and location = "
             + (location == null ? "all" : location.toString()) + " with requested fields = " + (fields == null ? "all" : fields.toString()));
         HallSearchParametersDTO searchParametersDTO = HallSearchParametersDTO.builder()
