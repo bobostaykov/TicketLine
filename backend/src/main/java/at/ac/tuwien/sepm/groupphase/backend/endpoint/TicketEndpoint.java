@@ -40,7 +40,6 @@ public class TicketEndpoint {
         this.ticketService = ticketService;
     }
 
-    // TODO: check if show is in less than 30 minutes and send error if yes
     @RequestMapping(method = RequestMethod.POST)
     @ApiOperation(value = "Create a ticket", authorizations = {@Authorization(value = "apiKey")})
     public List<TicketDTO> create(@RequestBody List<TicketPostDTO> ticketPostDTO) {
