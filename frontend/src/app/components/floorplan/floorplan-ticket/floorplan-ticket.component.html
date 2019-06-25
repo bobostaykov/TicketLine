@@ -6,6 +6,7 @@
   </div>
   <div class="ticket-list">
     <div *ngFor="let ticket of ticketsession.getTickets()" class="ticket"
+         [ngStyle]="allowDeleteTickets && {'cursor': 'pointer'}"
          (contextmenu)="displayContextmenu(ticket, $event)"
          (click)="displayContextmenu(ticket, $event)">
       <div class="ticketContent">

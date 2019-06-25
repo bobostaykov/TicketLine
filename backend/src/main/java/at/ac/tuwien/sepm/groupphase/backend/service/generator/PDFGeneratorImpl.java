@@ -35,7 +35,7 @@ public class PDFGeneratorImpl implements PDFGenerator{
     public byte[] generateReceipt(List<TicketDTO> tickets, Boolean cancellation) throws DocumentException {
         LOGGER.info("PDF Generator: Generate (cancellation) receipt for ticket(s)");
         if (tickets.size() < 1)
-            throw new NotFoundException("Cannot create receipt for empty list of Tickets."); //TODO: warum wird das auf HHTP 406 und nicht HTTP.NOT_FOUND gemapped?
+            throw new NotFoundException("Cannot create receipt for empty list of Tickets.");
         Double returnSum;
         Double sum = 0.0;
         Document receipt = new Document();
@@ -247,9 +247,9 @@ public class PDFGeneratorImpl implements PDFGenerator{
 
     private Image generateQrCode(TicketDTO ticket) throws BadElementException {
         SHA3.DigestSHA3 digestSHA3 = new SHA3.Digest512();
-        byte[] digest = digestSHA3.digest(ticket.getId().toString().getBytes());
+        byte[] digest = digestSHA3.digest(ticket.getReservationNo().getBytes());
         String sha3_256hex = bytesToHex(digest);
-        String toCode = TICKET_CHECK_URL + sha3_256hex; // TODO: use ticket number instead
+        String toCode = TICKET_CHECK_URL + sha3_256hex;
         BarcodeQRCode qr = new BarcodeQRCode(toCode, 1000, 1000, null);
         Image image = qr.getImage();
         image.scaleAbsolute(250, 250);

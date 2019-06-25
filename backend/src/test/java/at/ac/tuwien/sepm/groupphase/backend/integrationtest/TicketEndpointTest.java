@@ -748,7 +748,6 @@ public class TicketEndpointTest extends BaseIntegrationTest {
 
     @Test
     public void getReceiptForListOfTickets() {
-        // TODO: Use real repo with test data
         List<Long> ticketIDs = new ArrayList<>();
         ticketIDs.add(TEST_TICKET_ID1);
         ticketIDs.add(TEST_TICKET_ID2);

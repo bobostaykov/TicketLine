@@ -25,7 +25,6 @@ export class ContentManagerComponent implements OnInit {
   private savedName: string;
 
   private page: number = 0;
-  private page: number = 0;
   private totalPages: number;
   private pageRange: Array<number> = [];
   private dataReady: boolean = false;
@@ -346,6 +345,8 @@ export class ContentManagerComponent implements OnInit {
   }
 
   private addArtist() {
+    this.addArtistForm.reset();
+    this.addArtistFormSubmitted = false;
     console.log('ContentManager: addArtist');
     this.artistService.addArtist(this.artistToAdd).subscribe(
       () => {},
@@ -379,10 +380,6 @@ export class ContentManagerComponent implements OnInit {
       error => this.defaultServiceErrorHandling(error),
       () => window.location.reload()
     );
-  }
-
-  private loadArtistsInEventDialog() {
-    this.eventDialog.loadArtists();
   }
 
   private setActiveEvent(event: Event) {
@@ -425,4 +422,5 @@ export class ContentManagerComponent implements OnInit {
       this.errorMessage = error.error.error;
     }
   }
+
 }
