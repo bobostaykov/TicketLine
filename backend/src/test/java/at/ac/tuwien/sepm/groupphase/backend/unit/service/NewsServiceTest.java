@@ -8,7 +8,6 @@ import at.ac.tuwien.sepm.groupphase.backend.entity.User;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.news.NewsMapper;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.news.NewsMapperImpl;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.user.UserMapper;
-import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.user.UserMapperImpl;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.NewsRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.UserRepository;

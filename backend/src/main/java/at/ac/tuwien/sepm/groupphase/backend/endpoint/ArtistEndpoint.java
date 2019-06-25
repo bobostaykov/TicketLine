@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.artist.ArtistDTO;
+import at.ac.tuwien.sepm.groupphase.backend.exception.CustomValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.service.ArtistService;
@@ -16,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.constraints.Positive;
-import java.util.List;
 
 @RestController
 @RequestMapping(value = "/artists")
@@ -35,7 +35,7 @@ public class ArtistEndpoint {
     @ApiOperation(value = "Get artists with 'artistName' as part of their name", authorizations = {@Authorization(value = "apiKey")})
     public Page<ArtistDTO> findArtistsByName(@RequestParam(value = "artist_name") String artistName,
                                              @RequestParam(value = "page", required = false) Integer page,
-                                             @RequestParam(value = "pageSize", required = false) @Positive Integer pageSize) {
+                                             @RequestParam(value = "pageSize", required = false) @Positive Integer pageSize) throws CustomValidationException {
         LOGGER.info("ArtistEndpoint: findArtistsByName");
         return artistService.findArtistsByName(artistName, page, pageSize);
     }

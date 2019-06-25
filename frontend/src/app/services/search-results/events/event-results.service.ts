@@ -13,11 +13,25 @@ export class EventResultsService {
 
   constructor(private httpClient: HttpClient, private globals: Globals) { }
 
+  /**
+   * Finds all events in which the given artist takes part
+   * @param id of the artist to look for
+   * @param page the number of the page to return
+   */
   public findEventsFilteredByArtistID(id, page): Observable<Event[]> {
     console.log('Service Event-Results: findEventsFilteredByArtistID');
     return this.httpClient.get<Event[]>(this.eventBaseUri + '/artist/' + id, {params: {page: page}});
   }
 
+  /**
+   * Finds Events filtered by:
+   * @param eventName of the event
+   * @param eventType of the event
+   * @param artistName artist which takes part in the event
+   * @param content of the event
+   * @param description of the event
+   * @param page the number of the page to return
+   */
   public findEventsFilteredByAttributes(eventName, eventType, artistName, content, description, page): Observable<Event[]> {
     console.log('Service Event-Results: findEventsFilteredByAttributes');
     let parameters = new HttpParams();

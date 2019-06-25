@@ -137,7 +137,7 @@ export class FloorplanControlComponent implements OnInit {
       for (let number = Math.min(value.sectorNumberStart, value.sectorNumberEnd); number <= Math.max(value.sectorNumberStart, value.sectorNumberEnd); number++) {
         // only add sector if a sector with the same number does not already exist
         if (!this.getSelectedHall().sectors.some(sector => sector.sectorNumber === number)) {
-          this.getSelectedHall().sectors.push(new Sector(null, number, value.sectorPrice, null, null));
+          this.getSelectedHall().sectors.push(new Sector(null, number, value.sectorPrice, null, value.maxCapacity, null, null));
         }
       }
       this.addSectorsForm.reset({
@@ -334,6 +334,7 @@ export class FloorplanControlComponent implements OnInit {
     this.addSectorsForm = new FormGroup({
       'sectorNumberStart': new FormControl(null, [Validators.required, Validators.min(1)]),
       'sectorNumberEnd': new FormControl(null, [Validators.required, Validators.min(1)]),
+      'maxCapacity': new FormControl(null, [Validators.required, Validators.min(1)]),
       'sectorPrice': new FormControl(PriceCategory.Cheap, [Validators.required])
     });
 

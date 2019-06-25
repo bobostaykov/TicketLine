@@ -57,6 +57,7 @@ public class HallPerformanceTestDataGenerator extends PerformanceTestDataGenerat
                         sectors.add(Sector.builder()
                             .priceCategory(sectorId % 3 == 0 ? PriceCategory.CHEAP : sectorId % 3 == 1 ? PriceCategory.AVERAGE : PriceCategory.EXPENSIVE)
                             .sectorNumber(Math.toIntExact(customMod(sectorId, NUM_OF_SECTORS_PER_HALL)))
+                            .maxCapacity((int)(Math.random() * 1000) + 100)
                             .hall(hallRepository.getOne(customMod(id, NUM_OF_HALLS)))
                             .build());
                 }
