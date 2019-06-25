@@ -65,7 +65,7 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public List<TicketDTO> postTicket(List<TicketPostDTO> ticketPostDTO) throws TicketSoldOutException, NotFoundException {
+    public synchronized List<TicketDTO> postTicket(List<TicketPostDTO> ticketPostDTO) throws TicketSoldOutException, NotFoundException {
         LOGGER.info("Ticket Service: Create Ticket");
         List<TicketDTO> created = new ArrayList<>();
         for (TicketPostDTO current : ticketPostDTO) {
@@ -184,10 +184,14 @@ public class TicketServiceImpl implements TicketService {
 
     @Override
     @Transactional
-    public TicketDTO changeStatusToSold(Long id) {
+    public synchronized TicketDTO changeStatusToSold(Long id) {
         LOGGER.info("Ticket Service: Change Ticket status for ticket with id {} to sold", id);
         TicketDTO ticket = this.findOneReserved(id);
-        ticket.setStatus(TicketStatus.SOLD);
+        if (ticket.getStatus() == TicketStatus.RESERVED) {
+            ticket.setStatus(TicketStatus.SOLD);
+        }else{
+            throw new TicketSoldOutException("Ticker with number" + ticket.getReservationNo() + "has already been sold");
+        }
         TicketDTO updatedTicket = ticketMapper.ticketToTicketDTO(ticketRepository.save(ticketMapper.ticketDTOToTicket(ticket)));
         showRepository.incrementSoldTickets(showMapper.showDTOToShow(updatedTicket.getShow()).getId());
         return updatedTicket;
@@ -195,10 +199,15 @@ public class TicketServiceImpl implements TicketService {
 
     @Transactional
     @Override
-    public List<TicketDTO> changeStatusToSold(List<Long> reservationIds) {
+    public synchronized List<TicketDTO>  changeStatusToSold(List<Long> reservationIds) throws TicketSoldOutException{
         LOGGER.info("Change Ticket status for tickets with ids " + reservationIds.toString());
         List<TicketDTO> tickets = ticketMapper.ticketToTicketDTO(ticketRepository.findByIdIn(reservationIds));
-        tickets.stream().forEach(ticketDTO -> {ticketDTO.setStatus(TicketStatus.SOLD);});
+        tickets.stream().forEach( ticketDTO -> {
+            if (ticketDTO.getStatus() == TicketStatus.RESERVED){
+                ticketDTO.setStatus(TicketStatus.SOLD);
+            }else{
+                throw new TicketSoldOutException("Ticker with number" + ticketDTO.getReservationNo() + "has already been sold");
+        }});
         List<TicketDTO> outputList = new ArrayList(){
         };
         tickets.stream().forEach(t -> {outputList.add(ticketMapper.ticketToTicketDTO(ticketRepository.save(ticketMapper.ticketDTOToTicket(t))));});

@@ -53,7 +53,7 @@ public interface TicketService {
      * @param reservationIds reservation numbers of the tickets
      * @return changed tickets
      */
-    List<TicketDTO> changeStatusToSold(List<Long> reservationIds);
+    List<TicketDTO> changeStatusToSold(List<Long> reservationIds) throws TicketSoldOutException;
 
     /**
      * Find one ticket with status rservated by the given reservation number (id)

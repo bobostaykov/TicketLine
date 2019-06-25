@@ -115,7 +115,6 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
             HttpStatus.BAD_REQUEST,ex.getLocalizedMessage(), error);
         return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
     }
-
     @ExceptionHandler({Exception.class})
     protected ResponseEntity<Object> defaultExceptionHandler(Exception ex, WebRequest request) {
         LOGGER.info(ex.getClass().getCanonicalName() + "is thrown!");
@@ -123,4 +122,7 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
             HttpStatus.INTERNAL_SERVER_ERROR, ex.getLocalizedMessage(), "Error occured");
         return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
     }
+
+
+
 }
