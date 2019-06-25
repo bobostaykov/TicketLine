@@ -237,7 +237,7 @@
   </div>
 
   <!-- Modal to delete show -->
-  <div class="modal fade" id="delete-show-modal" tabindex="-1" role="dialog" aria-labelledby="Delete show modal"
+  <div class="modal fade delete-modal" id="delete-show-modal" tabindex="-1" role="dialog" aria-labelledby="Delete show modal"
        aria-hidden="true">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
@@ -249,10 +249,8 @@
         </div>
         <div class="modal-body">
           <p>Are you sure?</p>
-          <button type="button" (click)="deleteShow()" class="btn btn-danger float-left" data-dismiss="modal">
-            Delete
-          </button>
-          <button type="button" class="btn btn-default float-right" data-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-default float-left" data-dismiss="modal">Cancel</button>
+          <button type="button" (click)="deleteShow()" class="btn btn-danger float-right" data-dismiss="modal">Delete</button>
         </div>
       </div>
     </div>
@@ -288,10 +286,9 @@
           </form>
         </div>
         <div class="modal-footer">
+          <button type="button" class="btn btn-default float-left" data-dismiss="modal">Cancel</button>
           <button [disabled]="addArtistForm.invalid" type="button" (click)="addArtist()"
-                  class="btn btn-success float-left" data-dismiss="modal">Add Artist
-          </button>
-          <button type="button" class="btn btn-default float-right" data-dismiss="modal">Cancel</button>
+          class="btn btn-success float-right" data-dismiss="modal">Add Artist</button>
         </div>
       </div>
     </div>
@@ -325,17 +322,16 @@
           </form>
         </div>
         <div class="modal-footer">
+          <button type="button" class="btn btn-default float-left" data-dismiss="modal">Cancel</button>
           <button [disabled]="updateArtistForm.invalid" type="button" (click)="updateArtist()"
-                  class="btn btn-success float-left" data-dismiss="modal">Update Artist
-          </button>
-          <button type="button" class="btn btn-default float-right" data-dismiss="modal">Cancel</button>
+          class="btn btn-success float-right" data-dismiss="modal">Update Artist</button>
         </div>
       </div>
     </div>
   </div>
 
   <!-- Modal to delete artist -->
-  <div class="modal fade" id="delete-artist-modal" tabindex="-1" role="dialog" aria-labelledby="Delete artist modal"
+  <div class="modal fade delete-modal" id="delete-artist-modal" tabindex="-1" role="dialog" aria-labelledby="Delete artist modal"
        aria-hidden="true">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
@@ -347,10 +343,8 @@
         </div>
         <div class="modal-body">
           <p>Are you sure?</p>
-          <button type="button" (click)="deleteArtist()" class="btn btn-danger float-left" data-dismiss="modal">
-            Delete
-          </button>
-          <button type="button" class="btn btn-default float-right" data-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-default float-left" data-dismiss="modal">Cancel</button>
+          <button type="button" (click)="deleteArtist()" class="btn btn-danger float-right" data-dismiss="modal">Delete</button>
         </div>
       </div>
     </div>
@@ -424,9 +418,8 @@
         </div>
         <div class="modal-body">
           <p>Are you sure?</p>
-          <button type="button" (click)="deleteLocation()" class="btn btn-danger float-left" data-dismiss="modal">Delete
-          </button>
-          <button type="button" class="btn btn-default float-right" data-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-default float-left" data-dismiss="modal">Cancel</button>
+          <button type="button" (click)="deleteLocation()" class="btn btn-danger float-right" data-dismiss="modal">Delete</button>
         </div>
       </div>
     </div>
@@ -501,9 +494,8 @@
         </div>
         <div class="modal-body">
           <p>Are you sure?</p>
-          <button type="button" (click)="deleteEvent()" class="btn btn-danger float-left" data-dismiss="modal">Delete
-          </button>
-          <button type="button" class="btn btn-default float-right" data-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-default float-left" data-dismiss="modal">Cancel</button>
+          <button type="button" (click)="deleteEvent()" class="btn btn-danger float-right" data-dismiss="modal">Delete</button>
         </div>
       </div>
     </div>
