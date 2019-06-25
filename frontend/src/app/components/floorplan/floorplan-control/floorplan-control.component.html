@@ -1,10 +1,13 @@
 <!-- upper row containing forms to add seats or sectors as well as select a specific hall, show or location -->
 <div class="row mt-3 bottom-box-shadow pb-4 mb-5" [ngClass]="{'pb-5': ! editingEnabled || ! isAdmin()}">
+
   <div class="col" [ngSwitch]="hallType" *ngIf="isAdmin() && editingEnabled">
-    <!-- editing is disabled and this div therefore not shows if user is not admin or editing is no longer allowed on this hall -->
+    <!-- editing is disabled and this div therefore doesn't show  if user is not admin or editing is no longer allowed on this hall -->
+
     <!-- form to add or delete seats from currently selected hall -->
     <form *ngSwitchCase="'seats'" [formGroup]="addSeatsForm" (ngSubmit)="addSeats()">
       <div class="row pb-2">
+
         <!-- 'from-to' selection for seat rows to which seats should be added or deleted from the selected hall -->
         <div class="row col-7">
           <mat-form-field appearance="standard" class="col-7 pr-0">
@@ -24,6 +27,7 @@
             <mat-error *ngIf="addSeatsForm.get('seatRowEnd').hasError('min') && addSeatsForm.dirty">Must be greater than 0!</mat-error>
           </mat-form-field>
         </div>
+
         <!-- seat price selection -->
         <div class="row col-5">
           <mat-form-field appearance="standard">
@@ -36,6 +40,7 @@
         </div>
       </div>
       <div class="row">
+
         <!-- 'from-to' selection for seat numbers for which seats should be added or deleted from the selected hall -->
         <div class="row col-7">
           <mat-form-field appearance="standard" class="col-7 pr-0">
@@ -55,6 +60,7 @@
             <mat-error *ngIf="addSeatsForm.get('seatNumberEnd').hasError('min') && addSeatsForm.dirty">Must be greater than 0!</mat-error>
           </mat-form-field>
         </div>
+
         <!-- buttons to submit form and either add or delete seats -->
         <div class="col-5 mt-4 text-nowrap">
           <button mat-raised-button color="primary" class="mr-2 inputButton" type="submit"
@@ -66,9 +72,11 @@
         </div>
       </div>
     </form>
+
     <!-- form to add or delete sectors from currently selected hall -->
     <form *ngSwitchCase="'sectors'" [formGroup]="addSectorsForm" (ngSubmit)="addSectors()">
       <div class="row">
+
         <!-- 'from-to' selection for sector numbers for which sectors should be added or deleted from the selected hall -->
         <div class="row col-7">
           <mat-form-field appearance="standard" class="col-7 pr-0">
@@ -91,6 +99,7 @@
             <mat-error *ngIf="addSectorsForm.get('sectorNumberEnd').hasError('min') && addSectorsForm.dirty">Must be greater than 0!</mat-error>
           </mat-form-field>
         </div>
+
         <!-- selection for sector price category -->
         <div class="row col-5">
           <mat-form-field appearance="standard">
@@ -102,9 +111,26 @@
           </mat-form-field>
         </div>
       </div>
-      <!-- buttons to submit form and either adding or deleting sectors from hall -->
+
+      <!-- second row of addSectorsForm -->
       <div class="row">
-        <div class="col-12 h-100 mt-4">
+
+        <!-- form field to set sector max capacity -->
+        <div class="row col-7">
+          <mat-form-field appearance="standard" class="col-7 pr-0">
+            <mat-label>Sector Capacity</mat-label>
+            <label for="sectorCapacity" class="sr-only">Sector Capacity</label>
+            <input matInput id="sectorCapacity" formControlName="maxCapacity" type="number" class="text-right"
+                   aria-labelledby="sector max capacity"/>
+            <mat-error *ngIf="addSectorsForm.get('maxCapacity').hasError('required') && addSectorsForm.dirty">Capacity must be set!
+            </mat-error>
+            <mat-error *ngIf="addSectorsForm.get('maxCapacity').hasError('min') && addSectorsForm.dirty">Must be greater than 0!
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <!-- buttons to submit form and either adding or deleting sectors from hall -->
+        <div class="col-5 mt-4 text-nowrap">
           <button mat-raised-button color="primary" class="mr-2 inputButton" type="submit"
                   [disabled]="addSectorsForm.invalid">Add Sectors
           </button>

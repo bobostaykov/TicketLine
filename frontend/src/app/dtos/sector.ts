@@ -7,6 +7,8 @@ export class Sector {
     public sectorNumber: number,
     public priceCategory: PriceCategory,
     public price: number,
+    public maxCapacity: number,
+    public ticketsSold: number,
     public ticketStatus: TicketStatus
   ) {
   }
