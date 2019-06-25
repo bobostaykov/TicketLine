@@ -11,11 +11,13 @@ import {EventResultsService} from '../../services/search-results/events/event-re
 import {Location} from '../../dtos/location';
 import {MatSnackBar} from '@angular/material';
 import {EventService} from '../../services/event/event.service';
+import {EventDialogComponent} from '../event-dialog/event-dialog.component';
 
 @Component({
   selector: 'app-content-manager',
   templateUrl: './content-manager.component.html',
-  styleUrls: ['./content-manager.component.scss']
+  styleUrls: ['./content-manager.component.scss'],
+  providers: [EventDialogComponent]
 })
 export class ContentManagerComponent implements OnInit {
 
@@ -51,6 +53,7 @@ export class ContentManagerComponent implements OnInit {
   private artistToDelete: number;
   private addArtistForm: FormGroup;
   private updateArtistForm: FormGroup;
+  private addArtistFormSubmitted: boolean;
 
   // Add/Update Show
   private showToDelete: number;
@@ -100,8 +103,9 @@ export class ContentManagerComponent implements OnInit {
   ];
 
   constructor(private authService: AuthService, public snackBar: MatSnackBar, private artistService: ArtistResultsService,
-              private showService: ShowResultsService, private eventResultsService: EventResultsService, private locationService: LocationResultsService,
-              private eventService: EventService) { }
+              private showService: ShowResultsService, private eventResultsService: EventResultsService,
+              private locationService: LocationResultsService, private eventService: EventService,
+              private eventDialog: EventDialogComponent) { }
 
   ngOnInit() {
     this.addForm = new FormGroup({
@@ -352,6 +356,7 @@ export class ContentManagerComponent implements OnInit {
 
   private updateArtist() {
     console.log('ContentManager: updateArtist');
+    this.addArtistFormSubmitted = true;
     this.artistService.updateArtist(this.artistToUpdate).subscribe(
       () => {},
       error => { this.defaultServiceErrorHandling(error); },
@@ -374,6 +379,10 @@ export class ContentManagerComponent implements OnInit {
       error => this.defaultServiceErrorHandling(error),
       () => window.location.reload()
     );
+  }
+
+  private loadArtistsInEventDialog() {
+    this.eventDialog.loadArtists();
   }
 
   private setActiveEvent(event: Event) {
