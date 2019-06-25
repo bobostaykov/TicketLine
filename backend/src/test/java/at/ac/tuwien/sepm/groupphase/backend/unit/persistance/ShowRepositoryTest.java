@@ -294,7 +294,7 @@ public class ShowRepositoryTest {
         ShowSearchParametersDTO successParameters = new ShowSearchParametersDTO.builder().priceInEuroFrom(30).build();
         ShowSearchParametersDTO failureParameters = new ShowSearchParametersDTO.builder().priceInEuroFrom(50).build();
         Page<Show> showPage = showRepository.findAllShowsFiltered(successParameters,PageRequest.of(0,10));
-        Assert.assertEquals(3, showPage.getContent().size());
+        Assert.assertEquals(4, showPage.getContent().size());
         Assert.assertEquals(show1, showPage.getContent().get(0));
         Assert.assertEquals(show2, showPage.getContent().get(1));
         Assert.assertEquals(show3, showPage.getContent().get(2));

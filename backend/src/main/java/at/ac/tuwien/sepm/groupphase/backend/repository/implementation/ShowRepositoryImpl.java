@@ -213,9 +213,9 @@ public class ShowRepositoryImpl implements ShowRepositoryCustom {
             .getPriceMapping()
             .values()
             .stream()
-            .max(Comparator
+            .min(Comparator
                 .comparingDouble(Double::doubleValue))
-            .get() >= maxPrice;
+            .get() <= maxPrice;
     }
     private static java.util.function.Predicate<Show> compareMinPrice(Double minPrice){
         return show -> show.getPricePattern()

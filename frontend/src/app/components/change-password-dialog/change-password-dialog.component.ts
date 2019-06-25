@@ -42,11 +42,9 @@ export class ChangePasswordDialogComponent implements OnInit {
   }
 
   private changePassword() {
+    console.log('changing password')
     this.submitted = true;
-    if (this.passwordForm.valid
-      && this.passwordForm.controls.rePassword.value === this.passwordForm.controls.newPassword.value) {
-      this.onSubmit();
-    }
+    this.onSubmit();
   }
   private setSubmitted(){
     this.submitted = true;
