@@ -8,6 +8,7 @@
              aria-labelledby="location name"
              placeholder="Enter Name"
              [(ngModel)]="locationModel.locationName"
+             required = true
              #locationName='ngModel'/>
       <div [hidden]="locationName.valid || locationName.pristine" class="form-text text-warning">
         Name is required!
@@ -20,6 +21,7 @@
              aria-labelledby="location country"
              placeholder="Enter a country"
              [(ngModel)]="locationModel.country"
+             required = true
              #country='ngModel'/>
       <div [hidden]="country.valid || country.pristine" class="form-text text-warning">
         Country is required!
@@ -32,6 +34,7 @@
              aria-labelledby="location city"
              placeholder="Enter a city"
              [(ngModel)]="locationModel.city"
+             required = true
              #city='ngModel'/>
       <div [hidden]="city.valid || city.pristine" class="form-text text-warning">
         City is required!
@@ -44,6 +47,7 @@
              aria-labelledby="location postal code"
              placeholder="Enter a postal code"
              [(ngModel)]="locationModel.postalCode"
+             required = true
              #postalCode='ngModel'/>
       <div [hidden]="postalCode.valid || postalCode.pristine" class="form-text text-warning">
         Postal code is required!
@@ -56,6 +60,7 @@
              aria-labelledby="location street"
              placeholder="Enter a street"
              [(ngModel)]="locationModel.street"
+             required = true
              #street='ngModel'/>
       <div [hidden]="street.valid || street.pristine" class="form-text text-warning">
         Street is required!

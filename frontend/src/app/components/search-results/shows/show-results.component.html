@@ -14,7 +14,7 @@
       <td class="align-middle">{{show.event.eventType}}</td>
       <td class="align-middle">{{show.hall.location.country}}, {{show.hall.location.city}}
         , {{show.hall.location.street}}</td>
-      <td class="align-middle">{{show.date | date:'mediumDate'}} {{show.time}}</td>
+      <td class="align-middle">{{show.date | date:"dd/MM/yyyy"}} {{show.time}}</td>
       <td class="align-middle" *ngIf="show.event.artist !== undefined">{{show.event.artist.name}}</td>
       <td class="align-middle" *ngIf="show.event.artist === undefined"></td>
       <td class="align-middle">{{show.hall.name}}</td>

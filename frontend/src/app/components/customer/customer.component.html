@@ -47,7 +47,7 @@
       <td>{{customer.name}}</td>
       <td>{{customer.firstname}}</td>
       <td>{{customer.email}}</td>
-      <td>{{customer.birthday}}</td>
+      <td>{{customer.birthday | date:"dd/MM/yyyy"}}</td>
       <td *ngIf="isAdmin()">
         <button type="button" class="btn btn-secondary btn-sm m-2" data-toggle="modal" data-target="#update-customer"
                 (click)="setActiveCustomer(customer)">
