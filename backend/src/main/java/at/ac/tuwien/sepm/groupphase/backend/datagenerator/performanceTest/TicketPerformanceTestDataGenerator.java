@@ -13,10 +13,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 
 @Profile("generatePerformanceTestData")
 @Component
@@ -61,6 +58,7 @@ public class TicketPerformanceTestDataGenerator extends PerformanceTestDataGener
                         .seat(!show.getHall().getSeats().isEmpty() ? show.getHall().getSeats().get(i) : null)
                         .sector(!show.getHall().getSectors().isEmpty() ? show.getHall().getSectors().get(customModInt((long)i, NUM_OF_SECTORS_PER_HALL)) : null)
                         .price(TICKET_PRICE)
+                        .reservationNo(UUID.randomUUID().toString())
                         .build();
                     if (ticket.getStatus() == TicketStatus.SOLD)
                         showRepository.incrementSoldTickets(show.getId());
