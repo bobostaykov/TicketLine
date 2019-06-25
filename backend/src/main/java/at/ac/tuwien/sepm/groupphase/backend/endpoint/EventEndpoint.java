@@ -18,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -40,7 +41,7 @@ public class EventEndpoint {
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(value = "Create event", authorizations = {@Authorization(value = "apiKey")})
-    public EventDTO createEvent(@RequestBody EventDTO eventDTO) {
+    public EventDTO createEvent(@Valid @RequestBody EventDTO eventDTO) {
         LOGGER.info("Event Endpoint: createEvent");
         try {
             return eventService.createEvent(eventDTO);
@@ -160,7 +161,7 @@ public class EventEndpoint {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     @ApiOperation(value = "Update event", authorizations = {@Authorization(value = "apiKey")})
-    public EventDTO updateEvent(@RequestBody EventDTO eventDTO, @PathVariable("id") Long id) {
+    public EventDTO updateEvent(@Valid @RequestBody EventDTO eventDTO, @PathVariable("id") Long id) {
         LOGGER.info("Update event " + eventDTO.toString());
         eventDTO.setId(id);
         try {

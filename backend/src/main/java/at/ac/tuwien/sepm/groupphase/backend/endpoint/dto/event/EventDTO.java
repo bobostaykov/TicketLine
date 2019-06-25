@@ -5,6 +5,7 @@ import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.artist.ArtistDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import javax.validation.constraints.NotBlank;
 import java.util.Objects;
 
 @ApiModel(value = "EventDTO")
@@ -14,6 +15,7 @@ public class EventDTO {
     private Long id;
 
     @ApiModelProperty(name = "The unique name of the event")
+    @NotBlank
     private String name;
 
     @ApiModelProperty(name = "The type of the event (THEATER | OPER | FESTIVAL | CONCERT | MOVIE | MUSICAL)")
