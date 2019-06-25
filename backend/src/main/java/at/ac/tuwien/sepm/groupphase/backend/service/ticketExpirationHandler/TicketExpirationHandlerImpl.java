@@ -34,22 +34,22 @@ public class TicketExpirationHandlerImpl implements TicketExpirationHandler {
     public void setExpiredReservatedTicketsToStatusExpiredForSpecificShow(ShowDTO showDTO) {
         if(!this.checkIfShowStartsInLessThan30Minutes(showDTO))
             return;
-        List<TicketDTO> ticketsToExpire = ticketMapper.ticketToTicketDTO(ticketRepository.findAllByShowAndStatus(showMapper.showDTOToShow(showDTO), TicketStatus.RESERVATED));
+        List<TicketDTO> ticketsToExpire = ticketMapper.ticketToTicketDTO(ticketRepository.findAllByShowAndStatus(showMapper.showDTOToShow(showDTO), TicketStatus.RESERVED));
         for (TicketDTO t:
              ticketsToExpire) {
-            if(t.getStatus() == TicketStatus.RESERVATED)
+            if(t.getStatus() == TicketStatus.RESERVED)
                 t.setStatus(TicketStatus.EXPIRED);
         }
         ticketRepository.saveAll(ticketMapper.ticketDTOToTicket(ticketsToExpire));
     }
 
     @Override
-    public TicketDTO setExpiredReservatedTicketsToStatusExpired(TicketDTO ticket) {
+    public TicketDTO setExpiredReservedTicketsToStatusExpired(TicketDTO ticket) {
         return this.processSingleTicket(ticket);
     }
 
     @Override
-    public List<TicketDTO> setExpiredReservatedTicketsToStatusExpired(List<TicketDTO> tickets) {
+    public List<TicketDTO> setExpiredReservedTicketsToStatusExpired(List<TicketDTO> tickets) {
         List<TicketDTO> result = new ArrayList<>();
         for (TicketDTO t: tickets) {
             result.add(this.processSingleTicket(t));
@@ -58,7 +58,7 @@ public class TicketExpirationHandlerImpl implements TicketExpirationHandler {
     }
 
     @Override
-    public void setAllExpiredReservatedTicketsToStatusExpired() {
+    public void setAllExpiredReservedTicketsToStatusExpired() {
         List<ShowDTO> shows = showMapper.showToShowDTO(showRepository.findAll());
         for (ShowDTO s: shows) {
             this.setExpiredReservatedTicketsToStatusExpiredForSpecificShow(s);

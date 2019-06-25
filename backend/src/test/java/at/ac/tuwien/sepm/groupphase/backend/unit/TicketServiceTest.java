@@ -142,7 +142,7 @@ public class TicketServiceTest {
     private Long TEST_TICKET_ID2 = 12L;
     private Double TEST_TICKET_PRICE2 = 15.50;
     private Integer TEST_TICKET_SECTOR2 = 1;
-    private TicketStatus TEST_TICKET_STATUS2 = TicketStatus.RESERVATED;
+    private TicketStatus TEST_TICKET_STATUS2 = TicketStatus.RESERVED;
 
     @Before
     public void before() {
@@ -323,7 +323,7 @@ public class TicketServiceTest {
         Mockito.when(showRepository.findAllByEventIn(TEST_EVENT_LIST)).thenReturn(TEST_SHOW_LIST);
         Mockito.when(ticketRepository.findAllByCustomerIn(TEST_CUSTOMER1_LIST)).thenReturn(TEST_TICKET_LIST_BY_CUSTOMER);
         Mockito.when(ticketRepository.findAllByShowIn(TEST_SHOW_LIST)).thenReturn(TEST_TICKET_LIST_BY_SHOW);
-        Mockito.when(ticketExpirationHandler.setExpiredReservatedTicketsToStatusExpired(TEST_TICKET_LIST_DTO)).thenReturn(TEST_TICKET_LIST_DTO);
+        Mockito.when(ticketExpirationHandler.setExpiredReservedTicketsToStatusExpired(TEST_TICKET_LIST_DTO)).thenReturn(TEST_TICKET_LIST_DTO);
         //BDDMockito.given(ticketExpirationHandler.setExpiredReservatedTicketsToStatusExpired(any(ShowDTO.class));
         Page<TicketDTO> result = ticketService.findAllFilteredByCustomerAndEvent(TEST_CUSTOMER_NAME1, TEST_EVENT_NAME,null, 0, 10);
         Pageable pageable = PageRequest.of(0, 1);

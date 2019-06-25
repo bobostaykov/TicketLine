@@ -19,7 +19,7 @@
       <mat-select [value]="ticketSession.getTicketStatus()"
                   (selectionChange)="ticketSession.saveTicketStatus($event.value)">
         <mat-option [value]="statusEnum.SOLD">Buy Tickets</mat-option>
-        <mat-option [value]="statusEnum.RESERVATED">Reserve Tickets</mat-option>
+        <mat-option [value]="statusEnum.RESERVED">Reserve Tickets</mat-option>
       </mat-select>
     </mat-form-field>
     <!-- table displaying customer name, mail and birthday -->

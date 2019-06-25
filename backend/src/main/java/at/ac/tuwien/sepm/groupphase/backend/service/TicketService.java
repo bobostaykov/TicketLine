@@ -40,7 +40,7 @@ public interface TicketService {
     TicketDTO findOne(Long id);
 
     /**
-     * Find one ticket by the given reservation number (id) with status RESERVATED and change it to SOLD
+     * Find one ticket by the given reservation number (id) with status RESERVED and change it to SOLD
      *
      * @param id reservation number of the ticket
      * @return changed ticket
@@ -61,7 +61,7 @@ public interface TicketService {
      * @param id reservation number of the ticket
      * @return found ticket
      */
-    TicketDTO findOneReservated(Long id);
+    TicketDTO findOneReserved(Long id);
 
     /**
      * Delete one ticket by the given ticket/reservation number (id)

@@ -1,7 +1,7 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {TicketService} from '../../services/ticket/ticket.service';
 import {Ticket} from '../../dtos/ticket';
-import {CustomerService} from '../../services/customer.service';
+import {CustomerService} from '../../services/customer/customer.service';
 import {EventService} from '../../services/event/event.service';
 import {TicketStatus} from '../../datatype/ticket_status';
 import {AuthService} from '../../services/auth/auth.service';
@@ -312,7 +312,7 @@ export class StornoComponent implements OnInit {
    * @param ticket the ticket that is to be checked
    */
   private isReserved(ticket: Ticket): boolean {
-    return ticket.status === TicketStatus.RESERVATED;
+    return ticket.status === TicketStatus.RESERVED;
   }
 
   /**

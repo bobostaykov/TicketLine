@@ -1,6 +1,6 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {Customer} from '../../dtos/customer';
-import {CustomerService} from '../../services/customer.service';
+import {CustomerService} from '../../services/customer/customer.service';
 import {NgbModal, NgbModalOptions} from '@ng-bootstrap/ng-bootstrap';
 import {TicketSessionService} from '../../services/ticket-session/ticket-session.service';
 import {TicketStatus} from '../../datatype/ticket_status';

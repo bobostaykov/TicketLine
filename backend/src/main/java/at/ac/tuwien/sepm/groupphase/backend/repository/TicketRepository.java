@@ -21,18 +21,6 @@ public interface TicketRepository extends JpaRepository<Ticket, Long>, PagingAnd
      */
     Page<Ticket> findAllByOrderByIdAsc(Pageable pageable);
 
-    // PINOS IMPLEMENTATION
-    /**
-     * Find tickets that are issued for the given customer name and show name with status RESERVATED.
-     *
-     * @param customer customer to search for
-     * @param show show to search for
-     * @return List of found tickets
-     */
-    /*
-    List<Ticket> findAllByCustomerAndShowWithStatusReservated(Customer customer, Show show);
-    */
-
     /**
      * Find ticket by given reservation number
      *
@@ -92,8 +80,9 @@ public interface TicketRepository extends JpaRepository<Ticket, Long>, PagingAnd
      * Delete a list of tickets with the given list of ids
      *
      * @param id list of ids of Tickets to delete
+     * @return returns number of deleted tickets
      */
-    void deleteByIdIn(List<Long> id);
+    int deleteByIdIn(List<Long> id);
 
     /**
      * Find all Tickets filtered by a given show and seat.
