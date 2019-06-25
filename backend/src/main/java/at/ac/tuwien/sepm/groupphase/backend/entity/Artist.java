@@ -18,6 +18,7 @@ public class Artist {
     private Long id;
 
     @Size(max = 64)
+    @Column(nullable = false, unique = true)
     private String name;
 
     public Long getId() {
