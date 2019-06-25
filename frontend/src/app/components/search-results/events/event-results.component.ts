@@ -22,7 +22,7 @@ export class EventResultsComponent implements OnInit {
   private content: string;
   private description: string;
 
-  private noResultsFound: boolean = true;
+  private noResultsFound: boolean = false;
   private error: boolean = false;
   private errorMessage: string = '';
 
