@@ -3,7 +3,6 @@ package at.ac.tuwien.sepm.groupphase.backend.datagenerator.demo;
 import at.ac.tuwien.sepm.groupphase.backend.datatype.TicketStatus;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Show;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Ticket;
-import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.*;
 import com.github.javafaker.Faker;
 import org.slf4j.Logger;
@@ -55,17 +54,20 @@ public class TicketDataGenerator implements DataGenerator {
             for (Long i = 1L; i <= NUM_OF_TICKETS; i++) {
                 do { showOptional = showRepository.findById(((i+randomGenerator.nextLong()) % numOfShows) + 1); } while (showOptional.isEmpty());
                 Show show = showOptional.get();
-                show.setTicketsSold(show.getTicketsSold() + 1);
-                show = showRepository.save(show);
-                tickets.add(Ticket.builder()
+                /*show.setTicketsSold(show.getTicketsSold() + 1);
+                show = showRepository.save(show);*/
+                Ticket ticket =  Ticket.builder()
                     .reservationNo(UUID.randomUUID().toString())
                     .customer(customerRepository.getOne(((i-1) % numOfCustomers) + 1))
                     .show(show)
                     .price(faker.random().nextDouble()*50)
                     .seat(!show.getHall().getSeats().isEmpty() ? show.getHall().getSeats().get(0) : null)
                     .sector(!show.getHall().getSectors().isEmpty()? show.getHall().getSectors().get(0) : null)
-                    .status(i % 6 == 0 ? TicketStatus.RESERVATED : TicketStatus.SOLD)
-                    .build());
+                    .status(i % 6 == 0 ? TicketStatus.RESERVED : TicketStatus.SOLD)
+                    .build();
+                if (ticket.getStatus() == TicketStatus.SOLD)
+                    showRepository.incrementSoldTickets(show.getId());
+                tickets.add(ticket);
             }
             /*Long id = 1L, cn = 1L, sn = 1L;
             Customer customer1 = Customer.builder().id(id++).name(faker.name().lastName()).firstname(faker.name().firstName()).email(faker.bothify("????##@gmail.com")).birthday(faker.date().birthday().toInstant()

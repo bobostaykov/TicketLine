@@ -15,7 +15,6 @@ import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.ticket.TicketDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.ticket.TicketPostDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.*;
 import at.ac.tuwien.sepm.groupphase.backend.integrationtest.base.BaseIntegrationTest;
-import at.ac.tuwien.sepm.groupphase.backend.integrationtest.base.BaseIntegrationTestWithMockedUserCredentials;
 import at.ac.tuwien.sepm.groupphase.backend.repository.*;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -49,7 +48,7 @@ public class TicketEndpointTest extends BaseIntegrationTest {
     private static final String SPECIFIC_TICKET_PATH = "/{id}";
 
     private static final long TEST_TICKET_ID = 1L;
-    private static final TicketStatus TEST_TICKET_STATUS = TicketStatus.RESERVATED;
+    private static final TicketStatus TEST_TICKET_STATUS = TicketStatus.RESERVED;
 
     private static final String TEST_CUSTOMER_NAME = "TestName";
     private static final String TEST_CUSTOMER_FIRSTNAME = "TestFirstName";
@@ -170,7 +169,7 @@ public class TicketEndpointTest extends BaseIntegrationTest {
     private Long TEST_TICKET_ID2 = 12L;
     private Double TEST_TICKET_PRICE2 = 15.50;
     private Integer TEST_SECTOR_NUMBER = 1;
-    private TicketStatus TEST_TICKET_STATUS2 = TicketStatus.RESERVATED;
+    private TicketStatus TEST_TICKET_STATUS2 = TicketStatus.RESERVED;
     private String TEST_TICKET_RESERVATIONNO1 = "test_res_no_012345";
 
     @MockBean

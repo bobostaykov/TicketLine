@@ -9,18 +9,13 @@ import com.itextpdf.text.DocumentException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
-import io.swagger.models.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.HttpStatusCodeException;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.constraints.NotNull;
@@ -85,30 +80,18 @@ public class TicketEndpoint {
     }
 
     @RequestMapping(value = "/buy/{id}", method = RequestMethod.PUT, produces = "application/json")
-    @ApiOperation(value = "Buy reservated Ticket by id", authorizations = {@Authorization(value = "apiKey")})
-    public TicketDTO buyReservatedTicket(@PathVariable Long id) {
+    @ApiOperation(value = "Buy reserved Ticket by id", authorizations = {@Authorization(value = "apiKey")})
+    public TicketDTO buyReservedTicket(@PathVariable Long id) {
         LOGGER.info("Ticket Endpoint: Buy Ticket with id " + id);
         return ticketService.changeStatusToSold(id);
     }
 
-    @RequestMapping(value = "/reservated/{id}", method = RequestMethod.GET)
-    @ApiOperation(value = "Find reservated Ticket by id", authorizations = {@Authorization(value = "apiKey")})
-    public TicketDTO findReservatedById(@PathVariable Long id) {
-        LOGGER.info("Ticket Endpoint: Find reservated Ticket with id " + id);
-        return ticketService.findOneReservated(id);
+    @RequestMapping(value = "/reserved/{id}", method = RequestMethod.GET)
+    @ApiOperation(value = "Find reserved Ticket by id", authorizations = {@Authorization(value = "apiKey")})
+    public TicketDTO findReservedById(@PathVariable Long id) {
+        LOGGER.info("Ticket Endpoint: Find reserved Ticket with id " + id);
+        return ticketService.findOneReserved(id);
     }
-
-    // PINO's Implementation
-    /*
-    @RequestMapping(value = "/name", method = RequestMethod.GET)
-    @ApiOperation(value = "Get reservated Tickets by customer name and show", authorizations = {@Authorization(value = "apiKey")})
-    public List<TicketDTO> findByCustomerNameAndShowWithStatusReservated(@RequestParam(name = "surname") String surname,
-                                                                         @RequestParam(name = "firstname") String firstname,
-                                                                         @RequestBody ShowDTO showDTO) {
-        LOGGER.info("Find reservated Tickets for customer " + firstname + surname + " and show id " + showDTO.getId());
-        return ticketService.findByCustomerNameAndShowWithStatusReservated(surname, firstname, showDTO);
-    }
-     */
 
     // PINO: added value = "filter" to avoid GET method crash with findAll()
     @RequestMapping(value = "/filter", method = RequestMethod.GET)

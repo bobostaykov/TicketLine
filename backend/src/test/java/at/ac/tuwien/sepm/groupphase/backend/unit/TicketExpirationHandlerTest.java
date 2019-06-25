@@ -124,12 +124,12 @@ public class TicketExpirationHandlerTest {
     private Double TEST_TICKET_PRICE1 = 143.99;
     private Integer TEST_TICKET_SEAT_NO1 = 44;
     private Integer TEST_TICKET_ROW_NO1 = 25;
-    private TicketStatus TEST_TICKET_STATUS1 = TicketStatus.RESERVATED;
+    private TicketStatus TEST_TICKET_STATUS1 = TicketStatus.RESERVED;
 
     private Long TEST_TICKET_ID2 = 12L;
     private Double TEST_TICKET_PRICE2 = 15.50;
     private Integer TEST_TICKET_SECTOR2 = 1;
-    private TicketStatus TEST_TICKET_STATUS2 = TicketStatus.RESERVATED;
+    private TicketStatus TEST_TICKET_STATUS2 = TicketStatus.RESERVED;
 
     @Before
     public void before() {
@@ -261,25 +261,25 @@ public class TicketExpirationHandlerTest {
 
     @Test
     public void setSpecificExpiredReservatedTicketToExpired() {
-        Mockito.when(ticketRepository.findAllByShowAndStatus(TEST_SHOW_EXPIRED, TicketStatus.RESERVATED)).thenReturn(Collections.singletonList(TEST_TICKET_NOT_EXPIRED));
+        Mockito.when(ticketRepository.findAllByShowAndStatus(TEST_SHOW_EXPIRED, TicketStatus.RESERVED)).thenReturn(Collections.singletonList(TEST_TICKET_NOT_EXPIRED));
         Mockito.when(showRepository.findAll()).thenReturn(TEST_SHOW_LIST);
-        TicketDTO result = ticketExpirationHandler.setExpiredReservatedTicketsToStatusExpired(ticketMapper.ticketToTicketDTO(TEST_TICKET_EXPIRED));
+        TicketDTO result = ticketExpirationHandler.setExpiredReservedTicketsToStatusExpired(ticketMapper.ticketToTicketDTO(TEST_TICKET_EXPIRED));
         Assert.assertEquals(result.getStatus(), TicketStatus.EXPIRED);
     }
 
     @Test
     public void setSpecificNotExpiredReservatedTicketNotToExpired() {
-        Mockito.when(ticketRepository.findAllByShowAndStatus(TEST_SHOW_EXPIRED, TicketStatus.RESERVATED)).thenReturn(Collections.singletonList(TEST_TICKET_NOT_EXPIRED));
+        Mockito.when(ticketRepository.findAllByShowAndStatus(TEST_SHOW_EXPIRED, TicketStatus.RESERVED)).thenReturn(Collections.singletonList(TEST_TICKET_NOT_EXPIRED));
         Mockito.when(showRepository.findAll()).thenReturn(TEST_SHOW_LIST);
-        TicketDTO result = ticketExpirationHandler.setExpiredReservatedTicketsToStatusExpired(ticketMapper.ticketToTicketDTO(TEST_TICKET_NOT_EXPIRED));
+        TicketDTO result = ticketExpirationHandler.setExpiredReservedTicketsToStatusExpired(ticketMapper.ticketToTicketDTO(TEST_TICKET_NOT_EXPIRED));
         Assert.assertEquals(result.getStatus(), TEST_TICKET_NOT_EXPIRED.getStatus());
     }
 
     @Test
     public void setListOfExpiredReservatedTicketToExpired() {
-        Mockito.when(ticketRepository.findAllByShowAndStatus(TEST_SHOW_EXPIRED, TicketStatus.RESERVATED)).thenReturn(Collections.singletonList(TEST_TICKET_NOT_EXPIRED));
+        Mockito.when(ticketRepository.findAllByShowAndStatus(TEST_SHOW_EXPIRED, TicketStatus.RESERVED)).thenReturn(Collections.singletonList(TEST_TICKET_NOT_EXPIRED));
         Mockito.when(showRepository.findAll()).thenReturn(TEST_SHOW_LIST);
-        List<TicketDTO> result = ticketExpirationHandler.setExpiredReservatedTicketsToStatusExpired(ticketMapper.ticketToTicketDTO(TEST_TICKET_LIST));
+        List<TicketDTO> result = ticketExpirationHandler.setExpiredReservedTicketsToStatusExpired(ticketMapper.ticketToTicketDTO(TEST_TICKET_LIST));
         int countExpiredTickets = 0;
         for (TicketDTO t: result) {
             if(t.getStatus()==TicketStatus.EXPIRED)

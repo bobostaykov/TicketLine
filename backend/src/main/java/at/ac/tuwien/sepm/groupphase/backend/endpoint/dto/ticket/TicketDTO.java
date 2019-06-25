@@ -35,7 +35,7 @@ public class TicketDTO {
     @ApiModelProperty(name = "The sector number of this ticket")
     private SectorDTO sector;
 
-    @ApiModelProperty(name = "Status of the ticket (RESERVATED, SOLD, EXPIRED)")
+    @ApiModelProperty(name = "Status of the ticket (RESERVED, SOLD, EXPIRED)")
     private TicketStatus status;
 
     public String getReservationNo() {
@@ -97,10 +97,6 @@ public class TicketDTO {
     public TicketStatus getStatus() {
         return status;
     }
-
-    public String getReservationNumber() {
-        return "Dummy number";
-    } // TODO: remove this on Ticket Refactoring - including reservation number
 
     public void setStatus(TicketStatus status) {
         this.status = status;
