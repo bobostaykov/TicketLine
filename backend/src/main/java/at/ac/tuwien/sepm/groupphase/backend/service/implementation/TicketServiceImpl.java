@@ -1,32 +1,34 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.implementation;
 
 import at.ac.tuwien.sepm.groupphase.backend.datatype.TicketStatus;
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.TicketEndpoint;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.ticket.TicketDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.ticket.TicketPostDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.*;
-import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.customer.CustomerMapper;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.show.ShowMapper;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.ticket.TicketMapper;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.TicketSoldOutException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.*;
-import at.ac.tuwien.sepm.groupphase.backend.service.CustomerService;
 import at.ac.tuwien.sepm.groupphase.backend.service.TicketService;
 import at.ac.tuwien.sepm.groupphase.backend.service.generator.PDFGenerator;
 import at.ac.tuwien.sepm.groupphase.backend.service.ticketExpirationHandler.TicketExpirationHandler;
 import com.itextpdf.text.DocumentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class TicketServiceImpl implements TicketService {
@@ -65,7 +67,7 @@ public class TicketServiceImpl implements TicketService {
     @Override
     public List<TicketDTO> postTicket(List<TicketPostDTO> ticketPostDTO) throws TicketSoldOutException, NotFoundException {
         LOGGER.info("Ticket Service: Create Ticket");
-        // Check if any of the requested tickets were already sold or reservated
+        // Check if any of the requested tickets were already sold or reserved
         for (TicketPostDTO current : ticketPostDTO) {
             if (current.getSeat() != null) {
                 if (!this.ticketRepository.findAllByShowAndSeat(this.showRepository.getOne(current.getShow()),
@@ -116,12 +118,7 @@ public class TicketServiceImpl implements TicketService {
                         " not found in list of sectors for this show!");
                 }
             }
-            String uniqueReservationNo = null;
-            if (current.getStatus() == TicketStatus.RESERVATED) {
-                uniqueReservationNo = UUID.randomUUID().toString();
-            }
-            show.setTicketsSold(show.getTicketsSold() + 1);
-            show = showRepository.save(show);
+            String uniqueReservationNo = UUID.randomUUID().toString(); // Set reservation number for all tickets (in order to use it as a ticket number as well)
             Ticket ticket = new Ticket().builder()
                 .status(current.getStatus())
                 .customer(customer)
@@ -131,8 +128,10 @@ public class TicketServiceImpl implements TicketService {
                 .sector(sector)
                 .reservationNo(uniqueReservationNo)
                 .build();
-            /* TODO: test everthing, also test if incrementing ticketSold worked */
+            /* TODO: test everthing */
             created.add(ticketMapper.ticketToTicketDTO(ticketRepository.save(ticket)));
+            if (current.getStatus() == TicketStatus.SOLD)
+                showRepository.incrementSoldTickets(show.getId());
         }
         return created;
     }
@@ -170,33 +169,54 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public List<TicketDTO> findAll() {
+    public Page<TicketDTO> findAll(Integer page, Integer pageSize) {
         LOGGER.info("Ticket Service: Get all tickets");
-        ticketExpirationHandler.setAllExpiredReservatedTicketsToStatusExpired();
-        return ticketMapper.ticketToTicketDTO(ticketRepository.findAllByOrderByIdAsc());
+        if(pageSize == null){
+            pageSize = 10;
+        }
+        Pageable pageable = PageRequest.of(page, pageSize);
+        ticketExpirationHandler.setAllExpiredReservedTicketsToStatusExpired();
+        return ticketRepository.findAllByOrderByIdAsc(pageable).map(ticketMapper::ticketToTicketDTO);
     }
 
     @Override
     public TicketDTO findOne(Long id) {
         LOGGER.info("Ticket Service: Find Ticket with id {}", id);
         TicketDTO ticketDTO = ticketMapper.ticketToTicketDTO(ticketRepository.findOneById(id).orElseThrow(NotFoundException::new));
-        ticketDTO = ticketExpirationHandler.setExpiredReservatedTicketsToStatusExpired(ticketDTO);
+        ticketDTO = ticketExpirationHandler.setExpiredReservedTicketsToStatusExpired(ticketDTO);
         return ticketDTO;
     }
 
     @Override
+    @Transactional
     public TicketDTO changeStatusToSold(Long id) {
         LOGGER.info("Ticket Service: Change Ticket status for ticket with id {} to sold", id);
-        TicketDTO ticket = this.findOneReservated(id);
+        TicketDTO ticket = this.findOneReserved(id);
         ticket.setStatus(TicketStatus.SOLD);
-        return ticketMapper.ticketToTicketDTO(ticketRepository.save(ticketMapper.ticketDTOToTicket(ticket)));
+        TicketDTO updatedTicket = ticketMapper.ticketToTicketDTO(ticketRepository.save(ticketMapper.ticketDTOToTicket(ticket)));
+        showRepository.incrementSoldTickets(showMapper.showDTOToShow(updatedTicket.getShow()).getId());
+        return updatedTicket;
+    }
+
+    @Transactional
+    @Override
+    public List<TicketDTO> changeStatusToSold(List<Long> reservationIds) {
+        LOGGER.info("Change Ticket status for tickets with ids " + reservationIds.toString());
+        List<TicketDTO> tickets = ticketMapper.ticketToTicketDTO(ticketRepository.findByIdIn(reservationIds));
+        tickets.stream().forEach(ticketDTO -> {ticketDTO.setStatus(TicketStatus.SOLD);});
+        List<TicketDTO> outputList = new ArrayList(){
+        };
+        tickets.stream().forEach(t -> {outputList.add(ticketMapper.ticketToTicketDTO(ticketRepository.save(ticketMapper.ticketDTOToTicket(t))));});
+        LOGGER.info(outputList.toString());
+        return outputList;
+
     }
 
     @Override
-    public TicketDTO findOneReservated(Long id) {
-        LOGGER.info("Ticket Service: Find Ticket by id {} with status = {}", id, TicketStatus.RESERVATED);
-        TicketDTO ticketDTO = ticketMapper.ticketToTicketDTO(ticketRepository.findOneByIdAndStatus(id, TicketStatus.RESERVATED).orElseThrow(NotFoundException::new));
-        return ticketExpirationHandler.setExpiredReservatedTicketsToStatusExpired(ticketDTO);
+    public TicketDTO findOneReserved(Long id) {
+        LOGGER.info("Ticket Service: Find Ticket by id {} with status = {}", id, TicketStatus.RESERVED);
+        TicketDTO ticketDTO = ticketMapper.ticketToTicketDTO(ticketRepository.findOneByIdAndStatus(id, TicketStatus.RESERVED).orElseThrow(NotFoundException::new));
+        return ticketExpirationHandler.setExpiredReservedTicketsToStatusExpired(ticketDTO);
     }
 
     @Override
@@ -205,33 +225,81 @@ public class TicketServiceImpl implements TicketService {
         LOGGER.info("Ticket Service: Delete ticket with id {}", id);
         Optional<Ticket> ticket = ticketRepository.findOneById(id);
         if (ticket.isPresent()) {
-            ticketRepository.delete(ticket.get());
+            this.deleteOneHelper(ticketMapper.ticketToTicketDTO(ticket.get()));
         }
         else
             throw new NotFoundException("Ticket with id " + id + " not found.");
         return ticketMapper.ticketToTicketDTO(ticket.get());
     }
 
+    private void deleteOneHelper(TicketDTO ticket) {
+        ticketRepository.delete(ticketMapper.ticketDTOToTicket(ticket));
+        if (ticket.getStatus() == TicketStatus.SOLD)
+            showRepository.decrementSoldTickets(ticketMapper.ticketDTOToTicket(ticket).getShow().getId());
+    }
+
     @Override
-    public List<TicketDTO> findAllFilteredByCustomerAndEvent(String customerName, String eventName) {
+    public Page<TicketDTO> findAllFilteredByCustomerAndEvent(@NotNull String customerName, @NotNull String eventName, Boolean reserved, @PositiveOrZero Integer page, @Positive Integer pageSize) {
         LOGGER.info("Ticket Service: Find all tickets filtered by customer with name {} and event with name {}", customerName, eventName);
-        List<Customer> customers = customerRepository.findAllByName(customerName);
-        List<Event> events =  eventRepository.findAllByName(eventName);
-        List<Show> shows = showRepository.findAllByEvent(events);
+        if(pageSize == null){
+            pageSize = 10;
+        }
+        Pageable pageable = PageRequest.of(page, pageSize);
+        List<Customer> customers = customerRepository.findAllByNameContainsIgnoreCase(customerName);
+        List<Event> events =  eventRepository.findAllByNameContainsIgnoreCase(eventName);
+        List<Show> shows = showRepository.findAllByEventIn(events);
         List<Ticket> result1 = new ArrayList<>();
         List<Ticket> result2 = new ArrayList<>();
         if (customerName != null) {
-            result1 = ticketRepository.findAllByCustomer(customers);
-            //result1 = ticketExpirationHandler.setExpiredReservatedTicketsToStatusExpired(ticketMapper.ticketToTicketDTO(ticketRepository.findAllByCustomer(customers)));
+            result1 = ticketRepository.findAllByCustomerIn(customers);
         }
         if (eventName != null) {
-            result2 = ticketRepository.findAllByShow(shows);
-            //result2 = ticketExpirationHandler.setExpiredReservatedTicketsToStatusExpired(ticketMapper.ticketToTicketDTO(ticketRepository.findAllByShow(shows)));
+            result2 = ticketRepository.findAllByShowIn(shows);
         }
         List<Ticket> result = this.difference(result1, result2);
-        List<TicketDTO> res = ticketExpirationHandler.setExpiredReservatedTicketsToStatusExpired(ticketMapper.ticketToTicketDTO(result));
-        return res;
-        //return /*ticketExpirationHandler.setExpiredReservatedTicketsToStatusExpired(*/ticketMapper.ticketToTicketDTO(this.difference(result1, result2));
+        List<TicketDTO> res = ticketExpirationHandler.setExpiredReservedTicketsToStatusExpired(ticketMapper.ticketToTicketDTO(result));
+        //Aussortieren der Reservierungem oder der nicht-Reservierungen
+        if(reserved == null){
+
+        }else if(reserved == true){
+            res = res.stream().filter(ticketDTO -> ticketDTO.getStatus() == TicketStatus.RESERVED).collect(Collectors.toList());
+        }else{
+            res = res.stream().filter(ticketDTO -> ticketDTO.getStatus() == TicketStatus.SOLD).collect(Collectors.toList());
+        }
+        // create page from the result
+        res = res.stream().sorted(Comparator.comparing(ticketDTO -> ticketDTO.getCustomer().getFirstname())).collect(Collectors.toList());
+        int start = (int)pageable.getOffset();
+        int end = (start + pageable.getPageSize()) > res.size() ? res.size() : (start + pageable.getPageSize());
+        Page<TicketDTO> pages = new PageImpl<TicketDTO>(res.subList(start, end), pageable, res.size());
+        return pages;
+    }
+
+    @Override
+    public Page<TicketDTO> findAllFilteredByReservationNumber(@NotNull String reservationNumber, Boolean reserved, Integer page, Integer pageSize) {
+        LOGGER.info("Find all tickets filtered by reservation number {}", reservationNumber);
+        if(pageSize == null){
+            pageSize = 10;
+        }
+        Pageable pageable = PageRequest.of(page, pageSize);
+        TicketStatus status = reserved ? TicketStatus.RESERVED : TicketStatus.SOLD;
+        Page<TicketDTO> ticketPage =  ticketRepository.findAllByStatusAndReservationNoContainsIgnoreCaseOrderByCustomer_Firstname(status, reservationNumber, pageable).map(ticketMapper::ticketToTicketDTO);
+
+        LOGGER.info("returning page" + page);
+        return ticketPage;
+    }
+
+    @Override
+    public Page<TicketDTO> findAllReservedFilteredByCustomerAndEvent(@NotNull String customerName,@NotNull String eventName,@PositiveOrZero Integer page, @Positive Integer pageSize) {
+        if (pageSize == null) {
+            pageSize = 10;
+        }
+        Pageable pageable = PageRequest.of(page, pageSize);
+        Page<TicketDTO> ticketPage = ticketRepository.findAllByCustomer_NameContainsIgnoreCaseAndShow_Event_NameContainsIgnoreCaseAndStatusOrderByCustomer_Firstname(
+            customerName, eventName, TicketStatus.RESERVED, pageable).map(ticketMapper::ticketToTicketDTO);
+        if(ticketPage.isEmpty()){
+            //throw new NotFoundException("could not find any tickets");
+        }
+        return ticketPage;
     }
 
     @Override
@@ -246,14 +314,16 @@ public class TicketServiceImpl implements TicketService {
     public byte[] deleteAndGetCancellationReceipt(List<String> ticketIDs) throws DocumentException, IOException {
         LOGGER.info("Ticket Service: Delete Ticket(s) with id(s)" + ticketIDs.toString() + " and receive storno receipt");
         List<TicketDTO> tickets = ticketMapper.ticketToTicketDTO(ticketRepository.findByIdIn(this.parseListOfIds(ticketIDs)));
-        ticketRepository.deleteByIdIn(this.parseListOfIds(ticketIDs));
+        for (TicketDTO t: tickets) {
+            this.deleteOneHelper(t);
+        }
         return pdfGenerator.generateReceipt(tickets, true);
     }
 
     @Override
     public byte[] generateTicketPDF(List<String> ticketIDs) throws DocumentException, IOException, NoSuchAlgorithmException {
         LOGGER.info("Ticket Service: Get a PDF for ticket(s) {}", ticketIDs.toString());
-        List<TicketDTO> tickets = ticketExpirationHandler.setExpiredReservatedTicketsToStatusExpired(ticketMapper.ticketToTicketDTO(ticketRepository.findByIdIn(this.parseListOfIds(ticketIDs))));
+        List<TicketDTO> tickets = ticketExpirationHandler.setExpiredReservedTicketsToStatusExpired(ticketMapper.ticketToTicketDTO(ticketRepository.findByIdIn(this.parseListOfIds(ticketIDs))));
         return pdfGenerator.generateTicketPDF(tickets);
     }
 
@@ -288,23 +358,4 @@ public class TicketServiceImpl implements TicketService {
         }
         return result;
     }
-
-    // PINOS IMPLEMENTATION
-    /*
-    @Override
-    public List<TicketDTO> findByCustomerNameAndShowWithStatusReservated(String surname, String firstname, ShowDTO showDTO) {
-        List<CustomerDTO> customers = customerService.findCustomersFiltered(null, surname, firstname, null, null);
-        if (customers.isEmpty())
-            throw new NotFoundException("No Customer with name " + firstname + surname + " found.");
-        List<TicketDTO> tickets = new ArrayList<>();
-        for (CustomerDTO c: customers) {
-            List<Ticket> ticketsTemp = ticketRepository.findAllByCustomerAndShowWithStatusReservated(customerMapper.customerDTOToCustomer(c), showMapper.showDTOToShow(showDTO));
-            for (Ticket t: ticketsTemp) {
-                tickets.add(ticketMapper.ticketToTicketDTO(t));
-            }
-        }
-        return tickets;
-    }
-    */
-
 }

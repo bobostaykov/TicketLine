@@ -1,13 +1,16 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.event;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import java.util.Objects;
 
 @ApiModel(value = "EventTicketsDTO", description = "A DTO for eventTicket entries vie rest")
 public class EventTicketsDTO {
 
+    @ApiModelProperty(name = "the name of the event")
     private String eventName;
+    @ApiModelProperty(name = "the amount of sold tickets")
     private Long ticketsSold;
 
     public EventTicketsDTO(){}

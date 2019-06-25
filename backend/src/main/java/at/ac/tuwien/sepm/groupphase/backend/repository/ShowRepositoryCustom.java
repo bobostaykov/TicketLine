@@ -3,7 +3,6 @@ package at.ac.tuwien.sepm.groupphase.backend.repository;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.searchParameters.ShowSearchParametersDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Show;
-import at.ac.tuwien.sepm.groupphase.backend.repository.projections.SimpleShow;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

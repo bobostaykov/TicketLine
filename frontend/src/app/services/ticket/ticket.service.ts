@@ -4,6 +4,7 @@ import {Ticket} from '../../dtos/ticket';
 import {Observable} from 'rxjs';
 import {Globals} from '../../global/globals';
 import {TicketPost} from '../../dtos/ticket-post';
+import {Tick} from 'ng5-slider/slider.component';
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +13,7 @@ export class TicketService {
 
   private ticketBaseUri: string = this.globals.backendUri + '/tickets';
   private printableTicketBaseUri: string = this.ticketBaseUri + '/printable';
+  private ticketBuyUri: string = this.ticketBaseUri + '/buy';
 
   constructor(private httpClient: HttpClient, private globals: Globals) {
   }
@@ -34,12 +36,50 @@ export class TicketService {
   }
 
   /**
+   *
+   * @param number the reservation Number
+   * @param page the requested page
+   */
+  getReservationsByNumber(number: string, page: number): Observable<Ticket>{
+    console.log('Load reservations by number: ' + number);
+    return this.httpClient.get<Ticket>(this.ticketBaseUri + '/filter/?number=' + number + '&page=' + page);
+  }
+
+  /**
+   * gets sold tickets by number
+   * @param number the number that is searched for
+   * @param page the page
+   */
+  getTicketsByNumber(number: string, reserved: boolean , page: number): Observable<Ticket>{
+    console.log('Load tickets by number: ' + number + ' reserved= ' + + reserved);
+    return this.httpClient.get<Ticket>(this.ticketBaseUri + '/filter/?number=' + number + '&page=' + page + '&reserved=' + reserved);
+  }
+  /**
+   * searches for reservations by last name of the customer and event
+   * @param customer last name of the customer
+   * @param event name of the event
+   * @param page the page
+   */
+  getReservedTicketsByConsumerAndEvent(customer: string, event: string, page: number): Observable<Ticket>{
+    console.log('load reserved tickets by consumer ' + customer + 'and event ' + event);
+    console.log(this.ticketBaseUri + '/filter/?customerName=' + customer + '&eventName=' + event + '&page=' + page /*+
+      '&reserved=true'*/);
+    return this.httpClient.get<Ticket>(this.ticketBaseUri + '/filter/?customerName=' + customer + '&eventName=' + event + '&page=' + page +
+      '&reserved=true');
+  }
+
+  /**
    * Persists ticket to the backend
    * @param ticket to persist
    */
   createTicket(ticket: TicketPost[]): Observable<Ticket[]> {
     console.log('Create ticket');
     return this.httpClient.post<Ticket[]>(this.ticketBaseUri, ticket);
+  }
+
+  buyReservedTickets(ticketIDs: Number[]): Observable<Ticket> {
+    console.log('sell reservated tickets for tickets' + ticketIDs);
+     return this.httpClient.post<Ticket>(this.ticketBuyUri, ticketIDs);
   }
 
   /**

@@ -37,7 +37,7 @@ export class FloorplanSvgComponent implements OnInit, DoCheck, AfterViewInit {
   private activeElement: HTMLElement;
   // used for template update form
   private updateElementModel: Seat | Sector = this.hallType === 'seats' ? new Seat(null, null, null, null, null, null)
-    : new Sector(null, null, null, null, null);
+    : new Sector(null, null, null, null, null, null, null);
   // updateSubmissionError is displayed if seat/sector with given number/row already exists in the hall
   private updateSubmissionError: boolean = false;
   private updateSubmissionMessage: string = '';
@@ -52,6 +52,7 @@ export class FloorplanSvgComponent implements OnInit, DoCheck, AfterViewInit {
   private disableMouseupListener: Function;
   // detects changes for seat/sector arrays
   private iterableDiffer;
+  private oldHallType = this.hallType;
 
   constructor(private _iterableDiffers: IterableDiffers,
               private renderer: Renderer2,
@@ -82,6 +83,12 @@ export class FloorplanSvgComponent implements OnInit, DoCheck, AfterViewInit {
    * detects changes to seat or sector arrays and draws or removes changed elements accordingly
    */
   ngDoCheck(): void {
+    if (this.svgElement && this.hallType !== this.oldHallType) {
+      this.oldHallType = this.hallType;
+      while (this.svgElement.firstChild) {
+        this.svgElement.removeChild(this.svgElement.firstChild);
+      }
+    }
     if (this.hallType === 'seats') {
       const changes = this.iterableDiffer.diff(this.seats);
       if (changes) {
@@ -120,7 +127,7 @@ export class FloorplanSvgComponent implements OnInit, DoCheck, AfterViewInit {
     this.renderer.listen(seatElement, 'contextmenu', (event) => this.displayContext(seat, event));
     this.renderer.appendChild(this.svgElement, seatElement);
     // display ticket differently if status is set
-    if (seat.ticketStatus) {
+    if (seat.ticketStatus && seat.ticketStatus !== TicketStatus.EXPIRED) {
       this.renderer.addClass(seatElement, 'ticket');
       path += seat.ticketStatus === TicketStatus.SOLD ? ' l 10 10 m -10 0 l 10 -10' : '';
     }
@@ -145,9 +152,9 @@ export class FloorplanSvgComponent implements OnInit, DoCheck, AfterViewInit {
     this.renderer.listen(sectorElement, 'click', (event) => this.displayUpdateForm(sector, event.target));
     this.renderer.listen(sectorElement, 'contextmenu', (event => this.displayContext(sector, event)));
     // display ticket differently if status is set
-    if (sector.ticketStatus) {
+    if (sector.ticketsSold && sector.ticketsSold > 0) {
       this.renderer.addClass(sectorElement, 'ticket');
-      path += sector.ticketStatus === TicketStatus.SOLD ? ' l ' + width + ' 50 m 0 -50 l ' + (-width) + ' 50' : '';
+      path += sector.ticketsSold === sector.maxCapacity ? ' l ' + width + ' 50 m 0 -50 l ' + (-width) + ' 50' : '';
     }
     this.renderer.setAttribute(sectorElement, 'd', path);
     this.renderer.appendChild(this.svgElement, sectorElement);
@@ -210,12 +217,10 @@ export class FloorplanSvgComponent implements OnInit, DoCheck, AfterViewInit {
   private displayContext(element: Seat | Sector, event: MouseEvent): void {
     event.preventDefault();
     this.closeUpdateForm();
-    const target = event.target as HTMLElement;
-    const rectEvent = target.getBoundingClientRect();
-    this.renderer.setStyle(this.contextmenu, 'left', window.scrollX + rectEvent.left + 'px');
-    this.renderer.setStyle(this.contextmenu, 'top', window.scrollY + rectEvent.bottom + 'px');
+    this.renderer.setStyle(this.contextmenu, 'left',  event.pageX + 'px');
+    this.renderer.setStyle(this.contextmenu, 'top', event.pageY + 'px');
     this.renderer.setStyle(this.contextmenu, 'display', 'inline-block');
-    this.setActiveElement(element, target);
+    this.setActiveElement(element, event.target as HTMLElement);
     if (this.disableListenerContext) {
       this.disableListenerContext();
     }
@@ -355,6 +360,7 @@ export class FloorplanSvgComponent implements OnInit, DoCheck, AfterViewInit {
         const sector = this.selectedElement as Sector;
         this.ticketSession.saveSectorTicket(sector);
         // set ticket status and redraw element
+        sector.ticketsSold = sector.ticketsSold ? sector.ticketsSold + 1 : 1;
         sector.ticketStatus = TicketStatus.SELECTED;
         this.removeSectorPath(sector);
         this.drawSectorPath(sector);
@@ -376,6 +382,8 @@ export class FloorplanSvgComponent implements OnInit, DoCheck, AfterViewInit {
         this.drawSeatPath(seat);
       } else if (this.hallType === 'sectors') {
         const sector = this.selectedElement as Sector;
+        sector.ticketsSold = sector.ticketsSold ? sector.ticketsSold - 1 : null;
+        sector.ticketStatus = null;
         this.removeSectorPath(sector);
         this.drawSectorPath(sector);
       }
@@ -446,5 +454,55 @@ export class FloorplanSvgComponent implements OnInit, DoCheck, AfterViewInit {
       this.disableMouseupListener();
     }
     this.renderer.removeClass(this.svgElement, 'grabbing');
+  }
+
+  /**
+   * function returning boolean which determines if user is currently allowed to add a ticket to the selected seat or sector
+   */
+  private allowToAddTicket(): boolean {
+    if (!this.selectedElement || this.editingEnabled || !this.priceMapping
+      || (this.selectedElement.ticketStatus && this.selectedElement.ticketStatus !== TicketStatus.EXPIRED)) {
+      return false;
+    }
+    if (this.hallType === 'seats') {
+      return true;
+    } else {
+      const sector = this.selectedElement as Sector;
+      return sector.ticketsSold ? sector.ticketsSold < sector.maxCapacity : true;
+    }
+  }
+
+  /**
+   * function returning boolean which determines if user is currently allowed to remove a ticket from the selected seat or sector
+   */
+  private allowDeleteTicket(): boolean {
+    if (!this.selectedElement || this.editingEnabled || !this.priceMapping) {
+      return false;
+    }
+    return this.selectedElement.ticketStatus === 'SELECTED';
+  }
+
+  /**
+   * function checks if editing is currently enabled on the selected hall and given the current user
+   */
+  private allowEditing(): boolean {
+    return this.editingEnabled && this.isAdmin();
+  }
+
+  /**
+   * display function
+   * returns string to display tickets sold/max capacity for sector
+   */
+  private getTicketsSoldAndCapacity(): string {
+    const sector = this.selectedElement as Sector;
+    // tslint:disable-next-line:max-line-length
+    return sector && sector.ticketsSold ? sector.ticketsSold + '/' + sector.maxCapacity + ' sold' : (sector ? 'Capacity: ' + sector.maxCapacity : '');
+  }
+
+  /**
+   * maps price category to number or just returns price category name if no price mapping is set
+   */
+  private getPrice(price: string): string {
+    return this.priceMapping ? this.priceMapping[price] + ' €' : price;
   }
 }

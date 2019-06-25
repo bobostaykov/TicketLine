@@ -5,7 +5,7 @@ import {NgbPaginationConfig} from '@ng-bootstrap/ng-bootstrap';
 import * as _ from 'lodash';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {AuthService} from '../../services/auth/auth.service';
-import {FileService} from '../../services/file.service';
+import {FileService} from '../../services/file/file.service';
 import {UserService} from '../../services/user/user.service';
 
 @Component({

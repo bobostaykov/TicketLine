@@ -2,12 +2,15 @@ package at.ac.tuwien.sepm.groupphase.backend.repository;
 
 import at.ac.tuwien.sepm.groupphase.backend.entity.Event;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Show;
-import at.ac.tuwien.sepm.groupphase.backend.repository.projections.SimpleShow;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,7 +24,7 @@ public interface ShowRepository extends JpaRepository<Show, Long>, ShowRepositor
      * @param events list of events
      * @return found shows
      */
-    List<Show> findAllByEvent(List<Event> events);
+    List<Show> findAllByEventIn(List<Event> events);
 
     /**
      * Find all shows by location id
@@ -53,4 +56,23 @@ public interface ShowRepository extends JpaRepository<Show, Long>, ShowRepositor
      * @return boolean that declares existance or non-existance of the element
      */
     boolean existsByHallId(Long hallId);
+
+    /**
+     * Increment number of sold tickets for given show
+     *
+     * @param showId id of show to increment number of sold tickets
+     */
+    @Transactional
+    @Modifying
+    @Query("UPDATE Show SET tickets_sold = tickets_sold + 1 WHERE id = :showId")
+    void incrementSoldTickets(@Param("showId") Long showId);
+
+    /**
+     * Decrement number of sold tickets for given show
+     *
+     * @param showId id of show to increment number of sold tickets
+     */
+    @Modifying
+    @Query("UPDATE Show SET tickets_sold = tickets_sold - 1 WHERE id = :showId")
+    void decrementSoldTickets(@Param("showId") Long showId);
 }

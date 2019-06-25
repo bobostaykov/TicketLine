@@ -5,8 +5,6 @@ import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.customer.CustomerDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.seat.SeatDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.sector.SectorDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.show.ShowDTO;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Seat;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Sector;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -35,7 +33,7 @@ public class TicketDTO {
     @ApiModelProperty(name = "The sector number of this ticket")
     private SectorDTO sector;
 
-    @ApiModelProperty(name = "Status of the ticket (RESERVATED, SOLD, EXPIRED)")
+    @ApiModelProperty(name = "Status of the ticket (RESERVED, SOLD, EXPIRED)")
     private TicketStatus status;
 
     public String getReservationNo() {
@@ -97,10 +95,6 @@ public class TicketDTO {
     public TicketStatus getStatus() {
         return status;
     }
-
-    public String getReservationNumber() {
-        return "Dummy number";
-    } // TODO: remove this on Ticket Refactoring - including reservation number
 
     public void setStatus(TicketStatus status) {
         this.status = status;

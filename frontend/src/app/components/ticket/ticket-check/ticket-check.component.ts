@@ -51,7 +51,7 @@ export class TicketCheckReservationComponent implements OnInit {
     this.ticket_status = this.ticketSession.getTicketStatus();
     this.submitted = false;
 
-    if (this.ticket_status === TicketStatus.RESERVATED) {
+    if (this.ticket_status === TicketStatus.RESERVED) {
       this.statusStr = 'Reservation';
       this.ticketOrReservation = 'Reservation';
     } else {

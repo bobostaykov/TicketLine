@@ -1,35 +1,16 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.ticketExpirationHandler;
 
 import at.ac.tuwien.sepm.groupphase.backend.datatype.TicketStatus;
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.location.LocationDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.show.ShowDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.ticket.TicketDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.show.ShowMapper;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.ticket.TicketMapper;
-import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.ShowRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.TicketRepository;
-import com.itextpdf.text.*;
-import com.itextpdf.text.pdf.BarcodeQRCode;
-import com.itextpdf.text.pdf.PdfPCell;
-import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.text.pdf.PdfWriter;
-import org.apache.commons.io.IOUtils;
-import org.bouncycastle.jcajce.provider.digest.SHA3;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Component;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,22 +34,22 @@ public class TicketExpirationHandlerImpl implements TicketExpirationHandler {
     public void setExpiredReservatedTicketsToStatusExpiredForSpecificShow(ShowDTO showDTO) {
         if(!this.checkIfShowStartsInLessThan30Minutes(showDTO))
             return;
-        List<TicketDTO> ticketsToExpire = ticketMapper.ticketToTicketDTO(ticketRepository.findAllByShowAndStatus(showMapper.showDTOToShow(showDTO), TicketStatus.RESERVATED));
+        List<TicketDTO> ticketsToExpire = ticketMapper.ticketToTicketDTO(ticketRepository.findAllByShowAndStatus(showMapper.showDTOToShow(showDTO), TicketStatus.RESERVED));
         for (TicketDTO t:
              ticketsToExpire) {
-            if(t.getStatus() == TicketStatus.RESERVATED)
+            if(t.getStatus() == TicketStatus.RESERVED)
                 t.setStatus(TicketStatus.EXPIRED);
         }
         ticketRepository.saveAll(ticketMapper.ticketDTOToTicket(ticketsToExpire));
     }
 
     @Override
-    public TicketDTO setExpiredReservatedTicketsToStatusExpired(TicketDTO ticket) {
+    public TicketDTO setExpiredReservedTicketsToStatusExpired(TicketDTO ticket) {
         return this.processSingleTicket(ticket);
     }
 
     @Override
-    public List<TicketDTO> setExpiredReservatedTicketsToStatusExpired(List<TicketDTO> tickets) {
+    public List<TicketDTO> setExpiredReservedTicketsToStatusExpired(List<TicketDTO> tickets) {
         List<TicketDTO> result = new ArrayList<>();
         for (TicketDTO t: tickets) {
             result.add(this.processSingleTicket(t));
@@ -77,7 +58,7 @@ public class TicketExpirationHandlerImpl implements TicketExpirationHandler {
     }
 
     @Override
-    public void setAllExpiredReservatedTicketsToStatusExpired() {
+    public void setAllExpiredReservedTicketsToStatusExpired() {
         List<ShowDTO> shows = showMapper.showToShowDTO(showRepository.findAll());
         for (ShowDTO s: shows) {
             this.setExpiredReservatedTicketsToStatusExpiredForSpecificShow(s);

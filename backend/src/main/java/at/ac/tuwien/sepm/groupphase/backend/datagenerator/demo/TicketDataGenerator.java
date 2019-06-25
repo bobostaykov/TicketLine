@@ -27,6 +27,7 @@ public class TicketDataGenerator implements DataGenerator {
     private final SeatRepository seatRepository;
 
     private long NUM_OF_TICKETS;
+    private int NUM_OF_SECTORS_PER_HALL = 5;
 
     public TicketDataGenerator(TicketRepository ticketRepository,
                                CustomerRepository customerRepository,
@@ -38,6 +39,7 @@ public class TicketDataGenerator implements DataGenerator {
         this.seatRepository = seatRepository;
     }
 
+    /*
     @Transactional
     @Override
     public void generate(){
@@ -55,25 +57,59 @@ public class TicketDataGenerator implements DataGenerator {
             for (Long i = 1L; i <= NUM_OF_TICKETS; i++) {
                 do { showOptional = showRepository.findById(((i+randomGenerator.nextLong()) % numOfShows) + 1); } while (showOptional.isEmpty());
                 Show show = showOptional.get();
-                show.setTicketsSold(show.getTicketsSold() + 1);
-                show = showRepository.save(show);
-                tickets.add(Ticket.builder()
+                Ticket ticket =  Ticket.builder()
                     .reservationNo(UUID.randomUUID().toString())
                     .customer(customerRepository.getOne(((i-1) % numOfCustomers) + 1))
                     .show(show)
                     .price(faker.random().nextDouble()*50)
                     .seat(!show.getHall().getSeats().isEmpty() ? show.getHall().getSeats().get(0) : null)
                     .sector(!show.getHall().getSectors().isEmpty()? show.getHall().getSectors().get(0) : null)
-                    .status(i % 6 == 0 ? TicketStatus.RESERVATED : TicketStatus.SOLD)
-                    .build());
+                    .status(i % 6 == 0 ? TicketStatus.RESERVED : TicketStatus.SOLD)
+                    .build();
+                if (ticket.getStatus() == TicketStatus.SOLD)
+                    showRepository.incrementSoldTickets(show.getId());
+                tickets.add(ticket);
             }
-            /*Long id = 1L, cn = 1L, sn = 1L;
-            Customer customer1 = Customer.builder().id(id++).name(faker.name().lastName()).firstname(faker.name().firstName()).email(faker.bothify("????##@gmail.com")).birthday(faker.date().birthday().toInstant()
-                .atZone(ZoneId.systemDefault()).toLocalDate()).build();
-            Customer customer2 = Customer.builder().id(id++).name(faker.name().lastName()).firstname(faker.name().firstName()).email(faker.bothify("????##@gmail.com")).birthday(faker.date().birthday().toInstant()
-                .atZone(ZoneId.systemDefault()).toLocalDate()).build();*/
-
             ticketRepository.saveAll(tickets);
         }
     }
+
+     */
+    @Transactional
+    @Override
+    public void generate(){
+        if(ticketRepository.count() > 0){
+            LOGGER.info("Tickets already generated");
+        }else {
+            LOGGER.info("Generating tickets");
+            Random randomGenerator = new Random();
+            List<Ticket> tickets = new ArrayList<>();
+            Optional<Show> showOptional;
+            Long numOfShows = showRepository.count();
+            long numOfCustomers = customerRepository.count();
+            Long numOfSeats = seatRepository.count();
+            NUM_OF_TICKETS = numOfShows * 5;
+            for(Long showId = 1L; showId <= numOfShows; showId++) {
+                Show show = showRepository.getOne(showId);
+                long numOfTicketsPerShow = NUM_OF_TICKETS/numOfShows;
+                for(int i = 0; i < numOfTicketsPerShow; i++) {
+                    Ticket ticket = Ticket.builder()
+                        .id(showId)
+                        .customer(customerRepository.getOne(customMod(showId, (int) numOfCustomers)))
+                        .show(show)
+                        .status(showId % 6 == 0 ? TicketStatus.RESERVED : TicketStatus.SOLD)
+                        .seat(!show.getHall().getSeats().isEmpty() ? show.getHall().getSeats().get(i) : null)
+                        .sector(!show.getHall().getSectors().isEmpty() ? show.getHall().getSectors().get(customModInt((long)i, NUM_OF_SECTORS_PER_HALL)) : null)
+                        .price(faker.random().nextDouble()*50)
+                        .reservationNo(UUID.randomUUID().toString())
+                        .build();
+                    if (ticket.getStatus() == TicketStatus.SOLD)
+                        showRepository.incrementSoldTickets(show.getId());
+                    tickets.add(ticket);
+                }
+            }
+            ticketRepository.saveAll(tickets); // TODO: use service in order to increment the soldTickets field for the show
+        }
+    }
+
 }

@@ -2,6 +2,7 @@ package at.ac.tuwien.sepm.groupphase.backend.service.implementation;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.artist.ArtistDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.artist.ArtistMapper;
+import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.ArtistRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.EventRepository;
@@ -12,12 +13,9 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.persistence.PersistenceException;
-import javax.validation.ConstraintViolationException;
 
 
 @Service
@@ -49,7 +47,10 @@ public class ArtistServiceImpl implements ArtistService {
             artistName = "";
             pageable = Pageable.unpaged();
         } else pageable = PageRequest.of(page, pageSize);
-        return artistRepository.findByNameContainingIgnoreCase(artistName, pageable).map(artistMapper::artistToArtistDTO);
+        Page<ArtistDTO> result = artistRepository.findByNameContainingIgnoreCase(artistName, pageable).map(artistMapper::artistToArtistDTO);
+        if (!result.hasContent()) throw new NotFoundException("No artist found");
+        if (result.getContent().size() == 0) throw new NotFoundException("No artist found");
+        return result;
     }
 
     @Override

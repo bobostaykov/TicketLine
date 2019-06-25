@@ -111,6 +111,9 @@ export class SearchPageComponent implements OnInit {
     this.getCountriesOrderedByName();
   }
 
+  /**
+   * Returns a list of the names of the countries available in the data base
+   */
   private getCountriesOrderedByName() {
       this.locationsService.getCountriesOrderedByName().subscribe(
         (countries: string[]) => { this.countries = countries; },

@@ -29,7 +29,7 @@ public class TicketPostDTO {
     @ApiModelProperty(name = "The sector number of this ticket")
     private Long sector;
 
-    @ApiModelProperty(name = "Status of the ticket (RESERVATED, SOLD)")
+    @ApiModelProperty(name = "Status of the ticket (RESERVED, SOLD)")
     private TicketStatus status;
 
     public void setId(Long id) {

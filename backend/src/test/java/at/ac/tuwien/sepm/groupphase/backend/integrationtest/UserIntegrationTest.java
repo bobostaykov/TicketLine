@@ -3,6 +3,7 @@ package at.ac.tuwien.sepm.groupphase.backend.integrationtest;
 import at.ac.tuwien.sepm.groupphase.backend.datatype.UserType;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.authentication.AuthenticationToken;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.SimpleNewsDTO;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.requestparameter.PasswordChangeRequest;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.user.UserDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.LoginAttempts;
 import at.ac.tuwien.sepm.groupphase.backend.entity.News;
@@ -10,7 +11,6 @@ import at.ac.tuwien.sepm.groupphase.backend.entity.User;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.user.UserMapper;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.integrationtest.base.BaseIntegrationTest;
-import at.ac.tuwien.sepm.groupphase.backend.integrationtest.base.BaseIntegrationTestWithMockedUserCredentials;
 import at.ac.tuwien.sepm.groupphase.backend.repository.LoginAttemptsRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.UserRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.HeaderTokenAuthenticationService;
@@ -18,7 +18,10 @@ import at.ac.tuwien.sepm.groupphase.backend.service.UserService;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
-import org.junit.*;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -54,6 +57,7 @@ public class UserIntegrationTest extends BaseIntegrationTest {
     private static final List<News> TEST_READ_NEWS_2 = new ArrayList<News>();
     private static final List<SimpleNewsDTO> TEST_READ_NEWS_DTO_2 = new ArrayList<SimpleNewsDTO>();
     private static final Long INVALID_ID = 99999L;
+    private static final String CHANGED_PASSWORD = "newPassword";
     private User testUser1;
     private User testUser2;
     String validAdminTokenWithPrefix2;
@@ -144,6 +148,22 @@ public class UserIntegrationTest extends BaseIntegrationTest {
         //reset
         attempts = loginAttemptsRepository.findById(testUser1.getId()).get();
         Assert.assertThat(attempts.isBlocked(), is(false));
+    }
+    @Test
+    public void changePasswordAsAdmin_resultsInUserBeingBlocked() throws ServiceException {
+        PasswordChangeRequest passwordChangeRequest = PasswordChangeRequest.builder().password(CHANGED_PASSWORD).userId(testUser1.getId()).userName(testUser1.getUsername()).build();
+        Response response = RestAssured
+            .given()
+            .contentType(ContentType.JSON)
+            .body(passwordChangeRequest)
+            .headers(HttpHeaders.AUTHORIZATION, validAdminTokenWithPrefix)
+            .when().post(USER_ENDPOINT + "/password");
+        Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
+        User user  = userRepository.findById(testUser2.getId()).get();
+        Assert.assertTrue(user.getPassword() != testUser1.getPassword());
+        //reset
+        passwordChangeRequest = PasswordChangeRequest.builder().password(TEST_USER_PASS_1).userId(testUser1.getId()).userName(testUser1.getUsername()).build();
+        userService.changePassword(passwordChangeRequest);
     }
 
     @Test

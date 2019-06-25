@@ -1,11 +1,17 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.event;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 import java.util.List;
 import java.util.Objects;
 
+@ApiModel(value = "TopTenDetailsDTO", description = "a dto to pass for requests for the top ten events")
 public class TopTenDetailsDTO {
 
+    @ApiModelProperty(name = "the months that is searched for")
     private List<String> months;
+    @ApiModelProperty(name = "the categories that is searched for")
     private List<String> categories;
 
     public TopTenDetailsDTO() {}

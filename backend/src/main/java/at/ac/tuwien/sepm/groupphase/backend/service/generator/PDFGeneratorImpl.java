@@ -4,7 +4,6 @@ import at.ac.tuwien.sepm.groupphase.backend.datatype.TicketStatus;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.location.LocationDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.ticket.TicketDTO;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
-import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.BarcodeQRCode;
 import com.itextpdf.text.pdf.PdfPCell;
@@ -15,13 +14,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.security.NoSuchAlgorithmException;
+import java.io.ByteArrayOutputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -29,13 +24,13 @@ import java.util.List;
 @Component
 public class PDFGeneratorImpl implements PDFGenerator{
 
-    // TODO: take from application.yml
-    private static final String TICKET_CHECK_URL = "https://ticketline.at/tickets/check/";
-
     private static final Logger LOGGER = LoggerFactory.getLogger(PDFGeneratorImpl.class);
 
     @Value("${receipt.address}")
-    private String TICKETLINE_ADDRESS; // TODO: does this work?
+    private String TICKETLINE_ADDRESS;
+
+    @Value("${ticket.check.url}")
+    private String TICKET_CHECK_URL;
 
     public byte[] generateReceipt(List<TicketDTO> tickets, Boolean cancellation) throws DocumentException {
         LOGGER.info("PDF Generator: Generate (cancellation) receipt for ticket(s)");
@@ -91,7 +86,7 @@ public class PDFGeneratorImpl implements PDFGenerator{
             number.setPhrase(new Phrase(i.toString(), font));
             table.addCell(number);
             PdfPCell item = new PdfPCell();
-            item.setPhrase(new Phrase(t.getShow().getEvent().getName() + (t.getStatus() == TicketStatus.RESERVATED ? " - Reservierung" : ""), font));
+            item.setPhrase(new Phrase(t.getShow().getEvent().getName() + (t.getStatus() == TicketStatus.RESERVED ? " - Reservierung" : ""), font));
             table.addCell(item);
             PdfPCell price = new PdfPCell();
             price.setPhrase(new Phrase(this.doubleToEuro(t.getStatus() == TicketStatus.SOLD ? t.getPrice() : 0.0), font));
@@ -134,7 +129,6 @@ public class PDFGeneratorImpl implements PDFGenerator{
         receipt.add(Chunk.NEWLINE);
         receipt.add(Chunk.NEWLINE);
 
-        //Paragraph address = new Paragraph("Ticketline-Gasse 1a, 1010 Wien", font);
         Paragraph address = new Paragraph(TICKETLINE_ADDRESS, font);
         receipt.add(address);
 
@@ -240,7 +234,7 @@ public class PDFGeneratorImpl implements PDFGenerator{
             price.setPhrase(new Phrase("Preis (zu bezahlen): " + this.doubleToEuro(ticket.getPrice()), fontBold));
             table.addCell(price);
             PdfPCell reservationNumber = new PdfPCell();
-            reservationNumber.setPhrase(new Phrase("Reservierungsnummer: " + ticket.getReservationNumber().toString(), fontBold));
+            reservationNumber.setPhrase(new Phrase("Reservierungsnummer: \n" + ticket.getReservationNo(), fontBold));
             table.addCell(reservationNumber);
         }
 

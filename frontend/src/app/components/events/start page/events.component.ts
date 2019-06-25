@@ -24,6 +24,9 @@ export class EventsComponent implements OnInit {
     this.loadEvents();
   }
 
+  /**
+   * Loads events to be displayed on the page
+   */
   private loadEvents() {
     this.eventService.getAllEvents(this.page).subscribe(
       result => {
@@ -36,12 +39,21 @@ export class EventsComponent implements OnInit {
     );
   }
 
+  /**
+   * Sets page number to the chosen i
+   * @param i number of the page to get
+   * @param event to handle
+   */
   private setPage(i, event: any) {
     event.preventDefault();
     this.page = i;
     this.loadEvents();
   }
 
+  /**
+   * Sets page number to the previous one and calls the last method
+   * @param event to handle
+   */
   private previousPage(event: any) {
     event.preventDefault();
     if (this.page > 0 ) {
@@ -50,6 +62,10 @@ export class EventsComponent implements OnInit {
     }
   }
 
+  /**
+   * Sets page number to the next one and calls the last method
+   * @param event to handle
+   */
   private nextPage(event: any) {
     event.preventDefault();
     if (this.page < this.totalPages - 1) {
