@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint;
 
 import at.ac.tuwien.sepm.groupphase.backend.conversion.CaseInsensitiveEnumConverter;
+import at.ac.tuwien.sepm.groupphase.backend.datatype.EventType;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.requestparameter.ShowRequestParameter;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.searchParameters.ShowSearchParametersDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.show.ShowDTO;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -75,14 +77,15 @@ public class ShowEndpoint {
     public Page<ShowDTO> findShowsFilteredByShowAttributes(@RequestParam(value = "eventId", required = false) Long eventId,
                                                            @RequestParam(value = "artistName", required = false) String artistName,
                                                            @RequestParam(value = "eventName", required = false) String eventName,
+                                                           @RequestParam(value = "eventType", required = false) String eventTypeString,
                                                            @RequestParam(value = "hallName", required = false) String hallName,
-                                                           @RequestParam(value="minPrice", required = false) Integer minPrice,
-                                                           @RequestParam(value="maxPrice", required = false) Integer maxPrice,
+                                                           @RequestParam(value="minPrice", required = false)@PositiveOrZero Integer minPrice,
+                                                           @RequestParam(value="maxPrice", required = false)@PositiveOrZero Integer maxPrice,
                                                            @RequestParam(value="dateFrom", required = false) String dateFrom,
                                                            @RequestParam(value="dateTo", required = false) String dateTo,
                                                            @RequestParam(value="timeFrom", required = false) String timeFrom,
                                                            @RequestParam(value="timeTo", required = false) String timeTo,
-                                                           @RequestParam(value="duration", required = false) Integer duration,
+                                                           @RequestParam(value="duration", required = false)@Positive Integer duration,
                                                            @RequestParam(value = "locationName", required = false) String locationName,
                                                            @RequestParam(value = "country", required = false) String country,
                                                            @RequestParam(value = "city", required = false) String city,
@@ -91,6 +94,13 @@ public class ShowEndpoint {
                                                            @RequestParam(value = "page", required = false) Integer page,
                                                            @RequestParam(value = "pageSize", required = false) @Positive Integer pageSize)
     {
+
+        EventType eventType = null;
+        for(EventType type : EventType.values()){
+            if(type.toString().equals(eventTypeString)){
+                eventType = type;
+            }
+        }
         try {
             LOGGER.debug("\neventName: " + eventName + "\nhallName: " + hallName + "\nminPrice: " + minPrice + "\nmaxPrice: " + maxPrice +
                 "\ndateFrom: " + dateFrom + "\ndateTo: " + dateTo + "\ntimeFrom: " + timeFrom + "\ntimeTo: " + timeTo + "\nduration: " + duration +
@@ -113,6 +123,7 @@ public class ShowEndpoint {
                     .eventId(eventId)
                     .postalcode(postalCode)
                     .artistName(artistName)
+                    .eventType(eventType)
                     .build();
 
                 LOGGER.info("Get all shows filtered by specified attributes: " + parameters.toString());

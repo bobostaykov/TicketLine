@@ -28,6 +28,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 
+import javax.xml.bind.SchemaOutputResolver;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.*;
@@ -38,7 +39,7 @@ import static org.mockito.ArgumentMatchers.any;
 public class TicketEndpointTest extends BaseIntegrationTest {
 
     private static final String TICKET_ENDPOINT = "/tickets";
-    private static final String RESERVATED_TICKET = "/reservated";
+    private static final String RESERVED_TICKET = "/reserved";
     private static final String FIND_BY_NAME = "/name";
     private static final String PRINTABLE = "/printable";
     private static final String RECEIPT = "/receipt";
@@ -48,7 +49,7 @@ public class TicketEndpointTest extends BaseIntegrationTest {
     private static final String SPECIFIC_TICKET_PATH = "/{id}";
 
     private static final long TEST_TICKET_ID = 1L;
-    private static final TicketStatus TEST_TICKET_STATUS = TicketStatus.RESERVATED;
+    private static final TicketStatus TEST_TICKET_STATUS = TicketStatus.RESERVED;
 
     private static final String TEST_CUSTOMER_NAME = "TestName";
     private static final String TEST_CUSTOMER_FIRSTNAME = "TestFirstName";
@@ -169,7 +170,7 @@ public class TicketEndpointTest extends BaseIntegrationTest {
     private Long TEST_TICKET_ID2 = 12L;
     private Double TEST_TICKET_PRICE2 = 15.50;
     private Integer TEST_SECTOR_NUMBER = 1;
-    private TicketStatus TEST_TICKET_STATUS2 = TicketStatus.RESERVATED;
+    private TicketStatus TEST_TICKET_STATUS2 = TicketStatus.RESERVED;
     private String TEST_TICKET_RESERVATIONNO1 = "test_res_no_012345";
 
     @MockBean
@@ -496,7 +497,6 @@ public class TicketEndpointTest extends BaseIntegrationTest {
             .when().post(TEST_TICKET_ENDPOINT)
             .then().extract().response();
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
-        TEST_SHOW_DTO.setTicketsSold(TEST_SHOW_TICKET_SOLD + 1);
         Assert.assertThat(Arrays.asList(response.as(TicketDTO[].class)), is(Collections.singletonList(TicketDTO.builder()
             .id(TEST_TICKET_ID1)
             .show(TEST_SHOW_DTO)
@@ -625,7 +625,7 @@ public class TicketEndpointTest extends BaseIntegrationTest {
         Response response = RestAssured
             .given()
             .contentType(ContentType.JSON)
-            .when().get(TICKET_ENDPOINT + RESERVATED_TICKET + SPECIFIC_TICKET_PATH, TEST_TICKET_ID)
+            .when().get(TICKET_ENDPOINT + RESERVED_TICKET + SPECIFIC_TICKET_PATH, TEST_TICKET_ID)
             .then().extract().response();
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.UNAUTHORIZED.value()));
     }
@@ -643,7 +643,7 @@ public class TicketEndpointTest extends BaseIntegrationTest {
             .given()
             .contentType(ContentType.JSON)
             .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
-            .when().get(TICKET_ENDPOINT + RESERVATED_TICKET + SPECIFIC_TICKET_PATH, TEST_TICKET_ID)
+            .when().get(TICKET_ENDPOINT + RESERVED_TICKET + SPECIFIC_TICKET_PATH, TEST_TICKET_ID)
             .then().extract().response();
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
         Assert.assertThat(response.as(TicketDTO.class), is(TicketDTO.builder()
@@ -666,7 +666,7 @@ public class TicketEndpointTest extends BaseIntegrationTest {
             .given()
             .contentType(ContentType.JSON)
             .header(HttpHeaders.AUTHORIZATION, validAdminTokenWithPrefix)
-            .when().get(TICKET_ENDPOINT + RESERVATED_TICKET + SPECIFIC_TICKET_PATH, TEST_TICKET_ID)
+            .when().get(TICKET_ENDPOINT + RESERVED_TICKET + SPECIFIC_TICKET_PATH, TEST_TICKET_ID)
             .then().extract().response();
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
         Assert.assertThat(response.as(TicketDTO.class), is(TicketDTO.builder()
@@ -878,18 +878,11 @@ public class TicketEndpointTest extends BaseIntegrationTest {
             .given()
             .contentType(ContentType.JSON)
             .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
-            .when().get(TEST_TICKET_ENDPOINT_FILTER + "?customerName=est&eventName=ent_")
+            .when().get(TEST_TICKET_ENDPOINT_FILTER + "?customerName=est&eventName=ent_&page=0")
             .then().extract().response();
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
-        Assert.assertThat(Arrays.asList(response.as(TicketDTO[].class)), is(Collections.singletonList(
-            TicketDTO.builder()
-                .id(TEST_TICKET_ID1)
-                .show(TEST_SHOW_DTO)
-                .customer(TEST_CUSTOMER1_DTO)
-                .price(TEST_TICKET_PRICE1)
-                .seat(TEST_SEAT1_DTO)
-                .status(TEST_TICKET_STATUS1)
-                .build())));
+        List<TicketDTO> tickets = response.jsonPath().getList("content");
+        Assert.assertTrue(tickets.size() == 1);
     }
 /*
     @Test

@@ -5,7 +5,7 @@ import {NgbPaginationConfig} from '@ng-bootstrap/ng-bootstrap';
 import * as _ from 'lodash';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {AuthService} from '../../services/auth/auth.service';
-import {FileService} from '../../services/file.service';
+import {FileService} from '../../services/file/file.service';
 import {UserService} from '../../services/user/user.service';
 
 @Component({
@@ -36,7 +36,6 @@ export class NewsComponent implements OnInit {
               private cd: ChangeDetectorRef, private authService: AuthService) {
     this.newsForm = this.formBuilder.group({
       title: ['', [Validators.required]],
-      summary: ['', [Validators.required]],
       text: ['', [Validators.required]],
       image: ['']
     });
@@ -121,7 +120,8 @@ export class NewsComponent implements OnInit {
     if (this.newsForm.valid) {
       const news: News = new News(null,
         this.newsForm.controls.title.value,
-        this.newsForm.controls.summary.value,
+        // this.newsForm.controls.summary.value,
+        null,
         this.newsForm.controls.text.value,
         null,
         null,
@@ -133,7 +133,6 @@ export class NewsComponent implements OnInit {
           this.createNews(news);
           },
           error => {
-            this.defaultServiceErrorHandling(error);
           }
           );
       } else {
@@ -156,7 +155,6 @@ export class NewsComponent implements OnInit {
         this.loadNews();
       },
       error => {
-        this.defaultServiceErrorHandling(error);
       }
     );
   }
@@ -202,7 +200,6 @@ export class NewsComponent implements OnInit {
         }
       },
       error => {
-        this.defaultServiceErrorHandling(error);
       }
     );
   }
@@ -234,7 +231,6 @@ export class NewsComponent implements OnInit {
           this.setPagesRange();
         },
         error => {
-          this.defaultServiceErrorHandling(error);
         },
       () => { this.dataReady = true; }
       );
@@ -246,21 +242,9 @@ export class NewsComponent implements OnInit {
           this.setPagesRange();
         },
         error => {
-          this.defaultServiceErrorHandling(error);
         },
         () => { this.dataReady = true; }
       );
-    }
-  }
-
-
-  private defaultServiceErrorHandling(error: any) {
-    console.log(error);
-    this.error = true;
-    if (error.error.message !== 'No message available') {
-      this.errorMessage = error.error.message;
-    } else {
-      this.errorMessage = error.error.error;
     }
   }
 

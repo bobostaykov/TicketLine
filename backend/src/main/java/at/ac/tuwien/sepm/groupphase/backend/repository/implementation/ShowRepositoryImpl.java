@@ -42,7 +42,7 @@ public class ShowRepositoryImpl implements ShowRepositoryCustom {
         LOGGER.info("Find shows filtered by " + parameters.toString());
 
         CriteriaBuilder cBuilder = em.getCriteriaBuilder();
-        //Sammlung der Bedingungen
+        //Collection of conditions
         List<Predicate> predicates = new ArrayList<>();
         em.getMetamodel();
         CriteriaQuery<Show> criteriaQuery = cBuilder.createQuery(Show.class);
@@ -52,9 +52,6 @@ public class ShowRepositoryImpl implements ShowRepositoryCustom {
         if (parameters.getDateFrom() != null) {
             predicates.add(cBuilder.greaterThanOrEqualTo(show.get(Show_.date), parameters.getDateFrom()));
         }
-        //}else{
-        //   predicates.add(cBuilder.greaterThanOrEqualTo(show.get(Show_.date), LocalDate.now()));
-        //}
 
         if (parameters.getDateTo() != null) {
             predicates.add(cBuilder.lessThanOrEqualTo(show.get(Show_.date), parameters.getDateTo()));
@@ -70,7 +67,8 @@ public class ShowRepositoryImpl implements ShowRepositoryCustom {
         if (parameters.getEventId() != null
             || parameters.getEventName() != null
             || parameters.getArtistName() != null
-            || (parameters.getDurationInMinutes() != null && parameters.getDurationInMinutes() != 0)) {
+            || (parameters.getDurationInMinutes() != null && parameters.getDurationInMinutes() != 0)
+            || parameters.getEventType() != null) {
 
             Join<Show, Event> eventJoin = show.join(Show_.event);
 
@@ -88,6 +86,9 @@ public class ShowRepositoryImpl implements ShowRepositoryCustom {
             if (parameters.getDurationInMinutes() != null && parameters.getDurationInMinutes() != 0) {
                 predicates.add(cBuilder.between
                     (eventJoin.get(Event_.durationInMinutes), parameters.getDurationInMinutes() - 30, parameters.getDurationInMinutes() + 30));
+            }
+            if(parameters.getEventType() != null){
+                predicates.add(cBuilder.equal(eventJoin.get(Event_.eventType), parameters.getEventType()));
             }
         }
 
@@ -133,12 +134,12 @@ public class ShowRepositoryImpl implements ShowRepositoryCustom {
             }
         }
 
-        //Übergabe der Predicates
+        //Transfer of Predicates
         criteriaQuery.select(show).where(predicates.toArray(new Predicate[predicates.size()]));
         TypedQuery<Show> typedQuery = em.createQuery(criteriaQuery);
         List<Show> showList = typedQuery.getResultList();
 
-        //Filtern nach Preisen
+        //Filter for prices
         if ((parameters.getPriceInEuroFrom() != null || parameters.getPriceInEuroTo() != null) && !showList.isEmpty()) {
             if (parameters.getPriceInEuroFrom() != null) {
                 showList = showList.stream()
@@ -152,7 +153,7 @@ public class ShowRepositoryImpl implements ShowRepositoryCustom {
             }
         }
 
-        //Sortieren
+        //Sorting
         Comparator<Show> byDate = Comparator.comparing(s -> s.getDate() );
         Comparator<Show> byTime = Comparator.comparing(s -> s.getTime());
         Comparator<Show> byId = Comparator.comparing(s -> s.getId());
@@ -214,7 +215,7 @@ public class ShowRepositoryImpl implements ShowRepositoryCustom {
             .stream()
             .max(Comparator
                 .comparingDouble(Double::doubleValue))
-            .get() > maxPrice;
+            .get() >= maxPrice;
     }
     private static java.util.function.Predicate<Show> compareMinPrice(Double minPrice){
         return show -> show.getPricePattern()
@@ -223,8 +224,6 @@ public class ShowRepositoryImpl implements ShowRepositoryCustom {
             .stream()
             .max(Comparator
                 .comparingDouble(Double :: doubleValue))
-            .get() > minPrice;
+            .get() >= minPrice;
     }
 }
-
-

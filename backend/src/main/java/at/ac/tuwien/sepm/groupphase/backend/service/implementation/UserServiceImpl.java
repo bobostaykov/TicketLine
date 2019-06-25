@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.implementation;
 
 import at.ac.tuwien.sepm.groupphase.backend.datatype.UserType;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.requestparameter.PasswordChangeRequest;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.user.UserDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.LoginAttempts;
 import at.ac.tuwien.sepm.groupphase.backend.entity.User;
@@ -193,6 +194,24 @@ public class UserServiceImpl implements UserService {
             return result;
         } catch (PersistenceException e) {
             throw new ServiceException(e.getMessage());
+        }
+    }
+
+    @Override
+    public void changePassword(PasswordChangeRequest passwordChangeRequest) throws ServiceException {
+        LOGGER.info("changing password for user " + passwordChangeRequest.getId());
+        Optional<User> userOptional = userRepository.findById(passwordChangeRequest.getId());
+        if(userOptional.isPresent()){
+            User user = userOptional.get();
+            if(user.getType().equals(UserType.ADMIN)){
+                throw new ServiceException("admins cant be blocked");
+            }else{
+                user.setPassword(passwordEncoder.encode(passwordChangeRequest.getPassword()));
+                user = userRepository.save(user);
+                unblockUser(user.getId());
+            }
+        }else{
+            throw new NotFoundException("could not find user with id: " + passwordChangeRequest.getId());
         }
     }
 

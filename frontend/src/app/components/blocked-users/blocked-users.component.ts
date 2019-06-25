@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService} from '../../services/auth/auth.service';
 import {UserService} from '../../services/user/user.service';
 import {User} from '../../dtos/user';
+import {ChangePasswordRequest} from '../../dtos/change-password-request';
+import {UserType} from '../../datatype/user_type';
 import {el} from '@angular/platform-browser/testing/src/browser_util';
 
 
@@ -18,14 +20,18 @@ export class BlockedUsersComponent implements OnInit {
   private dataReady: boolean = false;
 
   private blockedUsers: User[];
-  private headElements = ['Username', 'Type', 'User Since', 'Last Login', 'Delete' , 'Unblock'];
+  private headElements = ['Username', 'Type', 'User Since', 'Last Login', 'Delete' , 'Unblock', 'Reset Password'];
   private error: boolean = false;
   private userUnblocked: boolean = false;
   private errorMessage: string = '';
   private unblockedUserMessage: string = 'User was successfully unblocked!';
+  private passwordResetMessage: string = 'Password was successfully reset';
   private userToDelete: number = null;
   private userToSearch: string = null;
-
+  private userToChangePwd: User;
+  private passwordChangeAttempt: boolean = false;
+  private passwordChangeRequest: ChangePasswordRequest;
+  private passwordReset: boolean = false;
   constructor(private authService: AuthService, private userService: UserService) {
   }
 
@@ -106,6 +112,22 @@ export class BlockedUsersComponent implements OnInit {
     }
   }
 
+  /**
+   * sends an request to the backend to change the password of a user
+   * @param changePasswordRequest an request containing id name and the new password
+   */
+  private changePassword(newPassword: string): boolean{
+    this.passwordChangeAttempt = false;
+    this.passwordChangeRequest = new ChangePasswordRequest(this.userToChangePwd.id, this.userToChangePwd.username, newPassword)
+    this.userService.changePassword(this.passwordChangeRequest).subscribe();
+    this.showPasswordResetMessage();
+    return true;
+  }
+
+  /**
+   * loads a page of blocked users matching the name
+   * @param username the name
+   */
   private loadBlockedUsers(username: string) {
     console.log('Get blocked users');
     this.userService.getBlockedUsers(username, this.page).subscribe(
@@ -125,6 +147,10 @@ export class BlockedUsersComponent implements OnInit {
     );
   }
 
+  /**
+   * unblocks a user
+   * @param user the user that is to be unblocked
+   */
   private unblockUser(user: User) {
     this.userService.unblockUser(user.id).subscribe(
       () => {},
@@ -133,6 +159,10 @@ export class BlockedUsersComponent implements OnInit {
     );
   }
 
+  /**
+   * deletes a user
+   * @param userId the id of a user
+   */
   private deleteUser(userId: number) {
     this.userToDelete = null;
     this.userService.deleteUser(userId).subscribe(
@@ -159,6 +189,19 @@ export class BlockedUsersComponent implements OnInit {
   private showUserUnblockedMessage() {
     this.userUnblocked = true;
     setTimeout(() => this.userUnblocked = false, 5000);
+  }
+  private showPasswordResetMessage() {
+    this.passwordReset = true;
+    setTimeout(() => this.passwordReset = false, 5000);
+  }
+  private checkIfUserIsAdmin(user: User): boolean{
+    return user.type === UserType.ADMIN;
+  }
+  private setPasswordChangeAttempt() {
+    this.passwordChangeAttempt = true;
+  }
+  private setUserToReset(user: User) {
+    this.userToChangePwd = user;
   }
 
 }

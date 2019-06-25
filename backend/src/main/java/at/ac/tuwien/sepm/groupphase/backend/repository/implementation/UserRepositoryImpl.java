@@ -42,7 +42,7 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
     public List<User> findAllBlockedUsers() {
         LOGGER.debug("UserRepositoryImpl: findAllBlockedUsers");
         CriteriaBuilder cBuilder = entityManager.getCriteriaBuilder();
-        //Sammlung der Bedingungen
+        //Collection of conditions
         List<Predicate> predicates = new ArrayList<>();
         CriteriaQuery<User> cq = cBuilder.createQuery(User.class);
         Root<User> userRoot = cq.from(entityManager.getMetamodel().entity(User.class));

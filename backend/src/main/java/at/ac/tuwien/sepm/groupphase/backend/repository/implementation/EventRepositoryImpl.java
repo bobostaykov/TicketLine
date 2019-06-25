@@ -78,9 +78,6 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
         if (eventList.isEmpty()) {
             throw new NotFoundException("No events are found with those parameters");
         }
-        int pageSize = 10;
-        int totalElements = eventList.size();
-
 
         int start = (int)pageable.getOffset();
         int end = (start + pageable.getPageSize()) > eventList.size() ? eventList.size() : (start + pageable.getPageSize());

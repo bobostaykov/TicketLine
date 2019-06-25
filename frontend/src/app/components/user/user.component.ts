@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {AuthService} from '../../services/auth/auth.service';
 import {User} from '../../dtos/user';
 import {UserService} from '../../services/user/user.service';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {UserType} from '../../datatype/user_type';
+import {ChangePasswordRequest} from '../../dtos/change-password-request';
 
 @Component({
   selector: 'app-user',
@@ -16,7 +17,6 @@ export class UserComponent implements OnInit {
   private totalPages: number;
   private pageRange: Array<number> = [];
   private dataReady: boolean = false;
-
   private error: boolean = false;
   private userBlocked: boolean = false;
   private userAlreadyBlocked: boolean = false;
@@ -25,15 +25,21 @@ export class UserComponent implements OnInit {
   private blockedUserMessage: string = 'User was successfully blocked!';
   private cantBlockAdminMessage: string = 'Can\'t block admin!';
   private userAlreadyBlockedMessage: string = 'User already blocked!';
+  private passwordResetMessage: string = 'Password was successfully reset';
   private users: User[];
   private userForm: FormGroup;
   private submitted: boolean = false;
   private usernameError: boolean = false;
-  private headElements = ['Username', 'Type', 'User Since', 'Last Login', 'Remove', 'Block'];
+  private headElements = ['Username', 'Type', 'User Since', 'Last Login', 'Remove', 'Block', 'Reset Password'];
   private userTypes = ['Admin', 'Seller'];
   private selectedUserType: string = null;
   private userToDelete: number = null;
   private userToSearch: string = null;
+  private userToChangePwd: User;
+  private passwordChangeAttempt: boolean = false;
+  private passwordChangeRequest: ChangePasswordRequest;
+  private passwordReset: boolean = false;
+
 
   constructor(private authService: AuthService, private userService: UserService, private formBuilder: FormBuilder) {
     this.userForm = this.formBuilder.group({
@@ -181,6 +187,10 @@ export class UserComponent implements OnInit {
     );
   }
 
+  private userIsAdmin(user: User): boolean {
+    return user.type === UserType.ADMIN;
+  }
+
   private deleteUser(userId: number) {
     this.userToDelete = null;
     this.userService.deleteUser(userId).subscribe(
@@ -192,6 +202,21 @@ export class UserComponent implements OnInit {
 
   private setUserToDelete(userId: number) {
     this.userToDelete = userId;
+  }
+  private setUserToReset(user: User) {
+    this.userToChangePwd = user;
+  }
+
+  /**
+   * sends an request to the backend to change the password of a user
+   * @param changePasswordRequest an request containing id name and the new password
+   */
+  private changePassword(newPassword: string): boolean{
+    this.passwordChangeAttempt = false;
+    this.passwordChangeRequest = new ChangePasswordRequest(this.userToChangePwd.id, this.userToChangePwd.username, newPassword)
+    this.userService.changePassword(this.passwordChangeRequest).subscribe();
+    this.showPasswordResetMessage();
+    return true;
   }
 
   /**
@@ -246,10 +271,20 @@ export class UserComponent implements OnInit {
     this.cantBlockAdmin = true;
     setTimeout(() => this.cantBlockAdmin = false, 5000);
   }
+  private showPasswordResetMessage() {
+    this.passwordReset = true;
+    setTimeout(() => this.passwordReset = false, 5000);
+  }
 
   private showUserAlreadyBlockedMessage() {
     this.userAlreadyBlocked = true;
     setTimeout(() => this.userAlreadyBlocked = false, 5000);
+  }
+  private checkIfUserIsAdmin(user: User): boolean {
+    return user.type.toString() === 'ADMIN';
+  }
+  private setPasswordChangeAttempt() {
+    this.passwordChangeAttempt = true;
   }
 
 }

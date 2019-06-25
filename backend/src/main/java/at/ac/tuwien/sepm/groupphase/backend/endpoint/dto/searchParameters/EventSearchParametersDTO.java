@@ -1,22 +1,29 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.searchParameters;
 
 import at.ac.tuwien.sepm.groupphase.backend.datatype.EventType;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Positive;
 import java.util.Objects;
-
+@ApiModel(value = "EventSearchParametersDTO", description = "the parameters to search events for")
 public class EventSearchParametersDTO {
     @NotBlank
+    @ApiModelProperty(name = "the name of the event")
     private String name;
     @Positive
+    @ApiModelProperty(name = "the duration of the event")
     private Integer durationInMinutes;
     @NotEmpty
+    @ApiModelProperty(name = "the content of the event")
     private String content;
     @NotBlank
+    @ApiModelProperty(name = "the name of the artist")
     private String artistName;
     @NotBlank
+    @ApiModelProperty(name = "the description of the event")
     private String description;
 
     private EventType eventType;

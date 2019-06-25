@@ -39,12 +39,13 @@ import {CustomerComponent} from './components/customer/customer.component';
 import {TicketComponent} from './components/ticket/ticket.component';
 import {CustomerDialogComponent} from './components/customer-dialog/customer-dialog.component';
 import {TicketCheckReservationComponent} from './components/ticket/ticket-check/ticket-check.component';
-import {StornoComponent} from './components/storno/storno.component';
 import {FloorplanTicketComponent} from './components/floorplan/floorplan-ticket/floorplan-ticket.component';
 import {BlockedUsersComponent} from './components/blocked-users/blocked-users.component';
 import {MinDirective} from './directives/min.directive';
 import {ContentManagerComponent} from './components/content-manager/content-manager.component';
 import {SelectDropDownModule} from 'ngx-select-dropdown';
+import {ChangePasswordDialogComponent } from './components/change-password-dialog/change-password-dialog.component';
+import {ReservationAndCancellationComponent} from './components/storno/reservation-and-cancellation.component';
 import {ShowDialogComponent} from './components/show-dialog/show-dialog.component';
 import {errorHandlingProvider} from './errorhandling';
 import {ErrorSnackBarComponent} from './components/error-snack-bar/error-snack-bar.component';
@@ -77,12 +78,17 @@ import {LocationDialogComponent} from './components/location-dialog/location-dia
     BlockedUsersComponent,
     TicketCheckReservationComponent,
     ContentManagerComponent,
+    BlockedUsersComponent,
+    ChangePasswordDialogComponent,
+    ContentManagerComponent,
     ShowDialogComponent,
     ContentManagerComponent,
     EventDialogComponent,
     ErrorSnackBarComponent,
     LocationDialogComponent,
-    StornoComponent
+    ContentManagerComponent,
+    LocationDialogComponent,
+    ReservationAndCancellationComponent
   ],
   imports: [
     BrowserModule,

@@ -11,14 +11,6 @@ import java.util.List;
 
 public interface ShowService {
 
-    /*
-     * inds all shows filtered by event name
-     * @param page the number of the page to return
-     * @param eventName eventName name of event by which to filter the shows
-     * @return a page of found shows matching the criteria
-     */
-    //Page<ShowDTO> findAllShowsFilteredByEventName(String eventName, Integer page);
-
     /**
      * Finds all shows
      * @param page number of the page to return, portion of all
@@ -26,28 +18,6 @@ public interface ShowService {
      * @throws ServiceException is thrown if something went wrong in the process
      */
     Page<ShowDTO> findAll(Integer page) throws ServiceException;
-
-    /*
-     * Finds all shows filtered by location id
-     *
-     * @param locationID id of location by which to filter the shows
-     * @return a list of found shows matching the criteria
-     */
-    //List<Show> findAllShowsFilteredByLocationID(Integer locationID);
-
-    /*
-     * Finds all shows filtered by date range, time range, price range, event name and hall username
-     *
-     * @param dateFrom lower bound of the date range in which the show is happening
-     * @param dateTo upper bound of the date range in which the show is happening
-     * @param timeFrom lower bound for staring time of the show
-     * @param timeTo upper bound for starting time of the show
-     * @param priceInEuroFrom minimal price in euros
-     * @param priceInEuroTo maximal price in euros
-     * @param eventName name of the event
-     * @param hallName name of the hall
-     * @return a list of found shows matching the criteria
-     */
 
     /**
      *

@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
-import {Customer} from '../dtos/customer';
-import {Globals} from '../global/globals';
+import {Customer} from '../../dtos/customer';
+import {Globals} from '../../global/globals';
 import {HttpClient, HttpParams} from '@angular/common/http';
 
 @Injectable({
