@@ -278,21 +278,18 @@
               <input type="text" id="add_artist_name" formControlName="addArtistNameControl"
                      class="form-control"
                      placeholder="Enter a name" [(ngModel)]="artistToAdd.name">
-              <div *ngIf="addArtistForm.controls['addArtistNameControl'].hasError('required')" class="error">
+              <div *ngIf="addArtistFormSubmitted && addArtistForm.controls['addArtistNameControl'].hasError('required')" class="error">
                 <small class="form-text text-danger">Name is required!</small>
               </div>
               <div *ngIf="addArtistForm.controls['addArtistNameControl'].hasError('maxlength')" class="error">
                 <small class="form-text text-danger">Name can be at most 60 characters!</small>
-              </div>
-              <div *ngIf="false" class="error">
-                <small class="form-text text-danger">Artist with the same name already exists!</small>
               </div>
             </div>
           </form>
         </div>
         <div class="modal-footer">
           <button [disabled]="addArtistForm.invalid" type="button" (click)="addArtist()"
-                  class="btn btn-danger float-left" data-dismiss="modal">Add Artist
+                  class="btn btn-success float-left" data-dismiss="modal">Add Artist
           </button>
           <button type="button" class="btn btn-default float-right" data-dismiss="modal">Cancel</button>
         </div>
@@ -318,21 +315,18 @@
               <input type="text" id="update_artist_name" formControlName="updateArtistNameControl"
                      class="form-control"
                      placeholder="Enter a name" [(ngModel)]="artistToUpdate.name">
-              <div *ngIf="updateArtistForm.controls['updateArtistNameControl'].hasError('required')" class="error">
+              <div *ngIf="addArtistFormSubmitted && updateArtistForm.controls['updateArtistNameControl'].hasError('required')" class="error">
                 <small class="form-text text-danger">Name is required!</small>
               </div>
               <div *ngIf="updateArtistForm.controls['updateArtistNameControl'].hasError('maxlength')" class="error">
                 <small class="form-text text-danger">Name can be at most 60 characters!</small>
-              </div>
-              <div *ngIf="false" class="error">
-                <small class="form-text text-danger">Artist with the same name already exists!</small>
               </div>
             </div>
           </form>
         </div>
         <div class="modal-footer">
           <button [disabled]="updateArtistForm.invalid" type="button" (click)="updateArtist()"
-                  class="btn btn-danger float-left" data-dismiss="modal">Update Artist
+                  class="btn btn-success float-left" data-dismiss="modal">Update Artist
           </button>
           <button type="button" class="btn btn-default float-right" data-dismiss="modal">Cancel</button>
         </div>
@@ -441,7 +435,7 @@
   <!-- Event modals -->
 
   <!-- Modal to add event -->
-  <div class="mt-4 container">
+  <div class="mt-4 container" *ngIf="addType === 'Event'">
     <div class="modal fade add-event-modal" id="add-event-modal" tabindex="-1" role="dialog"
          aria-labelledby="Add event modal" aria-hidden="true">
       <div class="modal-dialog modal-lg">
@@ -468,7 +462,7 @@
   </div>
 
   <!-- Modal to edit event -->
-  <div class="mt-4 container">
+  <div class="mt-4 container" *ngIf="addType === 'Event'">
     <div class="modal fade edit-event-modal" tabindex="-1" role="dialog" aria-labelledby="Edit event modal"
          aria-hidden="true">
       <div class="modal-dialog modal-lg">

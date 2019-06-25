@@ -12,15 +12,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 @RestController
 @RequestMapping(value = "/customers")
+@Validated
 @Api(value = "customers")
 public class CustomerEndpoint {
     private final CustomerService customerService;
@@ -30,9 +33,8 @@ public class CustomerEndpoint {
         this.customerService = customerService;
     }
 
-    // TODO: add birthdate validation (not in future)
     @RequestMapping(method = RequestMethod.POST)
-    public CustomerDTO postCustomer(@RequestBody CustomerDTO customerDTO) {
+    public CustomerDTO postCustomer(@Valid @RequestBody CustomerDTO customerDTO) {
         LOGGER.info("Post customer " + customerDTO.toString());
         try {
             return customerService.addCustomer(customerDTO);
@@ -49,7 +51,7 @@ public class CustomerEndpoint {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-    public CustomerDTO adaptCustomer(@RequestBody CustomerDTO customerDTO, @PathVariable("id") Long id) {
+    public CustomerDTO adaptCustomer(@Valid @RequestBody CustomerDTO customerDTO, @PathVariable("id") Long id) {
         LOGGER.info("Adapt customer " + customerDTO.toString());
         customerDTO.setId(id);
         try {

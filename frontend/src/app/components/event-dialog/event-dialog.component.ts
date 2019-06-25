@@ -68,7 +68,8 @@ export class EventDialogComponent implements OnInit, OnChanges {
     }
   }
 
-  private loadArtists() {
+  public loadArtists() {
+    console.log('Load Artists');
     this.artistResultsService.findArtists('-1', 0).subscribe(
       (artists: Artist[]) => { this.options = this.artistArrayToStringArray(artists); },
       error => { this.defaultServiceErrorHandling(error); }
