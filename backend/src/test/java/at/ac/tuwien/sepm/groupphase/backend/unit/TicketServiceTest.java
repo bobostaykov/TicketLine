@@ -435,6 +435,7 @@ public class TicketServiceTest {
     @Test
     public void testPostTicketSubmittingNoSeatOrSector_ExpectingNotFoundException() {
         Mockito.when(customerRepository.getOne(TEST_CUSTOMER_ID1)).thenReturn(TEST_CUSTOMER1);
+        Mockito.when(showRepository.getOne(TEST_SHOW_ID)).thenReturn(TEST_SHOW);
         try{
             ticketService.postTicket(TEST_TICKET_POST_DTO_LIST);
             fail("No NotFoundException was thrown!");
