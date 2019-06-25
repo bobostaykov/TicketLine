@@ -19,7 +19,8 @@ export class NotificationService {
       const snackbar = this.snackBar.openFromComponent(ErrorSnackBarComponent, {
         verticalPosition: 'bottom',
         horizontalPosition: 'center',
-        data: message
+        data: message,
+        duration: 5000
       });
       snackbar.onAction().subscribe(() => {
         snackbar.dismiss();
