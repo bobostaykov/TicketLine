@@ -45,7 +45,7 @@
     </form>
 
 
-    <div *ngIf="dataReady && totalPages > 0">
+    <div *ngIf="dataReady && totalPages > 0 && noResultsFound === false">
       <h3 class="mt-5">Results:</h3>
 
       <!------------------------ Location --------------------------------->
@@ -180,7 +180,7 @@
         </ul>
       </div>
     </div>
-    <h3 class="mt-5" *ngIf="dataReady && totalPages === 0">No Results</h3>
+    <h3 class="mt-5" *ngIf="noResultsFound === true">No Results</h3>
   </div>
 
   <!-- Show modals -->

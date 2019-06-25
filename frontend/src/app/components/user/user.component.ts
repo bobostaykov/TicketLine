@@ -204,8 +204,8 @@ export class UserComponent implements OnInit {
   private defaultServiceErrorHandling(error: any) {
     console.log(error);
     this.error = true;
-    if (error.error.news !== 'No message available') {
-      this.errorMessage = error.error.news;
+    if (error.error.message !== 'No message available') {
+      this.errorMessage = error.error.message;
     } else if (error.error.httpRequestStatusCode === 404) {
       this.errorMessage = 'Could not block user';
     } else {

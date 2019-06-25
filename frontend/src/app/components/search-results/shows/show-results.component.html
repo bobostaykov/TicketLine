@@ -1,8 +1,7 @@
-<div *ngIf="dataReady && totalPages > 0">
+<div *ngIf="dataReady && totalPages > 0 && noResultsFound === false">
   <h1 class="mt-5" *ngIf="resultsFor === 'EVENT'">Shows - Results for the chosen event</h1>
   <h1 class="mt-5" *ngIf="resultsFor === 'LOCATION'">Shows - Results for the chosen location</h1>
   <h1 class="mt-5" *ngIf="resultsFor === 'ATTRIBUTES'">Shows - Results for the chosen parameters</h1>
-  <h1 class="mt-5" *ngIf="resultsFor === null">Shows - No Results</h1>
   <table class="table mt-4">
     <thead>
     <tr>
@@ -53,7 +52,7 @@
   </div>
 </div>
 
-<div *ngIf="dataReady && totalPages === 0">
-  <h1 class="mt-5" align="center">Shows - No Results</h1>
+<div *ngIf="noResultsFound === true">
+  <h1 class="mt-5">No shows found!</h1>
 </div>
 

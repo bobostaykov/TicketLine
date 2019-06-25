@@ -191,8 +191,8 @@ export class SearchPageComponent implements OnInit {
   private defaultServiceErrorHandling(error: any) {
     console.log(error);
     this.error = true;
-    if (error.error.news !== 'No message available') {
-      this.errorMessage = error.error.news;
+    if (error.error.message !== 'No message available') {
+      this.errorMessage = error.error.message;
     } else {
       this.errorMessage = error.error.error;
     }

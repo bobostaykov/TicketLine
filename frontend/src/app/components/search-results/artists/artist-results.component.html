@@ -1,6 +1,5 @@
-<div *ngIf="dataReady && totalPages > 0">
-  <h1 class="mt-5" *ngIf="artists.length !== 0">Artists - Results for chosen name</h1>
-  <h1 class="mt-5" *ngIf="artists.length === 0 ">Artists - No Results</h1>
+<div *ngIf="dataReady && totalPages > 0 && noResultsFound === false">
+  <h1 class="mt-5">Artists - Results for chosen name</h1>
   <table class="table mt-4" style="width: 40%">
     <thead>
     <tr>
@@ -41,6 +40,6 @@
   </div>
 </div>
 
-<div *ngIf="dataReady && totalPages == 0">
+<div *ngIf="noResultsFound === true">
   <h1 class="mt-4">No artists found!</h1>
 </div>

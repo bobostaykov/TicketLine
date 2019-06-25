@@ -15,6 +15,7 @@ export class ArtistResultsComponent implements OnInit {
   private pageRange: Array<number> = [];
   private dataReady: boolean = false;
 
+  private noResultsFound: boolean = false;
   private error: boolean = false;
   private errorMessage: string = '';
 
@@ -108,6 +109,10 @@ export class ArtistResultsComponent implements OnInit {
   private defaultServiceErrorHandling(error: any) {
     console.log(error);
     this.error = true;
+    if (error.status === 404) {
+      console.log('No results found!');
+      this.noResultsFound = true;
+    }
     if (error.error.message !== 'No message available') {
       this.errorMessage = error.error.message;
     } else {

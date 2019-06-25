@@ -1,6 +1,5 @@
-<div *ngIf="dataReady && totalPages > 0">
-  <h1 class="mt-5" *ngIf="resultsFor === 'ATTRIBUTES'">Locations - Results for the chosen parameters</h1>
-  <h1 class="mt-5" *ngIf="resultsFor === null">Locations - No Results</h1>
+<div *ngIf="dataReady && totalPages > 0 && noResultsFound === false">
+  <h1 class="mt-5">Locations - Results for the chosen parameters</h1>
 
   <table class="table mt-4">
     <thead>
@@ -48,5 +47,5 @@
   </div>
 </div>
 
-<h1 *ngIf="dataReady && totalPages === 0" class="mt-5" align="center">Locations - No Results</h1>
+<h1 class="mt-5" *ngIf="noResultsFound === true">No locations found!</h1>
 

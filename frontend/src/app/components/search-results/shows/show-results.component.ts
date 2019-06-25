@@ -36,6 +36,7 @@ export class ShowResultsComponent implements OnInit {
   private street: string;
   private postalCode: string;
 
+  private noResultsFound: boolean = false;
   private error: boolean = false;
   private errorMessage: string = '';
 
@@ -217,6 +218,10 @@ export class ShowResultsComponent implements OnInit {
   private defaultServiceErrorHandling(error: any) {
     console.log(error);
     this.error = true;
+    if (error.status === 404) {
+      console.log('No results found!');
+      this.noResultsFound = true;
+    }
     if (error.error.message !== 'No message available') {
       this.errorMessage = error.error.message;
     } else {

@@ -191,8 +191,8 @@ export class CustomerComponent implements OnInit {
   private defaultServiceErrorHandling(error: any) {
     console.log(error);
     this.error = true;
-    if (error.error.news !== 'No message available' && error.error.news !== '' && error.error.news) {
-      this.errorMessage = error.error.news;
+    if (error.error.message !== 'No message available' && error.error.message !== '' && error.error.message) {
+      this.errorMessage = error.error.message;
     } else {
       this.errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
     }
