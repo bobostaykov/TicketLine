@@ -63,7 +63,7 @@ public class TicketPerformanceTestDataGenerator extends PerformanceTestDataGener
                     tickets.add(ticket);
                 }
             }
-            ticketRepository.saveAll(tickets); // TODO: use service in order to increment the soldTickets field for the show
+            ticketRepository.saveAll(tickets);
         }
     }
 }
