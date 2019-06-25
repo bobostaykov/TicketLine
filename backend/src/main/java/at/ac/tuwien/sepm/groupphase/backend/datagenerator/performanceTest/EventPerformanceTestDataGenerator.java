@@ -44,7 +44,7 @@ public class EventPerformanceTestDataGenerator extends PerformanceTestDataGenera
             for(Long id = 1L; id <= NUM_OF_EVENTS; id++) {
                 events.add(Event.builder()
                     .id(id)
-                    .name(faker.letterify("Event ???????"))
+                    .name(faker.letterify("Event " + faker.hitchhikersGuideToTheGalaxy().character()))
                     .eventType(getRandomEventType())
                     .artist(artistRepository.getOne(customMod(id, NUM_OF_ARTISTS)))
                     .durationInMinutes(RANDOM.nextInt(MAX_EVENT_DURATION_IN_MINUTES-MIN_EVENT_DURATION_IN_MINUTES)+MIN_EVENT_DURATION_IN_MINUTES)
