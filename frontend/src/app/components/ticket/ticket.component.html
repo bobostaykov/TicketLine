@@ -46,7 +46,7 @@
   </div>
   <!-- component displaying currently selected tickets -->
   <div class="floorplanTickets">
-    <app-floorplan-ticket [stepProgress]="2"></app-floorplan-ticket>
+    <app-floorplan-ticket [stepProgress]="2" [allowDeleteTickets]="true"></app-floorplan-ticket>
     <!-- button to continue on to ticket check component -->
     <button mat-raised-button color="primary" [routerLink]="'/ticket-check'"
             [disabled]="setButtonDisabled()">{{getButtonName()}}</button>

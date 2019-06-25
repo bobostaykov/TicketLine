@@ -15,16 +15,24 @@
             <label for="seatRowStart" class="sr-only">Seat Row Selection Start</label>
             <input matInput id="seatRowStart" formControlName="seatRowStart" type="number" class="text-right"
                    aria-labelledby="seat row selection start"/>
-            <mat-error *ngIf="addSeatsForm.get('seatRowStart').hasError('required') && addSeatsForm.dirty">Row must be set!</mat-error>
-            <mat-error *ngIf="addSeatsForm.get('seatRowStart').hasError('min') && addSeatsForm.dirty">Must be greater than 0!</mat-error>
+            <mat-error *ngIf="addSeatsForm.get('seatRowStart').hasError('required') && addSeatsForm.dirty">Row must be
+              set!
+            </mat-error>
+            <mat-error *ngIf="addSeatsForm.get('seatRowStart').hasError('min') && addSeatsForm.dirty">Must be greater
+              than 0!
+            </mat-error>
           </mat-form-field>
           <mat-form-field appearance="standard" class="col-5 pl-0">
             <span matPrefix class="pr-3">&ndash;</span>
             <label for="seatRowEnd" class="sr-only">Seat Row Selection End</label>
             <input matInput id="seatRowEnd" formControlName="seatRowEnd" type="number" class="text-left"
                    aria-labelledby="seat row selection end"/>
-            <mat-error *ngIf="addSeatsForm.get('seatRowEnd').hasError('required') && addSeatsForm.dirty">Row must be set!</mat-error>
-            <mat-error *ngIf="addSeatsForm.get('seatRowEnd').hasError('min') && addSeatsForm.dirty">Must be greater than 0!</mat-error>
+            <mat-error *ngIf="addSeatsForm.get('seatRowEnd').hasError('required') && addSeatsForm.dirty">Row must be
+              set!
+            </mat-error>
+            <mat-error *ngIf="addSeatsForm.get('seatRowEnd').hasError('min') && addSeatsForm.dirty">Must be greater than
+              0!
+            </mat-error>
           </mat-form-field>
         </div>
 
@@ -48,16 +56,24 @@
             <label for="seatNumberStart" class="sr-only">Seat Number Selection Start</label>
             <input matInput id="seatNumberStart" formControlName="seatNumberStart" type="number" class="text-right"
                    aria-labelledby="seat number selection start"/>
-            <mat-error *ngIf="addSeatsForm.get('seatNumberStart').hasError('required') && addSeatsForm.dirty">Number must be set!</mat-error>
-            <mat-error *ngIf="addSeatsForm.get('seatNumberStart').hasError('min') && addSeatsForm.dirty">Must be greater than 0</mat-error>
+            <mat-error *ngIf="addSeatsForm.get('seatNumberStart').hasError('required') && addSeatsForm.dirty">Number
+              must be set!
+            </mat-error>
+            <mat-error *ngIf="addSeatsForm.get('seatNumberStart').hasError('min') && addSeatsForm.dirty">Must be greater
+              than 0
+            </mat-error>
           </mat-form-field>
           <mat-form-field appearance="standard" class="col-5 pl-0">
             <span matPrefix class="pr-3">&ndash;</span>
             <label for="seatNumberEnd" class="sr-only">Seat Number Selection End</label>
             <input matInput id="seatNumberEnd" formControlName="seatNumberEnd" type="number" class="text-left"
                    aria-labelledby="seat number selection end"/>
-            <mat-error *ngIf="addSeatsForm.get('seatNumberEnd').hasError('required') && addSeatsForm.dirty">Number must be set!</mat-error>
-            <mat-error *ngIf="addSeatsForm.get('seatNumberEnd').hasError('min') && addSeatsForm.dirty">Must be greater than 0!</mat-error>
+            <mat-error *ngIf="addSeatsForm.get('seatNumberEnd').hasError('required') && addSeatsForm.dirty">Number must
+              be set!
+            </mat-error>
+            <mat-error *ngIf="addSeatsForm.get('seatNumberEnd').hasError('min') && addSeatsForm.dirty">Must be greater
+              than 0!
+            </mat-error>
           </mat-form-field>
         </div>
 
@@ -84,9 +100,11 @@
             <label for="sectorNumberStart" class="sr-only">Sector Number Selection Start</label>
             <input matInput id="sectorNumberStart" formControlName="sectorNumberStart" type="number" class="text-right"
                    aria-labelledby="sector number selection start"/>
-            <mat-error *ngIf="addSectorsForm.get('sectorNumberStart').hasError('required') && addSectorsForm.dirty">Number must be set!
+            <mat-error *ngIf="addSectorsForm.get('sectorNumberStart').hasError('required') && addSectorsForm.dirty">
+              Number must be set!
             </mat-error>
-            <mat-error *ngIf="addSectorsForm.get('sectorNumberStart').hasError('min') && addSectorsForm.dirty">Must be greater than 0!
+            <mat-error *ngIf="addSectorsForm.get('sectorNumberStart').hasError('min') && addSectorsForm.dirty">Must be
+              greater than 0!
             </mat-error>
           </mat-form-field>
           <mat-form-field appearance="standard" class="col-5 pl-0">
@@ -94,9 +112,12 @@
             <label for="sectorNumberEnd" class="sr-only">Sector Number Selection End</label>
             <input matInput id="sectorNumberEnd" formControlName="sectorNumberEnd" type="number" class="text-left"
                    aria-labelledby="sector number selection end"/>
-            <mat-error *ngIf="addSectorsForm.get('sectorNumberEnd').hasError('required') && addSectorsForm.dirty">Number must be set!
+            <mat-error *ngIf="addSectorsForm.get('sectorNumberEnd').hasError('required') && addSectorsForm.dirty">Number
+              must be set!
             </mat-error>
-            <mat-error *ngIf="addSectorsForm.get('sectorNumberEnd').hasError('min') && addSectorsForm.dirty">Must be greater than 0!</mat-error>
+            <mat-error *ngIf="addSectorsForm.get('sectorNumberEnd').hasError('min') && addSectorsForm.dirty">Must be
+              greater than 0!
+            </mat-error>
           </mat-form-field>
         </div>
 
@@ -122,9 +143,11 @@
             <label for="sectorCapacity" class="sr-only">Sector Capacity</label>
             <input matInput id="sectorCapacity" formControlName="maxCapacity" type="number" class="text-right"
                    aria-labelledby="sector max capacity"/>
-            <mat-error *ngIf="addSectorsForm.get('maxCapacity').hasError('required') && addSectorsForm.dirty">Capacity must be set!
+            <mat-error *ngIf="addSectorsForm.get('maxCapacity').hasError('required') && addSectorsForm.dirty">Capacity
+              must be set!
             </mat-error>
-            <mat-error *ngIf="addSectorsForm.get('maxCapacity').hasError('min') && addSectorsForm.dirty">Must be greater than 0!
+            <mat-error *ngIf="addSectorsForm.get('maxCapacity').hasError('min') && addSectorsForm.dirty">Must be greater
+              than 0!
             </mat-error>
           </mat-form-field>
         </div>
@@ -183,8 +206,12 @@
             <mat-option [value]="newHall" *ngIf="isAdmin()">New Hall</mat-option>
             <mat-option *ngFor="let hall of halls$ | async" [value]="hall">{{displayHall(hall)}}</mat-option>
           </mat-autocomplete>
-          <mat-error *ngIf="createHallForm.get('hallSelection').hasError('required') && hallFormSubmitted">A hall must be selected!</mat-error>
-          <mat-error *ngIf="createHallForm.get('hallSelection').hasError('missingSeats') && hallFormSubmitted">Hall is missing seats or sectors</mat-error>
+          <mat-error *ngIf="createHallForm.get('hallSelection').hasError('required') && hallFormSubmitted">A hall must
+            be selected!
+          </mat-error>
+          <mat-error *ngIf="createHallForm.get('hallSelection').hasError('missingSeats') && hallFormSubmitted">Hall is
+            missing seats or sectors
+          </mat-error>
           <mat-hint *ngIf="! editingEnabled || ! isAdmin()">The currently selected hall</mat-hint>
         </mat-form-field>
       </div>
@@ -225,7 +252,8 @@
                      [editingEnabled]="editingEnabled"
                      [priceMapping]="getSelectedShow()?.pricePattern?.priceMapping"></app-floorplan-svg>
   <div class="floorplanTickets" *ngIf="ticketSession.getTickets()?.length > 0">
-    <app-floorplan-ticket class="floorplanTickets" [stepProgress]="1"></app-floorplan-ticket>
+    <app-floorplan-ticket class="floorplanTickets" [stepProgress]="1"
+                          [allowDeleteTickets]="true"></app-floorplan-ticket>
     <button mat-raised-button color="primary" [routerLink]="'/ticket'"
             [disabled]="! ticketSession.getShow()">Continue
     </button>

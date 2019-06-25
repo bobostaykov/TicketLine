@@ -109,7 +109,7 @@ import {LocationDialogComponent} from './components/location-dialog/location-dia
     MatAutocompleteModule,
     SelectDropDownModule
   ],
-  providers: [errorHandlingProvider, httpInterceptorProviders, Globals],
+  providers: [httpInterceptorProviders, Globals],
   bootstrap: [AppComponent],
   entryComponents: [ErrorSnackBarComponent]
 })
