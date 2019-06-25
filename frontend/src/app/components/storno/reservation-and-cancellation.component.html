@@ -57,7 +57,7 @@
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
-  <div *ngIf="stornoTickets.length !== 0">
+  <div *ngIf="cancelTickets.length !== 0">
     <table class="table">
       <thead>
       <tr>
@@ -76,7 +76,7 @@
       </tr>
       </thead>
       <tbody>
-      <tr *ngFor="let ticket of stornoTickets">
+      <tr *ngFor="let ticket of cancelTickets">
         <td>{{ticket.customer.name}}</td>
         <td>{{ticket.customer.firstname}}</td>
         <td>{{ticket.show.event.name}}</td>
@@ -96,7 +96,7 @@
       <td>
         <form>
           <p align="right">
-            <button id = "submitCancel"  type = mat-raised-button (click)="submitStorno()" >submit Cancellation</button>
+            <button id = "submitCancel"  type = mat-raised-button (click)="submitCancellation()" >submit Cancellation</button>
           </p>
         </form>
       </td>
@@ -104,6 +104,9 @@
     </table>
   </div>
 
+  <div *ngIf="noSearchResults">
+    No matching results found
+  </div>
 
   <div *ngIf="cantSubmitEmpty" class="alert alert-warning alert-dismissible fade show" role="alert">
     {{ cantSubmitEmptyMessage }}
