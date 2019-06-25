@@ -126,7 +126,7 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler({DataIntegrityViolationException.class})
     private ResponseEntity<Object> handleDataIntegrityViolationException(DataIntegrityViolationException ex, WebRequest request){
-        String error = "Data Integrity Violation: Error = " + ex.getMessage()
+        String error = "Data Integrity Violation: Error = " + ex.getMessage();
         ApiError apiError = new ApiError(
             HttpStatus.BAD_REQUEST,ex.getLocalizedMessage(), error);
         return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
