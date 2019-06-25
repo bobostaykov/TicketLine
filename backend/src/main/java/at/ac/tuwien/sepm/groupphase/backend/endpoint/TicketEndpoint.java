@@ -54,12 +54,6 @@ public class TicketEndpoint {
         }
     }
 
-    @RequestMapping(method = RequestMethod.GET)
-    @ApiOperation(value = "Get all tickets", authorizations = {@Authorization(value = "apiKey")})
-    public List<TicketDTO> findAll() {
-        return ticketService.findAll();
-    }
-
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Delete a ticket", authorizations = {@Authorization(value = "apiKey")})

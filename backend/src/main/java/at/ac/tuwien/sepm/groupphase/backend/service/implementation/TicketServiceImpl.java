@@ -175,7 +175,7 @@ public class TicketServiceImpl implements TicketService {
             pageSize = 10;
         }
         Pageable pageable = PageRequest.of(page, pageSize);
-        ticketExpirationHandler.setAllExpiredReservatedTicketsToStatusExpired();
+        ticketExpirationHandler.setAllExpiredReservedTicketsToStatusExpired();
         return ticketRepository.findAllByOrderByIdAsc(pageable).map(ticketMapper::ticketToTicketDTO);
     }
 
@@ -183,7 +183,7 @@ public class TicketServiceImpl implements TicketService {
     public TicketDTO findOne(Long id) {
         LOGGER.info("Ticket Service: Find Ticket with id {}", id);
         TicketDTO ticketDTO = ticketMapper.ticketToTicketDTO(ticketRepository.findOneById(id).orElseThrow(NotFoundException::new));
-        ticketDTO = ticketExpirationHandler.setExpiredReservatedTicketsToStatusExpired(ticketDTO);
+        ticketDTO = ticketExpirationHandler.setExpiredReservedTicketsToStatusExpired(ticketDTO);
         return ticketDTO;
     }
 
@@ -257,12 +257,12 @@ public class TicketServiceImpl implements TicketService {
             result2 = ticketRepository.findAllByShowIn(shows);
         }
         List<Ticket> result = this.difference(result1, result2);
-        List<TicketDTO> res = ticketExpirationHandler.setExpiredReservatedTicketsToStatusExpired(ticketMapper.ticketToTicketDTO(result));
+        List<TicketDTO> res = ticketExpirationHandler.setExpiredReservedTicketsToStatusExpired(ticketMapper.ticketToTicketDTO(result));
         //Aussortieren der Reservierungem oder der nicht-Reservierungen
         if(reserved == null){
 
         }else if(reserved == true){
-            res = res.stream().filter(ticketDTO -> ticketDTO.getStatus() == TicketStatus.RESERVATED).collect(Collectors.toList());
+            res = res.stream().filter(ticketDTO -> ticketDTO.getStatus() == TicketStatus.RESERVED).collect(Collectors.toList());
         }else{
             res = res.stream().filter(ticketDTO -> ticketDTO.getStatus() == TicketStatus.SOLD).collect(Collectors.toList());
         }
@@ -281,7 +281,7 @@ public class TicketServiceImpl implements TicketService {
             pageSize = 10;
         }
         Pageable pageable = PageRequest.of(page, pageSize);
-        TicketStatus status = reserved ? TicketStatus.RESERVATED : TicketStatus.SOLD;
+        TicketStatus status = reserved ? TicketStatus.RESERVED : TicketStatus.SOLD;
         Page<TicketDTO> ticketPage =  ticketRepository.findAllByStatusAndReservationNoContainsIgnoreCaseOrderByCustomer_Firstname(status, reservationNumber, pageable).map(ticketMapper::ticketToTicketDTO);
 
         LOGGER.info("returning page" + page);
@@ -295,7 +295,7 @@ public class TicketServiceImpl implements TicketService {
         }
         Pageable pageable = PageRequest.of(page, pageSize);
         Page<TicketDTO> ticketPage = ticketRepository.findAllByCustomer_NameContainsIgnoreCaseAndShow_Event_NameContainsIgnoreCaseAndStatusOrderByCustomer_Firstname(
-            customerName, eventName, TicketStatus.RESERVATED, pageable).map(ticketMapper::ticketToTicketDTO);
+            customerName, eventName, TicketStatus.RESERVED, pageable).map(ticketMapper::ticketToTicketDTO);
         if(ticketPage.isEmpty()){
             //throw new NotFoundException("could not find any tickets");
         }
