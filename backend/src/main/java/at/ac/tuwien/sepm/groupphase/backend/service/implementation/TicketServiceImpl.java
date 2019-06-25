@@ -65,57 +65,53 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public List<TicketDTO> postTicket(List<TicketPostDTO> ticketPostDTO) throws TicketSoldOutException, NotFoundException {
+    public synchronized List<TicketDTO> postTicket(List<TicketPostDTO> ticketPostDTO) throws TicketSoldOutException, NotFoundException {
         LOGGER.info("Ticket Service: Create Ticket");
-        // Check if any of the requested tickets were already sold or reserved
+        List<TicketDTO> created = new ArrayList<>();
         for (TicketPostDTO current : ticketPostDTO) {
+            Seat seat = null;
+            Sector sector = null;
+            Show show = this.showRepository.getOne(current.getShow());
+            if (show == null) {
+                throw new NotFoundException("No Show found with id " + current.getShow());
+            }
+            if ((current.getSeat() == null && current.getSector() == null) ||
+                (current.getSeat() != null && current.getSector() != null)) {
+                throw new NotFoundException("Either seat or sector must be given");
+            }
             if (current.getSeat() != null) {
-                if (!this.ticketRepository.findAllByShowAndSeat(this.showRepository.getOne(current.getShow()),
-                    this.seatRepository.getOne(current.getSeat())).isEmpty()) {
+                seat = this.seatRepository.getOne(current.getSeat());
+                // Check if seat exist in hall for this show
+                if (!this.containsSeat(show.getHall().getSeats(), seat)) {
+                    throw new NotFoundException("Seat " + seat.getSeatNumber() + " in row " + seat.getSeatRow() +
+                        " not found in list of seats for this show!");
+                }
+                // Check if any of the requested tickets were already sold or reserved
+                if (!this.ticketRepository.findAllByShowAndSeat(show,seat).isEmpty()) {
                     throw new TicketSoldOutException("Ticket for this seat is already sold, please choose another seat");
                 }
             }
             if (current.getSector() != null) {
-                Integer amtTicketsSold = this.ticketRepository.findAllByShowAndSector(
-                    this.showRepository.getOne(current.getShow()), this.sectorRepository.getOne(current.getSector())).size();
-                Integer amtTicketsAvailable = this.showRepository.getOne(current.getShow()).getHall().getSectors().size();
+                sector = sectorRepository.getOne(current.getSector());
+                // Check if sector exists in hall for this show
+                if (current.getSector() != null) {
+                    if (!this.containsSector(show.getHall().getSectors(), sector)) {
+                        throw new NotFoundException("Sector " + sector.getSectorNumber() +
+                            " not found in list of sectors for this show!");
+                    }
+                }
+                // Check if there are any tickets left for this sector
+                Integer amtTicketsAvailable = sector.getMaxCapacity();
+                Integer amtTicketsSold = this.ticketRepository.findAllByShowAndSector(show, sector).size();
                 if (amtTicketsSold >= amtTicketsAvailable) {
                     throw new TicketSoldOutException("Tickets for this sector are sold out, please choose another sector");
                 }
             }
-        }
-
-        // Create each ticket
-        List<TicketDTO> created = new ArrayList<>();
-        for (TicketPostDTO current : ticketPostDTO) {
             Customer customer = null;
             if (current.getCustomer() != null) {
                 customer = this.customerRepository.getOne(current.getCustomer());
                 if (customer == null) {
                     throw new NotFoundException("No Customer found with id " + current.getCustomer());
-                }
-            }
-            if ((current.getSeat() == null && current.getSector() == null) || (current.getSeat() != null && current.getSector() != null)) {
-                throw new NotFoundException("Either seat or sector must be given");
-            }
-            Show show = this.showRepository.getOne(current.getShow());
-            if (show == null) {
-                throw new NotFoundException("No Show found with id " + current.getShow());
-            }
-            Seat seat = null;
-            Sector sector = null;
-            if (current.getSeat() != null) {
-                seat = this.seatRepository.getOne(current.getSeat());
-                if (!this.containsSeat(show.getHall().getSeats(), seat)) {
-                    throw new NotFoundException("Seat " + seat.getSeatNumber() + " in row " + seat.getSeatRow() +
-                        " not found in list of seats for this show!");
-                }
-            }
-            if (current.getSector() != null) {
-                sector = this.sectorRepository.getOne(current.getSector());
-                if (!this.containsSector(show.getHall().getSectors(), sector)) {
-                    throw new NotFoundException("Sector " + sector.getSectorNumber() +
-                        " not found in list of sectors for this show!");
                 }
             }
             String uniqueReservationNo = UUID.randomUUID().toString(); // Set reservation number for all tickets (in order to use it as a ticket number as well)
@@ -128,7 +124,6 @@ public class TicketServiceImpl implements TicketService {
                 .sector(sector)
                 .reservationNo(uniqueReservationNo)
                 .build();
-            /* TODO: test everthing */
             created.add(ticketMapper.ticketToTicketDTO(ticketRepository.save(ticket)));
             if (current.getStatus() == TicketStatus.SOLD)
                 showRepository.incrementSoldTickets(show.getId());
@@ -189,10 +184,14 @@ public class TicketServiceImpl implements TicketService {
 
     @Override
     @Transactional
-    public TicketDTO changeStatusToSold(Long id) {
+    public synchronized TicketDTO changeStatusToSold(Long id) {
         LOGGER.info("Ticket Service: Change Ticket status for ticket with id {} to sold", id);
         TicketDTO ticket = this.findOneReserved(id);
-        ticket.setStatus(TicketStatus.SOLD);
+        if (ticket.getStatus() == TicketStatus.RESERVED) {
+            ticket.setStatus(TicketStatus.SOLD);
+        }else{
+            throw new TicketSoldOutException("Ticker with number" + ticket.getReservationNo() + "has already been sold");
+        }
         TicketDTO updatedTicket = ticketMapper.ticketToTicketDTO(ticketRepository.save(ticketMapper.ticketDTOToTicket(ticket)));
         showRepository.incrementSoldTickets(showMapper.showDTOToShow(updatedTicket.getShow()).getId());
         return updatedTicket;
@@ -200,10 +199,15 @@ public class TicketServiceImpl implements TicketService {
 
     @Transactional
     @Override
-    public List<TicketDTO> changeStatusToSold(List<Long> reservationIds) {
+    public synchronized List<TicketDTO>  changeStatusToSold(List<Long> reservationIds) throws TicketSoldOutException{
         LOGGER.info("Change Ticket status for tickets with ids " + reservationIds.toString());
         List<TicketDTO> tickets = ticketMapper.ticketToTicketDTO(ticketRepository.findByIdIn(reservationIds));
-        tickets.stream().forEach(ticketDTO -> {ticketDTO.setStatus(TicketStatus.SOLD);});
+        tickets.stream().forEach( ticketDTO -> {
+            if (ticketDTO.getStatus() == TicketStatus.RESERVED){
+                ticketDTO.setStatus(TicketStatus.SOLD);
+            }else{
+                throw new TicketSoldOutException("Ticker with number" + ticketDTO.getReservationNo() + "has already been sold");
+        }});
         List<TicketDTO> outputList = new ArrayList(){
         };
         tickets.stream().forEach(t -> {outputList.add(ticketMapper.ticketToTicketDTO(ticketRepository.save(ticketMapper.ticketDTOToTicket(t))));});

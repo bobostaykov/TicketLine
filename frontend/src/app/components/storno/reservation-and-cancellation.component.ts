@@ -9,16 +9,14 @@ import {Tick} from 'ng5-slider/slider.component';
 
 @Component({
   selector: 'app-storno',
-  templateUrl: './storno.component.html',
-  styleUrls: ['./storno.component.scss']
+  templateUrl: './reservation-and-cancellation.component.html',
+  styleUrls: ['./reservation-and-cancellation.component.scss']
 })
-export class StornoComponent implements OnInit {
+export class ReservationAndCancellationComponent implements OnInit {
   private page: number = 0;
   private totalPages: number;
   private pageRange: Array<number> = [];
   private ticketDataReady: boolean = false;
-  private eventDataReady: boolean = false;
-  private customerDataReady: boolean = false;
   private error: boolean = false;
   private errorMessage: string = '';
   private cancellationMessage: string = 'Cancellation Successful';
@@ -26,6 +24,7 @@ export class StornoComponent implements OnInit {
   private cantSubmitEmptyMessage: string = 'Cant submit empty list';
   private cantSubmitEmpty = false;
   private saleComplete = false;
+  private noSearchResults = false;
 
   reservationsToSearch: string = '';
   ticketsToSearch: string = '';
@@ -34,7 +33,7 @@ export class StornoComponent implements OnInit {
   events: Event[];
   stornoArray: number[] = [];
   saleArray: number[] = [];
-  stornoTickets: Ticket[] = [];
+  cancelTickets: Ticket[] = [];
   saleTickets: Ticket[] = [];
   activeCustomerName: string = '';
   activeEventName: string = '';
@@ -61,6 +60,7 @@ export class StornoComponent implements OnInit {
    */
   private loadReservationsByNumber(reservationsToSearch: string, page: number) {
     this.page = page;
+    this.noSearchResults = false;
     this.searchByReservationNumber = true;
     this.searchByNameAndEvent = false;
     this.searchByTicketNumber = false;
@@ -75,12 +75,18 @@ export class StornoComponent implements OnInit {
            this.defaultServiceErrorHandling(error);
          },
          () => {
-           this.ticketDataReady = true;
-           this.displaySoldTickets = false;
+           if (this.tickets.length === 0){
+             this.noSearchResults = true;
+             this.ticketDataReady = false;
+           } else {
+             this.ticketDataReady = true;
+             this.displaySoldTickets = false;
+           }
          });
   }
   private loadTicketsByNumber(ticketsToSearch: string, page: number) {
     this.page = page;
+    this.noSearchResults = false;
     this.searchByTicketNumber = true;
     this.searchByNameAndEvent = false;
     this.searchByTicketNumber = false;
@@ -95,8 +101,13 @@ export class StornoComponent implements OnInit {
         this.defaultServiceErrorHandling(error);
       },
       () => {
-        this.ticketDataReady = true;
-        this.displaySoldTickets = true;
+        if (this.tickets.length === 0){
+          this.noSearchResults = true;
+          this.ticketDataReady = false;
+        } else {
+          this.ticketDataReady = true;
+          this.displaySoldTickets = true;
+        }
       });
   }
 
@@ -110,6 +121,7 @@ export class StornoComponent implements OnInit {
    */
   private loadReservationsByCustomerAndEvent(customerToSearch: string, eventToSearch: string, page: number) {
     this.page = page;
+    this.noSearchResults = false;
     this.searchByReservationNumber = false;
     this.searchByNameAndEvent = true;
     this.searchByTicketNumber = false;
@@ -124,8 +136,13 @@ export class StornoComponent implements OnInit {
         this.defaultServiceErrorHandling(error);
       },
       () => {
-        this.ticketDataReady = true;
-        this.displaySoldTickets = false;
+        if (this.tickets.length === 0) {
+          this.noSearchResults = true;
+          this.ticketDataReady = false;
+        } else {
+          this.ticketDataReady = true;
+          this.displaySoldTickets = true;
+        }
       }
     );
   }
@@ -133,11 +150,12 @@ export class StornoComponent implements OnInit {
   /**
    * submits the list of tickets that are to be cancelled to get on concise pdf
    */
-  private submitStorno() {
-    if (this.stornoTickets.length === 0) {
+  private submitCancellation() {
+    console.log('submitting cancellation')
+    if (this.cancelTickets.length === 0) {
       this.showCantSubmitEmptyMessage();
     } else {
-      this.stornoTickets.forEach(ticket =>  this.stornoArray.push(ticket.id));
+      this.cancelTickets.forEach(ticket =>  this.stornoArray.push(ticket.id));
       this.ticketService.getCancellationReceiptPdf(this.stornoArray).subscribe(res => {
         const fileURL = URL.createObjectURL(res);
         console.log(fileURL);
@@ -149,7 +167,7 @@ export class StornoComponent implements OnInit {
         },
         () => {
         this.stornoArray = [];
-        this.stornoTickets = [];
+        this.cancelTickets = [];
         this.ticketDataReady = false;
         this.clearSearch();
         this.showCancellationSuccess();
@@ -161,7 +179,7 @@ export class StornoComponent implements OnInit {
    * submits a sale, pops up the ticket pdf and clears the forms
    */
   private submitSale() {
-    console.log('länge ' + this.saleTickets.length);
+    console.log('submitting sale')
       if (this.saleTickets.length === 0) {
         this.showCantSubmitEmptyMessage();
       } else {
@@ -212,12 +230,20 @@ export class StornoComponent implements OnInit {
   private defaultServiceErrorHandling(error: any) {
     console.log(error);
     this.error = true;
-    if (error.error.news !== 'No message available') {
-      this.errorMessage = error.error.news;
-    } else if (error.error.httpRequestStatusCode === 404) {
-      this.errorMessage = 'Could not block user';
+    if (error.error.ticketCheckReservation !== 'No message available') {
+      this.errorMessage = error.error.ticketCheckReservation;
     } else {
       this.errorMessage = error.error.error;
+    }
+    if (error.error.status === 'BAD_REQUEST') {
+      this.errorMessage = error.error.message.replace('400 BAD_REQUEST \"', '');
+      this.errorMessage = this.errorMessage.replace('\"', '');
+    } else if (error.error.status === 'NOT_FOUND') {
+      this.errorMessage = error.error.message.replace('404 NOT_FOUND \"', '');
+      this.errorMessage = this.errorMessage.replace('\"', '');
+    } else if (error.error.status === 'INTERNAL_SERVER_ERROR') {
+      this.errorMessage = error.error.message.replace('404 INTERNAL_SERVER_ERROR \"', '');
+      this.errorMessage = this.errorMessage.replace('\"', '');
     }
   }
   /**
@@ -312,7 +338,7 @@ export class StornoComponent implements OnInit {
    * @param ticket the ticket that is to be checked
    */
   private isReserved(ticket: Ticket): boolean {
-    return ticket.status === TicketStatus.RESERVED;
+    return ticket.status.toString() === TicketStatus.RESERVED.toString();
   }
 
   /**
@@ -373,13 +399,13 @@ export class StornoComponent implements OnInit {
       this.saleTickets = [];
     }
     console.log('added ' + ticket.reservationNo + ' to cancellation');
-    if (!this.stornoTickets.includes(ticket)) {
-      this.stornoTickets.push(ticket);
+    if (!this.cancelTickets.includes(ticket)) {
+      this.cancelTickets.push(ticket);
     }
   }
   private addToBasket(ticket: Ticket) {
-    if (this.stornoTickets.length > 0) {
-      this.stornoTickets = [];
+    if (this.cancelTickets.length > 0) {
+      this.cancelTickets = [];
     }
     console.log('added ' + ticket.reservationNo + ' to basket');
     if (!this.saleTickets.includes(ticket)) {
@@ -396,8 +422,8 @@ export class StornoComponent implements OnInit {
   }
   private dismissFromCancellation(ticket: Ticket) {
     console.log('removing ' + ticket.reservationNo);
-    if (this.stornoTickets.includes(ticket)) {
-      this.stornoTickets.splice(this.stornoTickets.indexOf(ticket), 1);
+    if (this.cancelTickets.includes(ticket)) {
+      this.cancelTickets.splice(this.cancelTickets.indexOf(ticket), 1);
     } else {
       console.log('not in basket');
     }

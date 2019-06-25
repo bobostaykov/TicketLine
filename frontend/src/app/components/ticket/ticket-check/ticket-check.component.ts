@@ -11,6 +11,7 @@ import {TicketStatus} from '../../../datatype/ticket_status';
 import {TicketPost} from '../../../dtos/ticket-post';
 import {Ticket} from '../../../dtos/ticket';
 import {TicketSessionService} from '../../../services/ticket-session/ticket-session.service';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-ticket-check',
@@ -41,9 +42,14 @@ export class TicketCheckReservationComponent implements OnInit {
   private amtTickets: number;
 
   constructor(private ticketService: TicketService, private ngbPaginationConfig: NgbPaginationConfig,
-              private cd: ChangeDetectorRef, private authService: AuthService, private ticketSession: TicketSessionService) {}
+              private cd: ChangeDetectorRef, private authService: AuthService, private ticketSession: TicketSessionService,
+              private router: Router) {}
 
   ngOnInit() {
+    if (!(this.ticketSession.getTickets().length > 0 || this.ticketSession.getCustomer() || this.ticketSession.getShow() ||
+    this.ticketSession.getTicketStatus())) {
+      this.router.navigate(['http://localhost:4200/floorplan']);
+    }
     this.ticket_seats = this.ticketSession.getSeatTickets();
     this.ticket_sectors = this.ticketSession.getSectorTickets();
     this.ticket_customer = this.ticketSession.getCustomer();
@@ -59,20 +65,18 @@ export class TicketCheckReservationComponent implements OnInit {
       this.ticketOrReservation = 'Ticket';
     }
     this.idx = 0;
-    this.priceTotal = 0;
+    this.priceTotal = this.ticketSession.getTotalPrice();
     if (this.ticket_seats && this.ticket_seats.length > 0) {
       this.amtTickets = this.ticket_seats.length;
       for (const entry of this.ticket_seats) {
         this.seatsStr.push(entry.seatNumber.toString());
         this.rowStr.push(entry.seatRow.toString());
-        this.priceTotal += entry.price;
       }
     }
     if (this.ticket_sectors && this.ticket_sectors.length > 0) {
       this.amtTickets = this.ticket_sectors.length;
       for (const entry of this.ticket_sectors) {
         this.sectorStr.push(entry.sectorNumber.toString());
-        this.priceTotal += entry.price;
       }
     }
   }

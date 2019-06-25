@@ -13,9 +13,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 
 @RestController
@@ -43,7 +45,7 @@ public class ArtistEndpoint {
     @RequestMapping(method = RequestMethod.POST)
     @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "Add an artist by id", authorizations = {@Authorization(value = "apiKey")})
-    public ArtistDTO updateArtist(@RequestBody ArtistDTO artistDTO) {
+    public ArtistDTO updateArtist(@Valid @RequestBody ArtistDTO artistDTO) {
         LOGGER.info("ArtistEndpoint: Add an artist " + artistDTO.toString());
         try {
             return artistService.addArtist(artistDTO);
@@ -57,7 +59,7 @@ public class ArtistEndpoint {
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "Update an artist by id", authorizations = {@Authorization(value = "apiKey")})
-    public ArtistDTO updateArtist(@RequestBody ArtistDTO artistDTO, @PathVariable("id") Long id) {
+    public ArtistDTO updateArtist(@Valid @RequestBody ArtistDTO artistDTO, @PathVariable("id") Long id) {
         LOGGER.info("ArtistEndpoint: updateArtist");
         artistDTO.setId(id);
         try {

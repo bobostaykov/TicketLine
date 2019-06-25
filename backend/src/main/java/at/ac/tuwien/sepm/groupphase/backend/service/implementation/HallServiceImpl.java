@@ -7,6 +7,7 @@ import at.ac.tuwien.sepm.groupphase.backend.entity.Hall;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Seat;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Sector;
 import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.hall.HallMapper;
+import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.location.LocationMapper;
 import at.ac.tuwien.sepm.groupphase.backend.exception.CustomValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.exception.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.repository.HallRepository;
@@ -26,12 +27,15 @@ public class HallServiceImpl implements HallService {
     private final HallRepository hallRepository;
     private final ShowRepository showRepository;
     private final HallMapper hallMapper;
+    private final LocationMapper locationMapper;
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
-    public HallServiceImpl(HallRepository hallRepository, HallMapper hallMapper, ShowRepository showRepository) {
+    public HallServiceImpl(HallRepository hallRepository, HallMapper hallMapper, ShowRepository showRepository,
+                           LocationMapper locationMapper) {
         this.hallMapper = hallMapper;
         this.hallRepository = hallRepository;
         this.showRepository = showRepository;
+        this.locationMapper = locationMapper;
     }
 
     @Override
@@ -43,7 +47,8 @@ public class HallServiceImpl implements HallService {
                 hallMapper.hallListToHallDTOs(hallRepository.findAllWithSpecifiedFields(fields));
         } else {
             return isEmpty(fields) ?
-                hallMapper.hallListToHallDTOs(hallRepository.findByNameContainingAndLocation(searchParameters.getName(), searchParameters.getLocation())) :
+                hallMapper.hallListToHallDTOs(hallRepository.findByNameContainingAndLocation(searchParameters.getName(),
+                    locationMapper.locationDTOToLocation(searchParameters.getLocation()))) :
                 hallMapper.hallListToHallDTOs(hallRepository.findAllFilteredWithSpecifiedFields(searchParameters, fields));
         }
     }

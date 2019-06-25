@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.searchParameters;
 
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.location.LocationDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.Location;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -10,7 +11,7 @@ public class HallSearchParametersDTO {
     @ApiModelProperty(name = "name of or substring of the name of a hall")
     private String name;
     @ApiModelProperty(name = "location of the hall for filtering halls by their location")
-    private Location location;
+    private LocationDTO location;
 
     public String getName() {
         return name;
@@ -20,11 +21,11 @@ public class HallSearchParametersDTO {
         this.name = name;
     }
 
-    public Location getLocation() {
+    public LocationDTO getLocation() {
         return location;
     }
 
-    public void setLocation(Location location) {
+    public void setLocation(LocationDTO location) {
         this.location = location;
     }
 
@@ -56,14 +57,14 @@ public class HallSearchParametersDTO {
 
     public static class HallSearchParametersDTOBuilder {
         private String name;
-        private Location location;
+        private LocationDTO location;
 
         public HallSearchParametersDTOBuilder name(String name){
             this.name = name;
             return this;
         }
 
-        public HallSearchParametersDTOBuilder location(Location location){
+        public HallSearchParametersDTOBuilder location(LocationDTO location){
             this.location = location;
             return this;
         }

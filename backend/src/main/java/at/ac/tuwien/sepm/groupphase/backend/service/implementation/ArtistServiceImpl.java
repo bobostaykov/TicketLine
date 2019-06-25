@@ -58,7 +58,10 @@ public class ArtistServiceImpl implements ArtistService {
         LOGGER.info("ArtistService: updateArtist");
         try {
             return artistMapper.artistToArtistDTO(artistRepository.save(artistMapper.artistDTOToArtist(artistDTO)));
-        } catch (PersistenceException e) {
+        } catch (DataIntegrityViolationException e) {
+            throw new ServiceException("Artist name already exists.");
+        }
+        catch (PersistenceException e) {
             throw new ServiceException(e.getMessage());
         }
     }
@@ -68,6 +71,8 @@ public class ArtistServiceImpl implements ArtistService {
         LOGGER.info("ArtistService: addArtist");
         try {
             return artistMapper.artistToArtistDTO(artistRepository.save(artistMapper.artistDTOToArtist(artistDTO)));
+        } catch (DataIntegrityViolationException e) {
+            throw new ServiceException("Artist name already exists.");
         } catch (PersistenceException e) {
             throw new ServiceException(e.getMessage());
         }

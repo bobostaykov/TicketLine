@@ -40,7 +40,6 @@ public class TicketEndpoint {
         this.ticketService = ticketService;
     }
 
-    // TODO: check if show is in less than 30 minutes and send error if yes
     @RequestMapping(method = RequestMethod.POST)
     @ApiOperation(value = "Create a ticket", authorizations = {@Authorization(value = "apiKey")})
     public List<TicketDTO> create(@RequestBody List<TicketPostDTO> ticketPostDTO) {
@@ -89,7 +88,11 @@ public class TicketEndpoint {
     @ApiOperation(value = "Buy multiple reservated Tickets by id", authorizations = {@Authorization(value = "apiKey")})
     public List<TicketDTO> buyMultipleReservatedTickets(@RequestBody List<Long> tickets){
         LOGGER.info("buy tickets with ids" + tickets.toString());
-        return ticketService.changeStatusToSold(tickets);
+        try {
+            return ticketService.changeStatusToSold(tickets);
+        } catch (TicketSoldOutException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
     }
 
     @RequestMapping(value = "/reserved/{id}", method = RequestMethod.GET)

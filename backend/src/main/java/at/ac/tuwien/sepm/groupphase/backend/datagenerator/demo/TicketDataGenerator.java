@@ -39,42 +39,6 @@ public class TicketDataGenerator implements DataGenerator {
         this.seatRepository = seatRepository;
     }
 
-    /*
-    @Transactional
-    @Override
-    public void generate(){
-        if(ticketRepository.count() > 0){
-            LOGGER.info("Tickets already generated");
-        }else {
-            LOGGER.info("Generating tickets");
-            Random randomGenerator = new Random();
-            List<Ticket> tickets = new ArrayList<>();
-            Optional<Show> showOptional;
-            Long numOfShows = showRepository.count();
-            Long numOfCustomers = customerRepository.count();
-            Long numOfSeats = seatRepository.count();
-            NUM_OF_TICKETS = numOfShows;
-            for (Long i = 1L; i <= NUM_OF_TICKETS; i++) {
-                do { showOptional = showRepository.findById(((i+randomGenerator.nextLong()) % numOfShows) + 1); } while (showOptional.isEmpty());
-                Show show = showOptional.get();
-                Ticket ticket =  Ticket.builder()
-                    .reservationNo(UUID.randomUUID().toString())
-                    .customer(customerRepository.getOne(((i-1) % numOfCustomers) + 1))
-                    .show(show)
-                    .price(faker.random().nextDouble()*50)
-                    .seat(!show.getHall().getSeats().isEmpty() ? show.getHall().getSeats().get(0) : null)
-                    .sector(!show.getHall().getSectors().isEmpty()? show.getHall().getSectors().get(0) : null)
-                    .status(i % 6 == 0 ? TicketStatus.RESERVED : TicketStatus.SOLD)
-                    .build();
-                if (ticket.getStatus() == TicketStatus.SOLD)
-                    showRepository.incrementSoldTickets(show.getId());
-                tickets.add(ticket);
-            }
-            ticketRepository.saveAll(tickets);
-        }
-    }
-
-     */
     @Transactional
     @Override
     public void generate(){
@@ -108,7 +72,7 @@ public class TicketDataGenerator implements DataGenerator {
                     tickets.add(ticket);
                 }
             }
-            ticketRepository.saveAll(tickets); // TODO: use service in order to increment the soldTickets field for the show
+            ticketRepository.saveAll(tickets);
         }
     }
 

@@ -47,8 +47,6 @@ public class TicketPerformanceTestDataGenerator extends PerformanceTestDataGener
             for(Long showId = 1L; showId <= NUM_OF_SHOWS; showId++) {
                 Show show = showRepository.getOne(customMod(showId, NUM_OF_SHOWS));
                 int numOfTicketsPerShow = NUM_OF_TICKETS/NUM_OF_SHOWS;
-                /*show.setTicketsSold(show.getTicketsSold() + numOfTicketsPerShow);
-                show = showRepository.save(show);*/
                 for(int i = 0; i < numOfTicketsPerShow; i++) {
                     Ticket ticket = Ticket.builder()
                         .id(showId)
@@ -65,7 +63,7 @@ public class TicketPerformanceTestDataGenerator extends PerformanceTestDataGener
                     tickets.add(ticket);
                 }
             }
-            ticketRepository.saveAll(tickets); // TODO: use service in order to increment the soldTickets field for the show
+            ticketRepository.saveAll(tickets);
         }
     }
 }

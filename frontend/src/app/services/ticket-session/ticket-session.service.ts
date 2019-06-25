@@ -51,7 +51,7 @@ export class TicketSessionService {
    * @param sector to be saved
    */
   saveSectorTicket(sector: Sector) {
-    if (this.show && !this.ticket_sectors.some(s => sector === s)) {
+    if (this.show) {
       sector.price = this.show.pricePattern.priceMapping[sector.priceCategory];
       if (this.ticket_seats && this.ticket_seats.length) {
         this.flushTickets();

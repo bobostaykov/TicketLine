@@ -115,18 +115,6 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
             HttpStatus.BAD_REQUEST,ex.getLocalizedMessage(), error);
         return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
     }
-    /*
-
-    @ExceptionHandler({MissingServletRequestParameterException.class})
-    private ResponseEntity<Object> handleMissingServletRequestParameterException(MissingServletRequestParameterException ex, WebRequest request){
-        String error = "Bad Request: Error = " + ex.getMessage();
-        ApiError apiError = new ApiError(
-            HttpStatus.BAD_REQUEST,ex.getLocalizedMessage(), error);
-        return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
-    }
-    */
-    // default implementation
-
     @ExceptionHandler({Exception.class})
     protected ResponseEntity<Object> defaultExceptionHandler(Exception ex, WebRequest request) {
         LOGGER.info(ex.getClass().getCanonicalName() + "is thrown!");
