@@ -8,8 +8,14 @@
                              [config]="eventConfig"
                              [options]="events"
                              [(ngModel)]="chosenEvent"
-                             [_value] = "chosenEvent">
+                             [_value] = "chosenEvent"
+                             required=""
+                             #event='ngModel'
+        >
         </ngx-select-dropdown>
+        <div [hidden]="event.valid || event.pristine" class="form-text text-warning">
+          Event is required!
+        </div>
       </div>
     </div>
 
@@ -20,8 +26,13 @@
                              [config]="hallConfig"
                              [options]="halls"
                              [(ngModel)]="chosenHall"
-                             [_value] = "chosenHall">
+                             [_value] = "chosenHall"
+                             required=""
+                             #hall='ngModel'>
         </ngx-select-dropdown>
+        <div [hidden]="hall.valid || hall.pristine" class="form-text text-warning">
+          Hall is required!
+        </div>
       </div>
     </div>
 
@@ -46,6 +57,7 @@
                aria-labelledby="show date"
                placeholder="Enter a date"
                [(ngModel)]="showModel.date"
+               required = true
                #date='ngModel'/>
         <div [hidden]="date.valid || date.pristine" class="form-text text-warning">
           Valid date is required!
@@ -58,6 +70,7 @@
                aria-labelledby="show time"
                placeholder="Enter a time"
                [(ngModel)]="showModel.time"
+               required = true
                #time='ngModel'/>
         <div [hidden]="time.valid || time.pristine" class="form-text text-warning">
           Valid time is required!
@@ -77,6 +90,7 @@
                aria-labelledby="show price pattern"
                placeholder="Name"
                [(ngModel)]="patternName"
+               required = true
         />
       </div>
 
@@ -84,9 +98,10 @@
         <label for="price_cheap">Cheap:</label>
         <input id="price_cheap" type="number" name="priceCheap" class="form-control" style="width: 75px"
                [(ngModel)]="cheap"
+               required = true
                #priceCheap='ngModel'/>
-        <div [hidden]="priceCheap.valid || priceCheap.pristine" class="form-text text-warning">
-          Valid cheap price is required!
+        <div [hidden]="(priceCheap.valid || priceCheap.pristine) && cheap >= 0" class="form-text text-warning">
+          Invalid!
         </div>
       </div>
 
@@ -94,9 +109,10 @@
         <label for="price_average">Average:</label>
         <input id="price_average" type="number" name="priceAverage" class="form-control" style="width: 75px"
                [(ngModel)]="average"
+               required = true
                #priceAverage='ngModel'/>
-        <div [hidden]="priceAverage.valid || priceAverage.pristine" class="form-text text-warning">
-          Valid average price is required!
+        <div [hidden]="(priceAverage.valid || priceAverage.pristine) && average >= 0" class="form-text text-warning">
+          Invalid!
         </div>
       </div>
 
@@ -104,9 +120,10 @@
         <label for="price_expensive">Expensive:</label>
         <input id="price_expensive" type="number" name="priceExpensive" class="form-control" style="width: 75px"
                [(ngModel)]="expensive"
+               required = true
                #priceExpensive='ngModel'/>
-        <div [hidden]="priceExpensive.valid || priceExpensive.pristine" class="form-text text-warning">
-          Valid expensive price is required!
+        <div [hidden]="(priceExpensive.valid || priceExpensive.pristine) && average >= 0" class="form-text text-warning">
+          Invalid!
         </div>
       </div>
     </div>
@@ -114,7 +131,6 @@
   <p>
     <mat-hint>Note: Updating the price pattern will change it for all shows, which are using it!</mat-hint>
   </p>
-
 
   <button class="btn btn-success float-right" data-dismiss="modal" (click)="showForm.valid && onSubmit()"
           [disabled]="showForm.invalid">{{title}}</button>

@@ -22,6 +22,7 @@ export class LocationResultsComponent implements OnInit {
   private postalCode: string;
   private description: string;
 
+  private noResultsFound: boolean = false;
   private error: boolean = false;
   private errorMessage: string = '';
 
@@ -136,8 +137,12 @@ export class LocationResultsComponent implements OnInit {
   private defaultServiceErrorHandling(error: any) {
     console.log(error);
     this.error = true;
-    if (error.error.news !== 'No message available') {
-      this.errorMessage = error.error.news;
+    if (error.status === 404) {
+      console.log('No results found!');
+      this.noResultsFound = true;
+    }
+    if (error.error.message !== 'No message available') {
+      this.errorMessage = error.error.message;
     } else {
       this.errorMessage = error.error.error;
     }
