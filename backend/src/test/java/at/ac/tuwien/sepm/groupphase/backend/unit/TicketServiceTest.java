@@ -64,6 +64,7 @@ public class TicketServiceTest {
     private List<TicketDTO> TEST_TICKET_LIST_DTO;
     private List<Ticket> TEST_TICKET_LIST_BY_CUSTOMER;
     private List<Ticket> TEST_TICKET_LIST_BY_SHOW;
+    private List<Sector> TEST_SECTOR_LIST;
     private Hall TEST_HALL;
     private Location TEST_LOCATION;
     private Seat TEST_SEAT1;
@@ -71,6 +72,7 @@ public class TicketServiceTest {
     private Seat TEST_SEAT3;
     private Seat TEST_SEAT4;
     private Sector TEST_SECTOR;
+    private Sector TEST_SECTOR2;
 
     /******************************************************************
      TEST VARIABLES
@@ -97,7 +99,10 @@ public class TicketServiceTest {
     private Long TEST_SEAT_ID_3 = 53L;
     private Long TEST_SEAT_ID_4 = 54L;
     private Long TEST_SECTOR_ID = 55L;
+    private Long TEST_SECTOR_ID2 = 56L;
     private Integer TEST_SECTOR_NUMBER = 5;
+    private Integer TEST_SECTOR_NUMBER2 = 6;
+    private Integer TEST_SECTOR_MAXCAPACITY = 1;
     private Integer TEST_SEAT_SEAT_NO_1 = 43;
     private Integer TEST_SEAT_SEAT_NO_2 = 44;
     private Integer TEST_SEAT_SEAT_NO_3 = 45;
@@ -210,6 +215,13 @@ public class TicketServiceTest {
             .id(TEST_SECTOR_ID)
             .sectorNumber(TEST_SECTOR_NUMBER)
             .priceCategory(PriceCategory.AVERAGE)
+            .maxCapacity(TEST_SECTOR_MAXCAPACITY)
+            .build();
+        TEST_SECTOR2 = Sector.builder()
+            .id(TEST_SECTOR_ID2)
+            .sectorNumber(TEST_SECTOR_NUMBER2)
+            .priceCategory(PriceCategory.AVERAGE)
+            .maxCapacity(TEST_SECTOR_MAXCAPACITY)
             .build();
         TEST_HALL_SEATS.add(TEST_SEAT1);
         TEST_HALL_SEATS.add(TEST_SEAT2);
@@ -261,14 +273,14 @@ public class TicketServiceTest {
             .build();
         TEST_CUSTOMER1_LIST = new ArrayList<>();
         TEST_CUSTOMER1_LIST.add(TEST_CUSTOMER1);
+        TEST_SECTOR_LIST = new ArrayList<>();
+        TEST_SECTOR_LIST.add(TEST_SECTOR);
+        TEST_SECTOR_LIST.add(TEST_SECTOR2);
         TEST_EVENT_LIST = new ArrayList<>();
         TEST_EVENT_LIST.add(TEST_EVENT);
         TEST_SHOW_LIST = new ArrayList<>();
         TEST_SHOW_LIST.add(TEST_SHOW);
         TEST_TICKET_LIST = new ArrayList<>();
-        TEST_TICKET_LIST.add(TEST_TICKET1);
-        TEST_TICKET_LIST.add(TEST_TICKET2);
-        TEST_TICKET_LIST.add(TEST_TICKET2);
         TEST_TICKET_LIST_DTO = new ArrayList<>();
         TEST_TICKET_LIST_DTO.add(ticketMapper.ticketToTicketDTO(TEST_TICKET1));
         TEST_TICKET_SEATS_POST_DTO_LIST =  new ArrayList<>();
@@ -335,6 +347,9 @@ public class TicketServiceTest {
 
     @Test
     public void testPostTicketsWithSeatsWhenTicketAlreadyExists_ExpectingTicketSoldOutException() {
+        TEST_TICKET_LIST.add(TEST_TICKET1);
+        TEST_TICKET_LIST.add(TEST_TICKET2);
+        TEST_TICKET_LIST.add(TEST_TICKET2);
         Mockito.when(ticketRepository.findAllByShowAndSeat(TEST_SHOW, TEST_SEAT1)).thenReturn(TEST_TICKET_LIST);
         Mockito.when(showRepository.getOne(TEST_SHOW_ID)).thenReturn(TEST_SHOW);
         Mockito.when(seatRepository.getOne(TEST_SEAT_ID_1)).thenReturn(TEST_SEAT1);
@@ -349,9 +364,12 @@ public class TicketServiceTest {
 
     @Test
     public void testPostTicketsWithSectorsWhenTicketAlreadyExists_ExpectingTicketSoldOutException() {
+        TEST_TICKET_LIST.add(TEST_TICKET1);
         Mockito.when(ticketRepository.findAllByShowAndSector(TEST_SHOW, TEST_SECTOR)).thenReturn(TEST_TICKET_LIST);
-        Mockito.when(showRepository.getOne(TEST_SHOW_ID)).thenReturn(TEST_SHOW);
         Mockito.when(sectorRepository.getOne(TEST_SECTOR_ID)).thenReturn(TEST_SECTOR);
+        TEST_HALL.setSeats(null);
+        TEST_HALL.setSectors(TEST_SECTOR_LIST);
+        Mockito.when(showRepository.getOne(TEST_SHOW_ID)).thenReturn(TEST_SHOW);
         try{
             ticketService.postTicket(TEST_TICKET_SECTOR_POST_DTO_LIST);
             fail("No TicketSoldOutException was thrown!");
