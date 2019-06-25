@@ -162,14 +162,14 @@
           <li class="nav-item">
             <a class="nav-link" href="" (click)="previousPage($event)">Previous</a>
           </li>
-          <li class="nav-item" *ngIf="page - 5 > 0">
-            <a class="nav-link" href="">...</a>
+          <li class="nav-item" *ngIf="page - 5 > 0 && totalPages > 11">
+            <a class="nav-link">...</a>
           </li>
           <li class="nav-item" *ngFor="let p of pageRange;">
             <a class="nav-link" href="" (click)="setPage(p, $event)" [ngClass]="{'active': p == page}">{{p + 1}}</a>
           </li>
-          <li class="nav-item" *ngIf="totalPages - 5 > page">
-            <a class="nav-link" href="">...</a>
+          <li class="nav-item" *ngIf="totalPages - 5 > page && totalPages > 11">
+            <a class="nav-link">...</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="" (click)="nextPage($event)">Next</a>

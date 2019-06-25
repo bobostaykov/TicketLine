@@ -135,7 +135,7 @@ export class ContentManagerComponent implements OnInit {
    */
   private searchContent(): void {
     console.log('ContentManager: searchContent');
-
+    this.noResultsFound = false;
     if (this.searchName === undefined || this.searchType === undefined) {
       this.openSnackBar('Both fields must be filled!', 'red-snackbar');
       return;
@@ -152,7 +152,6 @@ export class ContentManagerComponent implements OnInit {
    * Loads entities for the 'savedName' and 'savedType'
    */
   private loadEntities() {
-    console.log('page: ' + this.page);
     switch (this.savedType) {
       case 'Artist':
         this.artistService.findArtists(this.savedName, this.page).subscribe(
