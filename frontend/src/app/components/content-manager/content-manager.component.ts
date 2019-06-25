@@ -287,7 +287,6 @@ export class ContentManagerComponent implements OnInit {
 
   private updateLocation(location: Location) {
     console.log('ContentManager: updateLocation:' + JSON.stringify(location));
-    // Object.assign(this.showToUpdate, show);
     this.locationService.updateLocation(location).subscribe(
       () => {},
       error => { this.defaultServiceErrorHandling(error); },

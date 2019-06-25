@@ -10,6 +10,9 @@
                              [(ngModel)]="chosenEvent"
                              [_value] = "chosenEvent">
         </ngx-select-dropdown>
+        <div [hidden]="chosenEvent !== undefined" class="form-text text-warning">
+          Event is required!
+        </div>
       </div>
     </div>
 
@@ -22,6 +25,9 @@
                              [(ngModel)]="chosenHall"
                              [_value] = "chosenHall">
         </ngx-select-dropdown>
+        <div [hidden]="chosenHall !== undefined" class="form-text text-warning">
+          Hall is required!
+        </div>
       </div>
     </div>
 
@@ -85,8 +91,8 @@
         <input id="price_cheap" type="number" name="priceCheap" class="form-control" style="width: 75px"
                [(ngModel)]="cheap"
                #priceCheap='ngModel'/>
-        <div [hidden]="priceCheap.valid || priceCheap.pristine" class="form-text text-warning">
-          Valid cheap price is required!
+        <div [hidden]="(priceCheap.valid || priceCheap.pristine) && cheap >= 0" class="form-text text-warning">
+          Invalid!
         </div>
       </div>
 
@@ -95,8 +101,8 @@
         <input id="price_average" type="number" name="priceAverage" class="form-control" style="width: 75px"
                [(ngModel)]="average"
                #priceAverage='ngModel'/>
-        <div [hidden]="priceAverage.valid || priceAverage.pristine" class="form-text text-warning">
-          Valid average price is required!
+        <div [hidden]="(priceAverage.valid || priceAverage.pristine) && average >= 0" class="form-text text-warning">
+          Invalid!
         </div>
       </div>
 
@@ -105,8 +111,8 @@
         <input id="price_expensive" type="number" name="priceExpensive" class="form-control" style="width: 75px"
                [(ngModel)]="expensive"
                #priceExpensive='ngModel'/>
-        <div [hidden]="priceExpensive.valid || priceExpensive.pristine" class="form-text text-warning">
-          Valid expensive price is required!
+        <div [hidden]="(priceExpensive.valid || priceExpensive.pristine) && average >= 0" class="form-text text-warning">
+          Invalid!
         </div>
       </div>
     </div>
@@ -114,7 +120,6 @@
   <p>
     <mat-hint>Note: Updating the price pattern will change it for all shows, which are using it!</mat-hint>
   </p>
-
 
   <button class="btn btn-success float-right" data-dismiss="modal" (click)="showForm.valid && onSubmit()"
           [disabled]="showForm.invalid">{{title}}</button>
