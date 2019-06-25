@@ -29,6 +29,7 @@ export class ContentManagerComponent implements OnInit {
   private pageRange: Array<number> = [];
   private dataReady: boolean = false;
 
+  private noResultsFound: boolean = false;
   private error: boolean = false;
   private errorMessage: string = '';
 
@@ -138,7 +139,7 @@ export class ContentManagerComponent implements OnInit {
    */
   private searchContent(): void {
     console.log('ContentManager: searchContent');
-
+    this.noResultsFound = false;
     if (this.searchName === undefined || this.searchType === undefined) {
       this.openSnackBar('Both fields must be filled!', 'red-snackbar');
       return;
@@ -155,7 +156,6 @@ export class ContentManagerComponent implements OnInit {
    * Loads entities for the 'savedName' and 'savedType'
    */
   private loadEntities() {
-    console.log('page: ' + this.page);
     switch (this.savedType) {
       case 'Artist':
         this.artistService.findArtists(this.savedName, this.page).subscribe(
@@ -291,7 +291,6 @@ export class ContentManagerComponent implements OnInit {
 
   private updateLocation(location: Location) {
     console.log('ContentManager: updateLocation:' + JSON.stringify(location));
-    // Object.assign(this.showToUpdate, show);
     this.locationService.updateLocation(location).subscribe(
       () => {},
       error => { this.defaultServiceErrorHandling(error); },
@@ -413,6 +412,10 @@ export class ContentManagerComponent implements OnInit {
   private defaultServiceErrorHandling(error: any) {
     console.log(error);
     this.error = true;
+    if (error.status === 404) {
+      console.log('No results found!');
+      this.noResultsFound = true;
+    }
     if (error.error.message !== 'No message available') {
       this.errorMessage = error.error.message;
     } else {

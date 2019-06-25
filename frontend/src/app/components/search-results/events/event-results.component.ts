@@ -22,6 +22,7 @@ export class EventResultsComponent implements OnInit {
   private content: string;
   private description: string;
 
+  private noResultsFound: boolean = true;
   private error: boolean = false;
   private errorMessage: string = '';
 
@@ -173,6 +174,10 @@ export class EventResultsComponent implements OnInit {
   private defaultServiceErrorHandling(error: any) {
     console.log(error);
     this.error = true;
+    if (error.status === 404) {
+      console.log('No results found!');
+      this.noResultsFound = true;
+    }
     if (error.error.message !== 'No message available') {
       this.errorMessage = error.error.message;
     } else {

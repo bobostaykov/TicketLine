@@ -34,7 +34,7 @@ public class ArtistPerformanceTestDataGenerator extends PerformanceTestDataGener
             for(Long id = 1L; id <= NUM_OF_ARTISTS; id++) {
                 artists.add(Artist.builder()
                     .id(id)
-                    .name(faker.artist().name())
+                    .name(faker.ancient().god())
                     .build());
             }
             artistRepository.saveAll(artists);

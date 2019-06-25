@@ -10,6 +10,8 @@ html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 .red-snackbar {
-  background-color: coral;
-  color: black;
+  border-color: black;
+  background-color: white;
+  font-weight: bold;
+  color: red;
 }
