@@ -28,6 +28,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 
+import javax.xml.bind.SchemaOutputResolver;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.*;
@@ -878,18 +879,11 @@ public class TicketEndpointTest extends BaseIntegrationTest {
             .given()
             .contentType(ContentType.JSON)
             .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
-            .when().get(TEST_TICKET_ENDPOINT_FILTER + "?customerName=est&eventName=ent_")
+            .when().get(TEST_TICKET_ENDPOINT_FILTER + "?customerName=est&eventName=ent_&page=0")
             .then().extract().response();
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
-        Assert.assertThat(Arrays.asList(response.as(TicketDTO[].class)), is(Collections.singletonList(
-            TicketDTO.builder()
-                .id(TEST_TICKET_ID1)
-                .show(TEST_SHOW_DTO)
-                .customer(TEST_CUSTOMER1_DTO)
-                .price(TEST_TICKET_PRICE1)
-                .seat(TEST_SEAT1_DTO)
-                .status(TEST_TICKET_STATUS1)
-                .build())));
+        List<TicketDTO> tickets = response.jsonPath().getList("content");
+        Assert.assertTrue(tickets.size() == 1);
     }
 /*
     @Test

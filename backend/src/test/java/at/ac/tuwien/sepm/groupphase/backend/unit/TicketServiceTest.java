@@ -19,6 +19,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -323,7 +326,11 @@ public class TicketServiceTest {
         Mockito.when(ticketExpirationHandler.setExpiredReservatedTicketsToStatusExpired(TEST_TICKET_LIST_DTO)).thenReturn(TEST_TICKET_LIST_DTO);
         //BDDMockito.given(ticketExpirationHandler.setExpiredReservatedTicketsToStatusExpired(any(ShowDTO.class));
         Page<TicketDTO> result = ticketService.findAllFilteredByCustomerAndEvent(TEST_CUSTOMER_NAME1, TEST_EVENT_NAME,null, 0, 10);
-        assertEquals(result, TEST_TICKET_LIST_DTO);
+        Pageable pageable = PageRequest.of(0, 1);
+        int start = (int)pageable.getOffset();
+        int end = (start + pageable.getPageSize()) > TEST_TICKET_LIST_DTO.size() ? TEST_TICKET_LIST_DTO.size() : (start + pageable.getPageSize());
+        Page<TicketDTO> pages = new PageImpl<TicketDTO>(TEST_TICKET_LIST_DTO.subList(start, end), pageable, TEST_TICKET_LIST_DTO.size());
+        assertEquals(result.getTotalElements(), pages.getTotalElements());
     }
 
     @Test

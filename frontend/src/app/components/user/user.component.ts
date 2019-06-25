@@ -30,7 +30,7 @@ export class UserComponent implements OnInit {
   private userForm: FormGroup;
   private submitted: boolean = false;
   private usernameError: boolean = false;
-  private headElements = ['Username', 'Type', 'User Since', 'Last Login', 'Remove', 'Block', 'reset user'];
+  private headElements = ['Username', 'Type', 'User Since', 'Last Login', 'Remove', 'Block', 'Reset Password'];
   private userTypes = ['Admin', 'Seller'];
   private selectedUserType: string = null;
   private userToDelete: number = null;
@@ -280,8 +280,8 @@ export class UserComponent implements OnInit {
     this.userAlreadyBlocked = true;
     setTimeout(() => this.userAlreadyBlocked = false, 5000);
   }
-  private checkIfUserIsAdmin(user: User): boolean{
-    return user.type === UserType.ADMIN;
+  private checkIfUserIsAdmin(user: User): boolean {
+    return user.type.toString() === 'ADMIN';
   }
   private setPasswordChangeAttempt() {
     this.passwordChangeAttempt = true;

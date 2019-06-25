@@ -20,7 +20,7 @@ export class BlockedUsersComponent implements OnInit {
   private dataReady: boolean = false;
 
   private blockedUsers: User[];
-  private headElements = ['Username', 'Type', 'User Since', 'Last Login', 'Delete' , 'Unblock'];
+  private headElements = ['Username', 'Type', 'User Since', 'Last Login', 'Delete' , 'Unblock', 'Reset Password'];
   private error: boolean = false;
   private userUnblocked: boolean = false;
   private errorMessage: string = '';

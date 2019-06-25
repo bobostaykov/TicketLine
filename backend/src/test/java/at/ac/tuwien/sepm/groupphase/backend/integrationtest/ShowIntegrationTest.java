@@ -144,7 +144,12 @@ public class ShowIntegrationTest extends BaseIntegrationTest {
 
     @Before
     public void before(){
-        if (!init && showRepository.findAll().isEmpty()) {
+        showRepository.deleteAll();
+        eventRepository.deleteAll();
+        hallRepository.deleteAll();
+        locationRepository.deleteAll();
+        artistRepository.deleteAll();
+        pricePatternRepository.deleteAll();
 
             priceMap1.put(PriceCategory.CHEAP, 10.0); priceMap1.put(PriceCategory.AVERAGE, 20.0); priceMap1.put(PriceCategory.EXPENSIVE, 40.0);
             pricePattern1 = pricePatternRepository.save(PricePattern.builder().setName(PRICE_PATTERN_NAME_1).setPriceMapping(priceMap1).createPricePattern());
@@ -164,7 +169,7 @@ public class ShowIntegrationTest extends BaseIntegrationTest {
             show4 = showRepository.save(Show.builder().event(event2).pricePattern(pricePattern2).ticketsSold(TICKETS_SOLD).time(SHOW_TIME_4).date(SHOW_DATE_4).hall(hall2).description(SHOW_DESCRIPTION_4).build());
             init = true;
         }
-    }
+
 
 
 
@@ -260,7 +265,6 @@ public class ShowIntegrationTest extends BaseIntegrationTest {
     }
 
     @Test
-    @Ignore
     public void searchShowsByCityName_returnsCorrectNumberOfShows(){
         Response response = RestAssured
             .given()

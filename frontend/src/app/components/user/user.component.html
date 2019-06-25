@@ -179,8 +179,8 @@
       <td class="align-middle" *ngIf="user.lastLogin">{{user.lastLogin | date:"dd/MM/yyyy HH:mm"}}</td>
       <td class="align-middle" *ngIf="!user.lastLogin">Never logged in</td>
       <td class="align-middle"><img (click)="setUserToDelete(user.id)" data-toggle="modal" data-target=".delete-user-modal" src="../../../assets/trash.png" width="25" height="25" alt="delete"></td>
-      <td *ngIf= "!checkIfUserIsAdmin(user)" class="align-middle" ><button mat-raised-button (click)="blockUser(user.id)">block user</button></td>
-      <td *ngIf= "!checkIfUserIsAdmin(user)" class="align-middle" ><button mat-raised-button (click)="setUserToReset(user) && setPasswordChangeAttempt" data-toggle="modal" data-target="#change-password"> reset password</button></td>
+      <td *ngIf= "checkIfUserIsAdmin(user) === false" class="align-middle" ><button [ngClass]="{disabled : checkIfUserIsAdmin(user)}" mat-raised-button (click)="blockUser(user.id)" [disabled]="checkIfUserIsAdmin(user) === true">block user</button></td>
+      <td *ngIf= "checkIfUserIsAdmin(user)===false" class="align-middle" ><button [ngClass]="{disabled : checkIfUserIsAdmin(user)}" mat-raised-button (click)="setUserToReset(user) && setPasswordChangeAttempt" data-toggle="modal" data-target="#change-password" > reset password</button></td>
     </tr>
   </tbody>
 </table>

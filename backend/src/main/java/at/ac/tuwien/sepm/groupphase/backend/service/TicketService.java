@@ -131,10 +131,10 @@ public interface TicketService {
 
     /**
      *
-     * @param customerName
-     * @param eventName
-     * @param page
-     * @param pageSize
+     * @param customerName the last name of the customer
+     * @param eventName name of the event
+     * @param page the requested page
+     * @param pageSize the size of the page
      * @return
      */
     Page<TicketDTO> findAllReservedFilteredByCustomerAndEvent(String customerName, String eventName, Integer page, Integer pageSize);

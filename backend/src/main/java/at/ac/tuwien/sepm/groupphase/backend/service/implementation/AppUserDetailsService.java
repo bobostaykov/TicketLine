@@ -49,7 +49,7 @@ public class AppUserDetailsService implements org.springframework.security.core.
 
         }else{
             LOGGER.info("Authentication Denied, user " + username + " does not exist");
-            throw new UsernameNotFoundException("The username"+ username + " doesn't exist");
+            throw new BadCredentialsException("");
         }
         return builder.build();
     }
