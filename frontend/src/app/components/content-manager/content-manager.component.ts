@@ -23,6 +23,7 @@ export class ContentManagerComponent implements OnInit {
   private savedName: string;
 
   private page: number = 0;
+  private page: number = 0;
   private totalPages: number;
   private pageRange: Array<number> = [];
   private dataReady: boolean = false;

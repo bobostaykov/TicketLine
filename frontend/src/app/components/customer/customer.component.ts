@@ -45,7 +45,7 @@ export class CustomerComponent implements OnInit {
           this.totalPages = result['totalPages'];
           this.setPagesRange();
       },
-      error => this.defaultServiceErrorHandling(error),
+      error => {},
       () => { this.dataReady = true; }
     );
   }
@@ -74,7 +74,7 @@ export class CustomerComponent implements OnInit {
         this.totalPages = result['totalPages'];
         this.setPagesRange();
       },
-      error => this.defaultServiceErrorHandling(error),
+      error => {},
       () => { this.dataReady = true; }
     );
   }
@@ -170,6 +170,7 @@ export class CustomerComponent implements OnInit {
     console.log('Updates customer with id ' + customer.id + ' to ' + JSON.stringify(customer));
     Object.assign(this.activeCustomer, customer);
     this.customerService.updateCustomer(customer);
+    this.loadCustomers();
   }
 
   /**
@@ -180,23 +181,8 @@ export class CustomerComponent implements OnInit {
     console.log('Adding customer: ' + JSON.stringify(customer));
     this.customerService.createCustomer(customer).subscribe(
       addedCustomer => this.customers.push(addedCustomer),
-      error => this.defaultServiceErrorHandling(error)
+      error => { this.loadCustomers(); }
     );
-  }
-
-  /**
-   * activates error flag and sets error message to display to user
-   * @param error that was encountered, includes error message
-   */
-  /* PINO: extended if clause in order to get into else if no error.error.news is available*/
-  private defaultServiceErrorHandling(error: any) {
-    console.log(error);
-    this.error = true;
-    if (error.error.news !== 'No message available' && error.error.news !== '' && error.error.news) {
-      this.errorMessage = error.error.news;
-    } else {
-      this.errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
-    }
   }
 
   /**

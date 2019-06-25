@@ -1,7 +1,10 @@
 package at.ac.tuwien.sepm.groupphase.backend.entity;
 
 
+import org.hibernate.validator.constraints.UniqueElements;
+
 import javax.persistence.*;
+import javax.validation.Valid;
 import javax.validation.constraints.Size;
 import java.util.Objects;
 
@@ -14,7 +17,6 @@ public class Artist {
     @GeneratedValue(generator = "artist_seq")
     private Long id;
 
-    @Column(nullable = false)
     @Size(max = 64)
     private String name;
 

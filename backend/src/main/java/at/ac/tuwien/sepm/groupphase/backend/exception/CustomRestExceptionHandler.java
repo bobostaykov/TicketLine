@@ -17,7 +17,8 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import javax.validation.ConstraintViolationException;
+import javax.ejb.EJBTransactionRolledbackException;
+import org.hibernate.exception.ConstraintViolationException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -91,12 +92,27 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(
             ex, apiError, headers, apiError.getStatus(), request);
     }
-    // Validation throws ConstraintViolationException if not applied on request body, but we still want a HTTP Bad_REQUEST here
+    // Validation throws ConstraintViolationException if not applied on request body, but we still want a HTTP BAD_REQUEST here
     @ExceptionHandler({ConstraintViolationException.class})
     private ResponseEntity<Object> handleConstraintViolationException(ConstraintViolationException ex, WebRequest request){
-        String error = "Validation Error: Error = " + ex.getMessage();
+        String message = "Validation Error: Error = " + ex.getMessage();
         ApiError apiError = new ApiError(
-            HttpStatus.BAD_REQUEST,ex.getLocalizedMessage(), error);
+            HttpStatus.BAD_REQUEST, message, message);
+        return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
+    }
+    @ExceptionHandler({EJBTransactionRolledbackException.class})
+    private ResponseEntity<Object> handleEJBTransactionRolledbackException(EJBTransactionRolledbackException ex, WebRequest request){
+        Throwable t = ex.getCause();
+        String message;
+        while ((t != null) && !(t instanceof ConstraintViolationException)) {
+            t = t.getCause();
+        }
+        if (t instanceof ConstraintViolationException) {
+            message = t.getLocalizedMessage();
+        }
+        message = "Validation Error";
+        ApiError apiError = new ApiError(
+            HttpStatus.BAD_REQUEST, message, message);
         return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
     }
     //to catch custom handled exceptions
@@ -111,6 +127,11 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler({DataIntegrityViolationException.class})
     private ResponseEntity<Object> handleDataIntegrityViolationException(DataIntegrityViolationException ex, WebRequest request){
         String error = "Data Integrity Violation: Error = " + ex.getMessage();
+        /*Throwable t = ex.getCause();
+        if (t instanceof ConstraintViolationException)
+            error = "Data Integrity Violation: Error = " + t.getLocalizedMessage();
+        else
+            error = */
         ApiError apiError = new ApiError(
             HttpStatus.BAD_REQUEST,ex.getLocalizedMessage(), error);
         return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
