@@ -23,8 +23,6 @@ export class UserComponent implements OnInit {
   private cantBlockAdmin: boolean = false;
   private errorMessage: string = '';
   private blockedUserMessage: string = 'User was successfully blocked!';
-  private cantBlockAdminMessage: string = 'Can\'t block admin!';
-  private userAlreadyBlockedMessage: string = 'User already blocked!';
   private passwordResetMessage: string = 'Password was successfully reset';
   private users: User[];
   private userForm: FormGroup;
@@ -211,9 +209,9 @@ export class UserComponent implements OnInit {
    * sends an request to the backend to change the password of a user
    * @param changePasswordRequest an request containing id name and the new password
    */
-  private changePassword(newPassword: string): boolean{
+  private changePassword(newPassword: string): boolean {
     this.passwordChangeAttempt = false;
-    this.passwordChangeRequest = new ChangePasswordRequest(this.userToChangePwd.id, this.userToChangePwd.username, newPassword)
+    this.passwordChangeRequest = new ChangePasswordRequest(this.userToChangePwd.id, this.userToChangePwd.username, newPassword);
     this.userService.changePassword(this.passwordChangeRequest).subscribe();
     this.showPasswordResetMessage();
     return true;
