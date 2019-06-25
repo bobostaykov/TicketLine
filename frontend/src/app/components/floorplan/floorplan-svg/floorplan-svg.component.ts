@@ -460,12 +460,11 @@ export class FloorplanSvgComponent implements OnInit, DoCheck, AfterViewInit {
    * function returning boolean which determines if user is currently allowed to add a ticket to the selected seat or sector
    */
   private allowToAddTicket(): boolean {
-    if (!this.selectedElement || this.editingEnabled || !this.priceMapping
-      || (this.selectedElement.ticketStatus && this.selectedElement.ticketStatus !== TicketStatus.EXPIRED)) {
+    if (!this.selectedElement || this.editingEnabled || !this.priceMapping) {
       return false;
     }
     if (this.hallType === 'seats') {
-      return true;
+      return ! this.selectedElement.ticketStatus || this.selectedElement.ticketStatus === TicketStatus.EXPIRED;
     } else {
       const sector = this.selectedElement as Sector;
       return sector.ticketsSold ? sector.ticketsSold < sector.maxCapacity : true;

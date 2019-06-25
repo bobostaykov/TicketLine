@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 
 @RestController
@@ -64,7 +65,7 @@ public class UserEndpoint {
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "Create a user", authorizations = {@Authorization(value = "apiKey")})
-    public UserDTO create(@RequestBody UserDTO userDTO) {
+    public UserDTO create(@Valid @RequestBody UserDTO userDTO) {
         LOGGER.info("Post user " + userDTO.getUsername());
         try {
             return userService.createUser(userDTO);

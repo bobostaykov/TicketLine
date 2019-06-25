@@ -12,6 +12,7 @@ export class FloorplanTicketComponent implements OnInit {
   // stepProgress can be used to showcase how many steps along the way to selling tickets the user already is
   // when embedding this component in different parts of the app
   @Input() private stepProgress: number;
+  @Input() private allowDeleteTickets: boolean;
   private selectedTicket: Seat | Sector;
   // event listener to close contextmenu on click anywhere in the document
   private _closeContext = this.closeContext.bind(this);
@@ -27,7 +28,7 @@ export class FloorplanTicketComponent implements OnInit {
    * called via contextmenu
    */
   private deleteSelectedTicket(): void {
-    if (this.selectedTicket) {
+    if (this.selectedTicket && this.allowDeleteTickets) {
       this.ticketsession.deleteTicket(this.selectedTicket);
     }
   }
@@ -38,14 +39,16 @@ export class FloorplanTicketComponent implements OnInit {
    * @param event click event containing location which will be used to determine where the contextmenu is placed
    */
   private displayContextmenu(ticket: Seat | Sector, event: MouseEvent): void {
-    event.preventDefault();
-    if (event.target instanceof Element) {
-      const context = document.getElementById('contextmenuTicket');
-      context.style.left = event.pageX + 'px';
-      context.style.top = event.pageY + 'px';
-      context.style.display = 'inline-block';
-      this.selectedTicket = ticket;
-      document.addEventListener('click', this._closeContext);
+    if (this.allowDeleteTickets) {
+      event.preventDefault();
+      if (event.target instanceof Element) {
+        const context = document.getElementById('contextmenuTicket');
+        context.style.left = event.pageX + 'px';
+        context.style.top = event.pageY + 'px';
+        context.style.display = 'inline-block';
+        this.selectedTicket = ticket;
+        document.addEventListener('click', this._closeContext);
+      }
     }
   }
 

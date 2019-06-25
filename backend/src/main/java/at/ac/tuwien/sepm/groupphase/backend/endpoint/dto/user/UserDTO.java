@@ -5,6 +5,7 @@ import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.SimpleNewsDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +17,7 @@ public class UserDTO {
     private Long id;
 
     @ApiModelProperty(name = "The unique username of the user")
+    @NotBlank(message = "username may not be blank")
     private String username;
 
     @ApiModelProperty(name = "The password of the user")

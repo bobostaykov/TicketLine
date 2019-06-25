@@ -63,9 +63,7 @@ export class UserComponent implements OnInit {
         this.totalPages = result['totalPages'];
         this.setPagesRange();
       },
-      error => {
-        this.defaultServiceErrorHandling(error);
-      },
+      error => {},
       () => {
         this.dataReady = true;
       }
@@ -168,7 +166,7 @@ export class UserComponent implements OnInit {
   private createUser(user: User) {
     this.userService.createUser(user).subscribe(
       (newUser: User) => { if (newUser.id === -1) { this.usernameError = true; } },
-      error => { this.defaultServiceErrorHandling(error); },
+      error => { this.loadUsers(null); },
       () => { this.loadUsers(null); }
     );
   }
@@ -180,7 +178,7 @@ export class UserComponent implements OnInit {
   private blockUser(userId: number) {
     this.userService.blockUser(userId).subscribe(
       () => {},
-      error => { this.handleBlockError(error); },
+      error => {},
       () => { this.loadUsers(this.userToSearch); this.showUserBlockedMessage(); }
     );
   }
@@ -193,7 +191,7 @@ export class UserComponent implements OnInit {
     this.userToDelete = null;
     this.userService.deleteUser(userId).subscribe(
       () => {},
-      error => { this.defaultServiceErrorHandling(error); },
+      error => {},
       () => { this.loadUsers(null); }
     );
   }
@@ -222,18 +220,6 @@ export class UserComponent implements OnInit {
    */
   private isAdmin(): boolean {
     return this.authService.getUserRole() === 'ADMIN';
-  }
-
-  private defaultServiceErrorHandling(error: any) {
-    console.log(error);
-    this.error = true;
-    if (error.error.news !== 'No message available') {
-      this.errorMessage = error.error.news;
-    } else if (error.error.httpRequestStatusCode === 404) {
-      this.errorMessage = 'Could not block user';
-    } else {
-      this.errorMessage = error.error.error;
-    }
   }
 
   /**

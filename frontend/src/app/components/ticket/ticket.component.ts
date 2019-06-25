@@ -37,6 +37,7 @@ export class TicketComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.foundCustomer = this.ticketSession.getCustomer();
   }
 
   /**
