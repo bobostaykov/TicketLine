@@ -79,13 +79,13 @@ import { LocationDialogComponent } from './components/location-dialog/location-d
     TicketCheckReservationComponent,
     ContentManagerComponent,
     BlockedUsersComponent,
-    ChangePasswordDialogComponent
+    ChangePasswordDialogComponent,
     ContentManagerComponent,
     ShowDialogComponent,
     ContentManagerComponent,
     EventDialogComponent,
     ErrorSnackBarComponent,
-    LocationDialogComponent
+    LocationDialogComponent,
     ContentManagerComponent,
     StornoComponent
   ],
