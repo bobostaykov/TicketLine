@@ -83,11 +83,6 @@ export class FloorplanSvgComponent implements OnInit, DoCheck, AfterViewInit {
    * detects changes to seat or sector arrays and draws or removes changed elements accordingly
    */
   ngDoCheck(): void {
-    if (!this.svgElement || !this.updateForm || !this.contextmenu) {
-      this.svgElement = document.getElementById('floorplan');
-      this.updateForm = document.getElementById('updateForm');
-      this.contextmenu = document.getElementById('contextmenu');
-    }
     if (this.svgElement && this.hallType !== this.oldHallType) {
       this.oldHallType = this.hallType;
       while (this.svgElement.firstChild) {
@@ -180,10 +175,12 @@ export class FloorplanSvgComponent implements OnInit, DoCheck, AfterViewInit {
    */
   private removeSeatPath(seat: Seat): void {
     const id: string = 'seat' + seat.seatRow + seat.seatNumber;
-    const path = document.getElementById(id);
-    // NOTE: using renderer to remove elements here for some reason did not always work
-    if (path) {
-      this.svgElement.removeChild(path);
+    if (id) {
+      const path = document.getElementById(id);
+      // NOTE: using renderer to remove elements here for some reason did not always work
+      if (path) {
+        this.svgElement.removeChild(path);
+      }
     }
   }
 
@@ -193,10 +190,12 @@ export class FloorplanSvgComponent implements OnInit, DoCheck, AfterViewInit {
    */
   private removeSectorPath(sector: Sector): void {
     const id: string = 'sector' + sector.sectorNumber;
-    this.renderer.removeChild(this.svgElement, document.getElementById(id));
-    const path = document.getElementById(id);
-    if (path) {
-      this.svgElement.removeChild(path);
+    if (id) {
+      this.renderer.removeChild(this.svgElement, document.getElementById(id));
+      const path = document.getElementById(id);
+      if (path) {
+        this.svgElement.removeChild(path);
+      }
     }
   }
 
