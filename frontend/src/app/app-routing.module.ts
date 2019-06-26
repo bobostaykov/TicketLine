@@ -18,7 +18,7 @@ import {TicketComponent} from './components/ticket/ticket.component';
 import {TicketCheckReservationComponent} from './components/ticket/ticket-check/ticket-check.component';
 import {BlockedUsersComponent} from './components/blocked-users/blocked-users.component';
 import {ContentManagerComponent} from './components/content-manager/content-manager.component';
-import {ReservationAndCancellationComponent} from './components/storno/reservation-and-cancellation.component';
+import {ReservationAndCancellationComponent} from './components/reservation-and-cancellation/reservation-and-cancellation.component';
 
 const routes: Routes = [
   {path: '', component: HomeComponent},
@@ -26,7 +26,7 @@ const routes: Routes = [
   {path: 'news', canActivate: [AuthGuard], component: NewsComponent},
   {path: 'user', canActivate: [AuthGuard], component: UserComponent},
   {path: 'customers', canActivate: [AuthGuard], component: CustomerComponent},
-  {path: 'events', canActivate: [AuthGuard], component: EventsComponent},
+  {path: 'events', canActivate: [AuthGuard], component: SearchPageComponent                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   },
   {path: 'events/topten', canActivate: [AuthGuard], component: TopTenEventsComponent},
   {path: 'events/search', canActivate: [AuthGuard], component: SearchPageComponent},
   {path: 'events/search/results/artists', canActivate: [AuthGuard], component: ArtistResultsComponent},
