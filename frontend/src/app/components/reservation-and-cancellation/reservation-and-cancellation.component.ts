@@ -141,7 +141,7 @@ export class ReservationAndCancellationComponent implements OnInit {
           this.ticketDataReady = false;
         } else {
           this.ticketDataReady = true;
-          this.displaySoldTickets = true;
+          this.displaySoldTickets = false;
         }
       }
     );
