@@ -23,7 +23,7 @@ import {
   MatSelectModule,
   MatSnackBarModule,
   MatRadioModule,
-  MatAutocompleteModule
+  MatAutocompleteModule, MatIconModule
 } from '@angular/material';
 import {NgxChartsModule} from '@swimlane/ngx-charts';
 import {SearchPageComponent} from './components/events/search page/search-page.component';
@@ -106,7 +106,8 @@ import {LocationDialogComponent} from './components/location-dialog/location-dia
     Ng5SliderModule,
     MatRadioModule,
     MatAutocompleteModule,
-    SelectDropDownModule
+    SelectDropDownModule,
+    MatIconModule
   ],
   providers: [httpInterceptorProviders, Globals],
   bootstrap: [AppComponent],
