@@ -1,8 +1,5 @@
+<button mat-raised-button routerLink="/events/topten" id="top_ten" color="primary" class="mr-3 float-right">Top 10 Events</button>
 <h1 class="mt-5" align="center">Search Page</h1>
-<div style="float: right">
-<button mat-raised-button id="btn_all_events" routerLink="/events" color="primary" class="mt-4 right" style="margin-right: 5px;">All Events</button>
-<button mat-raised-button id="btn_top10events" routerLink="/events/topten" color="primary" class="mt-4 right">Top 10</button>
-</div>
 <h3 class="mt-5">Search for shows:</h3>
 <form [formGroup]="showForm" (ngSubmit)="searchForShows()">
   <div>

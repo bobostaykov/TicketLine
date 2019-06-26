@@ -23,6 +23,7 @@ import javax.persistence.PersistenceException;
 import javax.persistence.Tuple;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -46,10 +47,13 @@ public class EventServiceImpl implements EventService {
     public EventDTO createEvent(EventDTO eventDTO) throws ServiceException {
         LOGGER.info("Event Service: createEvent");
         try {
-            Artist artist = artistRepository.findByName(eventDTO.getArtist().getName());
-            if (artist == null) {
+            List<Artist> artistList = artistRepository.findAllByName(eventDTO.getArtist().getName());
+            Artist artist;
+            if (artistList.isEmpty()) {
                 LOGGER.info("Event Service: create artist for event");
                 artist = artistRepository.save(artistMapper.artistDTOToArtist(eventDTO.getArtist()));
+            }else{
+                artist = artistList.get(0);
             }
             eventDTO.setArtist(artistMapper.artistToArtistDTO(artist));
             return eventMapper.eventToEventDTO(eventRepository.save(eventMapper.eventDTOToEvent(eventDTO)));

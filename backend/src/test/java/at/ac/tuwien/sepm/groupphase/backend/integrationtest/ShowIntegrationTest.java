@@ -339,6 +339,6 @@ public class ShowIntegrationTest extends BaseIntegrationTest {
             .then().extract().response();
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
         List<Show> shows = response.jsonPath().getList("content");
-        Assert.assertEquals(shows.size(), 3);
+        Assert.assertEquals(4, shows.size() );
     }
 }

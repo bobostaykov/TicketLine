@@ -8,6 +8,8 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 
+import java.util.List;
+
 @Repository
 public interface ArtistRepository extends JpaRepository<Artist, Long>, PagingAndSortingRepository<Artist, Long> {
 
@@ -32,4 +34,6 @@ public interface ArtistRepository extends JpaRepository<Artist, Long>, PagingAnd
      * @param artistId to delete
      */
     void deleteById(Long artistId);
+
+    List<Artist> findAllByName(String name);
 }

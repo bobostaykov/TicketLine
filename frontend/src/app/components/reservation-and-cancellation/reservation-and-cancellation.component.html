@@ -93,24 +93,23 @@
       <td>{{ticket.show.hall.name}}</td>
       <td *ngIf="hasSeatNo(ticket) && hasRowNo(ticket)"> Seat: {{ticket.seat.seatNumber}} Row: {{ticket.seat.seatRow}} </td>
       <td *ngIf="hasSectorNo(ticket) && !hasRowNo(ticket)"> Sector: {{ticket.sector.sectorNumber}}</td>
-      <td *ngIf="hasSectorNo(ticket) && !hasSeatNo(ticket)"> no data available</td>
+      <td *ngIf="!hasSectorNo(ticket) && !hasSeatNo(ticket)"> no data available</td>
       <td>{{ticket.status}}</td>
       <td>{{ticket.reservationNo}}</td>
-      <td ><button mat-raised-button (click)="dismissFromCancellation(ticket)" > dismiss </button></td>
+      <td ><button mat-raised-button color="primary" (click)="dismissFromCancellation(ticket)" > dismiss </button></td>
     </tr>
     <td>
-      <form>
-        <p align="right">
-          <button id = "submitCancel"  type = mat-raised-button (click)="submitCancellation()" >submit Cancellation</button>
-        </p>
-      </form>
-    </td>
+
+        </td>
     </tbody>
   </table>
+  <div>
+    <button id = "submitCancel"  mat-raised-button color="primary" class="mt-5 mb-4 right" (click)="submitCancellation()" >submit Cancellation</button>
+  </div>
 </div>
 
 <div *ngIf="noSearchResults">
-  No matching results found
+  <h3 style="text-align:center;">No matching results found</h3>
 </div>
 
 <div *ngIf="cantSubmitEmpty" class="alert alert-warning alert-dismissible fade show" role="alert">
@@ -150,20 +149,16 @@
       <td>{{ticket.show.hall.name}}</td>
       <td *ngIf="hasSeatNo(ticket) && hasRowNo(ticket)"> Seat: {{ticket.seat.seatNumber}} Row: {{ticket.seat.seatRow}} </td>
       <td *ngIf="hasSectorNo(ticket) && !hasRowNo(ticket)"> Sector: {{ticket.sector.sectorNumber}}</td>
-      <td *ngIf="hasSectorNo(ticket) && !hasSeatNo(ticket)"> no data available</td>
+      <td *ngIf="!hasSectorNo(ticket) && !hasSeatNo(ticket)"> no data available</td>
       <td>{{ticket.status}}</td>
       <td>{{ticket.reservationNo}}</td>
-      <td ><button mat-raised-button (click)="dismissFromBasket(ticket)" > Dismiss </button></td>
+      <td ><button mat-raised-button color="primary" (click)="dismissFromBasket(ticket)" > Dismiss </button></td>
     </tr>
-    <td>
-      <form>
-        <p align="right">
-          <button id = "submitBasket  "  type = mat-raised-button (click)="submitSale()" >Submit Order</button>
-        </p>
-      </form>
-    </td>
     </tbody>
   </table>
+  <div>
+    <button id = "submitBasket"  mat-raised-button color="primary" class="mt-5 mb-4 right" (click)="submitSale()" >Submit Order</button>
+  </div>
 </div>
 <!-- table displaying ticket search results -->
 <div *ngIf="ticketDataReady">
@@ -198,11 +193,11 @@
       <td>{{ticket.show.hall.name}}</td>
       <td *ngIf="hasSeatNo(ticket) && hasRowNo(ticket)"> Seat: {{ticket.seat.seatNumber}} Row: {{ticket.seat.seatRow}} </td>
       <td *ngIf="hasSectorNo(ticket) && !hasRowNo(ticket)"> Sector: {{ticket.sector.sectorNumber}}</td>
-      <td *ngIf="hasSectorNo(ticket) && !hasSeatNo(ticket)"> no data available</td>
+      <td *ngIf="!hasSectorNo(ticket) && !hasSeatNo(ticket)"> no data available</td>
       <td>{{ticket.status}}</td>
       <td>{{ticket.reservationNo}}</td>
-      <td><button (click)="addToCancellation(ticket)" mat-raised-button>Storno</button></td>
-      <td *ngIf="!displaySoldTickets"><button (click)="addToBasket(ticket)" mat-raised-button>Buy</button></td>
+      <td><button (click)="addToCancellation(ticket)"  mat-raised-button color="primary">Storno</button></td>
+      <td *ngIf="!displaySoldTickets"><button (click)="addToBasket(ticket)" mat-raised-button color="primary" >Buy</button></td>
     </tr>
     </tbody>
   </table>
