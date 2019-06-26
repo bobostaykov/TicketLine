@@ -1,15 +1,24 @@
 import {Component, OnInit} from '@angular/core';
 import {Customer} from '../../dtos/customer';
-import {CustomerService} from '../../services/customer.service';
+import {CustomerService} from '../../services/customer/customer.service';
 import {AuthService} from '../../services/auth/auth.service';
+import {FormGroup} from '@angular/forms';
 
 @Component({
   selector: 'app-customer',
   templateUrl: './customer.component.html',
+  styleUrls: ['./customer.component.scss'],
   styles: ['#errorMessage{z-index: 9999; }']
 })
 export class CustomerComponent implements OnInit {
+
+  private page: number = 0;
+  private totalPages: number;
+  private pageRange: Array<number> = [];
+  private dataReady: boolean = false;
+
   private customers: Customer[];
+  private customerFiltered: Customer;
   private activeCustomer: Customer;
   private error: boolean = false;
   private errorMessage: string;
@@ -30,26 +39,119 @@ export class CustomerComponent implements OnInit {
    */
   private loadCustomers() {
     console.log('Queries customerService to load all customers');
-    this.customerService.findAllCustomers().subscribe(
-      (customers: Customer[]) => {
-        this.customers = customers;
+    this.customerService.findAllCustomers(this.page).subscribe(
+        result => {
+          this.customers = result['content'];
+          this.totalPages = result['totalPages'];
+          this.setPagesRange();
       },
-      error => this.defaultServiceErrorHandling(error)
+      error => {},
+      () => { this.dataReady = true; }
     );
   }
 
   /**
+   * Resets all set parameters for customer and page number and calls 'loadCustomers'
+   */
+  private resetCustomerFilter() {
+    this.customerFiltered = undefined;
+    this.page = 0;
+    this.loadCustomers();
+  }
+
+  /**
    * uses CustomerService to search for customers matching parameter
+   * @param page number of the page to get
    * @param customer dto that includes search parameters for customerService
    */
-  private searchCustomers(customer: Customer) {
+  private searchCustomers(customer: Customer, page: number) {
     console.log('Queries customerService to search for customers resembling ' + JSON.stringify(customer));
-    this.customerService.searchCustomers(customer).subscribe(
-      (customers: Customer[]) => {
-        this.customers = customers;
+    this.customerFiltered = customer;
+    this.page = page;
+    this.customerService.searchCustomers(this.customerFiltered, page).subscribe(
+      result => {
+        this.customers = result['content'];
+        this.totalPages = result['totalPages'];
+        this.setPagesRange();
       },
-      error => this.defaultServiceErrorHandling(error)
+      error => {},
+      () => { this.dataReady = true; }
     );
+  }
+
+  /**
+   * Sets page number to the chosen i
+   * @param i number of the page to get
+   * @param event to handle
+   */
+  private setPage(i, event: any) {
+    event.preventDefault();
+    this.page = i;
+    if (this.customerFiltered !== undefined) {
+      this.searchCustomers(this.customerFiltered, this.page);
+    } else {
+      this.loadCustomers();
+    }
+  }
+
+  /**
+   * Sets page number to the previous one and calls the last method
+   * @param event o handle
+   */
+  private previousPage(event: any) {
+    event.preventDefault();
+    if (this.page > 0 ) {
+      this.page--;
+      if (this.customerFiltered !== undefined) {
+        this.searchCustomers(this.customerFiltered,  this.page);
+      } else {
+        this.loadCustomers();
+      }
+    }
+  }
+
+  /**
+   * Sets page number to the next one and calls the last method
+   * @param event to handle
+   */
+  private nextPage(event: any) {
+    event.preventDefault();
+    if (this.page < this.totalPages - 1) {
+      this.page++;
+      if (this.customerFiltered !== undefined) {
+        this.searchCustomers(this.customerFiltered , this.page);
+      } else {
+        this.loadCustomers();
+      }
+    }
+  }
+
+  /**
+   * Determines the page numbers which will be shown in the clickable menu
+   */
+  private setPagesRange() {
+    this.pageRange = []; // nullifies the array
+    if (this.totalPages <= 11) {
+      for (let i = 0; i < this.totalPages; i++) {
+        this.pageRange.push(i);
+      }
+    } else {
+      if (this.page <= 5) {
+        for (let i = 0; i <= 10; i++) {
+          this.pageRange.push(i);
+        }
+      }
+      if (this.page > 5 && this.page < this.totalPages - 5) {
+        for (let i = this.page - 5; i <= this.page + 5; i++) {
+          this.pageRange.push(i);
+        }
+      }
+      if (this.page >= this.totalPages - 5) {
+        for (let i = this.totalPages - 10; i < this.totalPages; i++) {
+          this.pageRange.push(i);
+        }
+      }
+    }
   }
 
   /**
@@ -57,7 +159,7 @@ export class CustomerComponent implements OnInit {
    * @param customer to be set as activeCustomer
    */
   private setActiveCustomer(customer: Customer) {
-    this.activeCustomer = customer;
+    this.activeCustomer = customer; // TODO?   Object.assign(this.activeCustomer, customer);
   }
 
   /**
@@ -65,9 +167,10 @@ export class CustomerComponent implements OnInit {
    * @param customer to be updated
    */
   private updateCustomer(customer: Customer) {
-    console.log('Updates custoemr with id ' + customer.id + ' to ' + JSON.stringify(customer));
+    console.log('Updates customer with id ' + customer.id + ' to ' + JSON.stringify(customer));
     Object.assign(this.activeCustomer, customer);
     this.customerService.updateCustomer(customer);
+    this.loadCustomers();
   }
 
   /**
@@ -78,22 +181,8 @@ export class CustomerComponent implements OnInit {
     console.log('Adding customer: ' + JSON.stringify(customer));
     this.customerService.createCustomer(customer).subscribe(
       addedCustomer => this.customers.push(addedCustomer),
-      error => this.defaultServiceErrorHandling(error)
+      error => { this.loadCustomers(); }
     );
-  }
-
-  /**
-   * activates error flag and sets error message to display to user
-   * @param error that was encountered, includes error message
-   */
-  private defaultServiceErrorHandling(error: any) {
-    console.log(error);
-    this.error = true;
-    if (error.error.news !== 'No message available') {
-      this.errorMessage = error.error.news;
-    } else {
-      this.errorMessage = error.error.error;
-    }
   }
 
   /**
@@ -112,4 +201,5 @@ export class CustomerComponent implements OnInit {
     console.log('Customer Component was initialized!');
     this.loadCustomers();
   }
+
 }

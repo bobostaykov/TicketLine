@@ -1,0 +1,107 @@
+<div class="d-flex justify-content-between">
+  <h1 class="mt-3">Select Customer</h1>
+  <button mat-raised-button color="primary" [routerLink]="'/floorplan'" class="h-25 align-self-center">Back to Floorplan</button>
+</div>
+<div class="d-flex flex-row justify-content-between mt-5">
+  <div class="customerForm">
+    <!-- radio buttons to decide between adding a new customer, searching for an existing one or selling to an anonymous customer -->
+    <mat-radio-group aria-labelledby="customer selection type" class="d-flex flex-row justify-content-between"
+                     [(ngModel)]="customerSelection" (change)="handleChangeInCustomerSelection($event.value);">
+      <mat-radio-button value="Anonymous" color="primary" aria-labelledby="anonymous">Anonymous</mat-radio-button>
+      <mat-radio-button value="Search Customers" color="primary" aria-labelledby="search customers">Search Customers
+      </mat-radio-button>
+      <mat-radio-button value="Add Customer" color="primary" aria-labelledby="add new customer">Add New Customer
+      </mat-radio-button>
+    </mat-radio-group>
+    <!-- select field to decide ticket status - whether tickets should be bought or just reserved -->
+    <mat-form-field appearance="standard">
+      <mat-label>Ticket Status</mat-label>
+      <mat-select [value]="ticketSession.getTicketStatus()"
+                  (selectionChange)="ticketSession.saveTicketStatus($event.value)">
+        <mat-option [value]="statusEnum.SOLD">Buy Tickets</mat-option>
+        <mat-option [value]="statusEnum.RESERVED">Reserve Tickets</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <!-- table displaying customer name, mail and birthday -->
+    <table class="table table-borderless">
+      <tr>
+        <td>Name</td>
+        <td>{{getName()}}</td>
+      </tr>
+      <tr>
+        <td>E-Mail</td>
+        <td>{{getMail()}}</td>
+      </tr>
+      <tr>
+        <td>Birthday</td>
+        <td>{{getBirthday()}}</td>
+      </tr>
+    </table>
+    <div class="mt-3" [ngSwitch]="customerSelection">
+      <app-customer-dialog *ngSwitchCase="'Search Customers'" [title]="customerSelection"
+                           (submitCustomer)="handleSearchSubmission($event)"></app-customer-dialog>
+      <app-customer-dialog *ngSwitchCase="'Add Customer'" [title]="customerSelection"
+                           (submitCustomer)="addCustomer($event)"></app-customer-dialog>
+    </div>
+  </div>
+  <!-- component displaying currently selected tickets -->
+  <div class="floorplanTickets">
+    <app-floorplan-ticket [stepProgress]="2" [allowDeleteTickets]="true"></app-floorplan-ticket>
+    <!-- button to continue on to ticket check component -->
+    <button mat-raised-button color="primary" [routerLink]="'/ticket-check'"
+            [disabled]="setButtonDisabled()">{{getButtonName()}}</button>
+  </div>
+</div>
+
+<!-- modal used to display customer search results -->
+<ng-template #searchCustomersModal class="modal fade" tabindex="-1" role="dialog"
+             aria-labelledby="Customer Search Results"
+             aria-hidden="true" let-c="close" let-d="dismiss">
+  <div class="modal-header">
+    <h5 class="modal-title">Customer Search Results</h5>
+    <button type="button" class="close" (click)="d('cross click')" aria-label="Close">
+      <span aria-hidden="true">x</span>
+    </button>
+  </div>
+  <div class="modal-body d-flex flex-column">
+    <table class="table table-borderless">
+      <thead>
+      <tr>
+        <th scope="col">Name</th>
+        <th scope="col">First Name</th>
+        <th scope="col">E-Mail</th>
+        <th scope="col">Birthday</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let customer of customers">
+        <td>{{customer.name}}</td>
+        <td>{{customer.firstname}}</td>
+        <td>{{customer.email}}</td>
+        <td>{{customer.birthday}}</td>
+        <td class="pt-2">
+          <button mat-raised-button color="primary" (click)="selectCustomer(customer); c('Selected Customer')">Select
+          </button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+    <div class="customerPagination align-self-center mt-auto" *ngIf="pages?.length > 1">
+      <ul class="nav nav-pills">
+        <li class="nav-item">
+          <a role="button" tabindex="0" class="nav-link" (click)="previousPage()">«</a>
+        </li>
+        <li class="nav-item" *ngFor="let p of pages; let i = index">
+          <a role="button" tabindex="0" class="nav-link" (click)="setPage(i)"
+             [ngClass]="{'active': i == page}">{{i}}</a>
+        </li>
+        <li class="nav-item">
+          <a role="button" tabindex="0" class="nav-link" (click)="nextPage()">»</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="d('Close button click')">Close</button>
+  </div>
+</ng-template>

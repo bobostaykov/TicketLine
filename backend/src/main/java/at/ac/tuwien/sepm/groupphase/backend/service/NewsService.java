@@ -2,24 +2,26 @@ package at.ac.tuwien.sepm.groupphase.backend.service;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.DetailedNewsDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.SimpleNewsDTO;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
 
 public interface NewsService {
 
     /**
      * Find all news entries ordered by published at date (descending).
-     *
-     * @return ordered list of al news entries
+     * @param page the number of the requested page
+     * @param pageSize number of entries per page
+     * @return ordered page of al news entries
      */
-    List<SimpleNewsDTO> findAll();
+    Page<SimpleNewsDTO> findAll(Integer page, Integer pageSize);
+
 
     /**
      * Find latest news entries ordered by published at date (descending).
-     *
-     * @return ordered list of latest news entries
+     * @param page the number of the requested page
+     * @param pageSize number of entries per page
+     * @return ordered page of latest news entries
      */
-    List<SimpleNewsDTO> findUnread(String username);
+    Page<SimpleNewsDTO> findUnread(String username, Integer page, Integer pageSize);
 
     /**
      * Find a single news entry by id.

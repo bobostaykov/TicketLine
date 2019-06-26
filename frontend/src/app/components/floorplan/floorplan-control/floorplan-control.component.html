@@ -1,0 +1,289 @@
+<!-- upper row containing forms to add seats or sectors as well as select a specific hall, show or location -->
+<div class="row mt-3 bottom-box-shadow pb-4 mb-5" [ngClass]="{'pb-5': ! editingEnabled || ! isAdmin()}">
+
+  <div class="col" [ngSwitch]="hallType" *ngIf="isAdmin() && editingEnabled">
+    <!-- editing is disabled and this div therefore doesn't show  if user is not admin or editing is no longer allowed on this hall -->
+
+    <!-- form to add or delete seats from currently selected hall -->
+    <form *ngSwitchCase="'seats'" [formGroup]="addSeatsForm" (ngSubmit)="addSeats()">
+      <div class="row pb-2">
+
+        <!-- 'from-to' selection for seat rows to which seats should be added or deleted from the selected hall -->
+        <div class="row col-7">
+          <mat-form-field appearance="standard" class="col-7 pr-0">
+            <mat-label>Seat Rows</mat-label>
+            <label for="seatRowStart" class="sr-only">Seat Row Selection Start</label>
+            <input matInput id="seatRowStart" formControlName="seatRowStart" type="number" class="text-right"
+                   aria-labelledby="seat row selection start"/>
+            <mat-error *ngIf="addSeatsForm.get('seatRowStart').hasError('required') && addSeatsForm.dirty">Row must be
+              set!
+            </mat-error>
+            <mat-error *ngIf="addSeatsForm.get('seatRowStart').hasError('min') && addSeatsForm.dirty">Must be greater
+              than 0!
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field appearance="standard" class="col-5 pl-0">
+            <span matPrefix class="pr-3">&ndash;</span>
+            <label for="seatRowEnd" class="sr-only">Seat Row Selection End</label>
+            <input matInput id="seatRowEnd" formControlName="seatRowEnd" type="number" class="text-left"
+                   aria-labelledby="seat row selection end"/>
+            <mat-error *ngIf="addSeatsForm.get('seatRowEnd').hasError('required') && addSeatsForm.dirty">Row must be
+              set!
+            </mat-error>
+            <mat-error *ngIf="addSeatsForm.get('seatRowEnd').hasError('min') && addSeatsForm.dirty">Must be greater than
+              0!
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <!-- seat price selection -->
+        <div class="row col-5">
+          <mat-form-field appearance="standard">
+            <label for="seatPrice" class="sr-only">Seat Price</label>
+            <select matNativeControl id="seatPrice" formControlName="seatPrice" aria-labelledby="seat price selection">
+              <option *ngFor="let price of priceCategories">Price: {{price}}</option>
+            </select>
+            <mat-error>Seat Price must be set!</mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+
+        <!-- 'from-to' selection for seat numbers for which seats should be added or deleted from the selected hall -->
+        <div class="row col-7">
+          <mat-form-field appearance="standard" class="col-7 pr-0">
+            <mat-label>Seat Numbers</mat-label>
+            <label for="seatNumberStart" class="sr-only">Seat Number Selection Start</label>
+            <input matInput id="seatNumberStart" formControlName="seatNumberStart" type="number" class="text-right"
+                   aria-labelledby="seat number selection start"/>
+            <mat-error *ngIf="addSeatsForm.get('seatNumberStart').hasError('required') && addSeatsForm.dirty">Number
+              must be set!
+            </mat-error>
+            <mat-error *ngIf="addSeatsForm.get('seatNumberStart').hasError('min') && addSeatsForm.dirty">Must be greater
+              than 0
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field appearance="standard" class="col-5 pl-0">
+            <span matPrefix class="pr-3">&ndash;</span>
+            <label for="seatNumberEnd" class="sr-only">Seat Number Selection End</label>
+            <input matInput id="seatNumberEnd" formControlName="seatNumberEnd" type="number" class="text-left"
+                   aria-labelledby="seat number selection end"/>
+            <mat-error *ngIf="addSeatsForm.get('seatNumberEnd').hasError('required') && addSeatsForm.dirty">Number must
+              be set!
+            </mat-error>
+            <mat-error *ngIf="addSeatsForm.get('seatNumberEnd').hasError('min') && addSeatsForm.dirty">Must be greater
+              than 0!
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <!-- buttons to submit form and either add or delete seats -->
+        <div class="col-5 mt-4 text-nowrap">
+          <button mat-raised-button color="primary" class="mr-2 inputButton" type="submit"
+                  [disabled]="addSeatsForm.invalid">Add Seats
+          </button>
+          <button mat-raised-button color="warn" class="inputButton" (click)="deleteSeats()" type="button"
+                  [disabled]="addSeatsForm.invalid">Delete Seats
+          </button>
+        </div>
+      </div>
+    </form>
+
+    <!-- form to add or delete sectors from currently selected hall -->
+    <form *ngSwitchCase="'sectors'" [formGroup]="addSectorsForm" (ngSubmit)="addSectors()">
+      <div class="row">
+
+        <!-- 'from-to' selection for sector numbers for which sectors should be added or deleted from the selected hall -->
+        <div class="row col-7">
+          <mat-form-field appearance="standard" class="col-7 pr-0">
+            <mat-label>Sector Numbers</mat-label>
+            <label for="sectorNumberStart" class="sr-only">Sector Number Selection Start</label>
+            <input matInput id="sectorNumberStart" formControlName="sectorNumberStart" type="number" class="text-right"
+                   aria-labelledby="sector number selection start"/>
+            <mat-error *ngIf="addSectorsForm.get('sectorNumberStart').hasError('required') && addSectorsForm.dirty">
+              Number must be set!
+            </mat-error>
+            <mat-error *ngIf="addSectorsForm.get('sectorNumberStart').hasError('min') && addSectorsForm.dirty">Must be
+              greater than 0!
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field appearance="standard" class="col-5 pl-0">
+            <span matPrefix class="pr-3">&ndash;</span>
+            <label for="sectorNumberEnd" class="sr-only">Sector Number Selection End</label>
+            <input matInput id="sectorNumberEnd" formControlName="sectorNumberEnd" type="number" class="text-left"
+                   aria-labelledby="sector number selection end"/>
+            <mat-error *ngIf="addSectorsForm.get('sectorNumberEnd').hasError('required') && addSectorsForm.dirty">Number
+              must be set!
+            </mat-error>
+            <mat-error *ngIf="addSectorsForm.get('sectorNumberEnd').hasError('min') && addSectorsForm.dirty">Must be
+              greater than 0!
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <!-- selection for sector price category -->
+        <div class="row col-5">
+          <mat-form-field appearance="standard">
+            <label for="sectorPrice" class="sr-only">Sector Price</label>
+            <select matNativeControl id="sectorPrice" formControlName="sectorPrice" aria-labelledby="sector price">
+              <option *ngFor="let price of priceCategories">{{price}}</option>
+            </select>
+            <mat-error>Sector Price must be set!</mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <!-- second row of addSectorsForm -->
+      <div class="row">
+
+        <!-- form field to set sector max capacity -->
+        <div class="row col-7">
+          <mat-form-field appearance="standard" class="col-7 pr-0">
+            <mat-label>Sector Capacity</mat-label>
+            <label for="sectorCapacity" class="sr-only">Sector Capacity</label>
+            <input matInput id="sectorCapacity" formControlName="maxCapacity" type="number" class="text-right"
+                   aria-labelledby="sector max capacity"/>
+            <mat-error *ngIf="addSectorsForm.get('maxCapacity').hasError('required') && addSectorsForm.dirty">Capacity
+              must be set!
+            </mat-error>
+            <mat-error *ngIf="addSectorsForm.get('maxCapacity').hasError('min') && addSectorsForm.dirty">Must be greater
+              than 0!
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <!-- buttons to submit form and either adding or deleting sectors from hall -->
+        <div class="col-5 mt-4 text-nowrap">
+          <button mat-raised-button color="primary" class="mr-2 inputButton" type="submit"
+                  [disabled]="addSectorsForm.invalid">Add Sectors
+          </button>
+          <button mat-raised-button color="warn" class="inputButton" (click)="deleteSectors()" type="button"
+                  [disabled]="addSectorsForm.invalid">Delete Sectors
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="col">
+    <!-- form to select specific hall, show or location -->
+    <form class="text-right" [formGroup]="createHallForm" (ngSubmit)="enterHallNameModal()">
+      <div class="pb-2">
+        <!-- form field allows selection one of the shows queried from backend -->
+        <mat-form-field appearance="outline" class="col-4">
+          <mat-label>Show</mat-label>
+          <label for="showSelection" class="sr-only">Show Selection</label>
+          <input matInput id="showSelection" aria-labelledby="Show Selection input" formControlName="showSelection"
+                 [matAutocomplete]="showOptions"/>
+          <mat-autocomplete #showOptions="matAutocomplete" (optionSelected)="loadSelectedShow($event.option.value)"
+                            [panelWidth]="'auto'" [displayWith]="displayShow">
+            <mat-option *ngFor="let show of shows$ | async" [value]="show">{{displayShow(show)}}</mat-option>
+          </mat-autocomplete>
+          <mat-hint *ngIf="! editingEnabled || ! isAdmin()">Show taking place in this hall and location</mat-hint>
+        </mat-form-field>
+        <!-- form field allows selecting one of the locations queried from backend -->
+        <mat-form-field appearance="outline" class="col-4">
+          <mat-label>Location</mat-label>
+          <label for="locationSelection" class="sr-only">Location Selection</label>
+          <input matInput id="locationSelection" aria-labelledby="location selection input"
+                 formControlName="locationSelection" [matAutocomplete]="locationOptions"/>
+          <mat-autocomplete #locationOptions="matAutocomplete" [panelWidth]="'auto'" [displayWith]="displayLocation"
+                            (optionSelected)="loadSelectedLocation($event.option.value)">
+            <mat-option *ngFor="let location of locations$ | async" [value]="location">
+              {{displayLocation(location)}}
+            </mat-option>
+          </mat-autocomplete>
+          <mat-error *ngIf="hallFormSubmitted">A location must be selected!</mat-error>
+          <mat-hint *ngIf="! editingEnabled || ! isAdmin()">The location of currently selected hall</mat-hint>
+        </mat-form-field>
+        <!-- form field allows selection one of the halls queried from backend -->
+        <mat-form-field appearance="outline" class="col-4">
+          <mat-label>Hall</mat-label>
+          <label for="hallSelection" class="sr-only">Hall Selection</label>
+          <input matInput id="hallSelection" aria-labelledby="Hall Selection Input" formControlName="hallSelection"
+                 [matAutocomplete]="hallOptions"/>
+          <mat-autocomplete #hallOptions="matAutocomplete" (optionSelected)="loadSelectedHall($event.option.value)"
+                            [panelWidth]="'auto'" [displayWith]="displayHall">
+            <mat-option [value]="newHall" *ngIf="isAdmin()">New Hall</mat-option>
+            <mat-option *ngFor="let hall of halls$ | async" [value]="hall">{{displayHall(hall)}}</mat-option>
+          </mat-autocomplete>
+          <mat-error *ngIf="createHallForm.get('hallSelection').hasError('required') && hallFormSubmitted">A hall must
+            be selected!
+          </mat-error>
+          <mat-error *ngIf="createHallForm.get('hallSelection').hasError('missingSeats') && hallFormSubmitted">Hall is
+            missing seats or sectors
+          </mat-error>
+          <mat-hint *ngIf="! editingEnabled || ! isAdmin()">The currently selected hall</mat-hint>
+        </mat-form-field>
+      </div>
+      <div class="row">
+        <!-- radio buttons allow switching between a hall with seats and a hall with sectors as long as neither have yet
+        been added to the currently selected hall -->
+        <mat-radio-group class="col-7 d-flex align-items-end justify-content-end"
+                         aria-labelledby="select either seats or sectors for hall"
+                         [(ngModel)]="hallType" [ngModelOptions]="{standalone: true}"
+                         [disabled]="getSelectedHall().seats?.length > 0|| getSelectedHall().sectors?.length > 0"
+                         *ngIf="editingEnabled && isAdmin()">
+          <mat-radio-button value="seats" color="primary" class="mx-3" aria-labelledby="seats">Seats
+          </mat-radio-button>
+          <mat-radio-button value="sectors" color="primary" class="mx-3" aria-labelledby="sectors">Sectors
+          </mat-radio-button>
+        </mat-radio-group>
+        <!-- buttons to submit form and either submit hall to backend or delete it from backend -->
+        <div class="col-5 mt-4 text-right text-nowrap" *ngIf="isAdmin() && editingEnabled">
+          <!-- buttons are not shown if user is not admin or editing is no longer allowed for this hall -->
+          <button mat-raised-button type="submit" color="primary" class="mr-3 inputButton">
+            {{getSelectedHall() === newHall ? 'Add Hall' : 'Update Hall'}}
+          </button>
+          <button mat-raised-button type="button" color="warn" class="mr-3 inputButton"
+                  [disabled]="getSelectedHall() === newHall" (click)="deleteHall()">
+            Delete Hall
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+<!-- adds floorplan svg and ticket component to page -->
+<div class="row">
+  <app-floorplan-svg class="floorplanSvgWidth"
+                     [ngClass]="{'w-100 pr-0': ! ticketSession.getTickets()?.length}"
+                     [seats]="getSelectedHall()?.seats" [sectors]="getSelectedHall()?.sectors"
+                     [hallType]="hallType"
+                     [editingEnabled]="editingEnabled"
+                     [priceMapping]="getSelectedShow()?.pricePattern?.priceMapping"></app-floorplan-svg>
+  <div class="floorplanTickets" *ngIf="ticketSession.getTickets()?.length > 0">
+    <app-floorplan-ticket class="floorplanTickets" [stepProgress]="1"
+                          [allowDeleteTickets]="true"></app-floorplan-ticket>
+    <button mat-raised-button color="primary" [routerLink]="'/ticket'"
+            [disabled]="! ticketSession.getShow()">Continue
+    </button>
+  </div>
+</div>
+
+<!-- bootstrap modal to ask user to enter hall name -->
+<ng-template #enterHallName class="modal fade" tabindex="-1" role="dialog"
+             aria-labelledby="Hall Name input"
+             aria-hidden="true" let-c="close" let-d="dismiss">
+  <div class="modal-header">
+    <h5 class="modal-title">Please enter a name for the new Hall!</h5>
+    <button type="button" class="close" (click)="d('cross click')" aria-label="Close" tabindex="-1">
+      <span aria-hidden="true">x</span>
+    </button>
+  </div>
+  <div class="modal-body d-flex flex-column" [formGroup]="createHallForm" (ngSubmit)="submitHall()">
+    <mat-form-field appearance="standard" class="col-12">
+      <mat-label>Please enter a Hall name</mat-label>
+      <label for="hallName" class="sr-only">Hall name</label>
+      <input matInput id="hallName" type="text" aria-labelledby="hall name" formControlName="hallName"/>
+      <mat-error>A Hall name is required!</mat-error>
+    </mat-form-field>
+    <div class="col-12 d-flex justify-content-end" (click)="submitHall()">
+      <button mat-raised-button color="primary" type="submit">
+        {{getSelectedHall() === newHall ? 'Add Hall' : 'Update Hall'}}
+      </button>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="d('Close button click')">Close</button>
+  </div>
+</ng-template>

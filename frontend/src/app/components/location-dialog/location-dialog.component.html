@@ -1,0 +1,81 @@
+<!-- dialog to add and update location -->
+<form #locationForm="ngForm" class="form">
+  <div class="form-group">
+
+    <div class="form-group">
+      <label for="location_name">Name:</label>
+      <input id="location_name" type="text" name="locationName" class="form-control"
+             aria-labelledby="location name"
+             placeholder="Enter Name"
+             [(ngModel)]="locationModel.locationName"
+             required = true
+             #locationName='ngModel'/>
+      <div [hidden]="locationName.valid || locationName.pristine" class="form-text text-warning">
+        Name is required!
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="country">Country:</label>
+      <input id="country" type="text" name="country" class="form-control"
+             aria-labelledby="location country"
+             placeholder="Enter a country"
+             [(ngModel)]="locationModel.country"
+             required = true
+             #country='ngModel'/>
+      <div [hidden]="country.valid || country.pristine" class="form-text text-warning">
+        Country is required!
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="city">City:</label>
+      <input id="city" type="text" name="city" class="form-control"
+             aria-labelledby="location city"
+             placeholder="Enter a city"
+             [(ngModel)]="locationModel.city"
+             required = true
+             #city='ngModel'/>
+      <div [hidden]="city.valid || city.pristine" class="form-text text-warning">
+        City is required!
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="postal_code">Postal Code:</label>
+      <input id="postal_code" type="text" name="postalCode" class="form-control"
+             aria-labelledby="location postal code"
+             placeholder="Enter a postal code"
+             [(ngModel)]="locationModel.postalCode"
+             required = true
+             #postalCode='ngModel'/>
+      <div [hidden]="postalCode.valid || postalCode.pristine" class="form-text text-warning">
+        Postal code is required!
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="street">Street:</label>
+      <input id="street" type="text" name="street" class="form-control"
+             aria-labelledby="location street"
+             placeholder="Enter a street"
+             [(ngModel)]="locationModel.street"
+             required = true
+             #street='ngModel'/>
+      <div [hidden]="street.valid || street.pristine" class="form-text text-warning">
+        Street is required!
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="description">Description:</label>
+      <input id="description" type="text" name="description" class="form-control"
+             aria-labelledby="location description"
+             placeholder="Enter a description"
+             [(ngModel)]="locationModel.description"
+      />
+    </div>
+  </div>
+
+  <button class="btn btn-success float-right" data-dismiss="modal" (click)="locationForm.valid && onSubmit()" [disabled]="locationForm.invalid">{{title}}</button>
+</form>

@@ -2,26 +2,28 @@ package at.ac.tuwien.sepm.groupphase.backend.configuration;
 
 import at.ac.tuwien.sepm.groupphase.backend.configuration.properties.H2ConsoleConfigurationProperties;
 import at.ac.tuwien.sepm.groupphase.backend.security.HeaderTokenAuthenticationFilter;
+import at.ac.tuwien.sepm.groupphase.backend.service.implementation.AppUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
 import org.springframework.boot.web.servlet.error.ErrorAttributes;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.authentication.configurers.provisioning.InMemoryUserDetailsManagerConfigurer;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.WebRequest;
@@ -30,6 +32,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
 import java.util.List;
 import java.util.Map;
 
@@ -39,6 +42,11 @@ import java.util.Map;
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 public class SecurityConfiguration {
 
+    @Autowired
+    private DataSource dataSource;
+    @Autowired
+    private AppUserDetailsService userDetailsService;
+    @Autowired
     private final PasswordEncoder passwordEncoder;
 
     public SecurityConfiguration(PasswordEncoder passwordEncoder) {
@@ -46,9 +54,31 @@ public class SecurityConfiguration {
     }
 
     @Bean
+    public UserDetailsService userDetailsService(){ return new AppUserDetailsService();
+    }
+
+    @Bean
+    public JdbcUserDetailsManager userDetailsManager (DataSource datasource){
+        JdbcUserDetailsManager mgr = new JdbcUserDetailsManager();
+        mgr.setDataSource(dataSource);
+        return mgr;
+    }
+    @Bean
+    public DaoAuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authProvider
+            = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userDetailsService);
+        authProvider.setPasswordEncoder(passwordEncoder);
+        return authProvider;
+    }
+
+
+    @Bean
     public static PasswordEncoder configureDefaultPasswordEncoder() {
         return new BCryptPasswordEncoder(10);
     }
+
+
 
     @Bean
     public ErrorAttributes errorAttributes() {
@@ -63,12 +93,22 @@ public class SecurityConfiguration {
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth, List<AuthenticationProvider> providerList) throws Exception {
+
+        auth.authenticationProvider(authenticationProvider());
+
+        /*
         new InMemoryUserDetailsManagerConfigurer<AuthenticationManagerBuilder>()
             .withUser("user").password(passwordEncoder.encode("password")).authorities("USER").and()
             .withUser("admin").password(passwordEncoder.encode("password")).authorities("ADMIN", "USER").and()
             .passwordEncoder(passwordEncoder)
             .configure(auth);
+
         providerList.forEach(auth::authenticationProvider);
+
+
+         */
+        providerList.forEach(auth::authenticationProvider);
+
     }
 
     @Configuration
@@ -80,6 +120,7 @@ public class SecurityConfiguration {
 
         @Autowired
         private AuthenticationManager authenticationManager;
+        @Autowired
 
         public WebSecurityConfiguration(
             H2ConsoleConfigurationProperties h2ConsoleConfigurationProperties

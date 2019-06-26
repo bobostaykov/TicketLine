@@ -2,7 +2,7 @@ package at.ac.tuwien.sepm.groupphase.backend.integrationtest.base;
 
 import at.ac.tuwien.sepm.groupphase.backend.configuration.JacksonConfiguration;
 import at.ac.tuwien.sepm.groupphase.backend.security.AuthenticationConstants;
-import at.ac.tuwien.sepm.groupphase.backend.service.implementation.SimpleHeaderTokenAuthenticationService;
+import at.ac.tuwien.sepm.groupphase.backend.service.HeaderTokenAuthenticationService;
 import io.restassured.RestAssured;
 import io.restassured.config.ObjectMapperConfig;
 import io.restassured.config.RestAssuredConfig;
@@ -34,7 +34,7 @@ public abstract class BaseIntegrationTest {
     private int port;
 
     @Autowired
-    private SimpleHeaderTokenAuthenticationService simpleHeaderTokenAuthenticationService;
+    private HeaderTokenAuthenticationService simpleHeaderTokenAuthenticationService;
 
     @Autowired
     private JacksonConfiguration jacksonConfiguration;
@@ -44,6 +44,7 @@ public abstract class BaseIntegrationTest {
 
     @Before
     public void beforeBase() {
+
         RestAssured.baseURI = SERVER_HOST;
         RestAssured.basePath = contextPath;
         RestAssured.port = port;

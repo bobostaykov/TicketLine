@@ -1,14 +1,21 @@
 package at.ac.tuwien.sepm.groupphase.backend.integrationtest;
 
+import at.ac.tuwien.sepm.groupphase.backend.datatype.EventType;
+import at.ac.tuwien.sepm.groupphase.backend.datatype.PriceCategory;
 import at.ac.tuwien.sepm.groupphase.backend.datatype.TicketStatus;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.artist.ArtistDTO;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.customer.CustomerDTO;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.event.EventDTO;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.hall.HallDTO;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.location.LocationDTO;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.seat.SeatDTO;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.sector.SectorDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.show.ShowDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.ticket.TicketDTO;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Customer;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Show;
-import at.ac.tuwien.sepm.groupphase.backend.entity.Ticket;
+import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.ticket.TicketPostDTO;
+import at.ac.tuwien.sepm.groupphase.backend.entity.*;
 import at.ac.tuwien.sepm.groupphase.backend.integrationtest.base.BaseIntegrationTest;
-import at.ac.tuwien.sepm.groupphase.backend.repository.CustomerRepository;
-import at.ac.tuwien.sepm.groupphase.backend.repository.TicketRepository;
+import at.ac.tuwien.sepm.groupphase.backend.repository.*;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.parsing.Parser;
@@ -16,20 +23,12 @@ import io.restassured.response.Response;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import at.ac.tuwien.sepm.groupphase.backend.datatype.EventType;
-import at.ac.tuwien.sepm.groupphase.backend.datatype.PriceCategory;
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.artist.ArtistDTO;
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.customer.CustomerDTO;
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.event.EventDTO;
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.hall.HallDTO;
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.location.LocationDTO;
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.seat.SeatDTO;
-import at.ac.tuwien.sepm.groupphase.backend.entity.*;
 import org.mockito.BDDMockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 
+import javax.xml.bind.SchemaOutputResolver;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.*;
@@ -40,13 +39,17 @@ import static org.mockito.ArgumentMatchers.any;
 public class TicketEndpointTest extends BaseIntegrationTest {
 
     private static final String TICKET_ENDPOINT = "/tickets";
-    private static final String RESERVATED_TICKET = "/reservated";
+    private static final String RESERVED_TICKET = "/reserved";
     private static final String FIND_BY_NAME = "/name";
+    private static final String PRINTABLE = "/printable";
+    private static final String RECEIPT = "/receipt";
+    private static final String TICKET = "/ticket";
+    private static final String CANCELLATION = "/cancellation";
     private static final String BUY_TICKET = "/buy";
     private static final String SPECIFIC_TICKET_PATH = "/{id}";
 
     private static final long TEST_TICKET_ID = 1L;
-    private static final TicketStatus TEST_TICKET_STATUS = TicketStatus.RESERVATED;
+    private static final TicketStatus TEST_TICKET_STATUS = TicketStatus.RESERVED;
 
     private static final String TEST_CUSTOMER_NAME = "TestName";
     private static final String TEST_CUSTOMER_FIRSTNAME = "TestFirstName";
@@ -55,6 +58,7 @@ public class TicketEndpointTest extends BaseIntegrationTest {
     private static final long TEST_CUSTOMER_ID = 1L;
 
     private static final String TEST_TICKET_ENDPOINT = "/tickets";
+    private static final String TEST_TICKET_ENDPOINT_FILTER = TEST_TICKET_ENDPOINT + "/filter";
     private static final String TEST_SPECIFIC_TICKET_PATH = "/{ticketId}";
 
     private ArtistDTO TEST_ARTIST_DTO;
@@ -76,6 +80,9 @@ public class TicketEndpointTest extends BaseIntegrationTest {
     private SeatDTO TEST_SEAT1_DTO;
     private SeatDTO TEST_SEAT2_DTO;
     private SeatDTO TEST_SEAT3_DTO;
+    private Seat TEST_SEAT;
+    private SectorDTO TEST_SECTOR_DTO;
+    private Sector TEST_SECTOR;
 
     private Artist TEST_ARTIST;
     private Event TEST_EVENT;
@@ -120,6 +127,7 @@ public class TicketEndpointTest extends BaseIntegrationTest {
     private Long TEST_SEAT_ID_1 = 51L;
     private Long TEST_SEAT_ID_2 = 52L;
     private Long TEST_SEAT_ID_3 = 53L;
+    private Long TEST_SECTOR_ID = 54L;
     private Integer TEST_SEAT_SEAT_NO_1 = 43;
     private Integer TEST_SEAT_SEAT_NO_2 = 44;
     private Integer TEST_SEAT_SEAT_NO_3 = 45;
@@ -161,14 +169,24 @@ public class TicketEndpointTest extends BaseIntegrationTest {
 
     private Long TEST_TICKET_ID2 = 12L;
     private Double TEST_TICKET_PRICE2 = 15.50;
-    private Integer TEST_TICKET_SECTOR2 = 1;
-    private TicketStatus TEST_TICKET_STATUS2 = TicketStatus.RESERVATED;
+    private Integer TEST_SECTOR_NUMBER = 1;
+    private TicketStatus TEST_TICKET_STATUS2 = TicketStatus.RESERVED;
+    private String TEST_TICKET_RESERVATIONNO1 = "test_res_no_012345";
 
     @MockBean
     private TicketRepository ticketRepository;
 
     @MockBean
     private CustomerRepository customerRepository;
+
+    @MockBean
+    private ShowRepository showRepository;
+
+    @MockBean
+    private SeatRepository seatRepository;
+
+    @MockBean
+    private EventRepository eventRepository;
 
     @Before
     public void init() {
@@ -217,6 +235,22 @@ public class TicketEndpointTest extends BaseIntegrationTest {
             .seatRow(TEST_SEAT_SEAT_ROW_3)
             .priceCategory(TEST_SEAT_PRICE_CATEGORY_3)
             .build();
+        TEST_SEAT = Seat.builder()
+            .id(TEST_SEAT_ID_1)
+            .seatNumber(TEST_SEAT_SEAT_NO_1)
+            .seatRow(TEST_SEAT_SEAT_ROW_1)
+            .priceCategory(TEST_SEAT_PRICE_CATEGORY_1)
+            .build();
+        TEST_SECTOR_DTO = SectorDTO.builder()
+            .id(TEST_SECTOR_ID)
+            .sectorNumber(TEST_SECTOR_NUMBER)
+            .priceCategory(PriceCategory.AVERAGE)
+            .build();
+        TEST_SECTOR = Sector.builder()
+            .id(TEST_SECTOR_ID)
+            .sectorNumber(TEST_SECTOR_NUMBER)
+            .priceCategory(PriceCategory.AVERAGE)
+            .build();
         TEST_HALL_SEATS_DTO.add(TEST_SEAT1_DTO);
         TEST_HALL_SEATS_DTO.add(TEST_SEAT2_DTO);
         TEST_HALL_SEATS_DTO.add(TEST_SEAT3_DTO);
@@ -254,8 +288,7 @@ public class TicketEndpointTest extends BaseIntegrationTest {
             .show(TEST_SHOW_DTO)
             .customer(TEST_CUSTOMER1_DTO)
             .price(TEST_TICKET_PRICE1)
-            .seatNumber(TEST_TICKET_SEAT_NO1)
-            .rowNumber(TEST_TICKET_ROW_NO1)
+            .seat(TEST_SEAT1_DTO)
             .status(TEST_TICKET_STATUS1)
             .build();
         TEST_TICKET2_DTO = TicketDTO.builder()
@@ -263,7 +296,7 @@ public class TicketEndpointTest extends BaseIntegrationTest {
             .show(TEST_SHOW_DTO)
             .customer(TEST_CUSTOMER2_DTO)
             .price(TEST_TICKET_PRICE2)
-            .sectorNumber(TEST_TICKET_SECTOR2)
+            .sector(TEST_SECTOR_DTO)
             .status(TEST_TICKET_STATUS2)
             .build();
         TEST_CUSTOMER1_LIST_DTO = new ArrayList<>();
@@ -360,8 +393,7 @@ public class TicketEndpointTest extends BaseIntegrationTest {
             .show(TEST_SHOW)
             .customer(TEST_CUSTOMER1)
             .price(TEST_TICKET_PRICE1)
-            .seatNumber(TEST_TICKET_SEAT_NO1)
-            .rowNumber(TEST_TICKET_ROW_NO1)
+            .seat(TEST_SEAT1)
             .status(TEST_TICKET_STATUS1)
             .build();
         TEST_TICKET2 = Ticket.builder()
@@ -369,7 +401,7 @@ public class TicketEndpointTest extends BaseIntegrationTest {
             .show(TEST_SHOW)
             .customer(TEST_CUSTOMER2)
             .price(TEST_TICKET_PRICE2)
-            .sectorNumber(TEST_TICKET_SECTOR2)
+            .sector(TEST_SECTOR)
             .status(TEST_TICKET_STATUS2)
             .build();
         TEST_CUSTOMER1_LIST = new ArrayList<>();
@@ -389,7 +421,7 @@ public class TicketEndpointTest extends BaseIntegrationTest {
         TEST_TICKET_LIST_ALL.add(TEST_TICKET1);
         TEST_TICKET_LIST_ALL.add(TEST_TICKET2);
     }
-
+/*
     @Test
     public void findAllTicketsAsUser() {
         BDDMockito.
@@ -400,8 +432,7 @@ public class TicketEndpointTest extends BaseIntegrationTest {
                     .show(TEST_SHOW)
                     .customer(TEST_CUSTOMER1)
                     .price(TEST_TICKET_PRICE1)
-                    .seatNumber(TEST_TICKET_SEAT_NO1)
-                    .rowNumber(TEST_TICKET_ROW_NO1)
+                    .seat(TEST_SEAT)
                     .status(TEST_TICKET_STATUS1)
                     .build()));
         Response response = RestAssured
@@ -417,42 +448,14 @@ public class TicketEndpointTest extends BaseIntegrationTest {
                 .show(TEST_SHOW_DTO)
                 .customer(TEST_CUSTOMER1_DTO)
                 .price(TEST_TICKET_PRICE1)
-                .seatNumber(TEST_TICKET_SEAT_NO1)
-                .rowNumber(TEST_TICKET_ROW_NO1)
+                .seat(TEST_SEAT1_DTO)
                 .status(TEST_TICKET_STATUS1)
                 .build())));
     }
 
-    @Test
-    public void findOneTicketByIdAsUser() {
-        BDDMockito.
-            given(ticketRepository.findOneById(TEST_TICKET_ID1)).
-            willReturn(Optional.of(Ticket.builder()
-                .id(TEST_TICKET_ID1)
-                .show(TEST_SHOW)
-                .customer(TEST_CUSTOMER1)
-                .price(TEST_TICKET_PRICE1)
-                .seatNumber(TEST_TICKET_SEAT_NO1)
-                .rowNumber(TEST_TICKET_ROW_NO1)
-                .status(TEST_TICKET_STATUS1)
-                .build()));
-        Response response = RestAssured
-            .given()
-            .contentType(ContentType.JSON)
-            .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
-            .when().get(TEST_TICKET_ENDPOINT + TEST_SPECIFIC_TICKET_PATH, TEST_TICKET_ID1)
-            .then().extract().response();
-        Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
-        Assert.assertThat(response.as(TicketDTO.class), is(TicketDTO.builder()
-            .id(TEST_TICKET_ID1)
-            .show(TEST_SHOW_DTO)
-            .customer(TEST_CUSTOMER1_DTO)
-            .price(TEST_TICKET_PRICE1)
-            .seatNumber(TEST_TICKET_SEAT_NO1)
-            .rowNumber(TEST_TICKET_ROW_NO1)
-            .status(TEST_TICKET_STATUS1)
-            .build()));
-    }
+ */
+
+
 
     @Test
     public void createTicketAsUser() {
@@ -463,35 +466,47 @@ public class TicketEndpointTest extends BaseIntegrationTest {
                 .show(TEST_SHOW)
                 .customer(TEST_CUSTOMER1)
                 .price(TEST_TICKET_PRICE1)
-                .seatNumber(TEST_TICKET_SEAT_NO1)
-                .rowNumber(TEST_TICKET_ROW_NO1)
+                .seat(TEST_SEAT)
                 .status(TEST_TICKET_STATUS1)
                 .build());
+        BDDMockito.
+            given(customerRepository.getOne(TEST_CUSTOMER_ID1)).
+            willReturn(TEST_CUSTOMER1);
+        BDDMockito.
+            given(showRepository.getOne(TEST_SHOW_ID)).
+            willReturn(TEST_SHOW);
+        BDDMockito.
+            given(seatRepository.getOne(TEST_SEAT_ID_1)).
+            willReturn(TEST_SEAT1);
+        BDDMockito.
+            given(showRepository.save(any(Show.class))).
+            willReturn(TEST_SHOW);
+        List<TicketPostDTO> body = new ArrayList<>();
+        body.add(TicketPostDTO.builder()
+            .show(TEST_SHOW_ID)
+            .customer(TEST_CUSTOMER_ID1)
+            .price(TEST_TICKET_PRICE1)
+            .seat(TEST_SEAT_ID_1)
+            .status(TEST_TICKET_STATUS1)
+            .build());
         Response response = RestAssured
             .given()
             .contentType(ContentType.JSON)
             .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
-            .body(TicketDTO.builder()
-                .show(TEST_SHOW_DTO)
-                .customer(TEST_CUSTOMER1_DTO)
-                .price(TEST_TICKET_PRICE1)
-                .seatNumber(TEST_TICKET_SEAT_NO1)
-                .rowNumber(TEST_TICKET_ROW_NO1)
-                .status(TEST_TICKET_STATUS1)
-                .build())
+            .body(body)
             .when().post(TEST_TICKET_ENDPOINT)
             .then().extract().response();
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
-        Assert.assertThat(response.as(TicketDTO.class), is(TicketDTO.builder()
+        Assert.assertThat(Arrays.asList(response.as(TicketDTO[].class)), is(Collections.singletonList(TicketDTO.builder()
             .id(TEST_TICKET_ID1)
             .show(TEST_SHOW_DTO)
             .customer(TEST_CUSTOMER1_DTO)
             .price(TEST_TICKET_PRICE1)
-            .seatNumber(TEST_TICKET_SEAT_NO1)
-            .rowNumber(TEST_TICKET_ROW_NO1)
+            .seat(TEST_SEAT1_DTO)
             .status(TEST_TICKET_STATUS1)
-            .build()));
+            .build())));
     }
+
 
     @Test
     public void deleteTicketUnauthorizedAsAnonymous() {
@@ -557,6 +572,10 @@ public class TicketEndpointTest extends BaseIntegrationTest {
             given(ticketRepository.findOneById(TEST_TICKET_ID)).
             willReturn(Optional.of(Ticket.builder()
                 .id(TEST_TICKET_ID)
+                .show(TEST_SHOW)
+                .customer(TEST_CUSTOMER1)
+                .price(TEST_TICKET_PRICE1)
+                .status(TEST_TICKET_STATUS1)
                 .build()));
         Response response = RestAssured
             .given()
@@ -567,6 +586,10 @@ public class TicketEndpointTest extends BaseIntegrationTest {
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
         Assert.assertThat(response.as(TicketDTO.class), is(TicketDTO.builder()
             .id(TEST_TICKET_ID)
+            .show(TEST_SHOW_DTO)
+            .customer(TEST_CUSTOMER1_DTO)
+            .price(TEST_TICKET_PRICE1)
+            .status(TEST_TICKET_STATUS1)
             .build()));
     }
 
@@ -576,6 +599,10 @@ public class TicketEndpointTest extends BaseIntegrationTest {
             given(ticketRepository.findOneById(TEST_TICKET_ID)).
             willReturn(Optional.of(Ticket.builder()
                 .id(TEST_TICKET_ID)
+                .show(TEST_SHOW)
+                .customer(TEST_CUSTOMER1)
+                .price(TEST_TICKET_PRICE1)
+                .status(TEST_TICKET_STATUS1)
                 .build()));
         Response response = RestAssured
             .given()
@@ -586,6 +613,10 @@ public class TicketEndpointTest extends BaseIntegrationTest {
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
         Assert.assertThat(response.as(TicketDTO.class), is(TicketDTO.builder()
             .id(TEST_TICKET_ID)
+            .show(TEST_SHOW_DTO)
+            .customer(TEST_CUSTOMER1_DTO)
+            .price(TEST_TICKET_PRICE1)
+            .status(TEST_TICKET_STATUS1)
             .build()));
     }
 
@@ -594,7 +625,7 @@ public class TicketEndpointTest extends BaseIntegrationTest {
         Response response = RestAssured
             .given()
             .contentType(ContentType.JSON)
-            .when().get(TICKET_ENDPOINT + RESERVATED_TICKET + SPECIFIC_TICKET_PATH, TEST_TICKET_ID)
+            .when().get(TICKET_ENDPOINT + RESERVED_TICKET + SPECIFIC_TICKET_PATH, TEST_TICKET_ID)
             .then().extract().response();
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.UNAUTHORIZED.value()));
     }
@@ -605,17 +636,19 @@ public class TicketEndpointTest extends BaseIntegrationTest {
             given(ticketRepository.findOneByIdAndStatus(TEST_TICKET_ID, TEST_TICKET_STATUS)).
             willReturn(Optional.of(Ticket.builder()
                 .id(TEST_TICKET_ID)
+                .show(TEST_SHOW)
                 .status(TEST_TICKET_STATUS)
                 .build()));
         Response response = RestAssured
             .given()
             .contentType(ContentType.JSON)
             .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
-            .when().get(TICKET_ENDPOINT + RESERVATED_TICKET + SPECIFIC_TICKET_PATH, TEST_TICKET_ID)
+            .when().get(TICKET_ENDPOINT + RESERVED_TICKET + SPECIFIC_TICKET_PATH, TEST_TICKET_ID)
             .then().extract().response();
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
         Assert.assertThat(response.as(TicketDTO.class), is(TicketDTO.builder()
             .id(TEST_TICKET_ID)
+            .show(TEST_SHOW_DTO)
             .status(TEST_TICKET_STATUS)
             .build()));
     }
@@ -626,17 +659,19 @@ public class TicketEndpointTest extends BaseIntegrationTest {
             given(ticketRepository.findOneByIdAndStatus(TEST_TICKET_ID, TEST_TICKET_STATUS)).
             willReturn(Optional.of(Ticket.builder()
                 .id(TEST_TICKET_ID)
+                .show(TEST_SHOW)
                 .status(TEST_TICKET_STATUS)
                 .build()));
         Response response = RestAssured
             .given()
             .contentType(ContentType.JSON)
             .header(HttpHeaders.AUTHORIZATION, validAdminTokenWithPrefix)
-            .when().get(TICKET_ENDPOINT + RESERVATED_TICKET + SPECIFIC_TICKET_PATH, TEST_TICKET_ID)
+            .when().get(TICKET_ENDPOINT + RESERVED_TICKET + SPECIFIC_TICKET_PATH, TEST_TICKET_ID)
             .then().extract().response();
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
         Assert.assertThat(response.as(TicketDTO.class), is(TicketDTO.builder()
             .id(TEST_TICKET_ID)
+            .show(TEST_SHOW_DTO)
             .status(TEST_TICKET_STATUS)
             .build()));
     }
@@ -657,12 +692,14 @@ public class TicketEndpointTest extends BaseIntegrationTest {
             given(ticketRepository.findOneByIdAndStatus(TEST_TICKET_ID, TEST_TICKET_STATUS)).
             willReturn(Optional.of(Ticket.builder()
                 .id(TEST_TICKET_ID)
+                .show(TEST_SHOW)
                 .status(TEST_TICKET_STATUS)
                 .build()));
         BDDMockito.
             given(ticketRepository.save(any(Ticket.class))).
             willReturn(Ticket.builder()
                 .id(TEST_TICKET_ID)
+                .show(TEST_SHOW)
                 .status(TicketStatus.SOLD)
                 .build());
         Response response = RestAssured
@@ -674,6 +711,7 @@ public class TicketEndpointTest extends BaseIntegrationTest {
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
         Assert.assertThat(response.as(TicketDTO.class), is(TicketDTO.builder()
             .id(TEST_TICKET_ID)
+            .show(TEST_SHOW_DTO)
             .status(TicketStatus.SOLD)
             .build()));
     }
@@ -684,12 +722,14 @@ public class TicketEndpointTest extends BaseIntegrationTest {
             given(ticketRepository.findOneByIdAndStatus(TEST_TICKET_ID, TEST_TICKET_STATUS)).
             willReturn(Optional.of(Ticket.builder()
                 .id(TEST_TICKET_ID)
+                .show(TEST_SHOW)
                 .status(TEST_TICKET_STATUS)
                 .build()));
         BDDMockito.
             given(ticketRepository.save(any(Ticket.class))).
             willReturn(Ticket.builder()
                 .id(TEST_TICKET_ID)
+                .show(TEST_SHOW)
                 .status(TicketStatus.SOLD)
                 .build());
         Response response = RestAssured
@@ -701,9 +741,183 @@ public class TicketEndpointTest extends BaseIntegrationTest {
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
         Assert.assertThat(response.as(TicketDTO.class), is(TicketDTO.builder()
             .id(TEST_TICKET_ID)
+            .show(TEST_SHOW_DTO)
             .status(TicketStatus.SOLD)
             .build()));
     }
+
+    @Test
+    public void getReceiptForListOfTickets() {
+        List<Long> ticketIDs = new ArrayList<>();
+        ticketIDs.add(TEST_TICKET_ID1);
+        ticketIDs.add(TEST_TICKET_ID2);
+        List<Ticket> returnedTickets = new ArrayList<>();
+        returnedTickets.add(Ticket.builder().id(TEST_TICKET_ID1).seat(TEST_SEAT).price(TEST_TICKET_PRICE1).customer(TEST_CUSTOMER1).show(TEST_SHOW).status(TEST_TICKET_STATUS1).build());
+        returnedTickets.add(Ticket.builder().id(TEST_TICKET_ID2).seat(TEST_SEAT2).price(TEST_TICKET_PRICE2).customer(TEST_CUSTOMER2).show(TEST_SHOW).status(TEST_TICKET_STATUS2).build());
+        BDDMockito.
+            given(ticketRepository.findByIdIn(ticketIDs)).
+            willReturn(returnedTickets);
+        Response response = RestAssured
+            .given()
+            .contentType(ContentType.JSON)
+            .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
+            .params("tickets", TEST_TICKET_ID1)
+            .params("tickets", TEST_TICKET_ID2)
+            .when().get(TICKET_ENDPOINT + PRINTABLE + RECEIPT)
+            .then().extract().response();
+        Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
+        Assert.assertThat(response.contentType(), is("application/pdf" ));
+    }
+
+    @Test
+    public void getReceiptForEmptyListOfTickets() {
+        BDDMockito.
+            given(ticketRepository.findByIdIn(Collections.EMPTY_LIST)).
+            willReturn(Collections.EMPTY_LIST);
+        Response response = RestAssured
+            .given()
+            .contentType(ContentType.JSON)
+            .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
+            .when().get(TICKET_ENDPOINT + PRINTABLE + RECEIPT)
+            .then().extract().response();
+        Assert.assertThat(response.getStatusCode(), is(HttpStatus.BAD_REQUEST.value()));
+    }
+
+    @Test
+    public void deleteTicketsAndReceiveReceipt() {
+        List<Long> ticketIDs = new ArrayList<>();
+        ticketIDs.add(TEST_TICKET_ID1);
+        ticketIDs.add(TEST_TICKET_ID2);
+        List<Ticket> returnedTickets = new ArrayList<>();
+        returnedTickets.add(Ticket.builder().id(TEST_TICKET_ID1).seat(TEST_SEAT).price(TEST_TICKET_PRICE1).customer(TEST_CUSTOMER1).show(TEST_SHOW).status(TEST_TICKET_STATUS1).build());
+        returnedTickets.add(Ticket.builder().id(TEST_TICKET_ID2).seat(TEST_SEAT2).price(TEST_TICKET_PRICE2).customer(TEST_CUSTOMER2).show(TEST_SHOW).status(TEST_TICKET_STATUS2).build());
+        BDDMockito.
+            given(ticketRepository.findByIdIn(ticketIDs)).
+            willReturn(returnedTickets);
+        Response response = RestAssured
+            .given()
+            .contentType(ContentType.JSON)
+            .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
+            .params("tickets", TEST_TICKET_ID1)
+            .params("tickets", TEST_TICKET_ID2)
+            .when().delete(TICKET_ENDPOINT + PRINTABLE + CANCELLATION)
+            .then().extract().response();
+        Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
+        Assert.assertThat(response.contentType(), is("application/pdf" ));
+    }
+
+    @Test
+    public void postTicktetThatAlreadyExistsExpectingTicketSoldOutException() {
+        BDDMockito.
+            given(ticketRepository.save(any(Ticket.class))).
+            willReturn(Ticket.builder()
+                .id(TEST_TICKET_ID1)
+                .show(TEST_SHOW)
+                .customer(TEST_CUSTOMER1)
+                .price(TEST_TICKET_PRICE1)
+                .seat(TEST_SEAT)
+                .status(TEST_TICKET_STATUS1)
+                .build());
+        BDDMockito.
+            given(customerRepository.getOne(TEST_CUSTOMER_ID1)).
+            willReturn(TEST_CUSTOMER1);
+        BDDMockito.
+            given(showRepository.getOne(TEST_SHOW_ID)).
+            willReturn(TEST_SHOW);
+        BDDMockito.
+            given(seatRepository.getOne(TEST_SEAT_ID_1)).
+            willReturn(TEST_SEAT1);
+        BDDMockito.
+            given(showRepository.save(any(Show.class))).
+            willReturn(TEST_SHOW);
+        BDDMockito.
+            given(ticketRepository.findAllByShowAndSeat(any(Show.class), any(Seat.class))).
+            willReturn(TEST_TICKET_LIST);
+        List<TicketPostDTO> body = new ArrayList<>();
+        body.add(TicketPostDTO.builder()
+            .show(TEST_SHOW_ID)
+            .customer(TEST_CUSTOMER_ID1)
+            .price(TEST_TICKET_PRICE1)
+            .seat(TEST_SEAT_ID_1)
+            .status(TEST_TICKET_STATUS1)
+            .build());
+        Response response = RestAssured
+            .given()
+            .contentType(ContentType.JSON)
+            .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
+            .body(body)
+            .when().post(TEST_TICKET_ENDPOINT)
+            .then().extract().response();
+        Assert.assertThat(response.getStatusCode(), is(HttpStatus.BAD_REQUEST.value()));
+        Assert.assertEquals(response.asString(), "{\n" +
+            "  \"status\" : \"BAD_REQUEST\",\n" +
+            "  \"message\" : \"400 BAD_REQUEST \\\"Ticket for this seat is already sold, please choose another seat\\\"\",\n" +
+            "  \"errors\" : [ \"400 BAD_REQUEST \\\"Ticket for this seat is already sold, please choose another seat\\\"\" ]\n" +
+            "}");
+    }
+
+    @Test
+    public void testFindTicketFilteredByCustomerAndEventSuccessfull() {
+        BDDMockito.given(customerRepository.
+            findAllByNameContainsIgnoreCase("est")).
+            willReturn(TEST_CUSTOMER1_LIST);
+        BDDMockito.given(eventRepository.
+            findAllByNameContainsIgnoreCase("ent_")).
+            willReturn(TEST_EVENT_LIST);
+        BDDMockito.given(showRepository.
+            findAllByEventIn(TEST_EVENT_LIST)).
+            willReturn(TEST_SHOW_LIST);
+        BDDMockito.given(ticketRepository.
+            findAllByCustomerIn(TEST_CUSTOMER1_LIST)).
+            willReturn(TEST_TICKET_LIST);
+        BDDMockito.given(ticketRepository.
+            findAllByShowIn(TEST_SHOW_LIST)).
+            willReturn(TEST_TICKET_LIST);
+        Response response = RestAssured
+            .given()
+            .contentType(ContentType.JSON)
+            .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
+            .when().get(TEST_TICKET_ENDPOINT_FILTER + "?customerName=est&eventName=ent_&page=0")
+            .then().extract().response();
+        Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
+        List<TicketDTO> tickets = response.jsonPath().getList("content");
+        Assert.assertTrue(tickets.size() == 1);
+    }
+/*
+    @Test
+    public void testFindAlTicketsFilteredWithoutFilterParamsSuccessfull() {
+        BDDMockito.
+            given(ticketRepository.findAllByOrderByIdAsc()).
+            willReturn(Collections.singletonList(
+                Ticket.builder()
+                    .id(TEST_TICKET_ID1)
+                    .show(TEST_SHOW)
+                    .customer(TEST_CUSTOMER1)
+                    .price(TEST_TICKET_PRICE1)
+                    .seat(TEST_SEAT)
+                    .status(TEST_TICKET_STATUS1)
+                    .build()));
+        Response response = RestAssured
+            .given()
+            .contentType(ContentType.JSON)
+            .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
+            .when().get(TEST_TICKET_ENDPOINT_FILTER)
+            .then().extract().response();
+        Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
+        Assert.assertThat(Arrays.asList(response.as(TicketDTO[].class)), is(Collections.singletonList(
+            TicketDTO.builder()
+                .id(TEST_TICKET_ID1)
+                .show(TEST_SHOW_DTO)
+                .customer(TEST_CUSTOMER1_DTO)
+                .price(TEST_TICKET_PRICE1)
+                .seat(TEST_SEAT1_DTO)
+                .status(TEST_TICKET_STATUS1)
+                .build())));
+    }
+
+ */
+
+
 
     // TESTS FOR PINOS IMPLEMENTATION
     /*

@@ -1,8 +1,11 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.searchParameters;
 
+import at.ac.tuwien.sepm.groupphase.backend.datatype.EventType;
+import at.ac.tuwien.sepm.groupphase.backend.entity.Event;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDate;
@@ -24,6 +27,8 @@ public class ShowSearchParametersDTO {
     @ApiModelProperty(name = "the minimum price")
     @PositiveOrZero
     private Integer priceInEuroFrom;
+    @ApiModelProperty(name = "type of the event")
+    private EventType eventType;
     @ApiModelProperty(name = "the maximum price")
     @PositiveOrZero
     private Integer priceInEuroTo;
@@ -52,7 +57,26 @@ public class ShowSearchParametersDTO {
     @ApiModelProperty(name = "the street of the Location")
     @NotBlank
     private String street;
+    @ApiModelProperty(name = "name of the artist")
+    @NotBlank
+    private String artistName;
 
+
+    public EventType getEventType() {
+        return eventType;
+    }
+
+    public void setEventType(EventType eventType) {
+        this.eventType = eventType;
+    }
+
+    public String getArtistName() {
+        return artistName;
+    }
+
+    public void setArtistName(String artistName) {
+        this.artistName = artistName;
+    }
 
     public Long getEventId() {
         return eventId;
@@ -192,6 +216,9 @@ public class ShowSearchParametersDTO {
         private String city;
         private String postalCode;
         private String street;
+        private String artistName;
+        private EventType eventType;
+
         public builder(){}
 
         public builder dateFrom(LocalDate dateFrom) {
@@ -201,6 +228,10 @@ public class ShowSearchParametersDTO {
 
         public builder eventId(Long eventId){
             this.eventId = eventId;
+            return this;
+        }
+        public builder eventType(EventType eventType){
+            this.eventType = eventType;
             return this;
         }
 
@@ -284,9 +315,15 @@ public class ShowSearchParametersDTO {
             parametersDTO.setPriceInEuroFrom(priceInEuroFrom);
             parametersDTO.setPriceInEuroTo(priceInEuroTo);
             parametersDTO.setLocationName(locationName);
+            parametersDTO.setArtistName(artistName);
+            parametersDTO.setEventType(eventType);
             return parametersDTO;
         }
 
+        public builder artistName(String artistName) {
+            this.artistName = artistName;
+            return this;
+        }
     }
 
     @Override
@@ -294,6 +331,7 @@ public class ShowSearchParametersDTO {
         return "ShowSearchParametersDTO{" +
             (eventId != null ? "eventId = " + eventId : "") +
             (dateFrom != null ? "dateFrom = " + dateFrom : "") +
+            (artistName != null ? "artistName = " + artistName: "") +
             (dateTo != null ? " dateTo = " + dateTo : "") +
             (timeFrom != null ? " timeFrom = " + timeFrom : "") +
             (timeTo != null ? " timeTo = " + timeTo : "") +
@@ -329,12 +367,13 @@ public class ShowSearchParametersDTO {
             Objects.equals(country, that.country) &&
             Objects.equals(city, that.city) &&
             Objects.equals(postalCode, that.postalCode) &&
-            Objects.equals(street, that.street);
+            Objects.equals(street, that.street) &&
+            Objects.equals(artistName, that.artistName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(eventId, dateFrom, dateTo, timeFrom, timeTo, priceInEuroFrom, priceInEuroTo, locationName, eventName, hallName, durationInMinutes, country, city, postalCode, street);
+        return Objects.hash(eventId, dateFrom, dateTo, timeFrom, timeTo, priceInEuroFrom, priceInEuroTo, locationName, eventName, hallName, durationInMinutes, country, city, postalCode, street, artistName);
     }
 }
 

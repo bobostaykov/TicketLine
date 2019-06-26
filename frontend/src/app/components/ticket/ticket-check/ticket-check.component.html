@@ -1,0 +1,51 @@
+<div class="float-right floorplanTickets w-25">
+  <app-floorplan-ticket [stepProgress]="3" [allowDeleteTickets]="false">
+
+  </app-floorplan-ticket>
+</div>
+
+<h1 *ngIf="submitted === false"  class="mt-5 mb-4 left">Tickets - Check {{statusStr}}</h1>
+<h1 *ngIf="submitted === true"  class="mt-5 mb-4 left">Tickets - Confirmation for {{statusStr}}</h1>
+
+
+<font size="5">
+<table class="table table-borderless w-75" bgcolor="#2E2E2E">
+  <tr>
+    <td scope="col"><font color="#848484">Name</font></td>
+    <td scope="col">{{ticket_customer?.firstname}} {{ticket_customer?.name}}</td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td scope="col"><font color="#848484">E-Mail</font></td>
+    <td scope="col">{{ticket_customer?.email}}</td>
+  </tr>
+  <tr>
+    <td scope="col"><font color="#848484">Event</font></td>
+    <td scope="col">{{ticket_show.event.artist.name}} - {{ticket_show.event.name}}</td>
+  </tr>
+  <tr>
+    <td scope="col"><font color="#848484">Date</font></td>
+    <td scope="col">{{ticket_show.date}}</td>
+  </tr>
+  <tr>
+    <td scope="col"><font color="#848484">Location</font></td>
+    <td scope="col">{{ticket_show.hall.name}}, {{ticket_show.hall.location.street}}, {{ticket_show.hall.location.postalCode}} -
+      {{ticket_show.hall.location.city}}, {{ticket_show.hall.location.country}}</td>
+  </tr>
+</table>
+</font>
+
+
+<div *ngIf="error === true" class="alert alert-danger alert-dismissable">
+  {{errorMessage}}
+  <a class="close" (click)="vanishError()">&times;</a>
+</div>
+
+<button type="button" *ngIf="submitted == false" class="btn btn-success col-2 mr-2 mb-4 float-right" (click)="createTicket()">Confirm</button>
+<button type="button" *ngIf="submitted == true" class="btn btn-success col-2 mr-2 mb-4 float-right" (click)="getReceipt()">Get receipt</button>
+<button type="button" *ngIf="submitted == true" class="btn btn-success col-2 mr-2 mb-4 float-right" (click)="getTicketPdf()">Get {{ticketOrReservation}} pdf</button>
+<button type="button" *ngIf="submitted == false" class="btn btn-secondary col-2 mr-2 mb-4 float-left" routerLink="/ticket">Change</button>

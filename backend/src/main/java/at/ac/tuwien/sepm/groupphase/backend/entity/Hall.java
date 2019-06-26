@@ -1,17 +1,18 @@
 package at.ac.tuwien.sepm.groupphase.backend.entity;
 
+import org.springframework.data.domain.Persistable;
+
 import javax.persistence.*;
 import java.util.List;
 import java.util.Objects;
 
-//TODO: add properties determining price?
 @Entity
-public class Hall {
+public class Hall implements Persistable<Long> {
 
     @Id
     @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "seq_hall_id")
-    @SequenceGenerator(name = "seq_hall_id", sequenceName = "seq_hall_id")
+    @SequenceGenerator(name = "hall_seq")
+    @GeneratedValue(generator = "hall_seq")
     private Long id;
 
     @Column(nullable = false, length = 64)
@@ -33,6 +34,11 @@ public class Hall {
 
     public Long getId() {
         return id;
+    }
+
+    @Override
+    public boolean isNew() {
+        return id == null;
     }
 
     public void setId(Long id) {
@@ -82,19 +88,20 @@ public class Hall {
         private List<Seat> seats;
         private List<Sector> sectors;
 
-        private HallBuilder(){}
+        private HallBuilder() {
+        }
 
         public HallBuilder id(Long id) {
             this.id = id;
             return this;
         }
 
-        public HallBuilder name(String name){
+        public HallBuilder name(String name) {
             this.name = name;
             return this;
         }
 
-        public HallBuilder location(Location location){
+        public HallBuilder location(Location location) {
             this.location = location;
             return this;
         }

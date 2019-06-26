@@ -9,8 +9,7 @@ import java.util.Objects;
 public class Sector {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "seq_sector_id")
-    @SequenceGenerator(name = "seq_sector_id", sequenceName = "seq_sector_id")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @Column(nullable = false)
@@ -18,6 +17,9 @@ public class Sector {
 
     @Column(nullable = false)
     private PriceCategory priceCategory;
+
+    @Column(nullable = false)
+    private Integer maxCapacity;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "hall_id", nullable = false)
@@ -59,40 +61,47 @@ public class Sector {
         this.hall = hall;
     }
 
+    public Integer getMaxCapacity() {
+        return maxCapacity;
+    }
+
+    public void setMaxCapacity(Integer maxCapacity) {
+        this.maxCapacity = maxCapacity;
+    }
+
     @Override
     public String toString() {
         return "Sector{" +
             "id=" + id +
             ", sectorNumber=" + sectorNumber +
-            ", priceCategory='" + priceCategory + "\'" +
+            ", priceCategory=" + priceCategory +
+            ", maxCapacity=" + maxCapacity +
             ", hall=" + hall +
             '}';
     }
 
     @Override
     public boolean equals(Object o) {
-        if(this == o) return  true;
-        if(o == null || getClass() != o.getClass()) return false;
+        if (this == o) return true;
+        if (!(o instanceof Sector)) return false;
         Sector sector = (Sector) o;
-        return Objects.equals(id, sector.getId()) &&
-            Objects.equals(sectorNumber, sector.getSectorNumber()) &&
-            Objects.equals(priceCategory, sector.getPriceCategory()) &&
-            Objects.equals(hall, sector.getHall());
+        return Objects.equals(getId(), sector.getId()) &&
+            Objects.equals(getSectorNumber(), sector.getSectorNumber()) &&
+            getPriceCategory() == sector.getPriceCategory() &&
+            Objects.equals(getMaxCapacity(), sector.getMaxCapacity()) &&
+            Objects.equals(getHall(), sector.getHall());
     }
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (sectorNumber != null ? sectorNumber.hashCode() : 0);
-        result = 31 * result + (priceCategory != null ? priceCategory.hashCode() : 0);
-        result = 31 * result + (hall != null ? hall.hashCode() : 0);
-        return result;
+        return Objects.hash(getId(), getSectorNumber(), getPriceCategory(), getMaxCapacity(), getHall());
     }
 
     public static final class SectorBuilder{
         private Long id;
         private Integer sectorNumber;
         private PriceCategory priceCategory;
+        private Integer maxCapacity;
         private Hall hall;
 
         private SectorBuilder(){}
@@ -112,6 +121,11 @@ public class Sector {
             return this;
         }
 
+        public SectorBuilder maxCapacity(Integer maxCapacity) {
+            this.maxCapacity = maxCapacity;
+            return this;
+        }
+
         public SectorBuilder hall(Hall hall){
             this.hall = hall;
             return this;
@@ -122,6 +136,7 @@ public class Sector {
             sector.setId(id);
             sector.setSectorNumber(sectorNumber);
             sector.setPriceCategory(priceCategory);
+            sector.setMaxCapacity(maxCapacity);
             sector.setHall(hall);
             return sector;
         }

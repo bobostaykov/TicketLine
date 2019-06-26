@@ -38,6 +38,14 @@ export class AuthService {
     return !!this.getToken() && (this.getTokenExpirationDate(this.getToken()).valueOf() > new Date().valueOf());
   }
 
+  getName(){
+    if (this.getToken() != null){
+      const decoded: any = jwt_decode(this.getToken());
+      const authInfo = decoded.aut;
+
+    }
+  }
+
   logoutUser() {
     console.log('Logout');
     localStorage.removeItem('currentToken');

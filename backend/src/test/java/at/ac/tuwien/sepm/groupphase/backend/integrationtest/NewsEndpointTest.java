@@ -6,7 +6,7 @@ import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.SimpleNewsDTO;
 import at.ac.tuwien.sepm.groupphase.backend.entity.File;
 import at.ac.tuwien.sepm.groupphase.backend.entity.News;
 import at.ac.tuwien.sepm.groupphase.backend.entity.User;
-import at.ac.tuwien.sepm.groupphase.backend.integrationtest.base.BaseIntegrationTest;
+import at.ac.tuwien.sepm.groupphase.backend.integrationtest.base.BaseIntegrationTestWithMockedUserCredentials;
 import at.ac.tuwien.sepm.groupphase.backend.repository.DBFileRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.NewsRepository;
 import at.ac.tuwien.sepm.groupphase.backend.repository.UserRepository;
@@ -18,6 +18,9 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.BDDMockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -26,12 +29,15 @@ import org.springframework.util.ResourceUtils;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.core.Is.is;
 import static org.mockito.Matchers.any;
 
-public class NewsEndpointTest extends BaseIntegrationTest {
+public class NewsEndpointTest extends BaseIntegrationTestWithMockedUserCredentials {
 
     private static final String NEWS_ENDPOINT = "/news";
     private static final String FILE_ENDPOINT = NEWS_ENDPOINT + "/file";
@@ -43,8 +49,8 @@ public class NewsEndpointTest extends BaseIntegrationTest {
     private static final String TEST_NEWS_IMAGEID = "1";
     private static final LocalDateTime TEST_NEWS_PUBLISHED_AT =
         LocalDateTime.of(2016, 11, 13, 12, 15, 0, 0);
-    private static final long TEST_NEWS_ID = 1L;
-    private static final long TEST_NEWS_ID_2 = 2L;
+    private static final Long TEST_NEWS_ID = 1L;
+    private static final Long TEST_NEWS_ID_2 = 2L;
     private static final String TEST_NEWS_TEXT_2 = "TestNewsText";
     private static final String TEST_NEWS_TITLE_2 = "title";
     private static final String TEST_NEWS_IMAGEID_2 = "1";
@@ -54,7 +60,7 @@ public class NewsEndpointTest extends BaseIntegrationTest {
 
     private static final String TEST_FILE_NAME = "TestFileName";
     private static final String TEST_FILE_TYPE = "jpg";
-    private static final long TEST_FILE_ID = 1L;
+    private static final Long TEST_FILE_ID = 1L;
     private static final String ADMIN_USERNAME = "admin";
     private static final Long ADMIN_ID = 1L;
     private static final LocalDateTime ADMIN_USER_SINCE = LocalDateTime.of(2000, 1, 1, 0, 0);
@@ -81,30 +87,35 @@ public class NewsEndpointTest extends BaseIntegrationTest {
     @Test
     public void findAllNewsAsUser() {
         BDDMockito.
-            given(newsRepository.findAllByOrderByPublishedAtDesc()).
-            willReturn(Collections.singletonList(
-                News.builder()
-                    .id(TEST_NEWS_ID)
-                    .title(TEST_NEWS_TITLE)
-                    .text(TEST_NEWS_TEXT)
-                    .image(TEST_NEWS_IMAGEID)
-                    .publishedAt(TEST_NEWS_PUBLISHED_AT)
-                    .build()));
+            given(newsRepository.findAllByOrderByPublishedAtDesc(PageRequest.of(0, 12)))
+            .willReturn(
+            new PageImpl<>(
+                Collections.singletonList(
+                    News.builder()
+                        .id(TEST_NEWS_ID)
+                        .title(TEST_NEWS_TITLE)
+                        .text(TEST_NEWS_TEXT)
+                        .image(TEST_NEWS_IMAGEID)
+                        .publishedAt(TEST_NEWS_PUBLISHED_AT)
+                        .build()), PageRequest.of(0,12), 1
+            )
+        );
         Response response = RestAssured
             .given()
             .contentType(ContentType.JSON)
             .header(HttpHeaders.AUTHORIZATION, validUserTokenWithPrefix)
-            .when().get(NEWS_ENDPOINT)
+            .when().get(NEWS_ENDPOINT + "?page=0")
             .then().extract().response();
+
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
-        Assert.assertThat(Arrays.asList(response.as(SimpleNewsDTO[].class)), is(Collections.singletonList(
-            SimpleNewsDTO.builder()
-                .id(TEST_NEWS_ID)
-                .title(TEST_NEWS_TITLE)
-                .summary(TEST_NEWS_TEXT)
-                .publishedAt(TEST_NEWS_PUBLISHED_AT)
-                .build())));
+        SimpleNewsDTO readValue = response.jsonPath().getList("content", SimpleNewsDTO.class).get(0);
+        Assert.assertNotNull(readValue);
+        Assert.assertEquals(readValue.getId(), TEST_NEWS_ID);
+        Assert.assertEquals(readValue.getTitle(), TEST_NEWS_TITLE);
+        Assert.assertEquals(readValue.getSummary(), TEST_NEWS_TEXT);
+        Assert.assertEquals(readValue.getPublishedAt(), TEST_NEWS_PUBLISHED_AT);
     }
+
 
     @Test
     public void findSpecificNewsUnauthorizedAsAnonymous() {
@@ -178,23 +189,22 @@ public class NewsEndpointTest extends BaseIntegrationTest {
                 .readNews(newsReadList)
                 .build()));
         BDDMockito.
-            given(newsRepository.findAllByOrderByPublishedAtDesc()).
-            willReturn(newsInRepositoryList);
+            given(newsRepository.findAllByOrderByPublishedAtDesc(Pageable.unpaged()))
+                .willReturn(new PageImpl<>(newsInRepositoryList, Pageable.unpaged(), 2));
 
         Response response = RestAssured
             .given()
             .contentType(ContentType.JSON)
             .header(HttpHeaders.AUTHORIZATION, validAdminTokenWithPrefix)
-            .when().get(UNREAD_NEWS_ENDPOINT)
+            .when().get(UNREAD_NEWS_ENDPOINT + "?page=0")
             .then().extract().response();
         Assert.assertThat(response.getStatusCode(), is(HttpStatus.OK.value()));
-        Assert.assertThat(Arrays.asList(response.as(SimpleNewsDTO[].class)), is(Collections.singletonList(
-            SimpleNewsDTO.builder()
-                .id(TEST_NEWS_ID_2)
-                .title(TEST_NEWS_TITLE_2)
-                .summary(TEST_NEWS_TEXT_2)
-                .publishedAt(TEST_NEWS_PUBLISHED_AT_2)
-                .build())));
+        SimpleNewsDTO readValue = response.jsonPath().getList("content", SimpleNewsDTO.class).get(0);
+        Assert.assertNotNull(readValue);
+        Assert.assertEquals(readValue.getId(), TEST_NEWS_ID_2);
+        Assert.assertEquals(readValue.getTitle(), TEST_NEWS_TITLE_2);
+        Assert.assertEquals(readValue.getSummary(), TEST_NEWS_TEXT_2);
+        Assert.assertEquals(readValue.getPublishedAt(), TEST_NEWS_PUBLISHED_AT_2);
     }
 
     @Test

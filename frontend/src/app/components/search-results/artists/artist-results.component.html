@@ -1,16 +1,45 @@
-<h1 class="mt-5" *ngIf="loaded && artistName !== null && artists.length !== 0">Events - Search Results for Artist '{{artistName}}'</h1>
-<h1 class="mt-5" *ngIf="loaded && artistName !== null && artists.length === 0">Events - No Results for Artist '{{artistName}}'</h1>
-<h1 class="mt-5" *ngIf="loaded && artistName === null && artists.length === 0">Events - No Results</h1>
-
-<table *ngIf="loaded && artists.length !== 0" class="table mt-4" style="width: 40%">
-  <thead>
+<div *ngIf="dataReady && totalPages > 0 && noResultsFound === false">
+  <h1 class="mt-5">Artists - Results for chosen name</h1>
+  <table class="table mt-4" style="width: 40%">
+    <thead>
     <tr>
       <th>Artist Name</th>
     </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let artist of artists" routerLink="/events/search/results/events" [queryParams]="{resultsFor: 'ARTIST', id: artist.id}">
-      <td class="align-middle" ngbTooltip="Show events" >{{artist.name}}</td>
+    </thead>
+    <tbody>
+    <tr *ngFor="let artist of artists" routerLink="/events/search/results/events"
+        [queryParams]="{resultsFor: 'ARTIST', id: artist.id}">
+      <td class="align-middle" ngbTooltip="Show events">{{artist.name}}</td>
     </tr>
-  </tbody>
-</table>
+    </tbody>
+  </table>
+  <div class="justify-content-center" *ngIf="totalPages > 1">
+    <ul class="nav nav-pills">
+      <li class="nav-item">
+        <a class="nav-link" href="" (click)="setPage(0, $event)">«</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="" (click)="previousPage($event)">Previous</a>
+      </li>
+      <li class="nav-item" *ngIf="page - 5 > 0 && totalPages > 11">
+        <a class="nav-link">...</a>
+      </li>
+      <li class="nav-item" *ngFor="let p of pageRange;">
+        <a class="nav-link" href="" (click)="setPage(p, $event)" [ngClass]="{'active': p == page}">{{p + 1}}</a>
+      </li>
+      <li class="nav-item" *ngIf="totalPages - 5 > page && totalPages > 11">
+        <a class="nav-link">...</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="" (click)="nextPage($event)">Next</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="" (click)="setPage(totalPages - 1, $event)">»</a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div *ngIf="noResultsFound === true">
+  <h1 class="mt-4">No artists found!</h1>
+</div>

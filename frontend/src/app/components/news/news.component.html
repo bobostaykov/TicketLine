@@ -5,13 +5,15 @@
   </button>
 </div>
 
-
 <div class="mt-4 container">
   <div class="row p-2 mb-4">
-    <button *ngIf="isAdmin()" type="button" class="btn btn-secondary btn-sm mr-4" data-toggle="modal" data-target=".create-news-modal">Add news</button>
+    <button *ngIf="isAdmin()" type="button" mat-raised-button class="mr-4" color="primary" data-toggle="modal"
+            data-target=".create-news-modal">Add news
+    </button>
     <mat-checkbox (change)="changeChecked()">Show Read News</mat-checkbox>
 
-    <div class="modal fade create-news-modal" tabindex="-1" role="dialog" aria-labelledby="Create news modal" aria-hidden="true">
+    <div class="modal fade create-news-modal" tabindex="-1" role="dialog" aria-labelledby="Create news modal"
+         aria-hidden="true">
       <div class="modal-dialog modal-lg">
         <div class="modal-content">
           <div class="modal-header">
@@ -35,20 +37,9 @@
               </div>
 
               <div class="form-group">
-                <label for="inputSummary">Summary</label>
-                <textarea rows="3" name="summary" formControlName="summary" class="form-control" id="inputSummary"
-                       aria-describedby="summaryHelp" placeholder="Enter summary"></textarea>
-                <div *ngIf="submitted && newsForm.controls.summary.errors" class="error">
-                  <small class="form-text text-warning" *ngIf="newsForm.controls.summary.errors.required">Your summary is
-                    required!
-                  </small>
-                </div>
-              </div>
-
-              <div class="form-group">
                 <label for="inputText">Text</label>
                 <textarea rows="6" name="text" formControlName="text" class="form-control" id="inputText"
-                       aria-describedby="textHelp" placeholder="Enter text"></textarea>
+                          aria-describedby="textHelp" placeholder="Enter text"></textarea>
                 <div *ngIf="submitted && newsForm.controls.text.errors" class="error">
                   <small class="form-text text-warning" *ngIf="newsForm.controls.text.errors.required">Your text is
                     required!
@@ -58,13 +49,15 @@
 
               <div class="form-group">
                 <label for="inputImage">Upload Image</label>
-                <input #imageInput name="image" type="file" accept="image/" formControlName="image" id="inputImage" (change)="processFile(imageInput)">
+                <input #imageInput name="image" type="file" accept="image/" formControlName="image" id="inputImage"
+                       (change)="processFile(imageInput)">
                 <div *ngIf="submitted && newsForm.controls.image.errors" class="error">
-                  <small class="form-text text-warning" *ngIf="newsForm.controls.image.errors.required">Your image is invalid!
+                  <small class="form-text text-warning" *ngIf="newsForm.controls.image.errors.required">Your image is
+                    invalid!
                   </small>
                 </div>
               </div>
-              
+
               <button type="button" (click)="addNews()" class="btn btn-success float-right">Add news</button>
 
             </form>
@@ -77,8 +70,7 @@
     </div>
   </div>
 
-
-  <div class="row">
+  <div class="row" *ngIf="dataReady && totalPages > 0">
 
     <div class="col-xl-3 col-lg-4 p-2" *ngFor="let news of getNews()">
 
@@ -87,10 +79,11 @@
         <div class="card-body">
           <h5 class="card-title">{{news.title}}</h5>
           <h6 class="card-subtitle mb-2 text-muted">{{news.publishedAt | date}}</h6>
+          <hr />
           <p class="card-text">{{news.summary}}</p>
-          <button (click)="getNewsDetails(news.id)" type="button" class="btn btn-primary" data-toggle="modal"
+          <button (click)="getNewsDetails(news.id)" type="button" mat-stroked-button color="primary" data-toggle="modal"
                   [attr.data-target]="'.news-modal-'+news.id">
-            Details
+           Full Text
           </button>
         </div>
 
@@ -107,13 +100,14 @@
               </div>
               <div class="modal-body">
                 <p class="lead"><span class="font-italic">{{news.publishedAt | date}}</span> {{news.summary}}</p>
-                <div class ="" *ngIf="news.imageURL != null">
-                  <img [src]="news.imageURL" class = "img-responsive" width = "75%">
+                <div class="" *ngIf="news.imageURL != null">
+                  <img alt="news image" [src]="news.imageURL" class="img-responsive" width="75%">
                 </div>
                 <p class="mt-2"> {{news.text}} </p>
               </div>
               <div class="modal-footer">
-                <button type="button" (click)="loadNews()" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" (click)="loadNews()" class="btn btn-secondary" data-dismiss="modal">Close
+                </button>
               </div>
             </div>
           </div>
@@ -123,7 +117,37 @@
 
     </div>
 
+    <div class="justify-content-center" *ngIf="totalPages > 1">
+      <ul class="nav nav-pills">
+        <li class="nav-item">
+          <a class="nav-link" href="" (click)="setPage(0, $event)">«</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="" (click)="previousPage($event)">Previous</a>
+        </li>
+        <li class="nav-item" *ngIf="page - 5 > 0 && totalPages > 11">
+          <a class="nav-link">...</a>
+        </li>
+        <li class="nav-item" *ngFor="let p of pageRange;">
+          <a class="nav-link" href="" (click)="setPage(p, $event)" [ngClass]="{'active': p == page}">{{p + 1}}</a>
+        </li>
+        <li class="nav-item" *ngIf="totalPages - 5 > page && totalPages > 11">
+          <a class="nav-link">...</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="" (click)="nextPage($event)">Next</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="" (click)="setPage(totalPages - 1, $event)">»</a>
+        </li>
+      </ul>
+    </div>
+
   </div>
 
-</div>
+  <div *ngIf="dataReady && totalPages === 0">
+    <h1 class="mt-5" align="center">No News yet!</h1>
+  </div>
 
+
+</div>

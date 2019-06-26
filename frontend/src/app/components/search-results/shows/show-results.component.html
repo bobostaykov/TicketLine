@@ -1,35 +1,58 @@
+<div *ngIf="dataReady && totalPages > 0 && noResultsFound === false">
+  <h1 class="mt-5" *ngIf="resultsFor === 'EVENT'">Shows - Results for the chosen event</h1>
+  <h1 class="mt-5" *ngIf="resultsFor === 'LOCATION'">Shows - Results for the chosen location</h1>
+  <h1 class="mt-5" *ngIf="resultsFor === 'ATTRIBUTES'">Shows - Results for the chosen parameters</h1>
+  <table class="table mt-4">
+    <thead>
+    <tr>
+      <th *ngFor="let head of headElements" scope="col">{{head}}</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let show of shows">
+      <td class="align-middle">{{show.event.name}}</td>
+      <td class="align-middle">{{show.event.eventType}}</td>
+      <td class="align-middle">{{show.hall.location.country}}, {{show.hall.location.city}}
+        , {{show.hall.location.street}}</td>
+      <td class="align-middle">{{show.date | date:"dd/MM/yyyy"}} {{show.time}}</td>
+      <td class="align-middle" *ngIf="show.event.artist !== undefined">{{show.event.artist.name}}</td>
+      <td class="align-middle" *ngIf="show.event.artist === undefined"></td>
+      <td class="align-middle">{{show.hall.name}}</td>
+      <td class="align-middle">{{show.description}}</td>
+      <td class="align-middle">{{show.ticketsSold}}</td>
+      <td class="align-middle"><img routerLink="/floorplan" [queryParams]="{show_id: show.id}"
+                                    src="../../../../assets/ticket.png" width="45" height="45" alt="ticket"></td>
+    </tr>
+    </tbody>
+  </table>
+  <div class="justify-content-center" *ngIf="totalPages > 1">
+    <ul class="nav nav-pills">
+      <li class="nav-item">
+        <a class="nav-link" href="" (click)="setPage(0, $event)">«</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="" (click)="previousPage($event)">Previous</a>
+      </li>
+      <li class="nav-item" *ngIf="page - 5 > 0 && totalPages > 11">
+        <a class="nav-link">...</a>
+      </li>
+      <li class="nav-item" *ngFor="let p of pageRange;">
+        <a class="nav-link" href="" (click)="setPage(p, $event)" [ngClass]="{'active': p == page}">{{p + 1}}</a>
+      </li>
+      <li class="nav-item" *ngIf="totalPages - 5 > page && totalPages > 11">
+        <a class="nav-link">...</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="" (click)="nextPage($event)">Next</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="" (click)="setPage(totalPages - 1, $event)">»</a>
+      </li>
+    </ul>
+  </div>
+</div>
 
-<h1 class="mt-5" *ngIf="resultsFor === 'EVENT'">Shows - Results for the chosen event</h1>
-<h1 class="mt-5" *ngIf="resultsFor === 'LOCATION'">Shows - Results for the chosen location</h1>
-<h1 class="mt-5" *ngIf="resultsFor === 'ATTRIBUTES'">Shows - Results for the chosen parameters</h1>
-<h1 class="mt-5" *ngIf="resultsFor === null">Shows - No Results</h1>
-
-<table class="table mt-4">
-  <thead>
-  <tr>
-    <th *ngFor="let head of headElements" scope="col">{{head}}</th>
-  </tr>
-  </thead>
-  <tbody>
-  <tr *ngFor="let show of shows | slice: (page - 1) * pageSize : page * pageSize">
-    <td class="align-middle">{{show.event.name}}</td>
-    <td class="align-middle">{{show.event.eventType}}</td>
-    <td class="align-middle">{{show.hall.location.country}}, {{show.hall.location.city}}, {{show.hall.location.street}}</td>
-    <td class="align-middle">{{show.date | date:'mediumDate'}} {{show.time}}</td>
-    <td class="align-middle" *ngIf="show.event.artist !== undefined">{{show.event.artist.name}}</td>
-    <td class="align-middle" *ngIf="show.event.artist === undefined"></td>
-    <td class="align-middle">{{show.hall.name}}</td>
-    <td class="align-middle">{{show.description}}</td>
-    <td class="align-middle">{{show.ticketsSold}}</td>
-    <td class="align-middle"><img routerLink="/tickets" [queryParams]="{show_id: show.id}" src="../../../../assets/ticket.png" width="45" height="45" alt="ticket"></td>
-  </tr>
-  </tbody>
-</table>
-<div class="justify-content-center">
-  <ngb-pagination
-    [(page)]="page"
-    [pageSize]="pageSize"
-    [collectionSize]="shows.length"
-    *ngIf="dataReady"></ngb-pagination>
+<div *ngIf="noResultsFound === true">
+  <h1 class="mt-5">No shows found!</h1>
 </div>
 

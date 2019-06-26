@@ -1,0 +1,115 @@
+::ng-deep mat-form-field{
+  height: 70px;
+}
+
+#svg-container {
+  width: 100%;
+  height: 60vh;
+  min-height: 500px;
+  border-radius: 7px;
+  overflow: hidden;
+
+  svg {
+    cursor: grab;
+
+    .grabbing {
+      cursor: grabbing;
+    }
+
+    path {
+      cursor: pointer;
+      fill-opacity: 0.5;
+
+      &:hover, &.active {
+        fill-opacity: 0.7;
+        stroke: #9ecaed;
+      }
+
+      &.ticket {
+        stroke: #000000;
+        stroke-linejoin: round;
+        stroke-width: 1;
+      }
+    }
+
+    .ticket{
+      fill-opacity: 1;
+    }
+  }
+}
+
+
+#svg-container:hover, #updateForm:hover ~ #svg-container, #contextmenu:hover ~ #svg-container {
+  outline: none;
+  border: 2px solid #9ecaed;
+  box-shadow: 0 0 10px #9ecaed;
+}
+
+#updateForm {
+  position: absolute;
+  display: none;
+  width: 300px;
+  z-index: 9999;
+
+  form {
+    position: relative;
+    padding-bottom: 20px;
+    background-color: #e9ecef;
+    -webkit-filter: drop-shadow(0 1px 3px rgba(34, 25, 25, 0.4));
+    filter: drop-shadow(0 1px 3px rgba(34, 25, 25, 0.4));
+  }
+
+  form:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border: 20px solid transparent;
+    border-bottom-color: #e9ecef;
+    border-top: 0;
+    margin-left: -20px;
+    margin-top: -20px;
+  }
+}
+
+#contextmenu {
+  z-index: 9999;
+  padding-top: 0;
+
+  .dropdown-small-item{
+    font-size: 14px;
+    background-color: #666666;
+    -webkit-background-clip: text;
+    -moz-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: rgba(255,255,255,0.5) 0 3px 3px;
+    padding-bottom: 0;
+    padding-top: 0;
+
+    &:first-child{
+      padding-top: 5px;
+    }
+  }
+
+  .dropdown-divider{
+    margin: 5px 0 0 0;
+  }
+}
+
+.ticketsSold {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-right: 0;
+  em {
+    display: inline-block;
+    font-size: 14px;
+    margin-top: auto;
+    color: rgba(0,0,0,0.6);
+    text-shadow: 2px 8px 6px rgba(0,0,0,0.2),
+    0px -5px 35px rgba(255,255,255,0.3);
+  }
+}

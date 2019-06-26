@@ -2,7 +2,6 @@ package at.ac.tuwien.sepm.groupphase.backend.endpoint;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.DetailedNewsDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.SimpleNewsDTO;
-import at.ac.tuwien.sepm.groupphase.backend.entity.mapper.news.NewsMapper;
 import at.ac.tuwien.sepm.groupphase.backend.entity.File;
 import at.ac.tuwien.sepm.groupphase.backend.service.FileService;
 import at.ac.tuwien.sepm.groupphase.backend.service.NewsService;
@@ -10,22 +9,29 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
 import org.apache.commons.io.FilenameUtils;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.Resource;
-import org.springframework.http.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
+import javax.validation.Valid;
+import javax.validation.constraints.Positive;
 
 @RestController
 @RequestMapping(value = "/news")
+@Validated
 @Api(value = "news")
 public class NewsEndpoint {
 
@@ -46,21 +52,27 @@ public class NewsEndpoint {
 
     @RequestMapping(method = RequestMethod.GET)
     @ApiOperation(value = "Get list of simple news entries", authorizations = {@Authorization(value = "apiKey")})
-    public List<SimpleNewsDTO> findAll() {
-        return newsService.findAll();
+    public Page<SimpleNewsDTO> findAll(@RequestParam(value = "page", required = false) Integer page,
+                                       @RequestParam(value = "pageSize", required = false) @Positive Integer pageSize) {
+        LOGGER.info("News Endpoint: Get all news entries (short version)");
+        return newsService.findAll(page, pageSize);
     }
 
 
     @RequestMapping(value = "/unread", method = RequestMethod.GET)
     @ApiOperation(value = "Get list of unread News articles", authorizations = {@Authorization(value = "apiKey")})
-    public List<SimpleNewsDTO> findUnread(HttpServletRequest request) {
+    public Page<SimpleNewsDTO> findUnread(HttpServletRequest request,
+                                          @RequestParam(value = "page", required = false) Integer page,
+                                          @RequestParam(value = "pageSize", required = false) @Positive Integer pageSize) {
+        LOGGER.info("News Endpoint: Get all unread news entries (short version)");
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        return newsService.findUnread(username);
+        return newsService.findUnread(username, page, pageSize);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ApiOperation(value = "Get detailed information about a specific news entry", authorizations = {@Authorization(value = "apiKey")})
     public DetailedNewsDTO find(@PathVariable Long id) {
+        LOGGER.info("News Endpoint: Get long/ detailed version of news entry with id " + id);
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         return newsService.findOne(id, username);
     }
@@ -68,13 +80,15 @@ public class NewsEndpoint {
     @RequestMapping(method = RequestMethod.POST)
     @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "Publish a new news entry", authorizations = {@Authorization(value = "apiKey")})
-    public DetailedNewsDTO publishNews(@RequestBody DetailedNewsDTO detailedNewsDTO) {
+    public DetailedNewsDTO publishNews(@Valid @RequestBody DetailedNewsDTO detailedNewsDTO) {
+        LOGGER.info("News Endpoint: Publish a new news entry: " + detailedNewsDTO.toString());
         return newsService.publishNews(detailedNewsDTO);
     }
 
     @RequestMapping(value = FILE_URI + "/{id}", method = RequestMethod.GET)
     @ApiOperation(value = "Get file by id", authorizations = {@Authorization(value = "apiKey")})
     public ResponseEntity<Resource> findFileById(@PathVariable Long id) {
+        LOGGER.info("News Endpoint: Get news associated image with id " + id);
         File file = fileService.getFile(id);
         ResponseEntity<Resource>  returnValue = ResponseEntity.ok()
             .contentType(MediaType.parseMediaType("image/" + file.getFileType()))
@@ -87,8 +101,8 @@ public class NewsEndpoint {
     @PreAuthorize("hasRole('ADMIN')")
     @ApiOperation(value = "Store file", authorizations = {@Authorization(value = "apiKey")})
     public String storeFile(@RequestParam("file") MultipartFile file) {
-
-        if (ALLOWED_FILE_TYPES.contains(FilenameUtils.getExtension(file.getOriginalFilename()))) {
+        LOGGER.info("News Endpoint: Store news associated image with name " + file.getOriginalFilename());
+        if (ALLOWED_FILE_TYPES.contains(FilenameUtils.getExtension(file.getOriginalFilename()).toLowerCase())) {
             try {
                 Long returnValue = fileService.storeFile(file);
                 return returnValue.toString();

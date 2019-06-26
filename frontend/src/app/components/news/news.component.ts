@@ -5,7 +5,7 @@ import {NgbPaginationConfig} from '@ng-bootstrap/ng-bootstrap';
 import * as _ from 'lodash';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {AuthService} from '../../services/auth/auth.service';
-import {FileService} from '../../services/file.service';
+import {FileService} from '../../services/file/file.service';
 import {UserService} from '../../services/user/user.service';
 
 @Component({
@@ -14,6 +14,12 @@ import {UserService} from '../../services/user/user.service';
   styleUrls: ['./news.component.scss']
 })
 export class NewsComponent implements OnInit {
+
+
+  private page: number = 0;
+  private totalPages: number;
+  private pageRange: Array<number> = [];
+  private dataReady: boolean = false;
 
   error: boolean = false;
   errorMessage: string = '';
@@ -30,7 +36,6 @@ export class NewsComponent implements OnInit {
               private cd: ChangeDetectorRef, private authService: AuthService) {
     this.newsForm = this.formBuilder.group({
       title: ['', [Validators.required]],
-      summary: ['', [Validators.required]],
       text: ['', [Validators.required]],
       image: ['']
     });
@@ -38,6 +43,58 @@ export class NewsComponent implements OnInit {
 
   ngOnInit() {
     this.loadNews();
+  }
+
+
+  private setPage(i, event: any) {
+    event.preventDefault();
+    this.page = i;
+    this.loadNews();
+  }
+
+  private previousPage(event: any) {
+    event.preventDefault();
+    if (this.page > 0 ) {
+      this.page--;
+      this.loadNews();
+    }
+  }
+
+  private nextPage(event: any) {
+    event.preventDefault();
+    if (this.page < this.totalPages - 1) {
+      this.page++;
+      this.loadNews();
+    }
+  }
+
+
+  /**
+   * Determines the page numbers which will be shown in the clickable menu
+   */
+  private setPagesRange() {
+    this.pageRange = []; // nullifies the array
+    if (this.totalPages <= 11) {
+      for (let i = 0; i < this.totalPages; i++) {
+        this.pageRange.push(i);
+      }
+    } else {
+      if (this.page <= 5) {
+        for (let i = 0; i <= 10; i++) {
+          this.pageRange.push(i);
+        }
+      }
+      if (this.page > 5 && this.page < this.totalPages - 5) {
+        for (let i = this.page - 5; i <= this.page + 5; i++) {
+          this.pageRange.push(i);
+        }
+      }
+      if (this.page >= this.totalPages - 5) {
+        for (let i = this.totalPages - 10; i < this.totalPages; i++) {
+          this.pageRange.push(i);
+        }
+      }
+    }
   }
 
   /**
@@ -63,7 +120,8 @@ export class NewsComponent implements OnInit {
     if (this.newsForm.valid) {
       const news: News = new News(null,
         this.newsForm.controls.title.value,
-        this.newsForm.controls.summary.value,
+        // this.newsForm.controls.summary.value,
+        null,
         this.newsForm.controls.text.value,
         null,
         null,
@@ -75,7 +133,6 @@ export class NewsComponent implements OnInit {
           this.createNews(news);
           },
           error => {
-            this.defaultServiceErrorHandling(error);
           }
           );
       } else {
@@ -98,7 +155,6 @@ export class NewsComponent implements OnInit {
         this.loadNews();
       },
       error => {
-        this.defaultServiceErrorHandling(error);
       }
     );
   }
@@ -126,14 +182,14 @@ export class NewsComponent implements OnInit {
       (news: News) => {
         const result = this.news.find(x => x.id === id);
         result.text = news.text;
-        if(news.image != null) {
+        if (news.image != null) {
           this.fileService.getFile(news.image).subscribe(
             val => {
-              console.log('Loaded file with id ' + id);
-              let reader = new FileReader();
-              reader.addEventListener("load", () => {
-                result.imageURL = <string>reader.result;}, false);
-              if(val) {
+              console.log('Loaded file with id ' + news.image);
+              const reader = new FileReader();
+              reader.addEventListener('load', () => {
+                result.imageURL = <string>reader.result; }, false);
+              if (val) {
                 reader.readAsDataURL(val);
               }
             },
@@ -144,7 +200,6 @@ export class NewsComponent implements OnInit {
         }
       },
       error => {
-        this.defaultServiceErrorHandling(error);
       }
     );
   }
@@ -163,40 +218,33 @@ export class NewsComponent implements OnInit {
 
   private loadNews() {
     if (this.showReadNews === true) {
-      console.log('True');
+      console.log('showReadNews: True');
     } else {
-      console.log('False');
+      console.log('showReadNews: False');
     }
 
     if (this.showReadNews === true) {
-      this.newsService.getAllNews().subscribe(
-        (news: News[]) => {
-          this.news = news;
+      this.newsService.getAllNews(this.page).subscribe(
+        result => {
+          this.news = result['content'];
+          this.totalPages = result['totalPages'];
+          this.setPagesRange();
         },
         error => {
-          this.defaultServiceErrorHandling(error);
-        }
+        },
+      () => { this.dataReady = true; }
       );
     } else {
-      this.newsService.getUnreadNews().subscribe(
-        (news: News[]) => {
-          this.news = news;
+      this.newsService.getUnreadNews(this.page).subscribe(
+        result => {
+          this.news = result['content'];
+          this.totalPages = result['totalPages'];
+          this.setPagesRange();
         },
         error => {
-          this.defaultServiceErrorHandling(error);
-        }
+        },
+        () => { this.dataReady = true; }
       );
-    }
-  }
-
-
-  private defaultServiceErrorHandling(error: any) {
-    console.log(error);
-    this.error = true;
-    if (error.error.news !== 'No message available') {
-      this.errorMessage = error.error.news;
-    } else {
-      this.errorMessage = error.error.error;
     }
   }
 

@@ -3,6 +3,7 @@ package at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.artist;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import javax.validation.constraints.NotBlank;
 import java.util.Objects;
 
 
@@ -13,6 +14,7 @@ public class ArtistDTO {
     private Long id;
 
     @ApiModelProperty(name = "The username of the artist")
+    @NotBlank(message = "artist name may not be blank")
     private String name;
 
     public Long getId() {
@@ -53,7 +55,7 @@ public class ArtistDTO {
     public String toString() {
         return "ArtistDTO{" +
             "id=" + id +
-            ", username='" + name + '\'' +
+            ", name='" + name + '\'' +
             '}';
     }
 

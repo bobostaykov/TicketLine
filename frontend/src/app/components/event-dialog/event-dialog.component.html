@@ -1,0 +1,71 @@
+<form class="form" [formGroup]="eventForm">
+
+  <div class="form-group">
+    <label for="inputEventName">Name</label>
+    <input type="text" name="eventName" formControlName="eventName" class="form-control" id="inputEventName"
+           aria-describedby="eventNameHelp" placeholder="Enter event name" [(ngModel)]="eventModel.name">
+    <div *ngIf="submitted && eventForm.controls.eventName.errors" class="error">
+      <small class="form-text text-warning" *ngIf="eventForm.controls.eventName.errors.required">
+        Event name is required!
+      </small>
+    </div>
+    <div *ngIf="submitted && eventForm.controls.eventName.value !== null" class="error">
+      <small class="form-text text-warning" *ngIf="eventForm.controls.eventName.value.startsWith(' ')">
+        Event name is required!
+      </small>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="inputType">Type</label>
+    <select name="type" formControlName="type" class="form-control" id="inputType" aria-describedby="rePasswordHelp" [(ngModel)]="eventType">
+      <option *ngFor="let type of eventTypes">{{type}}</option>
+    </select>
+    <div *ngIf="submitted && eventForm.controls.type.errors" class="error">
+      <small class="form-text text-warning" *ngIf="eventForm.controls.type.errors.required">
+        Event type is required!
+      </small>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="inputDuration">Duration</label>
+    <input type="number" min="1" name="duration" formControlName="duration" class="form-control" id="inputDuration"
+           aria-describedby="durationHelp" placeholder="Enter event duration in minutes" [(ngModel)]="eventModel.durationInMinutes">
+    <div *ngIf="submitted && eventForm.controls.duration.errors" class="error">
+      <small class="form-text text-warning" *ngIf="eventForm.controls.duration.errors.required">
+        Event duration is required!
+      </small>
+      <small class="form-text text-warning" *ngIf="eventForm.controls.duration.errors.min">
+        Minimum value is 1!
+      </small>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <div class="form-group">
+      <label for="inputArtist">Artist</label>
+      <ngx-select-dropdown id="inputArtist" formControlName="artist" [(ngModel)]="eventModel.artist.name" [config]="config" [options]="options"></ngx-select-dropdown>
+    </div>
+    <div *ngIf="submitted && eventForm.controls.artist.errors" class="error">
+      <small class="form-text text-warning" *ngIf="eventForm.controls.artist.errors.required">
+        Artist is required!
+      </small>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="inputContent">Content</label>
+    <textarea rows="2" name="content" formControlName="content" class="form-control" id="inputContent"
+              aria-describedby="contentHelp" placeholder="Enter event content" [(ngModel)]="eventModel.content"></textarea>
+  </div>
+
+  <div class="form-group">
+    <label for="inputDescription">Description</label>
+    <textarea rows="4" name="description" formControlName="description" class="form-control" id="inputDescription"
+              aria-describedby="descriptionHelp" placeholder="Enter event description" [(ngModel)]="eventModel.description"></textarea>
+  </div>
+
+  <button type="button" (click)="onSubmit()" class="btn btn-success float-right">{{title}}</button>
+
+</form>

@@ -1,0 +1,26 @@
+.inputButton{
+  height: 35px;
+}
+
+.bottom-box-shadow{
+  -webkit-box-shadow: 0 8px 6px -10px black;
+  -moz-box-shadow: 0 8px 6px -10px black;
+  box-shadow: 0 8px 6px -10px black;
+}
+
+.floorplanSvgWidth {
+  width: 70%;
+  padding-right: 10%;
+}
+
+.floorplanTickets {
+  height: 60vh;
+  width: 30%;
+  box-shadow: 0 1px 3px rgba(34, 25, 25, 0.4);
+
+  button {
+    background-color: #3f51b5;
+    margin: 0;
+    width: 100%;
+  }
+}

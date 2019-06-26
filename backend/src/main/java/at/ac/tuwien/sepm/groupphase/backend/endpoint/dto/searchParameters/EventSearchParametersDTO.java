@@ -1,32 +1,41 @@
 package at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.searchParameters;
 
 import at.ac.tuwien.sepm.groupphase.backend.datatype.EventType;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Positive;
 import java.util.Objects;
-
+@ApiModel(value = "EventSearchParametersDTO", description = "the parameters to search events for")
 public class EventSearchParametersDTO {
     @NotBlank
+    @ApiModelProperty(name = "the name of the event")
     private String name;
     @Positive
+    @ApiModelProperty(name = "the duration of the event")
     private Integer durationInMinutes;
     @NotEmpty
+    @ApiModelProperty(name = "the content of the event")
     private String content;
     @NotBlank
+    @ApiModelProperty(name = "the name of the artist")
     private String artistName;
     @NotBlank
+    @ApiModelProperty(name = "the description of the event")
     private String description;
-    private EventType eventType;
 
-    public EventSearchParametersDTO(String name, Integer durationInMinutes, String content, String artistName, String description, EventType eventType) {
+    private EventType eventType;
+    private String locationName;
+    public EventSearchParametersDTO(String name, Integer durationInMinutes, String content, String artistName, String description, EventType eventType, String locationName) {
         this.name = name;
         this.durationInMinutes = durationInMinutes;
         this.content = content;
         this.artistName = artistName;
         this.description = description;
         this.eventType = eventType;
+        this.locationName = locationName;
     }
 
     public String getName() {
@@ -79,6 +88,14 @@ public class EventSearchParametersDTO {
         this.eventType = eventType;
     }
 
+    public String getLocationName() {
+        return locationName;
+    }
+
+    public void setLocationName(String locationName) {
+        this.locationName = locationName;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -89,12 +106,13 @@ public class EventSearchParametersDTO {
             Objects.equals(content, that.content) &&
             Objects.equals(artistName, that.artistName) &&
             Objects.equals(description, that.description) &&
-            eventType == that.eventType;
+            eventType == that.eventType &&
+            Objects.equals(locationName, that.locationName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, durationInMinutes, content, artistName, description, eventType);
+        return Objects.hash(name, durationInMinutes, content, artistName, description, eventType, locationName);
     }
 
     @Override
@@ -106,11 +124,13 @@ public class EventSearchParametersDTO {
             ", artistName='" + artistName + '\'' +
             ", description='" + description + '\'' +
             ", eventType=" + eventType +
+            ", locationName='" + locationName + '\'' +
             '}';
     }
 
     public static class EventSearchParametersDTOBuilder {
         private String name;
+        private String locationName;
         private Integer durationInMinutes;
         private String content;
         private String artistName;
@@ -147,9 +167,13 @@ public class EventSearchParametersDTO {
             this.eventType = eventType;
             return this;
         }
+        public EventSearchParametersDTOBuilder setLocationName (String locationName){
+            this.locationName = locationName;
+            return this;
+        }
 
         public EventSearchParametersDTO build() {
-            return new EventSearchParametersDTO(name, durationInMinutes, content, artistName, description, eventType);
+            return new EventSearchParametersDTO(name, durationInMinutes, content, artistName, description, eventType, locationName);
         }
     }
 }

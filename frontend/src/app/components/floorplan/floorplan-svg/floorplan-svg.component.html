@@ -1,0 +1,115 @@
+<!-- div containing form to update selected seat or sector -->
+<div id="updateForm">
+
+  <form #updateForm="ngForm" (ngSubmit)="updateForm.valid && updateSelectedElement()">
+
+    <!-- disable row if elements are sectors -->
+    <div class="row mx-2" *ngIf="hallType === 'seats'">
+
+      <!-- form field to update seat row -->
+      <mat-form-field appearance="standard" class="col-6" hideRequiredMarker>
+        <mat-label class="pr-4">Row</mat-label>
+        <label for="seatRow" class="sr-only">Seat Row</label>
+        <input matInput id="seatRow" type="number" aria-labelledby="Seat Row" class="text-right"
+               name="seatRow" [(ngModel)]="updateElementModel.seatRow" #seatRow="ngModel"
+               required min="1" appMin="1"/>
+        <mat-error *ngIf="seatRow.hasError('required')">Row must be set!</mat-error>
+        <mat-error *ngIf="seatRow.hasError('min')">Must be greater <span class="text-nowrap">than 0!</span>
+        </mat-error>
+      </mat-form-field>
+
+      <!-- form field to update seat number -->
+      <mat-form-field appearance="standard" class="col-6" hideRequiredMarker>
+        <mat-label class="pr-4">Number</mat-label>
+        <label for="seatNumber" class="sr-only">Number</label>
+        <input matInput id="seatNumber" type="number" aria-labelledby="Seat Number" class="text-right"
+               name="seatNumber" [(ngModel)]="updateElementModel.seatNumber" #seatNumber="ngModel"
+               required min="1" appMin="1"/>
+        <mat-error *ngIf="seatNumber.hasError('required')">Number must be set!</mat-error>
+        <mat-error *ngIf="seatNumber.hasError('min')">Must be greater <span class="text-nowrap">than 0!</span>
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+
+    <!-- disable row if elements are seats -->
+    <div class="row mx-2" *ngIf="hallType === 'sectors'">
+
+      <!-- form field to update sector number -->
+      <mat-form-field appearance="standard" class="col-6" hideRequiredMarker>
+        <mat-label class="pr-4">Sector Number</mat-label>
+        <label for="sectorNumber" class="sr-only">Sector Number</label>
+        <input matInput id="sectorNumber" type="number" aria-labelledby="Sector Number" class="text-right"
+               name="sectorNumber" [(ngModel)]="updateElementModel.sectorNumber" #sectorNumber="ngModel"
+               required min="1" appMin="1"/>
+        <mat-error *ngIf="sectorNumber.hasError('required')">Sector number must be set!</mat-error>
+        <mat-error *ngIf="sectorNumber.hasError('min')">Must be greater <span class="text-nowrap">than 0!</span>
+        </mat-error>
+      </mat-form-field>
+
+      <!-- form field to update sector maxCapacity -->
+      <mat-form-field appearance="standard" class="col-6" hideRequiredMarker *ngIf="allowEditing()">
+        <mat-label class="pr-4">Sector Capacity</mat-label>
+        <label for="sectorCapacity" class="sr-only">Sector Capacity</label>
+        <input matInput id="sectorCapacity" type="number" aria-labelledby="sector max capacity" class="text-right"
+               name="maxCapacity" [(ngModel)]="updateElementModel.maxCapacity" #capacity="ngModel"
+               required min="1" appMin="1"/>
+        <mat-error *ngIf="capacity.hasError('required')">Sector Capacity must be set!</mat-error>
+        <mat-error *ngIf="capacity.hasError('min')">Must be greater <span class="text-nowrap">than 0!</span>
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <div class="row mx-2">
+
+      <!-- form field to update seat or sector price category -->
+      <mat-form-field appearance="standard" class="col-6">
+        <label for="priceCategory" class="sr-only">Price Category</label>
+        <select matNativeControl id="priceCategory" aria-labelledby="Price Category"
+                name="seatPrice" [(ngModel)]="updateElementModel.priceCategory" required>
+          <option *ngFor="let price of priceCategories">{{price}}</option>
+        </select>
+        <mat-error>Price Category is required!</mat-error>
+      </mat-form-field>
+
+      <!-- button submitting update form -->
+      <div class="col-6 d-flex align-items-end">
+        <button mat-raised-button type="submit" color="primary" *ngIf="editingEnabled">
+          Update
+        </button>
+      </div>
+    </div>
+    <!-- displays error message after submit if seat or sector with given row/number already exists in the hall -->
+    <small class="form-text text-danger mt-2 col-12" *ngIf="updateSubmissionError">{{updateSubmissionMessage}}</small>
+  </form>
+</div>
+
+<!-- div containing context menu for delete, ticket, update operations -->
+<div id="contextmenu" class="dropdown-menu shadow-sm" [ngSwitch]="hallType">
+  <div *ngIf="! allowEditing()">
+    <span class="dropdown-item dropdown-small-item" *ngSwitchCase="'seats'">SEAT: {{getPrice(selectedElement?.priceCategory)}}</span>
+    <span class="dropdown-item dropdown-small-item" *ngSwitchCase="'sectors'">SECTOR: {{getPrice(selectedElement?.priceCategory)}}</span>
+    <span class="dropdown-item dropdown-small-item" *ngSwitchCase="'seats'">Row {{selectedElement?.seatRow}}
+      / Number {{selectedElement?.seatNumber}}{{selectedElement?.ticketStatus ? ' - ' + selectedElement.ticketStatus : ''}}</span>
+    <span class="dropdown-item dropdown-small-item" *ngSwitchCase="'sectors'">Number ({{selectedElement?.sectorNumber}}) - {{getTicketsSoldAndCapacity()}}</span>
+  </div>
+  <div class="dropdown-divider"></div>
+  <button class="btn dropdown-item" (click)="displayUpdateForm(selectedElement, activeElement)" *ngIf="allowEditing()">
+    Update
+  </button>
+  <button class="btn dropdown-item" (click)="deleteSelectedElement()" *ngIf="allowEditing()">Delete</button>
+  <button class="btn dropdown-item" (click)="addAsTicket()" *ngIf="allowToAddTicket()">
+    Add To Ticket
+  </button>
+  <button class="btn dropdown-item" (click)="removeTicket()" *ngIf="allowDeleteTicket()">
+    Delete Ticket
+  </button>
+</div>
+
+<div id="svg-container">
+  <!-- displays a floor plan with seats or sectors -->
+  <svg id="floorplan"
+       [attr.viewBox]="this.viewbox"
+       (mousedown)="svgDragInit()"
+       (mousewheel)="zoom($event)">
+  </svg>
+</div>

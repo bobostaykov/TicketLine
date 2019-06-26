@@ -1,7 +1,10 @@
 package at.ac.tuwien.sepm.groupphase.backend.entity;
 
 
+import org.hibernate.validator.constraints.UniqueElements;
+
 import javax.persistence.*;
+import javax.validation.Valid;
 import javax.validation.constraints.Size;
 import java.util.Objects;
 
@@ -10,12 +13,12 @@ public class Artist {
 
     @Id
     @Column(name="id")
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "seq_artist_id")
-    @SequenceGenerator(name = "seq_artist_id", sequenceName = "seq_artist_id")
+    @SequenceGenerator(name = "artist_seq", initialValue = 1, allocationSize = 50)
+    @GeneratedValue(generator = "artist_seq")
     private Long id;
 
-    @Column(nullable = false)
     @Size(max = 64)
+    @Column(nullable = false, unique = true)
     private String name;
 
     public Long getId() {

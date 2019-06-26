@@ -9,10 +9,17 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface EventMapper {
 
+    /**
+     * Maps the EventDTO object to Event object
+     * @param eventDTO to map
+     * @return the mapped Event object
+     */
     Event eventDTOToEvent(EventDTO eventDTO);
 
+    /**
+     * Maps the Event object to EventDTO object
+     * @param event to map
+     * @return the mapped EventDTO object
+     */
     EventDTO eventToEventDTO(Event event);
-
-    List<EventDTO> eventToEventDTO(List<Event> events);
-
 }

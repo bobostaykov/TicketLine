@@ -1,8 +1,8 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.implementation;
 
+import at.ac.tuwien.sepm.groupphase.backend.configuration.properties.AuthenticationConfigurationProperties;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.authentication.AuthenticationToken;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.authentication.AuthenticationTokenInfo;
-import at.ac.tuwien.sepm.groupphase.backend.configuration.properties.AuthenticationConfigurationProperties;
 import at.ac.tuwien.sepm.groupphase.backend.security.AuthenticationConstants;
 import at.ac.tuwien.sepm.groupphase.backend.service.HeaderTokenAuthenticationService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -73,8 +73,11 @@ public class SimpleHeaderTokenAuthenticationService implements HeaderTokenAuthen
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList()));
         } catch (JsonProcessingException e) {
+
             LOGGER.error("Failed to wrap authorities", e);
         }
+
+
         String currentToken = Jwts.builder()
             .claim(AuthenticationConstants.JWT_CLAIM_PRINCIPAL_ID, null)
             .claim(AuthenticationConstants.JWT_CLAIM_PRINCIPAL, authentication.getName())

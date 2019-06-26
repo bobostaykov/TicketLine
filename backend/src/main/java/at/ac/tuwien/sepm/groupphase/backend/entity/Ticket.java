@@ -8,39 +8,48 @@ import javax.persistence.*;
 public class Ticket {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "seq_ticket_id")
-    @SequenceGenerator(name = "seq_ticket_id", sequenceName = "seq_ticket_id")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
+
+    @Column(unique = true)
+    private String reservationNo;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false, name = "show_id")
     private Show show;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false, name = "customer_id")
-    private Customer customer;
-
     @Column(nullable = false)
     private Double price;
 
-    @Column(nullable = true)
-    private Integer seatNumber;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "customer_id")
+    private Customer customer;
 
-    @Column(nullable = true)
-    private Integer rowNumber;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "seat_id")
+    private Seat seat;
 
-    @Column(nullable = true)
-    private Integer sectorNumber;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "sector_id")
+    private Sector sector;
 
     @Column(nullable = false)
     private TicketStatus status;
 
-    public void setId(Long reservationNumber) {
-        this.id = reservationNumber;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Long getId() {
         return id;
+    }
+
+    public void setReservationNo(String reservationNo) {
+        this.reservationNo = reservationNo;
+    }
+
+    public String getReservationNo() {
+        return reservationNo;
     }
 
     public void setShow(Show show) {
@@ -67,28 +76,20 @@ public class Ticket {
         return price;
     }
 
-    public void setSeatNumber(Integer seatNumber) {
-        this.seatNumber = seatNumber;
+    public void setSector(Sector sector) {
+        this.sector = sector;
     }
 
-    public Integer getSeatNumber() {
-        return seatNumber;
+    public Sector getSector() {
+        return sector;
     }
 
-    public void setRowNumber(Integer rowNumber) {
-        this.rowNumber = rowNumber;
+    public void setSeat(Seat seat) {
+        this.seat = seat;
     }
 
-    public Integer getRowNumber() {
-        return rowNumber;
-    }
-
-    public void setSectorNumber(Integer sectorNumber) {
-        this.sectorNumber = sectorNumber;
-    }
-
-    public Integer getSectorNumber() {
-        return sectorNumber;
+    public Seat getSeat() {
+        return seat;
     }
 
     public void setStatus(TicketStatus status) {
@@ -111,14 +112,17 @@ public class Ticket {
             ", price=" + price +
             ", customer=" + customer.toString() +
             ", status=" + status;
-        if (seatNumber != null) {
-            out = out + ", seatNumber=" + seatNumber;
+        if (seat != null && seat.getSeatNumber() != null) {
+            out = out + ", seatNumber=" + seat.getSeatNumber();
         }
-        if (rowNumber != null) {
-            out = out + ", rowNumber =" + rowNumber;
+        if (seat != null && seat.getSeatRow() != null) {
+            out = out + ", rowNumber =" + seat.getSeatRow();
         }
-        if (sectorNumber != null) {
-            out = out + ", sectorNumber =" + sectorNumber;
+        if (sector != null) {
+            out = out + ", sectorNumber =" + sector.getSectorNumber();
+        }
+        if (reservationNo != null) {
+            out = out + ", rservationNumber = " + reservationNo;
         }
         out = out + '}';
         return out;
@@ -135,10 +139,10 @@ public class Ticket {
         if (show != null ? !show.equals(ticket.show) : ticket.show != null) return false;
         if (price != null ? !price.equals(ticket.price) : ticket.price != null) return false;
         if (customer != null ? !customer.equals(ticket.customer) : ticket.customer != null) return false;
-        if (seatNumber != null ? !seatNumber.equals(ticket.seatNumber) : ticket.seatNumber != null) return false;
-        if (rowNumber != null ? !rowNumber.equals(ticket.rowNumber) : ticket.rowNumber != null) return false;
+        if (seat != null ? !seat.equals(ticket.seat) : ticket.seat != null) return false;
         if (status != null ? !status.equals(ticket.status) : ticket.status != null) return false;
-        return sectorNumber != null ? sectorNumber.equals(ticket.sectorNumber) : ticket.sectorNumber == null;
+        if (reservationNo != null ? !reservationNo.equals(ticket.reservationNo) : ticket.reservationNo != null) return false;
+        return sector != null ? sector.equals(ticket.sector) : ticket.sector == null;
     }
 
     @Override
@@ -147,26 +151,31 @@ public class Ticket {
         result = 31 * result + (show != null ? show.hashCode() : 0);
         result = 31 * result + (price != null ? price.hashCode() : 0);
         result = 31 * result + (customer != null ? customer.hashCode() : 0);
-        result = 31 * result + (seatNumber != null ? seatNumber.hashCode() : 0);
-        result = 31 * result + (rowNumber != null ? rowNumber.hashCode() : 0);
-        result = 31 * result + (sectorNumber != null ? sectorNumber.hashCode() : 0);
+        result = 31 * result + (seat != null ? seat.hashCode() : 0);
+        result = 31 * result + (sector != null ? sector.hashCode() : 0);
         result = 31 * result + (status != null ? status.hashCode() : 0);
+        result = 31 * result + (reservationNo != null ? reservationNo.hashCode() : 0);
         return result;
     }
 
     public static final class TicketBuilder {
 
         private Long id;
+        private String reservationNo;
         private Show show;
         private Double price;
         private Customer customer;
-        private Integer seatNumber;
-        private Integer rowNumber;
-        private Integer sectorNumber;
+        private Seat seat;
+        private Sector sector;
         private TicketStatus status;
 
-        public TicketBuilder id(Long reservationNumber) {
-            this.id = reservationNumber;
+        public TicketBuilder id(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public TicketBuilder reservationNo(String reservationNo) {
+            this.reservationNo = reservationNo;
             return this;
         }
 
@@ -184,18 +193,13 @@ public class Ticket {
             return this;
         }
 
-        public TicketBuilder seatNumber(Integer seatNumber) {
-            this.seatNumber = seatNumber;
+        public TicketBuilder seat(Seat seat) {
+            this.seat = seat;
             return this;
         }
 
-        public TicketBuilder rowNumber(Integer rowNumber) {
-            this.rowNumber = rowNumber;
-            return this;
-        }
-
-        public TicketBuilder sectorNumber(Integer sectorNumber) {
-            this.sectorNumber = sectorNumber;
+        public TicketBuilder sector(Sector sector) {
+            this.sector = sector;
             return this;
         }
 
@@ -207,12 +211,12 @@ public class Ticket {
         public Ticket build() {
             Ticket ticket = new Ticket();
             ticket.setId(id);
+            ticket.setReservationNo(reservationNo);
             ticket.setShow(show);
             ticket.setPrice(price);
             ticket.setCustomer(customer);
-            ticket.setSeatNumber(seatNumber);
-            ticket.setRowNumber(rowNumber);
-            ticket.setSectorNumber(sectorNumber);
+            ticket.setSeat(seat);
+            ticket.setSector(sector);
             ticket.setStatus(status);
             return ticket;
         }

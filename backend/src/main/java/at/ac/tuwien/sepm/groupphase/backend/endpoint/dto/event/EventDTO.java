@@ -5,6 +5,7 @@ import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.artist.ArtistDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import javax.validation.constraints.NotBlank;
 import java.util.Objects;
 
 @ApiModel(value = "EventDTO")
@@ -14,6 +15,7 @@ public class EventDTO {
     private Long id;
 
     @ApiModelProperty(name = "The unique name of the event")
+    @NotBlank
     private String name;
 
     @ApiModelProperty(name = "The type of the event (THEATER | OPER | FESTIVAL | CONCERT | MOVIE | MUSICAL)")
@@ -96,17 +98,18 @@ public class EventDTO {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         EventDTO eventDTO = (EventDTO) o;
-        return id.equals(eventDTO.id) &&
+        return Objects.equals(id, eventDTO.id) &&
             name.equals(eventDTO.name) &&
             eventType == eventDTO.eventType &&
             Objects.equals(description, eventDTO.description) &&
             Objects.equals(content, eventDTO.content) &&
-            Objects.equals(artist, eventDTO.artist);
+            durationInMinutes.equals(eventDTO.durationInMinutes) &&
+            artist.equals(eventDTO.artist);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, eventType, description, content, artist);
+        return Objects.hash(id, name, eventType, description, content, durationInMinutes, artist);
     }
 
     @Override
@@ -117,6 +120,7 @@ public class EventDTO {
             ", eventType=" + eventType +
             ", description='" + description + '\'' +
             ", content='" + content + '\'' +
+            ", durationInMinutes=" + durationInMinutes +
             ", artist=" + artist +
             '}';
     }

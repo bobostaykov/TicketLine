@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {EventService} from '../../../services/event/event.service';
 import {Router} from '@angular/router';
 import {EventTickets} from '../../../dtos/event_tickets';
+import {TopTenDetails} from '../../../dtos/top-ten-details';
 
 @Component({
   selector: 'app-top-ten-events',
@@ -104,7 +105,9 @@ export class TopTenEventsComponent implements OnInit {
       }
     }
 
-    this.eventService.getTopTenEvents(monthsArray, categoriesArray).subscribe(
+    const monthsCats = new TopTenDetails(monthsArray, categoriesArray);
+
+    this.eventService.getTopTenEvents(monthsCats).subscribe(
       (events: EventTickets[]) => { this.data = this.eventsToData(events.slice(0, 10)); },
       error => { this.defaultServiceErrorHandling(error); },
     () => { this.dataReady = true; }
@@ -142,7 +145,7 @@ export class TopTenEventsComponent implements OnInit {
    */
   private viewShows(event: any) {
     this.router.navigate(['/events/search/results/shows'], {queryParams: {
-      results_for: 'EVENT',
+      resultsFor: 'EVENT',
       name:        event.valueOf()['name']
     }});
   }
@@ -151,8 +154,8 @@ export class TopTenEventsComponent implements OnInit {
   private defaultServiceErrorHandling(error: any) {
     console.log(error);
     this.error = true;
-    if (error.error.news !== 'No message available') {
-      this.errorMessage = error.error.news;
+    if (error.error.message !== 'No message available') {
+      this.errorMessage = error.error.message;
     } else {
       this.errorMessage = error.error.error;
     }

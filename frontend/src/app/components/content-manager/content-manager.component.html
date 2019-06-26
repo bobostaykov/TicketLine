@@ -1,0 +1,503 @@
+<div *ngIf="isAdmin()">
+  <h1 class="mt-5">Content Manager</h1>
+  <!------------------------ Add Form --------------------------------->
+  <div *ngIf="isAdmin()" class="mt-4">
+    <form [formGroup]="addForm">
+      <mat-form-field appearance="outline" class="mr-4">
+        <mat-select id="add_type" placeholder="Select" formControlName="addType" [(ngModel)]="addType">
+          <mat-option>-- None --</mat-option>
+          <mat-option value="Artist">Artist</mat-option>
+          <mat-option value="Event">Event</mat-option>
+          <mat-option value="Location">Location</mat-option>
+          <mat-option value="Show">Show</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <button mat-raised-button *ngIf="addType === undefined" id="add_content" color="primary">Add</button>
+      <button mat-raised-button *ngIf="addType === 'Artist'" id="add_artist" color="primary" data-toggle="modal"
+              data-target="#add-artist-modal">Add</button>
+      <button mat-raised-button *ngIf="addType === 'Event'" id="add_event" color="primary" data-toggle="modal"
+              data-target=".add-event-modal">Add
+      </button>
+      <button mat-raised-button *ngIf="addType === 'Location'" id="add_location" color="primary" data-toggle="modal"
+              data-target=".add-location-modal">Add</button>
+      <button mat-raised-button *ngIf="addType === 'Show'" id="add_show" color="primary" data-toggle="modal"
+              data-target="#add-show-modal">Add
+      </button>
+    </form>
+
+    <!------------------------ Search Form --------------------------------->
+    <form [formGroup]="searchForm" (ngSubmit)="searchContent()">
+      <mat-form-field appearance="outline">
+        <mat-label>Name</mat-label>
+        <input matInput type="text" id="search_name" placeholder="Name" formControlName="searchName"
+               [(ngModel)]="searchName">
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="mr-4">
+        <mat-select id="search_type" placeholder="Select" formControlName="searchType" [(ngModel)]="searchType">
+          <mat-option>-- None --</mat-option>
+          <mat-option value="Artist">Artist</mat-option>
+          <mat-option value="Event">Event</mat-option>
+          <mat-option value="Location">Location</mat-option>
+          <mat-option value="Show">Show</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <button mat-raised-button id="search_content" color="primary">Search</button>
+    </form>
+
+
+    <div *ngIf="dataReady && totalPages > 0 && noResultsFound === false">
+      <h3 class="mt-5">Results:</h3>
+
+      <!------------------------ Location --------------------------------->
+      <table class="table mt-4" *ngIf="savedType === 'Location'">
+        <thead>
+        <tr>
+          <th *ngFor="let head of locationHeaders" scope="col">{{head}}</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let location of locations">
+          <td class="align-middle">{{location.locationName}}</td>
+          <td class="align-middle">{{location.country}}</td>
+          <td class="align-middle">{{location.city}}</td>
+          <td class="align-middle">{{location.postalCode}}</td>
+          <td class="align-middle">{{location.street}}</td>
+          <td class="align-middle">{{location.description}}</td>
+          <td class="align-middle">
+            <button type="button" class="btn btn-secondary btn-sm m-2" data-toggle="modal"
+                    data-target=".edit-location-modal" (click)="setActiveLocation(location)">Edit
+            </button>
+          </td>
+          <td class="align-middle">
+            <img data-toggle="modal" data-target=".delete-location-modal" src="../../../assets/trash.png" width="25" height="25" alt="Delete"
+                 (click)="setActiveLocation(location)">
+          </td>
+        </tr>
+        </tbody>
+      </table>
+
+      <!------------------------ Show --------------------------------->
+      <table class="table mt-4" *ngIf="savedType === 'Show'">
+        <thead>
+        <tr>
+          <th *ngFor="let head of showHeaders" scope="col">{{head}}</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let show of shows">
+          <td class="align-middle">{{show.event.name}}</td>
+          <td class="align-middle">{{show.date | date:'mediumDate'}} {{show.time}}</td>
+          <td class="align-middle">{{show.hall.name}}</td>
+          <td class="align-middle">{{show.description}}</td>
+          <td class="align-middle">{{show.ticketsSold}}</td>
+          <td>
+            <button type="button" class="btn btn-secondary btn-sm m-2" data-toggle="modal"
+                    data-target="#update-show-modal" (click)="setShowToUpdate(show)">Edit
+            </button>
+          </td>
+          <td class="align-middle"><img (click)="setShowToDelete(show.id)" data-toggle="modal"
+                                        data-target="#delete-show-modal" src="../../../assets/trash.png" width="25"
+                                        height="25" alt="delete"></td>
+        </tr>
+        </tbody>
+      </table>
+
+      <!------------------------ Event --------------------------------->
+      <table class="table mt-4" *ngIf="savedType === 'Event'">
+        <thead>
+        <tr>
+          <th *ngFor="let head of eventHeaders" scope="col">{{head}}</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let event of events">
+          <td class="align-middle">{{event.name}}</td>
+          <td class="align-middle">{{event.eventType}}</td>
+          <td class="align-middle" *ngIf="event.artist !== undefined">{{event.artist.name}}</td>
+          <td class="align-middle" *ngIf="event.artist === undefined"></td>
+          <td class="align-middle">{{event.durationInMinutes}}</td>
+          <td class="align-middle">{{event.description}}</td>
+          <td class="align-middle">{{event.content}}</td>
+          <td>
+            <button type="button" class="btn btn-secondary btn-sm m-2" data-toggle="modal"
+                    data-target=".edit-event-modal" (click)="setActiveEvent(event)">Edit
+            </button>
+          </td>
+          <td class="align-middle">
+            <img data-toggle="modal" data-target=".delete-event-modal" src="../../../assets/trash.png" width="25" height="25" alt="Delete"
+                 (click)="setActiveEvent(event)">
+          </td>
+        </tr>
+        </tbody>
+      </table>
+
+      <!------------------------ Artist --------------------------------->
+      <table class="table mt-4" *ngIf="savedType === 'Artist'" style="width:50%; min-width: 400px">
+        <thead>
+        <tr>
+          <th *ngFor="let head of artistHeaders" scope="col">{{head}}</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let artist of artists">
+          <td class="align-middle">{{artist.name}}</td>
+          <td>
+            <button type="button" class="btn btn-secondary btn-sm m-2" data-toggle="modal"
+                    data-target="#update-artist-modal" (click)="setArtistToUpdate(artist)">Edit
+            </button>
+          </td>
+          <td class="align-middle"><img (click)="setArtistToDelete(artist.id)" data-toggle="modal"
+                                        data-target="#delete-artist-modal" src="../../../assets/trash.png" width="25"
+                                        height="25" alt="Delete"></td>
+        </tr>
+        </tbody>
+      </table>
+
+      <!------------------------ Pagination --------------------------------->
+      <div class="justify-content-center" *ngIf="totalPages > 1">
+        <ul class="nav nav-pills">
+          <li class="nav-item">
+            <a class="nav-link" href="" (click)="setPage(0, $event)">«</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="" (click)="previousPage($event)">Previous</a>
+          </li>
+          <li class="nav-item" *ngIf="page - 5 > 0 && totalPages > 11">
+            <a class="nav-link">...</a>
+          </li>
+          <li class="nav-item" *ngFor="let p of pageRange;">
+            <a class="nav-link" href="" (click)="setPage(p, $event)" [ngClass]="{'active': p == page}">{{p + 1}}</a>
+          </li>
+          <li class="nav-item" *ngIf="totalPages - 5 > page && totalPages > 11">
+            <a class="nav-link">...</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="" (click)="nextPage($event)">Next</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="" (click)="setPage(totalPages - 1, $event)">»</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <h3 class="mt-5" *ngIf="noResultsFound === true">No Results</h3>
+  </div>
+
+  <!-- Show modals -->
+
+  <!-- Modal to update show using show-dialog component -->
+  <div class="modal fade" id="update-show-modal" tabindex="-1" role="dialog" aria-labelledby="Update show modal"
+       aria-hidden="true"
+       *ngIf="showToUpdate !== undefined">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Update Show</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">x</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <app-show-dialog
+            title="Update Show"
+            [show]="this.showToUpdate"
+            (submitShow)="updateShow($event)">
+          </app-show-dialog>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Modal to add show using show-dialog component -->
+  <div class="modal fade" id="add-show-modal" tabindex="-1" role="dialog" aria-labelledby="Add show modal"
+       aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Add Show</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">x</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <app-show-dialog
+            title="Add Show"
+            (submitShow)="addShow($event)">
+          </app-show-dialog>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal to delete show -->
+  <div class="modal fade delete-modal" id="delete-show-modal" tabindex="-1" role="dialog" aria-labelledby="Delete show modal"
+       aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Delete show</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>Are you sure?</p>
+          <button type="button" class="btn btn-default float-left" data-dismiss="modal">Cancel</button>
+          <button type="button" (click)="deleteShow()" class="btn btn-danger float-right" data-dismiss="modal">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Artist modals -->
+
+  <!-- Modal to add artist -->
+  <div class="modal fade" id="add-artist-modal" tabindex="-1" role="dialog"
+       aria-labelledby="Add artist modal" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Add Artist</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form class="form" [formGroup]="addArtistForm" (ngSubmit)="addArtist()">
+            <div class="form-group">
+              <label for="add_artist_name">Artist Name</label>
+              <input type="text" id="add_artist_name" formControlName="addArtistNameControl"
+                     class="form-control"
+                     placeholder="Enter a name" [(ngModel)]="artistToAdd.name">
+              <div *ngIf="addArtistFormSubmitted && addArtistForm.controls['addArtistNameControl'].hasError('required')" class="error">
+                <small class="form-text text-danger">Name is required!</small>
+              </div>
+              <div *ngIf="addArtistForm.controls['addArtistNameControl'].hasError('maxlength')" class="error">
+                <small class="form-text text-danger">Name can be at most 60 characters!</small>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default float-left" data-dismiss="modal">Cancel</button>
+          <button [disabled]="addArtistForm.invalid" type="button" (click)="addArtist()"
+          class="btn btn-success float-right" data-dismiss="modal">Add Artist</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal to update artist -->
+  <div *ngIf="artistToUpdate !== undefined" class="modal fade" id="update-artist-modal" tabindex="-1" role="dialog"
+       aria-labelledby="Update artist modal" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Update Artist</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form class="form" [formGroup]="updateArtistForm" (ngSubmit)="updateArtist()">
+            <div class="form-group">
+              <label for="update_artist_name">Artist Name</label>
+              <input type="text" id="update_artist_name" formControlName="updateArtistNameControl"
+                     class="form-control"
+                     placeholder="Enter a name" [(ngModel)]="artistToUpdate.name">
+              <div *ngIf="addArtistFormSubmitted && updateArtistForm.controls['updateArtistNameControl'].hasError('required')" class="error">
+                <small class="form-text text-danger">Name is required!</small>
+              </div>
+              <div *ngIf="updateArtistForm.controls['updateArtistNameControl'].hasError('maxlength')" class="error">
+                <small class="form-text text-danger">Name can be at most 60 characters!</small>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default float-left" data-dismiss="modal">Cancel</button>
+          <button [disabled]="updateArtistForm.invalid" type="button" (click)="updateArtist()"
+          class="btn btn-success float-right" data-dismiss="modal">Update Artist</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal to delete artist -->
+  <div class="modal fade delete-modal" id="delete-artist-modal" tabindex="-1" role="dialog" aria-labelledby="Delete artist modal"
+       aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Delete artist</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>Are you sure?</p>
+          <button type="button" class="btn btn-default float-left" data-dismiss="modal">Cancel</button>
+          <button type="button" (click)="deleteArtist()" class="btn btn-danger float-right" data-dismiss="modal">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Location modals -->
+
+  <!-- Modal to add location -->
+  <div class="mt-4 container">
+    <div class="modal fade add-location-modal" id="add-location-modal" tabindex="-1" role="dialog"
+         aria-labelledby="Add location modal" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Add location</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <app-location-dialog
+              title="Add Location"
+              (submitLocation)="addLocation($event)">
+            </app-location-dialog>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal to edit location -->
+  <div class="mt-4 container">
+    <div class="modal fade edit-location-modal" tabindex="-1" role="dialog" aria-labelledby="Edit location modal"
+         aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Edit Location</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <app-location-dialog
+              title="Edit Location"
+              [location]="this.activeLocation"
+              (submitLocation)="updateLocation($event)">
+            </app-location-dialog>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal to delete location -->
+  <div class="modal fade delete-location-modal delete-modal" id="delete-location-modal" tabindex="-1" role="dialog"
+       aria-labelledby="Delete location modal" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Delete Location</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>Are you sure?</p>
+          <button type="button" class="btn btn-default float-left" data-dismiss="modal">Cancel</button>
+          <button type="button" (click)="deleteLocation()" class="btn btn-danger float-right" data-dismiss="modal">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Event modals -->
+
+  <!-- Modal to add event -->
+  <div class="mt-4 container" *ngIf="addType === 'Event'">
+    <div class="modal fade add-event-modal" id="add-event-modal" tabindex="-1" role="dialog"
+         aria-labelledby="Add event modal" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Add event</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <app-event-dialog
+              title="Add Event"
+              [event]="this.activeEvent"
+              (submitEvent)="addEvent($event)">
+            </app-event-dialog>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal to edit event -->
+  <div class="mt-4 container">
+    <div class="modal fade edit-event-modal" tabindex="-1" role="dialog" aria-labelledby="Edit event modal"
+         aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Edit event</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <app-event-dialog
+              title="Edit Event"
+              [event]="this.activeEvent"
+              (submitEvent)="updateEvent($event)">
+            </app-event-dialog>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal to delete event -->
+  <div class="modal fade delete-event-modal delete-modal" id="delete-event-modal" tabindex="-1" role="dialog"
+       aria-labelledby="Delete event modal" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Delete event</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>Are you sure?</p>
+          <button type="button" class="btn btn-default float-left" data-dismiss="modal">Cancel</button>
+          <button type="button" (click)="deleteEvent()" class="btn btn-danger float-right" data-dismiss="modal">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

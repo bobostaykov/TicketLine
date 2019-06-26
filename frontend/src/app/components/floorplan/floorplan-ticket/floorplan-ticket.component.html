@@ -1,0 +1,31 @@
+<div id="ticket-container">
+  <div class="titlebox">
+    <h3>Tickets</h3>
+    <strong>Total Price: {{ticketsession.getTotalPrice()}} €</strong>
+    <p>Step {{stepProgress}} of 3</p>
+  </div>
+  <div class="ticket-list">
+    <div *ngFor="let ticket of ticketsession.getTickets()" class="ticket"
+         [ngStyle]="allowDeleteTickets && {'cursor': 'pointer'}"
+         (contextmenu)="displayContextmenu(ticket, $event)"
+         (click)="displayContextmenu(ticket, $event)">
+      <div class="ticketContent">
+        <div class="showtitle">
+          <p>{{ticketsession.getShow()?.event.name}}</p>
+        </div>
+        <p>{{ticketsession.getShow()?.date}}, {{ticketsession.getShow()?.time}}</p>
+        <div class="ticketInfo">
+          <div *ngIf="ticket.seatNumber">Seat<p>{{ticket.seatNumber}}</p></div>
+          <div *ngIf="ticket.seatRow">Row<p>{{ticket.seatRow}}</p></div>
+          <div *ngIf="ticket.sectorNumber">Sector Number<p>{{ticket.sectorNumber}}</p></div>
+          <div>Price<p>{{ticket.price}} €</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- div containing context menu for deleting tickets -->
+<div id="contextmenuTicket" class="dropdown-menu shadow-sm">
+  <button class="btn dropdown-item" (click)="deleteSelectedTicket()">Delete Ticket</button>
+</div>

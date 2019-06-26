@@ -1,0 +1,24 @@
+.justify-content-center {
+  display: flex !important;
+  justify-content: center !important;
+  margin-bottom: 15px;
+}
+
+ul {
+  border-radius: 10px;
+  border: 1px solid lightblue;
+}
+
+li {
+  border-left: 1px solid lightblue;
+  font-size: 15px;
+}
+
+li:first-child {
+  border: none;
+}
+
+a {
+  font-size: 15px;
+}
+

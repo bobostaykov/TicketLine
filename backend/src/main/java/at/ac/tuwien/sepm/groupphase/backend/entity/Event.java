@@ -12,8 +12,8 @@ public class Event {
 
     @Id
     @Column(name="id")
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "seq_event_id")
-    @SequenceGenerator(name = "seq_event_id", sequenceName = "seq_event_id")
+    @SequenceGenerator(name = "event_seq", initialValue = 1, allocationSize = 50)
+    @GeneratedValue(generator = "event_seq")
     private Long id;
 
     @Column(nullable = false, name = "name")

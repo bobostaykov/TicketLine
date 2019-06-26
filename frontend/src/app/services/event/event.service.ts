@@ -1,12 +1,13 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Globals} from '../../global/globals';
 import {Observable} from 'rxjs';
 import {EventTickets} from '../../dtos/event_tickets';
-import {ResultsFor} from '../../datatype/results_for';
 import {Event} from '../../dtos/event';
+import {TopTenDetails} from '../../dtos/top-ten-details';
+import {Customer} from '../../dtos/customer';
 
-// TODO public or default methods
+// TODO Combine this EventService with EventResultsService
 
 @Injectable({
   providedIn: 'root'
@@ -18,31 +19,47 @@ export class EventService {
   constructor(private httpClient: HttpClient, private globals: Globals) { }
 
   /**
-   * Get top ten events from backend
+   * Create event
    */
-  public getTopTenEvents(monthsArray: string[], categoriesArray: string[]): Observable<EventTickets[]> {
-    console.log('Get top 10 events');
-    return this.httpClient.get<EventTickets[]>(this.eventBaseUri + '/topten',
-      {params: { months: monthsArray.join(','), categories: categoriesArray.join(',') }});
+  public createEvent(event: Event): Observable<Event> {
+    console.log('Create event');
+    return this.httpClient.post<Event>(this.eventBaseUri, event);
   }
 
+
   /**
-   * Get all events that apply to a specific eventType of search term (resultsFor: ARTIST, EVENT, LOCATION) from backend
-   * If resultsFor === ResultsFor.LOCATION, name_or_id will be the location's id, otherwise it will be the name of the event/artist
+   * Get top ten events from backend
    */
-  /*
-  public getEventsFiltered(resultsFor: ResultsFor, nameOrId: string): Observable<Event[]> {
-    console.log('Get events filtered');
-    return this.httpClient.get<Event[]>(this.eventBaseUri, {params: { results_for: ResultsFor[resultsFor], name_or_id: nameOrId }});
+  public getTopTenEvents(monthsCats: TopTenDetails): Observable<EventTickets[]> {
+    console.log('Get top 10 events');
+    return this.httpClient.post<EventTickets[]>(this.eventBaseUri + '/topten', monthsCats);
   }
-  */
+
 
   /**
    * Get all events from backend
    */
-  public getAllEvents(): Observable<Event[]> {
+  public getAllEvents(page: number): Observable<Event[]> {
     console.log('Get all events');
-    return this.httpClient.get<Event[]>(this.eventBaseUri);
+    return this.httpClient.get<Event[]>(this.eventBaseUri + '/?page=' + page);
+  }
+
+  /**
+   * Deletes the event with the specified id
+   * @param eventId id of event to delete
+   */
+  public deleteEvent(eventId: number): Observable<{}> {
+    console.log('Delete event with id ' + eventId);
+    return this.httpClient.delete(this.eventBaseUri + '/' + eventId);
+  }
+
+  /**
+   * updates specified event in backend
+   * @param event updated event dto
+   */
+  public updateEvent(event: Event): Observable<Event> {
+    console.log('Update event with id ' + event.id + ' to ' + JSON.stringify(event));
+    return this.httpClient.put<Event>(this.eventBaseUri + '/' + event.id, event);
   }
 
 }

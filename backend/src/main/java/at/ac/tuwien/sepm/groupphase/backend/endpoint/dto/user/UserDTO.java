@@ -5,6 +5,7 @@ import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.news.SimpleNewsDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +17,7 @@ public class UserDTO {
     private Long id;
 
     @ApiModelProperty(name = "The unique username of the user")
+    @NotBlank(message = "username may not be blank")
     private String username;
 
     @ApiModelProperty(name = "The password of the user")
@@ -106,7 +108,6 @@ public class UserDTO {
             ", type=" + type +
             ", userSince=" + userSince +
             ", lastLogin=" + lastLogin +
-            ", readNews=" + readNews.toString() +
             '}';
     }
 
@@ -119,7 +120,6 @@ public class UserDTO {
 
         if (id != null ? !id.equals(userDTO.id) : userDTO.id != null) return false;
         if (userSince != null ? !userSince.equals(userDTO.userSince) : userDTO.userSince != null) return false;
-        if (lastLogin != null ? !lastLogin.equals(userDTO.lastLogin) : userDTO.lastLogin != null) return false;
         if (username != null ? !username.equals(userDTO.username) : userDTO.username != null) return false;
         if (password != null ? !password.equals(userDTO.password) : userDTO.password != null) return false;
         if (readNews != null ? !readNews.equals(userDTO.readNews) : userDTO.readNews != null) return false;

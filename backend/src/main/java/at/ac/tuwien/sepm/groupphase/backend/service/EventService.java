@@ -4,13 +4,21 @@ import at.ac.tuwien.sepm.groupphase.backend.datatype.EventType;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.event.EventDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.event.EventTicketsDTO;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.searchParameters.EventSearchParametersDTO;
-import at.ac.tuwien.sepm.groupphase.backend.entity.EventTickets;
 import at.ac.tuwien.sepm.groupphase.backend.exception.ServiceException;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 import java.util.Set;
 
 public interface EventService {
+
+    /**
+     * Add event to database
+     *
+     * @param eventDTO event to create
+     * @return created event
+     */
+    EventDTO createEvent(EventDTO eventDTO) throws ServiceException;
 
     /**
      * Get top 10 events from backend
@@ -22,16 +30,46 @@ public interface EventService {
     List<EventTicketsDTO> findTopTenEvents(Set<String> monthsSet, Set<EventType> categoriesSet) throws ServiceException;
 
     /**
-     * Get all events from backend
-     * @return a list of all events ordered by name
+     *
+     * @param page the number of the specific requested page
+     * @return a page of all EventDTOs
+     * @throws ServiceException is thrown if something went wrong in the process
      */
-    List<EventDTO> findAll() throws ServiceException;
-
-    List<EventDTO> findAllFiltered(EventSearchParametersDTO parameters);
+    Page<EventDTO> findAll(Integer page, Integer PageSize) throws ServiceException;
 
     /**
-     * @param id of the artist
-     * @return a list of all events in which the artist performs
+     * Find all events filtered by eventName, eventType, content, description, duration, artistName
+     *
+     * @param parameters object containing eventName, eventType, content, description, duration, artistName
+     * @param page the number of the specific requested page
+     * @return a page of the found events
+     * @throws ServiceException is thrown if something went wrong in the process
      */
-    List<EventDTO> findEventsFilteredByArtistID(Long id);
+    Page<EventDTO> findAllFiltered(EventSearchParametersDTO parameters, Integer page, Integer pageSize) throws ServiceException;
+
+    /**
+     * Find all events filtered by artist id
+     *
+     * @param id of the artist to filter by
+     * @param page the number of the specific requested page
+     * @return a page of the found events
+     * @throws ServiceException is thrown if something went wrong in the process
+     */
+    Page<EventDTO> findEventsFilteredByArtistID(Long id, Integer page, Integer PageSize) throws ServiceException;
+
+    /**
+     * Delete event by id
+     *
+     * @param eventId id of event to delete
+     */
+    void deleteEvent(Long eventId) throws ServiceException;
+
+    /**
+     * Change event information.
+     *
+     * @param eventDTO event to be changed
+     * @return changed event
+     */
+    EventDTO updateEvent(EventDTO eventDTO);
+
 }

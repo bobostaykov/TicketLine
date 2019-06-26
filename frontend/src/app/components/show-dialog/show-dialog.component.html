@@ -1,0 +1,137 @@
+<!-- dialog to add and update shows -->
+<form #showForm="ngForm" class="form">
+
+    <div class="form-group">
+      <div class="col">
+        <label for="event_name">Event Name</label>
+        <ngx-select-dropdown id="event_name" name="eventName"
+                             [config]="eventConfig"
+                             [options]="events"
+                             [(ngModel)]="chosenEvent"
+                             [_value] = "chosenEvent"
+                             required=""
+                             #event='ngModel'
+        >
+        </ngx-select-dropdown>
+        <div [hidden]="event.valid || event.pristine" class="form-text text-warning">
+          Event is required!
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="col">
+        <label for="hall_name">Hall Name</label>
+        <ngx-select-dropdown id="hall_name" name="hallName"
+                             [config]="hallConfig"
+                             [options]="halls"
+                             [(ngModel)]="chosenHall"
+                             [_value] = "chosenHall"
+                             required=""
+                             #hall='ngModel'>
+        </ngx-select-dropdown>
+        <div [hidden]="hall.valid || hall.pristine" class="form-text text-warning">
+          Hall is required!
+        </div>
+      </div>
+    </div>
+
+  <div class="form-group">
+    <div class="col">
+      <label for="description">Description:</label>
+      <input id="description" type="text" name="description" class="form-control"
+             aria-labelledby="show description"
+             placeholder="Enter a description"
+             [(ngModel)]="showModel.description"
+      />
+    </div>
+  </div>
+
+
+  <div class="form-inline">
+    <div class="form-group mb-2">
+
+      <div class="col">
+        <label for="date">Date:</label>
+        <input id="date" type="date" name="date" class="form-control"
+               aria-labelledby="show date"
+               placeholder="Enter a date"
+               [(ngModel)]="showModel.date"
+               required = true
+               #date='ngModel'/>
+        <div [hidden]="date.valid || date.pristine" class="form-text text-warning">
+          Valid date is required!
+        </div>
+      </div>
+
+      <div class="col">
+        <label for="time">Time:</label>
+        <input id="time" type="time" name="time" class="form-control"
+               aria-labelledby="show time"
+               placeholder="Enter a time"
+               [(ngModel)]="showModel.time"
+               required = true
+               #time='ngModel'/>
+        <div [hidden]="time.valid || time.pristine" class="form-text text-warning">
+          Valid time is required!
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <div class="form-inline">
+    <div class="form-group mb-3">
+
+      <div class="col">
+        <label for="price_pattern">Price Pattern:</label>
+        <input id="price_pattern" type="text" name="pricePattern" class="form-control" style="width: 175px"
+               aria-labelledby="show price pattern"
+               placeholder="Name"
+               [(ngModel)]="patternName"
+               required = true
+        />
+      </div>
+
+      <div class="col">
+        <label for="price_cheap">Cheap:</label>
+        <input id="price_cheap" type="number" name="priceCheap" class="form-control" style="width: 75px"
+               [(ngModel)]="cheap"
+               required = true
+               #priceCheap='ngModel'/>
+        <div [hidden]="(priceCheap.valid || priceCheap.pristine) && cheap >= 0" class="form-text text-warning">
+          Invalid!
+        </div>
+      </div>
+
+      <div class="col">
+        <label for="price_average">Average:</label>
+        <input id="price_average" type="number" name="priceAverage" class="form-control" style="width: 75px"
+               [(ngModel)]="average"
+               required = true
+               #priceAverage='ngModel'/>
+        <div [hidden]="(priceAverage.valid || priceAverage.pristine) && average >= 0" class="form-text text-warning">
+          Invalid!
+        </div>
+      </div>
+
+      <div class="col">
+        <label for="price_expensive">Expensive:</label>
+        <input id="price_expensive" type="number" name="priceExpensive" class="form-control" style="width: 75px"
+               [(ngModel)]="expensive"
+               required = true
+               #priceExpensive='ngModel'/>
+        <div [hidden]="(priceExpensive.valid || priceExpensive.pristine) && average >= 0" class="form-text text-warning">
+          Invalid!
+        </div>
+      </div>
+    </div>
+  </div>
+  <p>
+    <mat-hint>Note: Updating the price pattern will change it for all shows, which are using it!</mat-hint>
+  </p>
+
+  <button class="btn btn-success float-right" data-dismiss="modal" (click)="showForm.valid && onSubmit()"
+          [disabled]="showForm.invalid">{{title}}</button>
+</form>
