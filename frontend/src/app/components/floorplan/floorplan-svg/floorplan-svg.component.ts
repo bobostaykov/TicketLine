@@ -83,6 +83,11 @@ export class FloorplanSvgComponent implements OnInit, DoCheck, AfterViewInit {
    * detects changes to seat or sector arrays and draws or removes changed elements accordingly
    */
   ngDoCheck(): void {
+    if (!this.svgElement || !this.updateForm || !this.contextmenu) {
+      this.svgElement = document.getElementById('floorplan');
+      this.updateForm = document.getElementById('updateForm');
+      this.contextmenu = document.getElementById('contextmenu');
+    }
     if (this.svgElement && this.hallType !== this.oldHallType) {
       this.oldHallType = this.hallType;
       while (this.svgElement.firstChild) {
@@ -126,7 +131,6 @@ export class FloorplanSvgComponent implements OnInit, DoCheck, AfterViewInit {
     if (this.allowEditing()) {
       this.renderer.listen(seatElement, 'click', (event) => this.displayUpdateForm(seat, event.target));
     } else {
-      console.log('here now');
       this.renderer.listen(seatElement, 'click', (event) => this.displayContext(seat, event));
     }
     this.renderer.listen(seatElement, 'contextmenu', (event) => this.displayContext(seat, event));
@@ -260,7 +264,6 @@ export class FloorplanSvgComponent implements OnInit, DoCheck, AfterViewInit {
    * @param event click to handle and check target
    */
   private onCloseMenusClick(event: Event): void {
-    console.log('Document Listener called');
     const target = event.target as HTMLElement;
     if (!(target.tagName === 'path' || target.closest('#updateForm') || target.closest('#contextmenu'))) {
       this.closeUpdateForm();
