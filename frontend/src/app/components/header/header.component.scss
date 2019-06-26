@@ -3,6 +3,10 @@
 
   .navbar-main-custom {
     max-width: 1180px !important;
+
+    .nav-link{
+      font-size: 14px;
+    }
   }
   #logo{
     display: flex;
