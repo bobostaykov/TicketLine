@@ -1,12 +1,12 @@
 .nav-element-custom {
   box-shadow: 0 4px 2px -2px gray;
 
+  .nav-link{
+    font-size: 12px;
+  }
+
   .navbar-main-custom {
     max-width: 1180px !important;
-
-    .nav-link{
-      font-size: 14px;
-    }
   }
   #logo{
     display: flex;
@@ -27,8 +27,27 @@
   }
 }
 
+@media (min-width: 1200px) {
+  .nav-element-custom{
+    .nav-link{
+      font-size: 14px;
+    }
+
+    #logo img {
+      min-width: 150px;
+    }
+  }
+}
+
+@media (min-width: 1400px) {
+  .nav-element-custom .nav-link{
+    font-size: 16px;
+  }
+}
+
+
 @media (min-width: 1600px) {
-  .nav-link {
+  .nav-element-custom .nav-link{
     font-size: 20px;
   }
 }
