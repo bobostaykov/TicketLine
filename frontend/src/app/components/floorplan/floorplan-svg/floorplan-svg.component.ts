@@ -61,16 +61,16 @@ export class FloorplanSvgComponent implements OnInit, DoCheck, AfterViewInit {
     this.iterableDiffer = _iterableDiffers.find([]).create(null);
   }
 
-  ngOnInit() {
-  }
-
   /**
    * initializes class variable html elements
    */
-  ngAfterViewInit(): void {
+  ngOnInit() {
     this.svgElement = document.getElementById('floorplan');
     this.updateForm = document.getElementById('updateForm');
     this.contextmenu = document.getElementById('contextmenu');
+  }
+
+  ngAfterViewInit(): void {
     // draw seats after view init otherwise they will sometimes not show up
     if (this.hallType === 'seats') {
       this.seats.forEach(seat => this.drawSeatPath(seat));

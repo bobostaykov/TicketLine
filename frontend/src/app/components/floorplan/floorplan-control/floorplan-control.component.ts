@@ -78,10 +78,16 @@ export class FloorplanControlComponent implements OnInit {
       this.loadSelectedShow(id);
       this.editingEnabled = false;
     } else if (this.ticketSession.getShow() && this.ticketSession.getShow().hall) {
+      const hall = this.ticketSession.getShow().hall;
       this.createHallForm.patchValue({
-        'hallSelection': this.ticketSession.getShow().hall,
+        'hallSelection': hall,
         'showSelection': this.ticketSession.getShow()
       });
+      if (hall.seats && hall.seats.length > 0) {
+        this.hallType = 'seats';
+      } else if (hall.sectors && hall.sectors.length > 0) {
+        this.hallType = 'sectors';
+      }
       this.editingEnabled = false;
     }
   }
