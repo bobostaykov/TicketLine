@@ -123,7 +123,12 @@ export class FloorplanSvgComponent implements OnInit, DoCheck, AfterViewInit {
     const yPos = (seat.seatRow) * 1.2 * 10 + Math.floor(seat.seatRow / 10) * 10;
     let path: string = 'M ' + xPos + ' ' + yPos + ' h 10 v 10 h -10 Z';
     this.renderer.setAttribute(seatElement, 'fill', this.getColor(seat));
-    this.renderer.listen(seatElement, 'click', (event) => this.displayUpdateForm(seat, event.target));
+    if (this.allowEditing()) {
+      this.renderer.listen(seatElement, 'click', (event) => this.displayUpdateForm(seat, event.target));
+    } else {
+      console.log('here now');
+      this.renderer.listen(seatElement, 'click', (event) => this.displayContext(seat, event));
+    }
     this.renderer.listen(seatElement, 'contextmenu', (event) => this.displayContext(seat, event));
     this.renderer.appendChild(this.svgElement, seatElement);
     // display ticket differently if status is set
@@ -149,7 +154,11 @@ export class FloorplanSvgComponent implements OnInit, DoCheck, AfterViewInit {
     const yPos = Math.floor((sector.sectorNumber - 1) / 3) * (50 + gap);
     let path: string = 'M ' + xPos + ' ' + yPos + ' h ' + width + ' v 50 h ' + (-width) + ' Z';
     this.renderer.setAttribute(sectorElement, 'fill', this.getColor(sector));
-    this.renderer.listen(sectorElement, 'click', (event) => this.displayUpdateForm(sector, event.target));
+    if (this.allowEditing()) {
+      this.renderer.listen(sectorElement, 'click', (event) => this.displayUpdateForm(sector, event.target));
+    } else {
+      this.renderer.listen(sectorElement, 'click', (event => this.displayContext(sector, event)));
+    }
     this.renderer.listen(sectorElement, 'contextmenu', (event => this.displayContext(sector, event)));
     // display ticket differently if status is set
     if (sector.ticketsSold && sector.ticketsSold > 0) {
@@ -217,7 +226,7 @@ export class FloorplanSvgComponent implements OnInit, DoCheck, AfterViewInit {
   private displayContext(element: Seat | Sector, event: MouseEvent): void {
     event.preventDefault();
     this.closeUpdateForm();
-    this.renderer.setStyle(this.contextmenu, 'left',  event.pageX + 'px');
+    this.renderer.setStyle(this.contextmenu, 'left', event.pageX + 'px');
     this.renderer.setStyle(this.contextmenu, 'top', event.pageY + 'px');
     this.renderer.setStyle(this.contextmenu, 'display', 'inline-block');
     this.setActiveElement(element, event.target as HTMLElement);
@@ -464,7 +473,7 @@ export class FloorplanSvgComponent implements OnInit, DoCheck, AfterViewInit {
       return false;
     }
     if (this.hallType === 'seats') {
-      return ! this.selectedElement.ticketStatus || this.selectedElement.ticketStatus === TicketStatus.EXPIRED;
+      return !this.selectedElement.ticketStatus || this.selectedElement.ticketStatus === TicketStatus.EXPIRED;
     } else {
       const sector = this.selectedElement as Sector;
       return sector.ticketsSold ? sector.ticketsSold < sector.maxCapacity : true;
