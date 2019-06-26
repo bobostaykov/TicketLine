@@ -7,7 +7,7 @@
 
 <div class="mt-4 container">
   <div class="row p-2 mb-4">
-    <button *ngIf="isAdmin()" type="button" class="btn btn-secondary btn-sm mr-4" data-toggle="modal"
+    <button *ngIf="isAdmin()" type="button" mat-raised-button class="mr-4" color="primary" data-toggle="modal"
             data-target=".create-news-modal">Add news
     </button>
     <mat-checkbox (change)="changeChecked()">Show Read News</mat-checkbox>
@@ -35,19 +35,7 @@
                   </small>
                 </div>
               </div>
-<!--
-              <div class="form-group">
-                <label for="inputSummary">Summary</label>
-                <textarea rows="3" name="summary" formControlName="summary" class="form-control" id="inputSummary"
-                          aria-describedby="summaryHelp" placeholder="Enter summary"></textarea>
-                <div *ngIf="submitted && newsForm.controls.summary.errors" class="error">
-                  <small class="form-text text-warning" *ngIf="newsForm.controls.summary.errors.required">Your summary
-                    is
-                    required!
-                  </small>
-                </div>
-              </div>
-!-->
+
               <div class="form-group">
                 <label for="inputText">Text</label>
                 <textarea rows="6" name="text" formControlName="text" class="form-control" id="inputText"
@@ -91,10 +79,11 @@
         <div class="card-body">
           <h5 class="card-title">{{news.title}}</h5>
           <h6 class="card-subtitle mb-2 text-muted">{{news.publishedAt | date}}</h6>
+          <hr />
           <p class="card-text">{{news.summary}}</p>
-          <button (click)="getNewsDetails(news.id)" type="button" class="btn btn-primary" data-toggle="modal"
+          <button (click)="getNewsDetails(news.id)" type="button" mat-stroked-button color="primary" data-toggle="modal"
                   [attr.data-target]="'.news-modal-'+news.id">
-            Details
+           Full Text
           </button>
         </div>
 
@@ -112,7 +101,7 @@
               <div class="modal-body">
                 <p class="lead"><span class="font-italic">{{news.publishedAt | date}}</span> {{news.summary}}</p>
                 <div class="" *ngIf="news.imageURL != null">
-                  <img [src]="news.imageURL" class="img-responsive" width="75%">
+                  <img alt="news image" [src]="news.imageURL" class="img-responsive" width="75%">
                 </div>
                 <p class="mt-2"> {{news.text}} </p>
               </div>
