@@ -9,7 +9,7 @@ file, npm will download all required node_modules to run a Angular application.
 Afterwards, execute `npm install -g @angular/cli` to install the Angular CLI 
 globally. To start the frontend, run `ng serve`. To start the backend on Unix, 
 run `./mvnw spring-boot:run -Dspring-boot.run.profiles=generateData` in the 
-*backend* folder. Then visit `http://localhost:4200/`.
+*backend* folder (on Windows remove `./`). Then visit `http://localhost:4200/`.
 
 Used technologies:
 - Spring Boot
