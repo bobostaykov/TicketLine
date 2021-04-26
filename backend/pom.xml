@@ -27,7 +27,7 @@
         <!-- dependencies -->
         <h2.version>1.4.197</h2.version>
         <mapstruct.version>1.3.0.Beta2</mapstruct.version>
-        <commons-io.version>2.6</commons-io.version>
+        <commons-io.version>2.7</commons-io.version>
         <jjwt.version>0.9.1</jjwt.version>
         <javafaker.version>0.16</javafaker.version>
         <rest-assured.version>3.2.0</rest-assured.version>
